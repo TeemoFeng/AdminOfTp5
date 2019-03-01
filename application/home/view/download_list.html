@@ -1,0 +1,54 @@
+{include file="common/head"/}
+<!-- pagetitle start here -->
+<section id="pagetitle-wrapper">
+    <div class="pagetitle-content">
+        <h2>{$title}</h2>
+    </div>
+</section>
+<!-- pagetitle end here -->
+<!-- breadcrumb start here -->
+<section id="breadcrumb-wrapper">
+    <div id="breadcrumb-content">
+        <ul>
+            <li><a href="{:url('home/index/index')}" title="CLTPHP">首页</a></li>
+            <li><a href="#">{$title}</a></li>
+        </ul>
+    </div>
+</section>
+<!-- breadcrumb end here -->
+<!-- maincontent start here -->
+<section id="content-wrapper">
+    <div class="row">
+        <div class="eight columns">
+            <aside>
+                <ul class="popular-list">
+                    {volist name="list" id="vo"}
+                    <li style="position: relative;">
+                        <img src="{$vo.title_thumb}" alt="" class="img-border" />
+                        <p class="popular-title" style="{$vo.title_style}">{$vo.title}</p>
+                        <p class="popular-title">{$vo.description}</p>
+                        <p class="author-name">
+                            <a style="font-style: normal;display: inline-block;padding:3px 12px;border: 1px solid #eee; position: absolute;bottom:30px;right: 15px;" href="{:url('home/download/down',['id'=>$vo.id])}">下载文件</a>
+                        </p>
+                    </li>
+                    {/volist}
+                </ul>
+            </aside>
+            {$page|raw}
+        </div>
+        <div class="four columns">
+            <aside>
+                <h5>推荐下载</h5>
+                <ul class="sidebar-list">
+                    {php} $catid = input("catId");{/php}
+                    {tlist db='download' id='vo' where='posid = 2 and catid=".$catid." ' limit='10'}
+                    <li><a href="{:url('home/download/down',['id'=>$vo.id])}" style="{:style($vo['title_style'])}" title="{$vo.title}">{$vo.title}</a></li>
+                    {/tlist}
+                </ul>
+            </aside>
+        </div>
+    </div>
+</section>
+<!-- maincontent end here -->
+{include file="common/footer"/}
+<script id="cy_cmt_num" src="https://changyan.sohu.com/upload/plugins/plugins.list.count.js?clientId={$changyan.app_id}"></script>

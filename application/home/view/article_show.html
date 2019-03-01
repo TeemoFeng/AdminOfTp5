@@ -1,0 +1,100 @@
+{include file="common/head"/}
+<style>
+    #SOHUCS #SOHU_MAIN .module-cmt-footer .section-service-w .service-wrap-w a {
+        display: none!important;
+    }
+    #cyReward{text-align: center;}
+    #cy-reward-click{margin: 0 auto;}
+    /*#SOHUCS #SOHU_MAIN .module-cmt-box .post-wrap-w .post-wrap-main{background-image: none!important;}*/
+</style>
+<!-- pagetitle start here -->
+<section id="pagetitle-wrapper">
+    <div class="pagetitle-content">
+        <h2>{$title}</h2>
+    </div>
+</section>
+<!-- pagetitle end here -->
+
+<!-- breadcrumb start here -->
+<section id="breadcrumb-wrapper">
+    <div id="breadcrumb-content">
+        <ul>
+            <li><a href="{:url('home/index/index')}" title="CLTPHP">首页</a></li>
+            <li><a href="{:url('home/'.MODULE_NAME.'/index',array('catId'=>input('catId')))}" title="{$title}">{$title}</a></li>
+            <li>{$info.title}</li>
+        </ul>
+    </div>
+</section>
+<!-- breadcrumb end here -->
+
+<!-- maincontent start here -->
+<section id="content-wrapper">
+    <div class="row">
+        <div class="eight columns">
+            <!-- blog post 1 -->
+            <div class="blog-post">
+                <img src="{$info['title_thumb']}" alt="blog-img" />
+                <div class="post-info">
+                    <div class="big-date">{:toDate($info['createtime'],'d')}</div>
+                    <div class="small-month">{:toDate($info['createtime'],'Y/m')}</div>
+                    <ul>
+                        <li class="author-icon">{$info.username}</li>
+                        <li class="tag-icon"><a href="{$info.fromlink}" target="_blank">{$info.copyfrom}</a></li>
+                        <li class="comment-icon"><a href="#SOHUCS"><b id="changyan_count_unit"></b> 评论</a></li>
+                    </ul>
+                </div>
+                <div class="post-content">
+                    <h4 style="{$info.title_color};{$info.title_weight}">{$info.title}</h4>
+                    {$info.content|raw}
+                </div>
+                <div class="fly-panel detail-box">
+                    <!-- 代码1：放在页面需要展示的位置  -->
+                    <!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
+                    <div id="cyReward" sourceid="{$info.id}" role="cylabs" data-use="reward"></div>
+                    <!-- 代码2：用来读取评论框配置，此代码需放置在代码1之后。 -->
+                    <!-- 如果当前页面有评论框，代码2请勿放置在评论框代码之前。 -->
+                    <!-- 如果页面同时使用多个实验室项目，以下代码只需要引入一次，只配置上面的div标签即可 -->
+                    <script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+                    <script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cytu7fNxW"></script>
+                </div >
+
+                <div class="fly-panel detail-box" id="flyReply">
+                    <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
+                        <legend>评论</legend>
+                    </fieldset>
+                    <!--PC和WAP自适应版-->
+                    <div id="SOHUCS" sid="{$info.id}" ></div>
+                </div>
+
+
+
+            </div>
+        </div>
+        <div class="four columns">
+            <aside>
+                <h5>推荐内容</h5>
+                <ul class="sidebar-list">
+                    {php} $catid = input("catId");{/php}
+                    {clist db='article' id='vo' where='posid = 2 and catid=".$catid."' limit='10'}
+                    <li><a href="{:url('home/'.$vo['catdir'].'/info',array('id'=>$vo['id'],'catId'=>$vo['catid']))}" style="{$vo.title_style}" title="{$vo.title}">{$vo.title}</a></li>
+                    {/clist}
+                </ul>
+            </aside>
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+    (function(){
+        var appid = '{$changyan.app_id}';
+        var conf = '{$changyan.config}';
+        var width = window.innerWidth || document.documentElement.clientWidth;
+        if (width < 960) {
+            window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })();
+    function changyan_wtx() {
+        window.location.href="{:url('user/login/index')}";
+    }
+</script>
+<script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+<!-- maincontent end here -->
+{include file="common/footer"/}
