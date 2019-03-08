@@ -64,11 +64,14 @@ class Users extends Common{
             $province = db('Region')->where ( array('pid'=>1) )->select ();
             $user_level=db('user_level')->order('sort')->select();
             $info = UsersModel::get($id);
+            $bank = db('Bank')->order('id ASC')->select();
+
             $this->assign('info',json_encode($info,true));
             $this->assign('title',lang('edit').lang('user'));
             $this->assign('province',json_encode($province,true));
             $this->assign('user_level',json_encode($user_level,true));
 
+            $this->assign('bank', json_encode($bank, true)); //银行列表
             $city = db('Region')->where ( array('pid'=>$info['province']) )->select ();
             $this->assign('city',json_encode($city,true));
             $district = db('Region')->where ( array('pid'=>$info['city']) )->select ();
@@ -164,12 +167,12 @@ class Users extends Common{
             $data   = input('post.');
             $level          = explode(':',$data['level']); //ng 获取的值要单独去除number:
             $data['level']  = $level[1];
-            $province       = explode(':',$data['province']);
-            $data['province'] = isset($province[1]) ? $province[1] : '';
-            $city           = explode(':',$data['city']);
-            $data['city']   = isset( $city[1]) ? $city[1] : '';
-            $district       = explode(':',$data['district']);
-            $data['district'] = isset( $district[1]) ? $district[1] : '';
+//            $province       = explode(':',$data['province']);
+//            $data['province'] = isset($province[1]) ? $province[1] : '';
+//            $city           = explode(':',$data['city']);
+//            $data['city']   = isset( $city[1]) ? $city[1] : '';
+//            $district       = explode(':',$data['district']);
+//            $data['district'] = isset( $district[1]) ? $district[1] : '';
             if (empty($data['mobile'])) return ['code' => 0, 'msg' => '手机号不能为空'];
             $check_user = UsersModel::get(['mobile' => $data['mobile']]);
             if ($check_user) {
@@ -196,7 +199,7 @@ class Users extends Common{
             if($data['safeword'] != $data['confirmSafePwd']) return ['code' => 0, 'msg' => '两次输入的安全密码不一致'];
 
             $data['password'] = md5($data['password']);
-            $data['level'] = 1; //默认会员等级为注册会员
+//            $data['level'] = 1; //默认会员等级为注册会员
             if (UsersModel::create($data)) {
                 return ['code' => 1, 'msg' => '注册成功', 'url' => url('index')];
             } else {
@@ -207,8 +210,12 @@ class Users extends Common{
         } else {
             $province   = db('Region')->where ( array('pid'=>1) )->select ();
             $user_level = db('user_level')->order('sort')->select();
+            $bank = db('Bank')->order('id ASC')->select();
+            $user_num = createVipNum();
             $this->assign('province',json_encode($province,true));
-            $this->assign('user_level', json_encode($user_level, true));
+            $this->assign('user_level', json_encode($user_level, true)); //会员级别
+            $this->assign('bank', json_encode($bank, true)); //银行列表
+            $this->assign('usernum', $user_num); //会员编号
 
             return $this->fetch();
         }

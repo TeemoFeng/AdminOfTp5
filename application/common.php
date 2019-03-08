@@ -711,4 +711,13 @@ function safe_html($html){
     $html = substr($xml->saveHTML($xml->documentElement), 12, -14);
     $html = strip_tags($html,'<'.implode('><', array_keys($elements)).'>');
     return $html;
+
+}
+
+//创建会员编号
+function createVipNum()
+{
+    $num = rand(10000,99999);
+    $vip_num = 'vip'.date('Ymd').$num;
+    return $vip_num;
 }

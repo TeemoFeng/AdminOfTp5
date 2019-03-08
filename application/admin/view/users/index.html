@@ -18,8 +18,10 @@
     <input type="checkbox" name="is_lock" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="is_lock" {{ d.is_lock == 0 ? 'checked' : '' }}>
 </script>
 <script type="text/html" id="action">
+    <a href="{:url('home/index/index')}?id={{d.id}}" class="layui-btn layui-btn-xs">访问前台</a>
     <a href="{:url('edit')}?id={{d.id}}" class="layui-btn layui-btn-xs">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a href="{:url('detail')}?id={{d.id}}" class="layui-btn layui-btn-xs" lay-event="del">详情</a>
 </script>
 <script type="text/html" id="email">
     {{d.email}}
@@ -52,12 +54,13 @@
             cols: [[
                 {checkbox:true,fixed: true},
                 {field: 'id', title: 'id', width: 50, fixed: true},
-                {field: 'usernum', title: '会员编号', width: 80, fixed: true},
-                {field: 'username', title: '{:lang("nickname")}', width: 120},
+                {field: 'usernum', title: '会员编号', width: 100, fixed: true},
+                {field: 'username', title: '姓名', width: 120, fixed: true},
                 {field: 'level_name', title: '会员等级', width: 100},
                 {field: 'mobile', title: '{:lang("tel")}', width: 150,hide:true},
                 {field: 'email', title: '{:lang("email")}', width: 250,templet:'#email'},
                 {field: 'referee', title: '推荐人编号', width: 100},
+                {field: 'contact_person', title: '接点人编号', width: 100},
                 {field: 'reg_time', title: '注册时间', width: 100},
                 {field: 'active_time', title: '激活时间', width: 100},
                 {field: 'single_currency', title: '排单币', width: 100},
@@ -66,7 +69,7 @@
                 {field: 'sex', title: '性别', width: 80,templet:'#sex',hide:true},
                 {field: 'is_lock', align: 'center',title: '{:lang("status")}', width: 120,toolbar: '#is_lock'},
                 {field: 'reg_time', title: '注册时间', width: 150},
-                {title:'操作', width: 160, align: 'center', toolbar: '#action'}
+                {title:'操作', width: 300, align: 'center', toolbar: '#action'}
             ]],
             limit: 10 //每页默认显示的数量
         });

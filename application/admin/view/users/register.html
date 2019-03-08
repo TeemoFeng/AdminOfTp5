@@ -27,10 +27,10 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">会员编号</label>
                     <div class="layui-input-4">
-                        <input type="text" name="usernum" lay-verify="usernum" placeholder="请填写会员编号" class="layui-input">
+                        <input type="text" name="usernum" lay-verify="usernum" placeholder="请填写会员编号" class="layui-input" value="{$usernum}">
                     </div>
                     <div class="layui-form-mid layui-word-aux">
-                        <span class="tishi">*</span> 不超过15个字符
+                        <span class="tishi">*</span> 不超过16个字符
                     </div>
                 </div>
 
@@ -45,51 +45,12 @@
                 </div>
 
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">{:lang('sex')}</label>
-                        <div class="layui-input-block">
-                            <input type="radio" name="sex" value="1" title="{:lang('man')}" checked>
-                            <input type="radio" name="sex" value="0"  title="{:lang('woman')}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">{:lang('address')}</label>
-                    <div class="layui-input-inline">
-                        <select name="province" ng-model="field.province" lay-filter="province" ng-options="v.id as v.name for v in province" ng-selected="v.id==field.province">
-                            <option value="">请选择省</option>
-                        </select>
-                    </div>
-                    <div class="layui-input-inline" >
-                        <select name="city" id="city" ng-model="field.city" lay-filter="city" ng-options="v.id as v.name for v in city" ng-selected="v.id==field.city">
-                            <option value="">请选择市</option>
-                        </select>
-                    </div>
-                    <div class="layui-input-inline">
-                        <select name="district" id="district" ng-model="field.district" lay-filter="district" ng-options="v.id as v.name for v in district" ng-selected="v.id==field.district">
-                            <option value="">请选择县/区</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
+                    <label class="layui-form-label">身份证号</label>
                     <div class="layui-input-4">
-                        <input type="text" name="email"  placeholder="请填写邮箱" class="layui-input">
+                        <input type="text" name="identity"  placeholder="请填写身份证号" class="layui-input">
                     </div>
                     <!--<div class="layui-form-mid layui-word-aux">-->
-                        <!--用于找回密码-->
-                    <!--</div>-->
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">QQ</label>
-                    <div class="layui-input-4">
-                        <input type="text" name="qq"  placeholder="" class="layui-input">
-                    </div>
-                    <!--<div class="layui-form-mid layui-word-aux">-->
-                    <!--用于找回密码-->
+                        <!--<span class="tishi">*</span>用户名在4到25个字符之间。-->
                     <!--</div>-->
                 </div>
 
@@ -104,24 +65,127 @@
 
                 </div>
 
+                <!--<div class="layui-form-item">-->
+                    <!--<div class="layui-inline">-->
+                        <!--<label class="layui-form-label">{:lang('sex')}</label>-->
+                        <!--<div class="layui-input-block">-->
+                            <!--<input type="radio" name="sex" value="1" title="{:lang('man')}" checked>-->
+                            <!--<input type="radio" name="sex" value="0"  title="{:lang('woman')}">-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="layui-form-item">-->
+                    <!--<label class="layui-form-label">{:lang('address')}</label>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<select name="province" ng-model="field.province" lay-filter="province" ng-options="v.id as v.name for v in province" ng-selected="v.id==field.province">-->
+                            <!--<option value="">请选择省</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                    <!--<div class="layui-input-inline" >-->
+                        <!--<select name="city" id="city" ng-model="field.city" lay-filter="city" ng-options="v.id as v.name for v in city" ng-selected="v.id==field.city">-->
+                            <!--<option value="">请选择市</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<select name="district" id="district" ng-model="field.district" lay-filter="district" ng-options="v.id as v.name for v in district" ng-selected="v.id==field.district">-->
+                            <!--<option value="">请选择县/区</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="email"  placeholder="请填写邮箱" class="layui-input">
+                    </div>
+                    <!--<div class="layui-form-mid layui-word-aux">-->
+                        <!--用于找回密码-->
+                    <!--</div>-->
+                </div>
+
+                <!--<div class="layui-form-item">-->
+                    <!--<label class="layui-form-label">QQ</label>-->
+                    <!--<div class="layui-input-4">-->
+                        <!--<input type="text" name="qq"  placeholder="" class="layui-input">-->
+                    <!--</div>-->
+                    <!--&lt;!&ndash;<div class="layui-form-mid layui-word-aux">&ndash;&gt;-->
+                    <!--&lt;!&ndash;用于找回密码&ndash;&gt;-->
+                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                <!--</div>-->
             </div>
         </fieldset>
 
         <fieldset class="layui-elem-field layui-field-title">
             <legend>关系信息</legend>
             <div class="layui-field-box">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">推荐人编号</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="referee" lay-verify="required" placeholder="请填写推荐人编号" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        <span class="tishi">*</span>必填
+                    </div>
+                </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">推荐人</label>
+                    <label class="layui-form-label">接点人编号</label>
                     <div class="layui-input-4">
-                        <input type="text" name="referee" lay-verify="referee" placeholder="请填写推荐人编号" class="layui-input">
+                        <input type="text" name="contact_person" lay-verify="required" placeholder="请填写接点人编号" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        <span class="tishi">*</span>必填
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>银行账号信息</legend>
+            <div class="layui-field-box">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">支付宝账户</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="alipay_account"  placeholder="请填写支付宝账号" class="layui-input">
                     </div>
 
                 </div>
 
+                <div class="layui-form-item">
+                    <label class="layui-form-label">银行</label>
+                    <div class="layui-input-4">
+                        <select name="bank_id"  ng-model="field.bank" ng-options="v.id as v.bank_name for v in bank">
+                            <option value="">请选择银行</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开户人</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="bank_user"  placeholder="" class="layui-input">
+                    </div>
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">银行卡账号</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="bank_account" placeholder="" class="layui-input">
+                    </div>
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开户行</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="bank_desc" placeholder="" class="layui-input">
+                    </div>
+
+                </div>
             </div>
         </fieldset>
-
 
         <fieldset class="layui-elem-field layui-field-title">
             <legend>安全信息<span style="color: #FF5722">(默认密码：123456)</span></legend>
@@ -166,7 +230,7 @@
 
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <input type="hidden" name="admin_id">
+                <!--<input type="hidden" name="admin_id">-->
                 <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
                 <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
             </div>
@@ -182,6 +246,7 @@
     m.controller('ctrl',function($scope) {
         $scope.group = {$user_level|raw};
         $scope.province = {$province|raw};
+        $scope.bank = {$bank|raw};
         // $scope.city = {$city|raw};
         // $scope.district = {$district|raw};
         layui.use(['form', 'layer'], function () {
@@ -220,7 +285,7 @@
                     if(value.length < 1){
                         return '会员编号不能为空';
                     }
-                    if(value.length > 15){
+                    if(value.length > 16){
                         return '会员编号长度不能大于15位';
                     }
                 }
