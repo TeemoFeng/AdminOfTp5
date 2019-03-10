@@ -21,4 +21,7 @@ class Users extends Model
             $data['reg_time'] = time();
         });
     }
+
+
+
 }

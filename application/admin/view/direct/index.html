@@ -1,0 +1,234 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>直销制度</legend>
+    </fieldset>
+
+    <div class="layui-fluid">
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">币种</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        <tr>
+                            <td><span class="first">币种名称:</span></td>
+                            {foreach $currency_arr as $key=>$vo }
+                            <td><span class="layui-text"><a class="data-set" href="javascript:void(0)" data-table="currency" data-id="{$vo.id}" data-field="name">{$vo.name}</a></span></td>
+                            {/foreach}
+
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        <tr>
+                            <td><span class="first">奖金类型:</span></td>
+                            {foreach $bonus_type as $key=>$vo}
+                            <td><span class="layui-text"><a class="data-set" href="javascript:void(0)" data-table="bonus_type" data-id="{$vo.id}" data-field="name">{$vo.name}</a></span></td>
+                            {/foreach}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">直销制度,太阳线</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        <tr>
+                            <td><span class="first">会员级别:</span></td>
+                            {foreach $user_level as $key=>$vo}
+                            <td><span class="layui-text"><a class="data-set" href="javascript:void(0)" data-table="user_level" data-id="{$vo.level_id}" data-field="name">{$vo.name}</a></span></td>
+                            {/foreach}
+                        </tr>
+                        <tr>
+                            <td><span class="first">报单额:</span></td>
+                            {foreach $fenhong_info as $key=>$vo}
+                            <td><span class="layui-text"><a class="data-set" href="javascript:void(0)" data-table="bonus_set" data-id="{$vo.id}" data-field="declaration">{$vo.declaration}</a></span></td>
+                            {/foreach}
+                        </tr>
+                        <tr>
+                            <td><span class="first">静态收益:</span></td>
+                            {foreach $fenhong_info as $key=>$vo}
+                            <td><span class="layui-text"><a class="data-set" href="javascript:void(0)" data-table="bonus_set" data-id="{$vo.id}" data-field="static_gains">{$vo.static_gains}</a>%</span></td>
+                            {/foreach}
+                        </tr>
+                        <tr>
+                            <td><span class="first">直推奖比例:</span></td>
+                            {foreach $fenhong_info as $key=>$vo}
+                            <td><span class="layui-text"><a class="data-set" href="javascript:void(0)" data-table="bonus_set" data-id="{$vo.id}" data-field="bonus_ratio">{$vo.bonus_ratio}</a>%</span></td>
+                            {/foreach}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">推广红包:层数按接点关系拿下面几层，最多拿几层按自己下面接点人数以及自己的投资额而定</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        {foreach $user_level as $key=>$vo}
+                        <tr>
+                            <td><span class="first">{$vo.name}</span></td>
+                            <td class="layui-text">1-<a class="data-set" href="javascript:void(0)" data-table="user_level" data-id="{$vo.level_id}" data-field="bonus_level">{$vo.bonus_level}</a>层</td>
+                            <td class="layui-text">层内每入一名有效会员每天奖励<a class="data-set" href="javascript:void(0)" data-table="user_level" data-id="{$vo.level_id}" data-field="promotion_award">{$vo.promotion_award}</a>枚%</td>
+
+                        </tr>
+                        {/foreach}
+                        <tr>
+                            <td colspan="4" class="layui-text"><span class="first">
+所得 奖金 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="shate_ratio">{$other_set.shate_ratio}</a> %进入沙特链，50%按阿美币实时价格直接进入阿美币账户，需冻结 10 天后才可以交易</span></td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">激活红包</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        <tr>
+                            <td class="layui-text"><span class="first">报单中心：报单 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="baodan_num">{$other_set.baodan_num}</a> 个F4的会员自动升级为报单中心，每报一单奖励报单额的 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="baodan_ratio">{$other_set.baodan_ratio}</a> %的沙特链</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">外系统转阿美币</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        <tr>
+                            <td class="layui-text"><span class="first">外系统兑换的币自动锁仓 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="lock_time">{$other_set.lock_time}</a> 个月后，自动解仓</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">其他</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        <tr>
+                            <td class="layui-text">
+1、奖金日封顶：投资分红和推广红包	按投资额的 外系统兑换的币自动锁仓 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="day_top_ratio">{$other_set.day_top_ratio}</a> %进行封顶</td>
+                        </tr>
+                        <tr>
+                            <td class="layui-text">2、沙特链可随时提现(每 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="extract_num">{$other_set.extract_num}</a> 枚起提)和复投(复投也是 10起复投)，沙特链提现时扣除 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="extract_deduction_ratio">{$other_set.extract_deduction_ratio}</a> %手续费,每天可提 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="day_extract_num">{$other_set.day_extract_num}</a> 次， 10 的整数倍可提</td>
+                        </tr>
+                        <tr>
+                            <td class="layui-text"><span class="first">3、沙特链复投可 撤回，撤回时单笔手续费 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="double_throw_recall">{$other_set.double_throw_recall}</a> %</span></td>
+                        </tr>
+                        <tr>
+                            <td class="layui-text"><span class="first">4、本金账户	撤资时需先转沙特链,转换是需扣除 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="principal_recall">{$other_set.principal_recall}</a> %手续费，</span></td>
+                        </tr>
+                        <tr>
+                            <td class="layui-text"><span class="first">5、兑换比率：1美金兑 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="money_change">{$other_set.money_change}</a> 人民币，</span></td>
+                        </tr>
+                        <tr>
+                            <td class="layui-text"><span class="first">6、外盘交易所出金时扣除 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="outer_disc_trans_ratio">{$other_set.outer_disc_trans_ratio}</a> %手续费， <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="outer_disc_trans_to_waller">{$other_set.outer_disc_trans_to_waller}</a> %给消费钱包,最少 0 可提, 0 整数倍提现,单笔最高可提 100000</span></td>
+                        </tr>
+                        <tr>
+                            <td class="layui-text"><span class="first">7、外盘交易手续费，在线交易收买卖双方的 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="trans_ratio">{$other_set.trans_ratio}</a> %手续费，</span></td>
+                        </tr>
+                        <tr>
+                            <td class="layui-text"><span class="first">8、消费钱包提现最小 <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="waller_excract_ratio">{$other_set.waller_excract_ratio}</a> 可提， <a class="data-set" href="javascript:void(0)" data-table="bonus_ext_set" data-id="{$other_set.id}" data-field="waller_excract_multiple">{$other_set.waller_excract_multiple}</a> 整数倍提现</span></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">备注</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                        <tbody>
+                        <tr>
+                            <td><span class="first">
+1、沙特链提现需转换成人民币，转换时按当初本点位投资的单价转换，比如投资时，为1美金兑换6.5人民币，提现转换时还是这个费率</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="first">
+2、只要本金账户低于投资额就是无效会员，不可回复为有效会员，并且无效会员和冻结会员不再享受任何奖励，其它会员也不再拿无效会员产生的奖励</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{include file="common/foot"/}
+
+<script>
+    layui.use(['element','layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        $('.data-set').on('click',function () {
+            var _this = $(this);
+            var data_table = _this.attr('data-table');
+            var data_id = _this.attr('data-id');
+            var data_field = _this.attr('data-field');
+            var data_value = _this.text();
+            console.log(data_table);
+            console.log(data_id);
+            console.log(data_field);
+            console.log(data_value);
+
+            //例子2
+            layer.prompt({
+                value: data_value, //初始值
+                title: '请输入修改值',
+            }, function(value, index, elem){
+                loading =layer.load(2, {shade: [0.1,'#fff']});
+                //发送修改请求
+                $.post('{:url("configSet")}',{'table_name':data_table,'id':data_id,'data_field':data_field,'data_value':value},function (res) {
+                    layer.close(loading);
+                    if (res.code==1) {
+                        location.reload();
+                        layer.msg(res.msg,{time:1000,icon:1});
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                        return false;
+                    }
+                });
+
+                layer.close(index);
+            });
+
+        });
+
+
+    });
+
+</script>
+
+
