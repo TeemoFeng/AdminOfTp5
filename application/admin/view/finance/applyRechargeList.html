@@ -1,0 +1,165 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>申请充值列表</legend>
+    </fieldset>
+
+    <div class="demoTable layui-form">
+        <div class="layui-inline">
+            <div class="layui-inline">
+                <select name="status" lay-verify="required" id="status" lay-search>
+                    <option value="">请选择</option>
+                    {foreach $status as $key => $val}
+                    <option value="{$key}">{$val}</option>
+                    {/foreach}
+                </select>
+            </div>
+
+            <div class="layui-inline">
+                <input type="text" name="start_date" id="start_time" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+            </div>
+
+            <div class="layui-inline">
+                <input type="text" name="end_date" id="end_time" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+            </div>
+
+        </div>
+
+        <div class="layui-inline">
+            <input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+
+        </div>
+        <button class="layui-btn" id="search" data-type="reload">搜索</button>
+        <a href="{:url('applicationRecharge')}" class="layui-btn">显示全部</a>
+
+
+    </div>
+
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+
+<script type="text/html" id="is_lock">
+    <input type="checkbox" name="is_lock" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="is_lock" {{ d.is_lock == 0 ? 'checked' : '' }}>
+</script>
+
+<script type="text/html" id="action">
+    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-xs">详情</a>
+    <a href="{:url('currencyRecharge')}?id={{d.id}}" class="layui-btn layui-btn-xs">货币充值</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+</script>
+
+<script type="text/html" id="email">
+    {{d.email}}
+    {{# if(d.email && d.email_validated=='0'){ }}
+    (未验证)
+    {{# } }}
+</script>
+
+<script type="text/html" id="topBtn">
+    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="delAll">批量删除</button>
+    <!--<a href="{:url('register')}" class="layui-btn layui-btn-normal layui-btn-sm">会员注册</a>-->
+</script>
+
+{include file="common/foot"/}
+<script>
+    layui.use(['table','form','laydate'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery; laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time' //指定元素
+        });
+        var tableIn = table.render({
+            id: 'user',
+            elem: '#list',
+            url: '{:url("applicationRecharge")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            page: true,
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: 'id', width: 50, fixed: true},
+                {field: 'username', title: '用户', width: 200, fixed: true},
+                {field: 'apply_method', title: '充值方式', width: 100},
+                {field: 'apply_num', title: '充值数量', width: 100},
+                {field: 'amount', title: '充值金额(人民币)', width: 100},
+                {field: 'create_time', title: '申请时间', width: 150},
+                {field: 'status_str', title: '状态', width: 150},
+                {title:'操作', width: 300, align: 'center', toolbar: '#action'}
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+        form.on('switch(is_lock)', function(obj){
+            loading =layer.load(2, {shade: [0.1,'#fff']});
+            var id = this.value;
+            var is_lock = obj.elem.checked===true?0:1;
+            $.post('{:url("usersState")}',{'id':id,'is_lock':is_lock},function (res) {
+                layer.close(loading);
+                if (res.status==1) {
+                    tableIn.reload();
+                }else{
+                    layer.msg(res.msg,{time:1000,icon:2});
+                    return false;
+                }
+            })
+        });
+        //搜索
+        $('#search').on('click', function() {
+            var key = $('#key').val();
+            var start_time = $('#start_time').val();
+            var end_time = $('#end_time').val();
+            var status = $('#status').val();
+
+            // if($.trim(key)==='') {
+            //     layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
+            //     return;
+            // }
+            tableIn.reload({ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status}});
+        });
+        table.on('tool(list)', function(obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除吗？', function(index){
+                    var loading = layer.load(1, {shade: [0.1, '#fff']});
+                    $.post("{:url('applyDel')}",{id:data.id},function(res){
+                        layer.close(loading);
+                        if(res.code===1){
+                            layer.msg(res.msg,{time:1000,icon:1});
+                            tableIn.reload();
+                        }else{
+                            layer.msg('操作失败！',{time:1000,icon:2});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+        $('body').on('click','#delAll',function() {
+            layer.confirm('确认要删除选中信息吗？', {icon: 3}, function(index) {
+                layer.close(index);
+                var checkStatus = table.checkStatus('user'); //test即为参数id设定的值
+                var ids = [];
+                $(checkStatus.data).each(function (i, o) {
+                    ids.push(o.id);
+                });
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('applyReachrgeDelall')}", {ids: ids}, function (data) {
+                    layer.close(loading);
+                    if (data.code === 1) {
+                        layer.msg(data.msg, {time: 1000, icon: 1});
+                        tableIn.reload();
+                    } else {
+                        layer.msg(data.msg, {time: 1000, icon: 2});
+                    }
+                });
+            });
+        })
+    });
+</script>
+</body>
+</html>

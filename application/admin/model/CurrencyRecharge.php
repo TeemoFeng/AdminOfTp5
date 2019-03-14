@@ -11,5 +11,5 @@ use think\Db;
 //货币充值model
 class CurrencyRecharge extends Model
 {
-
+    protected $autoWriteTimestamp = 'datetime';
 }

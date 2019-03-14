@@ -2,7 +2,7 @@
 
 <div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>货币充值</legend>
+        <legend>货币扣除</legend>
     </fieldset>
 
 
@@ -15,7 +15,7 @@
                     <label class="layui-form-label">币种类型</label>
                     <div class="layui-input-block">
                         {foreach $currency_list as $key => $val}
-                            <input type="radio" name="currency_id" value="{$val.id}" title="{$val.name}" checked="">
+                        <input type="radio" name="currency_id" value="{$val.id}" title="{$val.name}" checked="">
                         {/foreach}
                     </div>
                 </div>
@@ -62,7 +62,7 @@
 
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <input type="hidden" name="type" value="1">
+                <input type="hidden" name="type" value="2">
                 <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
                 <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
             </div>
