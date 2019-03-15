@@ -1,0 +1,99 @@
+{include file="common/head"/}
+<!--<link rel="stylesheet" href="../../../css/demo.css" type="text/css">-->
+<link rel="stylesheet" href="/static/plugins/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="/static/plugins/zTree_v3/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="/static/plugins/zTree_v3/js/jquery.ztree.core.js"></script>
+
+<script type="text/javascript">
+
+    var setting = {
+        view: {
+            selectedMulti: false
+        },
+        async: {
+            enable: true,
+            url:"{:U('userTree')}",
+            autoParam:["id", "name=n", "level=lv"],
+            otherParam:{"otherParam":"zTreeAsyncTest"},
+            dataFilter: filter
+        },
+        callback: {
+            beforeClick: beforeClick,
+            beforeAsync: beforeAsync,
+            onAsyncError: onAsyncError,
+            onAsyncSuccess: onAsyncSuccess
+        }
+    };
+
+    function filter(treeId, parentNode, childNodes) {
+        if (!childNodes) return null;
+        for (var i=0, l=childNodes.length; i<l; i++) {
+            childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+        }
+        return childNodes;
+    }
+    function beforeClick(treeId, treeNode) {
+        if (!treeNode.isParent) {
+            alert("请选择父节点");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    function refreshNode(e) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+            type = e.data.type,
+            silent = e.data.silent,
+            nodes = zTree.getSelectedNodes();
+        if (nodes.length == 0) {
+            alert("请先选择一个父节点");
+        }
+        for (var i=0, l=nodes.length; i<l; i++) {
+            zTree.reAsyncChildNodes(nodes[i], type, silent);
+            if (!silent) zTree.selectNode(nodes[i]);
+        }
+    }
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#treeDemo"), setting);
+        $("#refreshNode").bind("click", {type:"refresh", silent:false}, refreshNode);
+        $("#refreshNodeSilent").bind("click", {type:"refresh", silent:true}, refreshNode);
+        $("#addNode").bind("click", {type:"add", silent:false}, refreshNode);
+        $("#addNodeSilent").bind("click", {type:"add", silent:true}, refreshNode);
+    });
+
+    // $(function(){
+    //     $.ajax({
+    //         async : false,
+    //         cache : false,
+    //         type : 'POST',
+    //         dataType : "json",
+    //         url: "{:U('userTree')}",//请求的action路径
+    //         data :{'pid': '0'},
+    //         error: function () {//请求失败处理函数
+    //             alert('请求失败');
+    //         },
+    //         success:function(data){ //请求成功后处理函数。
+    //             treeNodes = eval(data); //把后台封装好的简单Json格式赋给treeNodes
+    //         }
+    //     });
+    // });
+
+
+
+</script>
+
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>直推架构树</legend>
+    </fieldset>
+
+    <div>
+        <ul id="treeDemo" class="ztree"></ul>
+    </div>
+</div>
+
+{include file="common/foot"/}
