@@ -1,0 +1,472 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit ">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>会员概况图示</legend>
+    </fieldset>
+    <div class="layui-row">
+        <div class="layui-fluid">
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-chart">新增会员走势图</i></div>
+                    <div class="layui-card-body">
+                        <canvas id="chart" height="400" width="600" style="margin:50px"> 你的浏览器不支持HTML5 canvas </canvas>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="layui-row" style="padding-top: 20px">
+        <div class="layui-fluid">
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-chart">会员级别统计图</i></div>
+                    <div class="layui-card-body">
+                        <div height="400" width="600" style="margin:50px">
+                            <canvas id="chart2"> 你的浏览器不支持HTML5 canvas </canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{include file="common/foot"/}
+
+<script>
+    layui.use(['element','layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        $(function () {
+            $.post("{:url('userChart')}",{'key' : 'key'},function (data) {
+                var chartData = [],chartData2 = [];
+                $.each(data.level_chart,function (i,v) {
+                    // [[50,"#2dc6c8","puit"], [100,"#b6a2dd", "花生"], [200,"#5ab1ee","土豆"], [700,"#d7797f","南瓜四号"]];
+                    chartData2[i] = [v.num,v.color,v.level];
+
+                });
+                console.log(chartData2);
+                goChart2(chartData2);
+            },'json');
+        });
+
+
+
+        function goChart(dataArr){
+
+
+            // 声明所需变量
+            var canvas,ctx;
+            // 图表属性
+            var cWidth, cHeight, cMargin, cSpace;
+            var originX, originY;
+            // 折线图属性
+            var tobalDots, dotSpace, maxValue;
+            var totalYNomber;
+            // 运动相关变量
+            var ctr, numctr, speed;
+
+            // 获得canvas上下文
+            canvas = document.getElementById("chart");
+            if(canvas && canvas.getContext){
+                ctx = canvas.getContext("2d");
+            }
+            initChart(); // 图表初始化
+            drawLineLabelMarkers(); // 绘制图表轴、标签和标记
+            drawLineAnimate(); // 绘制折线图的动画
+
+            //点击刷新图表
+            canvas.onclick = function(){
+                initChart(); // 图表初始化
+                drawLineLabelMarkers(); // 绘制图表轴、标签和标记
+                drawLineAnimate(); // 绘制折线图的动画
+            };
+
+            // 图表初始化
+            function initChart(){
+                // 图表信息
+                cMargin = 60;
+                cSpace = 80;
+                /*这里是对高清屏幕的处理，
+                     方法：先将canvas的width 和height设置成本来的两倍
+                     然后将style.height 和 style.width设置成本来的宽高
+                     这样相当于把两倍的东西缩放到原来的 1/2，这样在高清屏幕上 一个像素的位置就可以有两个像素的值
+                     这样需要注意的是所有的宽高间距，文字大小等都得设置成原来的两倍才可以。
+                */
+                canvas.width = Math.floor( (window.innerWidth-100)/2 ) * 2 ;
+                canvas.height = 740;
+                canvas.style.height = canvas.height/2 + "px";
+                canvas.style.width = canvas.width/2 + "px";
+                cHeight = canvas.height - cMargin - cSpace;
+                cWidth = canvas.width - cMargin - cSpace;
+                originX = cMargin + cSpace;
+                originY = cMargin + cHeight;
+
+                // 折线图信息
+                tobalDots = dataArr.length;
+                dotSpace = parseInt( cWidth/tobalDots );
+                maxValue = 0;
+                for(var i=0; i<dataArr.length; i++){
+                    var dotVal = parseInt( dataArr[i][1] );
+                    if( dotVal > maxValue ){
+                        maxValue = dotVal;
+                    }
+                }
+                maxValue += 50;
+                totalYNomber = 10;
+                // 运动相关
+                ctr = 1;
+                numctr = 100;
+                speed = 6;
+
+                ctx.translate(0.5,0.5);  // 当只绘制1像素的线的时候，坐标点需要偏移，这样才能画出1像素实线
+            }
+
+            // 绘制图表轴、标签和标记
+            function drawLineLabelMarkers(){
+                ctx.font = "24px Arial";
+                ctx.lineWidth = 2;
+                ctx.fillStyle = "#566a80";
+                ctx.strokeStyle = "#566a80";
+                // y轴
+                drawLine(originX, originY, originX, cMargin);
+                // x轴
+                drawLine(originX, originY, originX+cWidth, originY);
+
+                // 绘制标记
+                drawMarkers();
+            }
+
+            // 画线的方法
+            function drawLine(x, y, X, Y){
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(X, Y);
+                ctx.stroke();
+                ctx.closePath();
+            }
+
+            // 绘制标记
+            function drawMarkers(){
+                ctx.strokeStyle = "#E0E0E0";
+                // 绘制 y 轴 及中间横线
+                var oneVal = parseInt(maxValue/totalYNomber);
+                ctx.textAlign = "right";
+                for(var i=0; i<=totalYNomber; i++){
+                    var markerVal =  i*oneVal;
+                    var xMarker = originX-5;
+                    var yMarker = parseInt( cHeight*(1-markerVal/maxValue) ) + cMargin;
+
+                    ctx.fillText(markerVal, xMarker, yMarker+3, cSpace); // 文字
+                    if(i>0){
+                        drawLine(originX+2, yMarker, originX+cWidth, yMarker);
+                    }
+                }
+                // 绘制 x 轴 及中间竖线
+                ctx.textAlign = "center";
+                for(var i=0; i<tobalDots; i++){
+                    var markerVal = dataArr[i][0];
+                    var xMarker = originX+i*dotSpace;
+                    var yMarker = originY+30;
+                    ctx.fillText(markerVal, xMarker, yMarker, cSpace); // 文字
+                    if(i>0){
+                        drawLine(xMarker, originY-2, xMarker, cMargin	);
+                    }
+                }
+                // 绘制标题 y
+                ctx.save();
+                ctx.rotate(-Math.PI/2);
+                ctx.fillText("访问量", -canvas.height/2, cSpace-10);
+                ctx.restore();
+                // 绘制标题 x
+                ctx.fillText("月份", originX+cWidth/2, originY+cSpace/2+20);
+            };
+
+            //绘制折线图
+            function drawLineAnimate(){
+                ctx.strokeStyle = "#566a80";  //"#49FE79";
+
+                //连线
+                ctx.beginPath();
+                for(var i=0; i<tobalDots; i++){
+                    var dotVal = dataArr[i][1];
+                    var barH = parseInt( cHeight*dotVal/maxValue* ctr/numctr );//
+                    var y = originY - barH;
+                    var x = originX + dotSpace*i;
+                    if(i==0){
+                        ctx.moveTo( x, y );
+                    }else{
+                        ctx.lineTo( x, y );
+                    }
+                }
+                ctx.stroke();
+
+                //背景
+                ctx.lineTo( originX+dotSpace*(tobalDots-1), originY);
+                ctx.lineTo( originX, originY);
+                //背景渐变色
+                //柱状图渐变色
+                var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(133,171,212,0.6)');
+                gradient.addColorStop(1, 'rgba(133,171,212,0.1)');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.closePath();
+                ctx.fillStyle = "#566a80";
+
+                //绘制点
+                for(var i=0; i<tobalDots; i++){
+                    var dotVal = dataArr[i][1];
+                    var barH = parseInt( cHeight*dotVal/maxValue * ctr/numctr );
+                    var y = originY - barH;
+                    var x = originX + dotSpace*i;
+                    drawArc( x, y );  //绘制点
+                    ctx.fillText(parseInt(dotVal*ctr/numctr), x+15, y-8); // 文字
+                }
+
+                if(ctr<numctr){
+                    ctr++;
+                    setTimeout(function(){
+                        ctx.clearRect(0,0,canvas.width, canvas.height);
+                        drawLineLabelMarkers();
+                        drawLineAnimate();
+                    }, speed);
+                }
+            }
+
+            //绘制圆点
+            function drawArc( x, y, X, Y ){
+                ctx.beginPath();
+                ctx.arc( x, y, 3, 0, Math.PI*2 );
+                ctx.fill();
+                ctx.closePath();
+            }
+
+
+        }
+
+    function goChart2(dataArr){
+
+        // 声明所需变量
+        var canvas2,ctx2;
+        // 图表属性
+        var cWidth, cHeight, cMargin, cSpace;
+        // 饼状图属性
+        var radius,ox,oy;//半径 圆心
+        var tWidth, tHeight;//图例宽高
+        var posX, posY, textX, textY;
+        var startAngle, endAngle;
+        var totleNb;
+        // 运动相关变量
+        var ctr, numctr, speed;
+        //鼠标移动
+        var mousePosition = {};
+
+        //线条和文字
+        var lineStartAngle,line,textPadding,textMoveDis;
+
+        // 获得canvas上下文
+        canvas2 = document.getElementById("chart2");
+        if(canvas2 && canvas2.getContext){
+            ctx2 = canvas2.getContext("2d");
+        }
+        initChart2();
+
+        // 图表初始化
+        function initChart2(){
+            // 图表信息
+            cMargin = 20;
+            cSpace = 40;
+
+            canvas2.width = canvas2.parentNode.getAttribute("width")* 2 ;
+            canvas2.height = canvas2.parentNode.getAttribute("height")* 2;
+            canvas2.style.height = canvas2.height/2 + "px";
+            canvas2.style.width = canvas2.width/2 + "px";
+            cHeight = canvas2.height - cMargin*2;
+            cWidth = canvas2.width - cMargin*2;
+
+            //饼状图信息
+            radius = cHeight*2/6;  //半径  高度的2/6
+            ox = canvas2.width/2 + cSpace;  //圆心
+            oy = canvas2.height/2;
+            tWidth = 60; //图例宽和高
+            tHeight = 20;
+            posX = cMargin;
+            posY = cMargin;   //
+            textX = posX + tWidth + 15
+            textY = posY + 18;
+            startAngle = endAngle = 90*Math.PI/180; //起始弧度 结束弧度
+            rotateAngle = 0; //整体旋转的弧度
+
+            //将传入的数据转化百分比
+            totleNb = 0;
+            new_data_arr = [];
+            for (var i = 0; i < dataArr.length; i++){
+                totleNb += dataArr[i][0];
+            }
+            for (var i = 0; i < dataArr.length; i++){
+                new_data_arr.push( dataArr[i][0]/totleNb );
+            }
+            totalYNomber = 10;
+            // 运动相关
+            ctr = 1;//初始步骤
+            numctr = 50;//步骤
+            speed = 1.2; //毫秒 timer速度
+
+            //指示线 和 文字
+            lineStartAngle = -startAngle;
+            line=40;         //画线的时候超出半径的一段线长
+            textPadding=10;  //文字与线之间的间距
+            textMoveDis = 200; //文字运动开始的间距
+        }
+
+        drawMarkers2();
+        //绘制比例图及文字
+        function drawMarkers2(){
+            ctx2.textAlign="left";
+            for (var i = 0; i < dataArr.length; i++){
+                //绘制比例图及文字
+                ctx2.fillStyle = dataArr[i][1];
+                ctx2.fillRect(posX, posY + 40 * i, tWidth, tHeight);
+                ctx2.moveTo(posX, posY + 40 * i);
+                ctx2.font = 'normal 24px 微软雅黑';    //斜体 30像素 微软雅黑字体
+                ctx2.fillStyle = dataArr[i][1]; //"#000000";
+                var percent = dataArr[i][2] + "：" + parseInt(100 * new_data_arr[i]) + "%" + " 会员数：" + dataArr[i][0];
+                ctx2.fillText(percent, textX, textY + 40 * i);
+            }
+        };
+
+        //绘制动画
+        pieDraw2();
+        function pieDraw2(mouseMove){
+
+            for (var n = 0; n < dataArr.length; n++){
+                ctx2.fillStyle = ctx2.strokeStyle = dataArr[n][1];
+                ctx2.lineWidth=1;
+                var step = new_data_arr[n]* Math.PI * 2; //旋转弧度
+                var lineAngle = lineStartAngle+step/2;   //计算线的角度
+                lineStartAngle += step;//结束弧度
+
+                ctx2.beginPath();
+                var  x0=ox+radius*Math.cos(lineAngle),//圆弧上线与圆相交点的x坐标
+                    y0=oy+radius*Math.sin(lineAngle),//圆弧上线与圆相交点的y坐标
+                    x1=ox+(radius+line)*Math.cos(lineAngle),//圆弧上线与圆相交点的x坐标
+                    y1=oy+(radius+line)*Math.sin(lineAngle),//圆弧上线与圆相交点的y坐标
+                    x2=x1,//转折点的x坐标
+                    y2=y1,
+                    linePadding=ctx2.measureText(dataArr[n][2]).width+10; //获取文本长度来确定折线的长度
+
+                ctx2.moveTo(x0,y0);
+                //对x1/y1进行处理，来实现折线的运动
+                yMove = y0+(y1-y0)*ctr/numctr;
+                ctx2.lineTo(x1,yMove);
+                if(x1<=x0){
+                    x2 -= line;
+                    ctx2.textAlign="right";
+                    ctx2.lineTo(x2-linePadding,yMove);
+                    ctx2.fillText(dataArr[n][2],x2-textPadding-textMoveDis*(numctr-ctr)/numctr,y2-textPadding);
+                }else{
+                    x2 += line;
+                    ctx2.textAlign="left";
+                    ctx2.lineTo(x2+linePadding,yMove);
+                    ctx2.fillText(dataArr[n][2],x2+textPadding+textMoveDis*(numctr-ctr)/numctr,y2-textPadding);
+                }
+
+                ctx2.stroke();
+
+            }
+
+
+
+            //设置旋转
+            ctx2.save();
+            ctx2.translate(ox, oy);
+            ctx2.rotate((Math.PI*2/numctr)*ctr/2);
+
+            //绘制一个圆圈
+            ctx2.strokeStyle = "rgba(0,0,0,"+ 0.5*ctr/numctr +")"
+            ctx2.beginPath();
+            ctx2.arc(0, 0 ,(radius+20)*ctr/numctr, 0, Math.PI*2, false);
+            ctx2.stroke();
+
+            for (var j = 0; j < dataArr.length; j++){
+
+                //绘制饼图
+                endAngle = endAngle + new_data_arr[j]* ctr/numctr * Math.PI * 2; //结束弧度
+
+                ctx2.beginPath();
+                ctx2.moveTo(0,0); //移动到到圆心
+                ctx2.arc(0, 0, radius*ctr/numctr, startAngle, endAngle, false); //绘制圆弧
+
+                ctx2.fillStyle = dataArr[j][1];
+                if(mouseMove && ctx2.isPointInPath(mousePosition.x*2, mousePosition.y*2)){
+                    ctx2.globalAlpha = 0.8;
+                }
+
+                ctx2.closePath();
+                ctx2.fill();
+                ctx2.globalAlpha = 1;
+
+                startAngle = endAngle; //设置起始弧度
+                if( j == dataArr.length-1 ){
+                    startAngle = endAngle = 90*Math.PI/180; //起始弧度 结束弧度
+                }
+            }
+
+            ctx2.restore();
+
+            if(ctr<numctr){
+                ctr++;
+                setTimeout(function(){
+                    //ctx2.clearRect(-canvas2.width,-canvas2.width,canvas2.width*2, canvas2.height*2);
+                    ctx2.clearRect(-canvas2.width, -canvas2.height,canvas2.width*2, canvas2.height*2);
+                    drawMarkers2();
+                    pieDraw2();
+                }, speed*=1.085);
+            }
+        }
+
+
+
+        //监听鼠标移动
+        var mouseTimer = null;
+        canvas2.addEventListener("mousemove",function(e){
+            e = e || window.event;
+            if( e.offsetX || e.offsetX==0 ){
+                mousePosition.x = e.offsetX;
+                mousePosition.y = e.offsetY;
+            }else if( e.layerX || e.layerX==0 ){
+                mousePosition.x = e.layerX;
+                mousePosition.y = e.layerY;
+            }
+
+            clearTimeout(mouseTimer);
+            mouseTimer = setTimeout(function(){
+                ctx2.clearRect(0,0,canvas2.width, canvas2.height);
+                drawMarkers2();
+                pieDraw2(true);
+            },10);
+        });
+
+
+
+    }
+
+
+    //     var chartData = [["2017/01", 50], ["2017/02", 60], ["2017/03", 100], ["2017/04",200], ["2017/05",350], ["2017/06",600]];
+    // goChart(chartData);
+
+   // var charData2 = [[50,"#2dc6c8","puit"], [100,"#b6a2dd", "花生"], [200,"#5ab1ee","土豆"], [700,"#d7797f","南瓜四号"]];
+   //      goChart(charData2);
+
+
+
+    });
+</script>
+

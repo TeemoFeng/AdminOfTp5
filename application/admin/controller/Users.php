@@ -166,7 +166,7 @@ class Users extends Common{
         if (request()->isPost()) {
             $data   = input('post.');
             $level          = explode(':',$data['level']); //ng 获取的值要单独去除number:
-            $data['level']  = $level[1];
+            $data['level']  = $level[1]; //默认会员等级为注册会员
 //            $province       = explode(':',$data['province']);
 //            $data['province'] = isset($province[1]) ? $province[1] : '';
 //            $city           = explode(':',$data['city']);
@@ -199,8 +199,18 @@ class Users extends Common{
             if($data['safeword'] != $data['confirmSafePwd']) return ['code' => 0, 'msg' => '两次输入的安全密码不一致'];
 
             $data['password'] = md5($data['password']);
-//            $data['level'] = 1; //默认会员等级为注册会员
+            //接入用户和推荐人关系
+            if (empty($data['referee'])) {
+                $data['pid'] = 0;
+            } else {
+                //查询推荐人id
+               $referrr_info =  UsersModel::get(['referee' => $data['referee']]);
+               $data['gid'] = $referrr_info['id'];
+            }
+            $data['create_time'] = date('Y-m-d',time()); //添加时间方便做折线图
             if (UsersModel::create($data)) {
+                //推荐人邀请成功用户，修改users表 have_tree 为1
+                UsersModel::where('id', $referrr_info['id'])->update(['have_tree' => 1]);
                 return ['code' => 1, 'msg' => '注册成功', 'url' => url('index')];
             } else {
                 return ['code' => 0, 'msg' => '注册失败'];
@@ -222,48 +232,114 @@ class Users extends Common{
 
     }
 
-    //直推架构图
-    public function userTree()
+    public function usertree()
     {
-        $pId = "0";
-        $pName = "";
-        $pLevel = "";
-        $pCheck = "";
-        if(array_key_exists( 'id',$_REQUEST)) {
-            $pId=$_REQUEST['id'];
-        }
-        if(array_key_exists( 'lv',$_REQUEST)) {
-            $pLevel=$_REQUEST['lv'];
-        }
-        if(array_key_exists('n',$_REQUEST)) {
-            $pName=$_REQUEST['n'];
-        }
-        if(array_key_exists('chk',$_REQUEST)) {
-            $pCheck=$_REQUEST['chk'];
-        }
-        if ($pId==null || $pId=="") $pId = "0";
-        if ($pLevel==null || $pLevel=="") $pLevel = "0";
-        if ($pName==null) $pName = "";
-        else $pName = $pName.".";
+        if (request()->isPost()) {
+            $where = [];
+            if(array_key_exists( 'id',$_REQUEST)) {
+                $pId = $_REQUEST['id'];
+                $pId = htmlspecialchars($pId);
+                if ($pId == null || $pId == "") $pId = "0";
+                $where['u.pid'] = $pId;
 
-        $pId = htmlspecialchars($pId);
-
-        $pName = htmlspecialchars($pName);
-
-//for ($i=1; $i<9999; $i++) {
-//	for ($j=1; $j<999; $j++) {
-//
-//	}
-//}
-
-        for ($i=1; $i<5; $i++) {
-            $nId = $pId.$i;
-            $nName = $pName."n".$i;
-            echo "{ id:'".$nId."',	name:'".$nName."',	isParent:".(( $pLevel < "2" && ($i%2)!=0)?"true":"false").($pCheck==""?"":((($pLevel < "2" && ($i%2)!=0)?", halfCheck:true":"").($i==3?", checked:true":"")))."}";
-            if ($i<4) {
-                echo ",";
+            }else{
+                $where['u.pid'] = 0;
             }
+            if(array_key_exists( 'key',$_REQUEST)){
+                $referee = $_REQUEST['key'];
+                if(!empty($referee)){
+                    unset($where);
+                    $where['u.username'] = $referee;
+                }
+            }
+            $user_info = db('users')
+                ->alias('u')
+                ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+                ->field('u.id,u.referee,u.username,u.pid,u.have_tree,ul.level_name')
+                ->where($where)
+                ->order('u.id asc')
+                ->select();
+            $list = [];
+            array_map(function ($v) use (&$list) {
+                $list[] = [
+                    'id' => $v['id'],
+                    'name' => $v['referee'] . '(' . $v['username'] . ' 级别:' . $v['level_name']. ')',
+                    'isParent'  => $v['have_tree'],
+                ];
+            },$user_info);
+
+            return $list;
+
         }
+
+        return $this->fetch('UserTree');
+    }
+
+    //会员概况图示
+    public function userChart()
+    {
+        if(request()->post()){
+            //获取各个级别用户数量
+            $user_count = db('users')
+                ->group('level')
+                ->field('level,count("id") as count')
+                ->select();
+            $user_count_list = [];
+            $user_level = [
+                '1' => 'F',
+                '2' => 'F1',
+                '3' => 'F2',
+                '4' => 'F3',
+                '5' => 'F4'
+            ];
+            $color = [
+                '1' => '#2dc6c8',
+                '2' => '#b6a2dd',
+                '3' => '#5ab1ee',
+                '4' => '#d7797f',
+                '5' => '#dcc97f',
+            ];
+
+            foreach($user_count as $key => $val){
+                $user_count_list[$key]['num'] = $val['count'];
+                $user_count_list[$key]['level'] = $user_level[$val['level']];
+                $user_count_list[$key]['color'] = $color[$val['level']];
+
+            }
+
+            //获取前七天所有注册会员的数量和未注册会员的数量
+            $year = date("Y");
+            $month = date("m");
+            $day = date("d");
+            $end_time = mktime(23,59,59,$month,$day,$year);//当天结束时间戳
+            $start_time = $end_time-(7*86400); //获取7天前的时间戳
+            $where = [$start_time, $end_time];
+            $user_info = db('users')
+                ->whereTime('reg_time','between', $where)
+                ->group('create_time')
+                ->field('id,create_time as date,count("id") as count')
+                ->select();
+
+            //获取未激活会员信息
+            $where2['status'] = 0; //未激活状态
+            $user_no_active = db('users')
+                ->whereTime('reg_time','between', $where)
+                ->where($where2)
+                ->group('create_time')
+                ->field('id,create_time as date,count("id") as count')
+                ->select();
+
+            return ['level_chart' => $user_count_list, 'user_chart' => $user_info, 'user_no_active' => $user_no_active];
+        }
+
+        return $this->fetch('userChartNew');
+    }
+
+    //会员接点图
+    public function userContact()
+    {
+
+        return $this->fetch('userContactTest');
     }
 
 

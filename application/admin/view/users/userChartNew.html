@@ -1,0 +1,170 @@
+{include file="common/head"/}
+<script type="text/javascript" src="/static/plugins/echarts.js"></script>
+<div class="admin-main layui-anim layui-anim-upbit ">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>会员概况图示</legend>
+    </fieldset>
+    <div class="layui-row">
+        <div class="layui-fluid">
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-chart">新增会员走势图</i></div>
+                    <div class="layui-card-body">
+                        <div id="main" style="width: auto;height:400px;"></div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="layui-row" style="padding-top: 20px">
+        <div class="layui-fluid">
+            <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-chart">会员级别统计图</i></div>
+                    <div class="layui-card-body">
+                        <div id="main2" style="width: auto;height:400px;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{include file="common/foot"/}
+
+<script type="text/javascript">
+    layui.use(['element','layer'], function() {
+        var $ = layui.jquery;
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main2'));
+        var myChart2 = echarts.init(document.getElementById('main'));
+
+        $(function () {
+            $.post("{:url('userChart')}", {'key': 'key'}, function (data) {
+                var data1 = [], data2 = [], data3 = [], data4 = [], data5 = [];
+                $.each(data.level_chart, function (i, v) {
+                    data1[i] = v.level; //饼状图会员级别名称
+                    data2[i] = {value: v.num, name: v.level}; //饼状图会员各级别数量
+                });
+
+                //全部会员折线图信息
+                $.each(data.user_chart, function (i, v) {
+                    data3[i] = v.date;
+                    data4[i] = v.count;
+                });
+
+                //未激活会员折线图信息
+                $.each(data.user_no_active, function (i, v) {
+                    data5[i] = v.count;
+                });
+
+                // 指定图表的配置项和数据
+                option = {
+                    title: {
+                        text: '站点所有会员显示',
+                        subtext: '会员统计',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: data1
+                    },
+                    series: [
+                        {
+                            name: '会员数量',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '60%'],
+                            data: data2,
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+
+                option2 = {
+                    title: {
+                        text: '注册会员走势图'
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data:['全部注册会员数量','未激活会员数量']
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            // data : ['周一','周二','周三','周四','周五','周六','周日']
+                            data : data3
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'全部注册会员数量',
+                            type:'line',
+                            stack: '总量',
+                            areaStyle: {},
+                            data: data4
+                        },
+                        {
+                            name:'未激活会员数量',
+                            type:'line',
+                            stack: '总量',
+                            areaStyle: {},
+                            data: data5
+                        }
+                    ]
+                };
+                myChart2.setOption(option2);
+
+
+
+
+            }, 'json');
+        });
+    });
+
+</script>

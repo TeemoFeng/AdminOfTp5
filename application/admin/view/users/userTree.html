@@ -1,29 +1,89 @@
 {include file="common/head"/}
-<!--<link rel="stylesheet" href="../../../css/demo.css" type="text/css">-->
 <link rel="stylesheet" href="/static/plugins/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
 <script type="text/javascript" src="/static/plugins/zTree_v3/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="/static/plugins/zTree_v3/js/jquery.ztree.core.js"></script>
 
+<div class="admin-main layui-anim layui-anim-upbit layui-fluid">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>直推架构树</legend>
+    </fieldset>
+    <div class="demoTable layui-row" >
+        <div class="layui-col-md4 layui-col-md-offset7">
+            <input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+
+        </div>
+        <div class="layui-col-md1">
+            <button class="layui-btn" id="search" data-type="reload">搜索</button>
+        </div>
+
+    </div>
+    <hr>
+    <p class="layui-hide" id="demoMsg"></p>
+    <div class="demoTable layui-row">
+        <a href="#" class="layui-btn layui-btn-normal layui-btn-sm allTree" id="expandAllBtn" data-type="1">全部展开</a>
+        <a href="#" class="layui-btn layui-btn-normal layui-btn-sm allTree" id="resetBtn" data-type="0">全部折叠</a>
+    </div>
+
+    <div class="demoTable layui-row">
+        <ul id="treeDemo" class="ztree" style="overflow:auto;"></ul>
+    </div>
+</div>
+
+
+{include file="common/foot"/}
+
 <script type="text/javascript">
+    layui.use(['form', 'element'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        // //搜索
+        // $('#search').on('click', function() {
+        //     var key = $('#key').val();
+        //     if($.trim(key)==='') {
+        //         layer.msg('请输入用户名',{icon:0});
+        //         return;
+        //     }
+        //
+        //     var setting2 = {
+        //         async: {
+        //             enable: true,
+        //             url:"{:url('userTree')}",
+        //             autoParam:["id", "name=n", "level=lv"],
+        //             otherParam:{"otherParam":key},
+        //             dataFilter: filter,
+        //             type: "get"
+        //         },
+        //         callback: {
+        //             beforeAsync: beforeAsync,
+        //             onAsyncSuccess: onAsyncSuccess,
+        //             onAsyncError: onAsyncError
+        //         }
+        //     };
+        //     asyncForAll = false;
+        //     goAsync = false;
+        //     $("#demoMsg").text("");
+        //     $.fn.zTree.init($("#treeDemo"), setting2);
+        //
+        // });
+
+    });
 
     var setting = {
-        view: {
-            selectedMulti: false
-        },
         async: {
             enable: true,
-            url:"{:U('userTree')}",
+            url:"{:url('userTree')}",
             autoParam:["id", "name=n", "level=lv"],
             otherParam:{"otherParam":"zTreeAsyncTest"},
-            dataFilter: filter
+            dataFilter: filter,
+            type: "post"
         },
         callback: {
-            beforeClick: beforeClick,
             beforeAsync: beforeAsync,
-            onAsyncError: onAsyncError,
-            onAsyncSuccess: onAsyncSuccess
+            onAsyncSuccess: onAsyncSuccess,
+            onAsyncError: onAsyncError
         }
     };
+
 
     function filter(treeId, parentNode, childNodes) {
         if (!childNodes) return null;
@@ -32,68 +92,145 @@
         }
         return childNodes;
     }
-    function beforeClick(treeId, treeNode) {
-        if (!treeNode.isParent) {
-            alert("请选择父节点");
-            return false;
-        } else {
-            return true;
+
+    function beforeAsync() {
+        curAsyncCount++;
+    }
+
+    function onAsyncSuccess(event, treeId, treeNode, msg) {
+        curAsyncCount--;
+        if (curStatus == "expand") {
+            expandNodes(treeNode.children);
+        } else if (curStatus == "async") {
+            asyncNodes(treeNode.children);
+        }
+
+        if (curAsyncCount <= 0) {
+            if (curStatus != "init" && curStatus != "") {
+                $("#demoMsg").text((curStatus == "expand") ? demoMsg.expandAllOver : demoMsg.asyncAllOver);
+                asyncForAll = true;
+            }
+            curStatus = "";
         }
     }
 
+    function onAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+        curAsyncCount--;
 
-    function refreshNode(e) {
-        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
-            type = e.data.type,
-            silent = e.data.silent,
-            nodes = zTree.getSelectedNodes();
-        if (nodes.length == 0) {
-            alert("请先选择一个父节点");
+        if (curAsyncCount <= 0) {
+            curStatus = "";
+            if (treeNode!=null) asyncForAll = true;
         }
+    }
+
+    var curStatus = "init", curAsyncCount = 0, asyncForAll = false,
+        goAsync = false;
+    function expandAll() {
+        if (!check()) {
+            return;
+        }
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        if (asyncForAll) {
+            $("#demoMsg").text(demoMsg.expandAll);
+            setTimeout(function(){
+                zTree.expandAll(true);
+            },1000);//延迟加载
+
+            // zTree.expandAll(true);
+        } else {
+            expandNodes(zTree.getNodes());
+            if (!goAsync) {
+                $("#demoMsg").text(demoMsg.expandAll);
+                curStatus = "";
+            }
+        }
+    }
+    function expandNodes(nodes) {
+        if (!nodes) return;
+        curStatus = "expand";
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
         for (var i=0, l=nodes.length; i<l; i++) {
-            zTree.reAsyncChildNodes(nodes[i], type, silent);
-            if (!silent) zTree.selectNode(nodes[i]);
+            zTree.expandNode(nodes[i], true, false, false);
+            if (nodes[i].isParent && nodes[i].zAsync) {
+                expandNodes(nodes[i].children);
+            } else {
+                goAsync = true;
+            }
         }
+    }
+
+    function asyncAll() {
+        if (!check()) {
+            return;
+        }
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        if (asyncForAll) {
+            $("#demoMsg").text(demoMsg.asyncAll);
+        } else {
+            asyncNodes(zTree.getNodes());
+            if (!goAsync) {
+                $("#demoMsg").text(demoMsg.asyncAll);
+                curStatus = "";
+            }
+        }
+    }
+    function asyncNodes(nodes) {
+        if (!nodes) return;
+        curStatus = "async";
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        for (var i=0, l=nodes.length; i<l; i++) {
+            if (nodes[i].isParent && nodes[i].zAsync) {
+                asyncNodes(nodes[i].children);
+            } else {
+                goAsync = true;
+                zTree.reAsyncChildNodes(nodes[i], "refresh", true);
+            }
+        }
+    }
+
+    function reset() {
+        if (!check()) {
+            return;
+        }
+        asyncForAll = false;
+        goAsync = false;
+        $("#demoMsg").text("");
+        $.fn.zTree.init($("#treeDemo"), setting);
+    }
+
+    //搜索
+    function search() {
+        asyncForAll = false;
+        goAsync = false;
+        var key = $('#key').val();
+        if($.trim(key)==='') {
+            layer.msg('请输入用户名',{icon:0});
+            return;
+        }
+
+        $.post("{:url('userTree')}",{'key' : key},function (data) {
+            $.fn.zTree.init($("#treeDemo"), setting,data);
+        });
+        $('#key').val('');
+
+
+    }
+
+    function check() {
+        if (curAsyncCount > 0) {
+            $("#demoMsg").text(demoMsg.async);
+            return false;
+        }
+        return true;
     }
 
     $(document).ready(function(){
         $.fn.zTree.init($("#treeDemo"), setting);
-        $("#refreshNode").bind("click", {type:"refresh", silent:false}, refreshNode);
-        $("#refreshNodeSilent").bind("click", {type:"refresh", silent:true}, refreshNode);
-        $("#addNode").bind("click", {type:"add", silent:false}, refreshNode);
-        $("#addNodeSilent").bind("click", {type:"add", silent:true}, refreshNode);
+        $("#expandAllBtn").bind("click", expandAll);
+        $("#asyncAllBtn").bind("click", asyncAll);
+        $("#resetBtn").bind("click", reset);
+        $("#search").bind("click", search);
+
     });
 
-    // $(function(){
-    //     $.ajax({
-    //         async : false,
-    //         cache : false,
-    //         type : 'POST',
-    //         dataType : "json",
-    //         url: "{:U('userTree')}",//请求的action路径
-    //         data :{'pid': '0'},
-    //         error: function () {//请求失败处理函数
-    //             alert('请求失败');
-    //         },
-    //         success:function(data){ //请求成功后处理函数。
-    //             treeNodes = eval(data); //把后台封装好的简单Json格式赋给treeNodes
-    //         }
-    //     });
-    // });
-
-
-
 </script>
-
-
-<div class="admin-main layui-anim layui-anim-upbit">
-    <fieldset class="layui-elem-field layui-field-title">
-        <legend>直推架构树</legend>
-    </fieldset>
-
-    <div>
-        <ul id="treeDemo" class="ztree"></ul>
-    </div>
-</div>
-
-{include file="common/foot"/}

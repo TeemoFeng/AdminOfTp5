@@ -1,0 +1,29 @@
+{include file="common/head"/}
+<script type="text/javascript" src="/static/plugins/echarts.js"></script>
+<div class="admin-main layui-anim layui-anim-upbit layui-fluid">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>会员接点图</legend>
+    </fieldset>
+
+
+    <div class="demoTable layui-row" >
+
+        <div class="layui-col-md4">
+            <div class="layui-inline">
+                <a href="#" class="layui-btn layui-btn-normal layui-btn-sm allTree" id="expandAllBtn" data-type="1">返回第一层</a>
+                <a href="#" class="layui-btn layui-btn-normal layui-btn-sm allTree" id="resetBtn" data-type="0">返回上一层</a>
+            </div>
+        </div>
+
+        <div class="layui-col-md3 layui-col-md-offset4">
+            <input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+        </div>
+        <div class="layui-col-md1">
+            <button class="layui-btn" id="search" data-type="reload">搜索</button>
+        </div>
+
+    </div>
+
+
+</div>
+{include file="common/foot"/}
