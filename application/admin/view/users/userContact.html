@@ -59,8 +59,16 @@
 
         $(function() {
 
+            //ajax请求接点
+            $.post("{'userContact'}", {'search' : '', 'id' : 0}, function (data) {
+
+
+
+            });
             $('#chart-container').orgchart({
-                'data' : $('#ul-data')
+                'data' : $('#ul-data'),
+                'visibleLevel': 4 //展开几级
+
             });
 
         });

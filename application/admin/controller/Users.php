@@ -1,5 +1,7 @@
 <?php
 namespace app\admin\controller;
+use app\admin\model\UserNode;
+use app\admin\model\UserReferee;
 use app\admin\model\Users as UsersModel;
 use think\Validate;
 
@@ -205,16 +207,49 @@ class Users extends Common{
             } else {
                 //查询推荐人id
                $referrr_info =  UsersModel::get(['referee' => $data['referee']]);
-               $data['gid'] = $referrr_info['id'];
+               //查询接点人id
+               $node_info    = UsersModel::get(['contact_person' => $data['contact_person']]);
+               $data['pid'] = $referrr_info['id'];
+               $data['npid'] = $node_info['id'];
             }
+
+
+
             $data['create_time'] = date('Y-m-d',time()); //添加时间方便做折线图
-            if (UsersModel::create($data)) {
+
+            $new_user_id = UsersModel::create($data);
+            if ($new_user_id) {
                 //推荐人邀请成功用户，修改users表 have_tree 为1
                 UsersModel::where('id', $referrr_info['id'])->update(['have_tree' => 1]);
+                $user_referee_model = new UserReferee();
+                $user_node_model = new UserNode();
+                if($data['pid'] == 0){
+                    //接入用户和接点人关系
+                    $data2['user_id'] = $new_user_id;
+                    $data2['user_son_str'] = 0 . ',';
+                    //接入用户和推荐人的关系
+                    $data3['user_id'] = $new_user_id;
+                    $data3['user_son_str'] = 0 . ',';
+                }else{
+                    $son_str = $user_referee_model->where(['user_id' => $referrr_info['id'] ])->value('user_son_str');
+                    $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
+                    //接入用户和接点人关系
+                    $data2['user_id'] = $new_user_id;
+                    $data2['user_son_str'] = $son_str . $referrr_info["id"];
+                    //接入用户和推荐人的关系
+                    $data3['user_id'] = $new_user_id;
+                    $data3['user_son_str'] = $son_node_str . $node_info['id'];
+                }
+
+                UserReferee::create($data2);
+                UserNode::create($data3);
+
                 return ['code' => 1, 'msg' => '注册成功', 'url' => url('index')];
             } else {
                 return ['code' => 0, 'msg' => '注册失败'];
             }
+
+
 
 
         } else {
@@ -338,6 +373,117 @@ class Users extends Common{
     //会员接点图
     public function userContact()
     {
+        if(request()->isPost()){
+            $search = input('post.search');
+            $id = input('post.id');
+            if(empty($search)){
+
+            }else{
+                if($id == 0){ //初始化
+                    //查询upid = 0
+                    $first_node = UsersModel::get(['upid' => 0]);
+                    $where['id'] = $first_node['id'];
+                    $where2['npid'] = $first_node['id'];
+                }else{
+                    $where['id']  = $id;
+                    $where2['npid'] = $id;
+                }
+
+            }
+            $user_info = [];
+            $user_info = db('users')
+                ->alias('u')
+                ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+                ->field('u.id,u.usernum,u.username,ul.level_name')
+                ->where($where)
+                ->find();
+
+            $user_info['child'] = db('users')
+                ->alias('u')
+                ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+                ->field('u.id,u.usernum,u.username,ul.level_name')
+                ->where($where2)
+                ->select();
+
+            if(!empty($user_info['child'])){
+                foreach($user_info['child'] as $key => $val){
+                    $where3['npid'] = $val['id'];
+                    $user_info['child'][$key]['child'] = db('users')
+                        ->alias('u')
+                        ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+                        ->field('u.id,u.usernum,u.username,ul.level_name')
+                        ->where($where3)
+                        ->select();
+
+
+                }
+            }
+
+
+            dump($user_info);die;
+
+            $html = '<li>';
+            foreach ($user_info as $k => $v){
+                $html .= '<ul>';
+
+
+            }
+
+
+
+
+
+
+        }
+
+        $user_info = [];
+        $user_info = db('users')
+            ->alias('u')
+            ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+            ->field('u.id,u.usernum,u.username,ul.level_name')
+            ->where(['id' => 1])
+            ->find();
+        $user_info['child'] = db('users')
+            ->alias('u')
+            ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+            ->field('u.id,u.usernum,u.username,ul.level_name')
+            ->where(['npid' => 1])
+            ->select();
+
+        if(!empty($user_info['child'])){
+            foreach($user_info['child'] as $key => $val){
+                $where3['npid'] = $val['id'];
+                $user_info['child'][$key]['child'] = db('users')
+                    ->alias('u')
+                    ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+                    ->field('u.id,u.usernum,u.username,ul.level_name')
+                    ->where($where3)
+                    ->select();
+
+
+            }
+        }
+
+
+
+
+        $html = '<li>';
+        $html .= '<ul>';
+        $html .= '<li><a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">编号：'.$user_info["usernum"].'</a></li>';
+        $html .= '<li><a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">姓名：'.$user_info["username"].'</a></li>';
+        $html .= '<li><a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">级别：'.$user_info["level_name"].'</a></li>';
+
+        if(!empty($user_info['child'])){
+            foreach ($user_info['child'] as $k => $v){
+
+
+
+            }
+        }
+
+        $html .= '</ul>';
+        $html .= '</li>';
+
 
         return $this->fetch('userContactTest');
     }
