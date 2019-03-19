@@ -267,6 +267,32 @@ class Users extends Common{
 
     }
 
+    //验证推荐人和接点人
+    public function validateUser()
+    {
+        $search = input('post.search');
+        $type = input('post.type');
+        if(empty($search) || empty($type)){
+            return ['code' => 0, 'msg' => '请求不合法'];
+        }
+        if($type == 1){
+            //推荐人
+            $where['referee'] = $search;
+        }else{
+            //接点人
+            $where['contact_person'] = $search;
+        }
+
+        $user_info = UsersModel::get($where);
+        if(empty($user_info)){
+            return ['code' => 0, 'msg' => '此用户不存在'];
+        }else{
+            return ['code' => 1, 'name' => $user_info['username']];
+        }
+
+
+    }
+
     public function usertree()
     {
         if (request()->isPost()) {

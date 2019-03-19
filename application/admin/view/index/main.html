@@ -1,67 +1,97 @@
 {include file="common/head"/}
 <div class="admin-main layui-anim layui-anim-upbit">
-    <div class="table-responsive">
-        <table class="layui-table" lay-even lay-skin="line">
-            <colgroup>
-                <col width="40%">
-                <col>
-            </colgroup>
-            <thead>
-            <tr>
-                <th class="text-center" colspan="2">{:lang('systemInfo')}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>网站域名</td>
-                <td>{$config.url}</td>
-            </tr>
-            <tr>
-                <td>网站目录</td>
-                <td>{$config.document_root}</td>
-            </tr>
-            <tr>
-                <td>服务器操作系统</td>
-                <td>{$config.server_os}</td>
-            </tr>
-            <tr>
-                <td>服务器端口</td>
-                <td>{$config.server_port}</td>
-            </tr>
-            <tr>
-                <td>服务器IP</td>
-                <td>{$config.server_ip}</td>
-            </tr>
-            <tr>
-                <td>WEB运行环境</td>
-                <td>{$config.server_soft}</td>
-            </tr>
-            <tr>
-                <td>MySQL数据库版本</td>
-                <td>{$config.mysql_version}</td>
-            </tr>
-            <tr>
-                <td>运行PHP版本</td>
-                <td>{$config.php_version}</td>
-            </tr>
 
-            <tr>
-                <td>最大上传限制</td>
-                <td>{$config.max_upload_size}</td>
-            </tr>
-            <tr>
-                <td>CLTPHP版本</td>
-                <td>{:config('version')}</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="layui-fluid">
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12 layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray">
+                    <i class="layui-icon layui-icon-theme"> 快捷操作</i>
+                </div>
+                <div class="layui-card-body">
+
+                    <div class="layui-row layui-col-space10">
+                        <div class="layui-col-md2 layui-col-sm2 layui-bg-blue layui-col-md-offset1">
+                            1/3
+                        </div>
+                        <div class="layui-col-md2 layui-col-sm2 layui-bg-blue layui-col-md-offset1">
+                            1/3
+                        </div>
+                        <div class="layui-col-md2 layui-col-sm2 layui-bg-blue layui-col-md-offset1">
+                            1/3
+                        </div>
+                        <div class="layui-col-md2 layui-col-sm2 layui-bg-blue layui-col-md-offset1">
+                            1/3
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">直销制度,太阳线</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
+
 </div>
 {include file="common/foot"/}
+
 <script>
-    layui.use('table', function() {
-        var table = layui.table;
-    })
+    layui.use(['element','layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        $('.data-set').on('click',function () {
+            var _this = $(this);
+            var data_table = _this.attr('data-table');
+            var data_id = _this.attr('data-id');
+            var data_field = _this.attr('data-field');
+            var data_value = _this.text();
+            console.log(data_table);
+            console.log(data_id);
+            console.log(data_field);
+            console.log(data_value);
+
+            //例子2
+            layer.prompt({
+                value: data_value, //初始值
+                title: '请输入修改值',
+            }, function(value, index, elem){
+                loading =layer.load(2, {shade: [0.1,'#fff']});
+                //发送修改请求
+                $.post('{:url("configSet")}',{'table_name':data_table,'id':data_id,'data_field':data_field,'data_value':value},function (res) {
+                    layer.close(loading);
+                    if (res.code==1) {
+                        location.reload();
+                        layer.msg(res.msg,{time:1000,icon:1});
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                        return false;
+                    }
+                });
+
+                layer.close(index);
+            });
+
+        });
+
+
+    });
+
 </script>
+
+
+
 </body>
 </html>
