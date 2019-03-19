@@ -1,9 +1,15 @@
 {include file="common/head"/}
 <!--<link rel="stylesheet" href="/static/plugins/orgchart-master/css/font-awesome.min.css">-->
-<link rel="stylesheet" href="/static/plugins/orgchart-master/src/css/jquery.orgchart.css">
-<!--<link rel="stylesheet" href="css/style.css">-->
-<!--<script type="text/javascript" src="/static/plugins/orgchart-master/dist/js/jquery.min.js"></script>-->
-<script type="text/javascript" src="/static/plugins/orgchart-master/src/js/jquery.orgchart.js"></script>
+<link rel="stylesheet" href="/static/plugins/orgchart-master/demo/css/jquery.orgchart.css">
+<!--<link rel="stylesheet" href="/static/plugins/orgchart-master/demo/css/font-awesome.min.css">-->
+<link rel="stylesheet" href="/static/plugins/orgchart-master/demo/css/style.css">
+<script type="text/javascript" src="/static/plugins/orgchart-master/demo/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/plugins/orgchart-master/demo/js/jquery.orgchart.js"></script>
+<style>
+    #chart-container{
+        background-color:transparent;
+    }
+</style>
 <div class="admin-main layui-anim layui-anim-upbit layui-fluid">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>会员接点图</legend>
@@ -16,11 +22,12 @@
             <div class="layui-inline">
                 <a href="#" class="layui-btn layui-btn-normal layui-btn-sm allTree" id="expandAllBtn" data-type="1">返回第一层</a>
                 <a href="#" class="layui-btn layui-btn-normal layui-btn-sm allTree" id="resetBtn" data-type="0">返回上一层</a>
+                <input type="text" id="last_id" name="last_id" class="layui-input layui-hide" value="">
             </div>
         </div>
 
         <div class="layui-col-md3 layui-col-md-offset4">
-            <input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+            <input class="layui-input" name="key" id="key" placeholder="请输入用户编号">
         </div>
         <div class="layui-col-md1">
             <button class="layui-btn" id="search" data-type="reload">搜索</button>
@@ -28,26 +35,7 @@
 
     </div>
 
-
-        <ul id="ul-data">
-            <li>Lao Lao
-                <ul>
-                    <li>Bo Miao</li>
-                    <li>Su Miao
-                        <ul>
-                            <li>Tie Hua</li>
-                            <li>Hei Hei
-                                <ul>
-                                    <li>Pang Pang</li>
-                                    <li>Xiang Xiang</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        <div id="chart-container"></div>
+    <div class="layui-row" id="chart-container"></div>
 
 </div>
 {include file="common/foot"/}
@@ -58,20 +46,98 @@
         var layer = layui.layer;
 
         $(function() {
-
             //ajax请求接点
-            $.post("{'userContact'}", {'search' : '', 'id' : 0}, function (data) {
+            $.post("{:url('userContact')}", {'search' : '', 'id' : 0}, function (data) {
+                //记录开始id
+                $('#last_id').attr('value',0);
 
+                var nodeTemplate = function(data) {
+                    return '<span class="office">'+data.level_name+'</span>'+
+        '<div class="title"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>'+
+        '<div class="content"><a href="#" class="userInfo" user-id="'+data.id+'">'+data.username+'</a></div>';
+                };
 
-
-            });
-            $('#chart-container').orgchart({
-                'data' : $('#ul-data'),
-                'visibleLevel': 4 //展开几级
+                //全局oc
+                oc = $('#chart-container').orgchart({
+                    'data' : data.data,
+                    'visibleLevel': 3, //展开几级
+                    'nodeTemplate': nodeTemplate
+                });
 
             });
 
         });
+
+        //点击其他接点获取对应数据
+        $(document).on('click','.userChart',function(){
+            var id = $(this).attr('user-id');
+            //获取上次记录的last_id
+            var last_id = $('#last_id').val();
+            var new_id = last_id+','+id;
+            $('#last_id').attr('value',new_id);
+            var loading = layer.load(2, {shade: [0.1, '#fff']});
+            $.post("{:url('userContact')}", {'search' : '', 'id' : id}, function (data) {
+
+                oc.init({ 'data': data.data }); //点击刷新节点
+                layer.close(loading);
+            });
+        });
+
+        //返回第一层
+        $(document).on('click', '#expandAllBtn',function () {
+            var loading = layer.load(2, {shade: [0.1, '#fff']});
+            $.post("{:url('userContact')}", {'search' : '', 'id' : 0}, function (data) {
+                $('#last_id').attr('value',0); //重置存储的last_id
+                oc.init({ 'data': data.data }); //点击刷新节点
+                layer.close(loading);
+            });
+        });
+
+        //返回上一层
+        $(document).on('click', '#resetBtn',function () {
+            //点击一次返回清除一个last_id
+            var last_id = $('#last_id').val();
+            var id;
+            $last_arr = last_id.split(",");
+            $length = $last_arr.length;
+            if(Number($length) <= 2){
+                 id = 0;
+            }else{
+                 id = $last_arr[$length-2];
+            }
+
+            var s = last_id.substring(0,last_id.Length-1);
+            $('#last_id').val(s);
+            var loading = layer.load(2, {shade: [0.1, '#fff']});
+            $.post("{:url('userContact')}", {'search' : '', 'id' : id}, function (data) {
+
+                oc.init({ 'data': data.data }); //点击刷新节点
+                layer.close(loading);
+            });
+        });
+
+        //点击搜索
+        $(document).on('click', '#search',function () {
+            var key = $('#key').val();
+            if($.trim(key)==='') {
+                layer.msg('请输入用户编号',{icon:0});
+                return;
+
+            }
+            var loading = layer.load(2, {shade: [0.1, '#fff']});
+            $.post("{:url('userContact')}",{'search' : key},function (data) {
+                oc.init({ 'data': data.data }); //刷新节点
+                layer.close(loading);
+            });
+
+            $('#key').val('');
+        });
+
+
+
+
+
+
 
 
     });

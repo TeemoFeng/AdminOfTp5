@@ -376,12 +376,15 @@ class Users extends Common{
         if(request()->isPost()){
             $search = input('post.search');
             $id = input('post.id');
-            if(empty($search)){
-
+            if(!empty($search)){
+                //如果是搜索查询
+                $first_node = UsersModel::get(['usernum' => $search]);
+                $where['id'] = $first_node['id'];
+                $where2['npid'] = $first_node['id'];
             }else{
                 if($id == 0){ //初始化
                     //查询upid = 0
-                    $first_node = UsersModel::get(['upid' => 0]);
+                    $first_node = UsersModel::get(['npid' => 0]);
                     $where['id'] = $first_node['id'];
                     $where2['npid'] = $first_node['id'];
                 }else{
@@ -390,7 +393,6 @@ class Users extends Common{
                 }
 
             }
-            $user_info = [];
             $user_info = db('users')
                 ->alias('u')
                 ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
@@ -398,94 +400,66 @@ class Users extends Common{
                 ->where($where)
                 ->find();
 
-            $user_info['child'] = db('users')
+            $user_info['children'] = db('users')
                 ->alias('u')
                 ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
                 ->field('u.id,u.usernum,u.username,ul.level_name')
                 ->where($where2)
                 ->select();
 
-            if(!empty($user_info['child'])){
-                foreach($user_info['child'] as $key => $val){
+            if(!empty($user_info['children'])){
+                foreach($user_info['children'] as $key => $val){
                     $where3['npid'] = $val['id'];
-                    $user_info['child'][$key]['child'] = db('users')
+                    $user_info['children'][$key]['children'] = db('users')
                         ->alias('u')
                         ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
                         ->field('u.id,u.usernum,u.username,ul.level_name')
                         ->where($where3)
                         ->select();
-
-
                 }
             }
-
-
-            dump($user_info);die;
-
-            $html = '<li>';
-            foreach ($user_info as $k => $v){
-                $html .= '<ul>';
-
-
-            }
-
-
-
-
-
+            return ['code' => 1, 'data' => $user_info];
+//            $html = '<li>';
+//            $html .= '<div>';
+//            $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">编号：'.$user_info["usernum"].'</a><br/>';
+//            $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">姓名：'.$user_info["username"].'</a><br/>';
+//            $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">级别：'.$user_info["level_name"].'</a>';
+//            $html .= '</div>';
+//            if(isset($user_info['child'])){
+//                $html .= '<ul>';
+//                foreach ($user_info['child'] as $k => $v){
+//                    $html .= '<li>';
+//                    $html .= '<div>';
+//                    $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">编号：'.$v["usernum"].'</a><br/>';
+//                    $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">姓名：'.$v["username"].'</a><br/>';
+//                    $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">级别：'.$v["level_name"].'</a>';
+//                    $html .= '</div>';
+//                    if(isset($v['child'])){
+//                        $html .= '<ul>';
+//                        foreach ($v['child'] as $kk => $vv){
+//                            $html .= '<li>';
+//                            $html .= '<div>';
+//                            $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">编号：'.$vv["usernum"].'</a><br/>';
+//                            $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">姓名：'.$vv["username"].'</a><br/>';
+//                            $html .= '<a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">级别：'.$vv["level_name"].'</a>';
+//                            $html .= '</div>';
+//                            $html .= '</li>';
+//                        }
+//                        $html .= '</ul>';
+//
+//                    }else{
+//                        $html .= '</li>';
+//                    }
+//
+//                }
+//                $html .= '</ul>';
+//            }
+//
+//            $html .= '</li>';
 
         }
 
-        $user_info = [];
-        $user_info = db('users')
-            ->alias('u')
-            ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-            ->field('u.id,u.usernum,u.username,ul.level_name')
-            ->where(['id' => 1])
-            ->find();
-        $user_info['child'] = db('users')
-            ->alias('u')
-            ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-            ->field('u.id,u.usernum,u.username,ul.level_name')
-            ->where(['npid' => 1])
-            ->select();
-
-        if(!empty($user_info['child'])){
-            foreach($user_info['child'] as $key => $val){
-                $where3['npid'] = $val['id'];
-                $user_info['child'][$key]['child'] = db('users')
-                    ->alias('u')
-                    ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-                    ->field('u.id,u.usernum,u.username,ul.level_name')
-                    ->where($where3)
-                    ->select();
-
-
-            }
-        }
-
-
-
-
-        $html = '<li>';
-        $html .= '<ul>';
-        $html .= '<li><a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">编号：'.$user_info["usernum"].'</a></li>';
-        $html .= '<li><a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">姓名：'.$user_info["username"].'</a></li>';
-        $html .= '<li><a href="#" class="layui-btn layui-btn-normal layui-btn-sm" id="resetBtn" data-type="0">级别：'.$user_info["level_name"].'</a></li>';
-
-        if(!empty($user_info['child'])){
-            foreach ($user_info['child'] as $k => $v){
-
-
-
-            }
-        }
-
-        $html .= '</ul>';
-        $html .= '</li>';
-
-
-        return $this->fetch('userContactTest');
+        return $this->fetch('userContact');
     }
 
 

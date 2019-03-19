@@ -122,20 +122,24 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">推荐人编号</label>
                     <div class="layui-input-4">
-                        <input type="text" name="referee" lay-verify="required" placeholder="请填写推荐人编号" class="layui-input">
+                        <input type="text" name="referee" lay-verify="required" placeholder="请填写推荐人编号" class="layui-input" id="referee">
                     </div>
-                    <div class="layui-form-mid layui-word-aux">
-                        <span class="tishi">*</span>必填
+                    <button class="layui-btn" id="search" data-type="reload">获取姓名</button>
+
+                    <div class="layui-form-mid layui-word-aux" id="userReferee">
+
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">接点人编号</label>
                     <div class="layui-input-4">
-                        <input type="text" name="contact_person" lay-verify="required" placeholder="请填写接点人编号" class="layui-input">
+                        <input type="text" name="contact_person" lay-verify="required" placeholder="请填写接点人编号" class="layui-input" id="contact_person">
                     </div>
-                    <div class="layui-form-mid layui-word-aux">
-                        <span class="tishi">*</span>必填
+                    <button class="layui-btn" id="search2" data-type="reload">获取姓名</button>
+
+                    <div class="layui-form-mid layui-word-aux" id="userContact">
+
                     </div>
                 </div>
             </div>
@@ -306,6 +310,23 @@
                 });
             })
 
+
+            //点击搜索
+            $(document).on('click', '#search',function () {
+                var key = $('#key').val();
+                if($.trim(key)==='') {
+                    layer.msg('请输入用户编号',{icon:0});
+                    return;
+
+                }
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('userContact')}",{'search' : key},function (data) {
+                    oc.init({ 'data': data.data }); //刷新节点
+                    layer.close(loading);
+                });
+
+                $('#key').val('');
+            });
 
 
         });
