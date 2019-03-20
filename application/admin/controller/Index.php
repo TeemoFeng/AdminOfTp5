@@ -45,22 +45,45 @@ class Index extends Common
         $this->assign('menus',json_encode($menus,true));
         return $this->fetch();
     }
+//    public function main(){
+//        $version = Db::query('SELECT VERSION() AS ver');
+//        $config  = [
+//            'url'             => $_SERVER['HTTP_HOST'],
+//            'document_root'   => $_SERVER['DOCUMENT_ROOT'],
+//            'server_os'       => PHP_OS,
+//            'server_port'     => $_SERVER['SERVER_PORT'],
+//            'server_ip'       => $_SERVER['SERVER_ADDR'],
+//            'server_soft'     => $_SERVER['SERVER_SOFTWARE'],
+//            'php_version'     => PHP_VERSION,
+//            'mysql_version'   => $version[0]['ver'],
+//            'max_upload_size' => ini_get('upload_max_filesize')
+//        ];
+//        $this->assign('config', $config);
+//        return $this->fetch();
+//    }
+
     public function main(){
-        $version = Db::query('SELECT VERSION() AS ver');
-        $config  = [
-            'url'             => $_SERVER['HTTP_HOST'],
-            'document_root'   => $_SERVER['DOCUMENT_ROOT'],
-            'server_os'       => PHP_OS,
-            'server_port'     => $_SERVER['SERVER_PORT'],
-            'server_ip'       => $_SERVER['SERVER_ADDR'],
-            'server_soft'     => $_SERVER['SERVER_SOFTWARE'],
-            'php_version'     => PHP_VERSION,
-            'mysql_version'   => $version[0]['ver'],
-            'max_upload_size' => ini_get('upload_max_filesize')
+        //获取会员总数
+        $user_model = new Users();
+        $user_num = $user_model->count();
+        //新增会员
+        $no_ac_num = $user_model->where(['status' => 0])->count();
+
+        //获取申请充值的用户数量
+        $apply_recharge = 0;
+        //获取申请提现的用户数量
+        $apply_cash = 0;
+        $init = [
+            'user_num'          => $user_num,
+            'no_ac_num'         => $no_ac_num,
+            'apply_recharge'    => $apply_recharge,
+            'apply_cash'        => $apply_cash,
         ];
-        $this->assign('config', $config);
+
+        $this->assign('init', $init);
         return $this->fetch();
     }
+
     public function navbar(){
         return $this->fetch();
     }
