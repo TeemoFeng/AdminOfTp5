@@ -27,6 +27,7 @@
         height: 100%;
         background-color: #5FB878;
         border-radius:5px;
+        cursor:pointer;
     }
     .box:hover .front {
         transform: perspective(500px) rotatey(-180deg);
@@ -80,7 +81,7 @@
                                     <h2 class="title_index">会员总数</h2>
 
                                 </div>
-                                <div class="backface">
+                                <div class="backface user_list">
                                     <div class="layui-inline icon_index">
                                         <i class="layui-icon layui-icon-user icon_style"></i>
                                     </div>
@@ -102,11 +103,11 @@
                                     <h2 class="title_index">新增会员</h2>
                                 </div>
 
-                                <div class="backface">
+                                <div class="backface add_user">
                                     <div class="layui-inline icon_index">
                                         <i class="layui-icon layui-icon-user icon_style"></i>
                                     </div>
-                                    <h2 class="title_index">新增会员</h2>
+                                    <h2 class="title_index">未激活会员列表</h2>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +123,14 @@
 
                                     <h2 class="title_index">申请充值</h2>
                                 </div>
-                                <div class="backface">背面</div>
+                                <div class="backface apply_recharge">
+                                    <div class="layui-inline icon_index">
+                                        <i class="layui-icon layui-icon-add-circle icon_style"></i>
+                                    </div>
+
+                                    <h2 class="title_index">申请充值列表</h2>
+
+                                </div>
                             </div>
                         </div>
                         <div class="layui-col-xs6 layui-col-md3 layui-col-sm6 layui-col-lg3   fanzhuan">
@@ -139,7 +147,14 @@
                                     <h2 class="title_index">申请提现</h2>
 
                                 </div>
-                                <div class="backface">背面</div>
+                                <div class="backface apply_cash">
+                                    <div class="layui-inline icon_index">
+                                        <i class="layui-icon layui-icon-dollar icon_style"></i>
+                                    </div>
+
+                                    <h2 class="title_index">申请提现</h2>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -148,62 +163,176 @@
             </div>
         </div>
 
-        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
             <div class="layui-card">
-                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-about">直销制度,太阳线</i></div>
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">数量显示</i></div>
                 <div class="layui-card-body">
-                    <table class="layui-table layuiadmin-page-table" lay-skin="line">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                        <tbody>
+                        <tr>
+                            {foreach $num_arr as $key=>$vo }
+                            <td style="width: 20%"><span class="layui-text">{$vo.name}</span></td>
+                            {/foreach}
 
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                        <tbody>
+                        <tr>
+                            {foreach $num_arr as $key=>$vo }
+                            <td style="width: 20%"><span class="layui-text">{$vo.num}</span></td>
+                            {/foreach}
+
+                        </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">公司财务</i></div>
+                <div class="layui-card-body">
+                        <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                            <tbody>
+                            <tr>
+                                {foreach finance_arr as $key=>$vo }
+                                <td style="width: 20%"><span class="layui-text">{$vo.name}</span></td>
+                                {/foreach}
+
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                            <tbody>
+                            <tr>
+                                {foreach finance_arr as $key=>$vo }
+                                <td style="width: 20%"><span class="layui-text">{$vo.num}</span></td>
+                                {/foreach}
+
+                            </tr>
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">公司财务走势图</i></div>
+                <div class="layui-card-body">
+
+                    <div id="main" style="width: auto;height:400px;"></div>
+
+                </div>
+            </div>
+        </div>
 
 
     </div>
 
 </div>
 {include file="common/foot"/}
+<script type="text/javascript" src="/static/plugins/echarts.js"></script>
 
 <script>
     layui.use(['element','layer'], function(){
         var element = layui.element;
         var layer = layui.layer;
         var $ = layui.jquery;
-        $('.data-set').on('click',function () {
-            var _this = $(this);
-            var data_table = _this.attr('data-table');
-            var data_id = _this.attr('data-id');
-            var data_field = _this.attr('data-field');
-            var data_value = _this.text();
-            console.log(data_table);
-            console.log(data_id);
-            console.log(data_field);
-            console.log(data_value);
 
-            //例子2
-            layer.prompt({
-                value: data_value, //初始值
-                title: '请输入修改值',
-            }, function(value, index, elem){
-                loading =layer.load(2, {shade: [0.1,'#fff']});
-                //发送修改请求
-                $.post('{:url("configSet")}',{'table_name':data_table,'id':data_id,'data_field':data_field,'data_value':value},function (res) {
-                    layer.close(loading);
-                    if (res.code==1) {
-                        location.reload();
-                        layer.msg(res.msg,{time:1000,icon:1});
-                    }else{
-                        layer.msg(res.msg,{time:1000,icon:2});
-                        return false;
-                    }
-                });
-
-                layer.close(index);
-            });
-
+        $(document).on('click','.user_list',function(){
+            window.location.href="{:url('Users/index')}"
         });
+
+        $(document).on('click','.add_user',function(){
+            self.location.href="{:url('Users/index')}"
+        });
+
+        $(document).on('click','.apply_recharge',function(){
+            self.location.href="{:url('Finance/applicationRecharge')}"
+        });
+
+
+        $(document).on('click','.apply_cash',function(){
+            self.location.href="{:url('Finance/applicationForCash')}"
+        });
+
+        // $(function () {
+        //     $.post("{:url('index/expenditureAndGeneral')}", {'key': 'key'}, function (data) {
+        //
+        //         if(data.code == 0){
+        //             layer.msg(data.msg,{icon:0});
+        //             return;
+        //         }
+        //         $.each(data.level_chart, function (i, v) {
+        //             data1[i] = v.level; //饼状图会员级别名称
+        //             data2[i] = {value: v.num, name: v.level}; //饼状图会员各级别数量
+        //         });
+        //         option2 = {
+        //             title: {
+        //                 text: '公司收入\/支出\/拨比走势图'
+        //             },
+        //             tooltip : {
+        //                 trigger: 'axis',
+        //                 axisPointer: {
+        //                     type: 'cross',
+        //                     label: {
+        //                         backgroundColor: '#6a7985'
+        //                     }
+        //                 }
+        //             },
+        //             legend: {
+        //                 data:['拨比走势（单位：%）','收入走势（单位：元）','支出走势（单位：元）']
+        //             },
+        //             toolbox: {
+        //                 feature: {
+        //                     saveAsImage: {}
+        //                 }
+        //             },
+        //             grid: {
+        //                 left: '3%',
+        //                 right: '4%',
+        //                 bottom: '3%',
+        //                 containLabel: true
+        //             },
+        //             xAxis : [
+        //                 {
+        //                     type : 'category',
+        //                     boundaryGap : false,
+        //                     // data : ['周一','周二','周三','周四','周五','周六','周日']
+        //                     data : data3
+        //                 }
+        //             ],
+        //             yAxis : [
+        //                 {
+        //                     type : 'value'
+        //                 }
+        //             ],
+        //             series : [
+        //                 {
+        //                     name:'全部注册会员数量',
+        //                     type:'line',
+        //                     stack: '总量',
+        //                     areaStyle: {},
+        //                     data: data4
+        //                 },
+        //                 {
+        //                     name:'未激活会员数量',
+        //                     type:'line',
+        //                     stack: '总量',
+        //                     areaStyle: {},
+        //                     data: data5
+        //                 }
+        //             ]
+        //         };
+        //         myChart2.setOption(option2);
+        //     });
+        // });
+
+
 
 
     });

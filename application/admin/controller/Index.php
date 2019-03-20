@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 use think\Db;
+use app\admin\model\Users;
 use think\facade\Env;
 class Index extends Common
 {
@@ -12,7 +13,8 @@ class Index extends Common
         // 获取缓存数据
         $authRule = cache('authRule');
         if(!$authRule){
-            $authRule = db('auth_rule')->where('menustatus=1')->order('sort')->select();
+            //2019-3-20添加区分前后台权限
+            $authRule = db('auth_rule')->where(['menustatus'=>1,'type' => 1])->order('sort')->select();
             cache('authRule', $authRule, 3600);
        }
         //声明数组
@@ -80,9 +82,70 @@ class Index extends Common
             'apply_cash'        => $apply_cash,
         ];
 
+        //数量显示数组
+        $now_date = date('Y-m-d');
+        $today_add_user = $user_model->where(['create_time' => $now_date, 'status' => 1])->count(); //获取今天注册有效会员
+        $today_noval_user = $user_model->where(['create_time' => $now_date, 'status' => 0])->count(); //获取今天注册无效会员
+        $lock_user = $user_model->where(['is_lock' => 1])->count(); //获取今天冻结会员
+        $all_invest_money = $user_model->where(['is_lock' => 1])->count(); //平台总投资额
+        $all_double_num = $user_model->where(['is_lock' => 1])->count(); //平台复投数量
+        $num_arr = [];
+        $num_arr[] = ['name' => '今天新增有效会员', 'num' => $today_add_user];
+        $num_arr[] = ['name' => '今天新增无效会员', 'num' => $today_noval_user];
+        $num_arr[] = ['name' => '冻结会员', 'num' => $lock_user];
+        $num_arr[] = ['name' => '平台投资总额', 'num' => $all_invest_money];
+        $num_arr[] = ['name' => '平台复投数量', 'num' => $all_double_num];
+        //公司财务
+        $general_all = 0;           //总收入
+        $total_expenditure = 0;     //总支出
+        $total_precipitation = 0;   //总沉淀
+        $allocation_ratio = 0;      //拨比
+        $finance_arr[] = ['name' => '总收入', 'num' => $general_all];
+        $finance_arr[] = ['name' => '总支出', 'num' => $total_expenditure];
+        $finance_arr[] = ['name' => '总沉淀', 'num' => $total_precipitation];
+        $finance_arr[] = ['name' => '拨比',   'num' => $allocation_ratio];
+        //近7天内公司财务
+
+
+
         $this->assign('init', $init);
+        $this->assign('num_arr', $num_arr);
+        $this->assign('finance_arr', $finance_arr);
+
         return $this->fetch();
     }
+
+    //公司收入支出拨比走势图数据
+    public function expenditureAndGeneral()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['start_time']) && empty($data['end_time'])){
+
+            }else{
+                return ['code' => 0];
+                //初始化最近七天的
+                $year = date("Y");
+                $month = date("m");
+                $day = date("d");
+                $end_time = mktime(23,59,59,$month,$day,$year);//当天结束时间戳
+                $start_time = $end_time-(7*86400); //获取7天前的时间戳
+                $where = [$start_time, $end_time];
+                $user_info = db('users')
+                    ->whereTime('reg_time','between', $where)
+                    ->group('create_time')
+                    ->field('id,create_time as date,count("id") as count')
+                    ->select();
+
+            }
+
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+
+    }
+
+
 
     public function navbar(){
         return $this->fetch();

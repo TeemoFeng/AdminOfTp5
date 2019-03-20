@@ -18,7 +18,7 @@
     <input type="checkbox" name="is_lock" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁用" lay-filter="is_lock" {{ d.is_lock == 0 ? 'checked' : '' }}>
 </script>
 <script type="text/html" id="action">
-    <a href="{:url('home/index/index')}?id={{d.id}}" class="layui-btn layui-btn-xs">访问前台</a>
+    <a href="{:url('home/index/index')}?id={{d.id}}" target="_blank" class="layui-btn layui-btn-xs">访问前台</a>
     <a href="{:url('edit')}?id={{d.id}}" class="layui-btn layui-btn-xs">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     <a href="{:url('detail')}?id={{d.id}}" class="layui-btn layui-btn-xs" lay-event="del">详情</a>
