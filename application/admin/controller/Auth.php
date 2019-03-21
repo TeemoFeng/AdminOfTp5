@@ -1,5 +1,6 @@
 <?php
 namespace app\admin\controller;
+use app\admin\model\UserAuthRule;
 use function MongoDB\BSON\toJSON;
 use think\Db;
 use clt\Leftnav;
@@ -380,4 +381,128 @@ class Auth extends Common
             return $this->fetch();
         }
     }
+
+    /********************************会员权限管理*******************************/
+    public function userRule()
+    {
+        if (request()->isPost()) {
+            $arr = cache('userAuthRuleList');
+            if(!$arr){
+                $arr = Db::name('userAuthRule')->order('pid asc,sort asc')->select();
+                foreach($arr as $k=>$v){
+                    $arr[$k]['lay_is_open']=false;
+                }
+                cache('userAuthRuleList', $arr, 3600);
+            }
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$arr,'is'=>true,'tip'=>'操作成功'];
+        }
+        return view();
+    }
+    public function userClear()
+    {
+        $arr = Db::name('userAuthRule')->where('pid','neq',0)->select();
+        foreach ($arr as $k=>$v) {
+            $p = Db::name('userAuthRule')->where('id',$v['pid'])->find();
+            if(!$p){
+                Db::name('userAuthRule')->where('id',$v['id'])->delete();
+            }
+        }
+        cache('userAuthRule', NULL);
+        cache('userAuthRuleList', NULL);
+        $this->success('清除成功');
+    }
+
+    public function userRuleAdd()
+    {
+        if (request()->isPost()) {
+            $data = input('post.');
+            $data['addtime'] = time();
+            userAuthRule::create($data);
+            cache('userAuthRule', NULL);
+            cache('userAuthRuleList', NULL);
+            return $result = ['code'=>1,'msg'=>'权限添加成功!','url'=>url('userRule')];
+        } else {
+            $nav = new Leftnav();
+            $arr = cache('userAuthRuleList');
+            if (!$arr) {
+                $authRule = userAuthRule::all(function($query){
+                    $query->order('sort', 'asc');
+                });
+                $arr = $nav->menu($authRule);
+                cache('userAuthRuleList', $arr, 3600);
+            }
+            $this->assign('admin_rule',$arr);//权限列表
+            return $this->fetch();
+        }
+    }
+
+    public function userRuleOrder()
+    {
+        $auth_rule = db('user_auth_rule');
+        $data = input('post.');
+        if ($auth_rule->update($data)!==false) {
+            cache('userAuthRuleList', NULL);
+            cache('userAuthRule', NULL);
+            return $result = ['code'=>1,'msg'=>'排序更新成功!','url'=>url('userRule')];
+        } else {
+            return $result = ['code'=>0,'msg'=>'排序更新失败!'];
+        }
+    }
+
+    //设置权限菜单显示或者隐藏
+    public function userRuleState()
+    {
+        $id=input('post.id');
+        $menustatus=input('post.menustatus');
+        if(db('user_auth_rule')->where('id='.$id)->update(['menustatus'=>$menustatus])!==false){
+            cache('userAuthRule', NULL);
+            cache('userAuthRuleList', NULL);
+            return ['status'=>1,'msg'=>'设置成功!'];
+        }else{
+            return ['status'=>0,'msg'=>'设置失败!'];
+        }
+    }
+    //设置权限是否验证
+    public function userRuleTz()
+    {
+        $id=input('post.id');
+        $authopen=input('post.authopen');
+        if (db('user_auth_rule')->where('id='.$id)->update(['authopen'=>$authopen])!==false) {
+            cache('userAuthRule', NULL);
+            cache('userAuthRuleList', NULL);
+            return ['status'=>1,'msg'=>'设置成功!'];
+        } else {
+            return ['status'=>0,'msg'=>'设置失败!'];
+        }
+    }
+
+    public function userRuleDel()
+    {
+        userAuthRule::destroy(['id'=>input('param.id')]);
+        cache('userAuthRule', NULL);
+        cache('userAuthRuleList', NULL);
+        return $result = ['code'=>1,'msg'=>'删除成功!'];
+    }
+
+    public function userRuleEdit()
+    {
+        if (request()->isPost()) {
+            $datas = input('post.');
+            if(userAuthRule::update($datas)) {
+                cache('userAuthRule', NULL);
+                cache('userAuthRuleList', NULL);
+                return json(['code' => 1, 'msg' => '保存成功!', 'url' => url('userRule')]);
+            } else {
+                return json(['code' => 0, 'msg' =>'保存失败！']);
+            }
+        } else {
+            $admin_rule = userAuthRule::get(function($query){
+                $query->where(['id'=>input('id')])->field('id,href,title,icon,sort,menustatus');
+            });
+            $this->assign('rule',$admin_rule);
+            return $this->fetch();
+        }
+    }
+
+
 }

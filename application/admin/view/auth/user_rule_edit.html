@@ -43,7 +43,7 @@
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <button type="button" class="layui-btn" lay-submit="" lay-filter="auth">立即提交</button>
-                <a href="{:url('adminRule')}" class="layui-btn layui-btn-primary">返回</a>
+                <a href="{:url('userRule')}" class="layui-btn layui-btn-primary">返回</a>
             </div>
         </div>
     </form>
@@ -54,7 +54,7 @@
         var form = layui.form,layer = layui.layer,$ = layui.jquery;
         form.on('submit(auth)', function (data) {
             // 提交到方法 默认为本身
-            $.post("{:url('ruleEdit')}",data.field,function(res){
+            $.post("{:url('userRuleEdit')}",data.field,function(res){
                 if(res.code > 0){
                     layer.msg(res.msg,{time:1800,icon:1},function(){
                         location.href = res.url;
