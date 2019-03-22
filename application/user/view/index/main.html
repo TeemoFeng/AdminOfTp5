@@ -1,0 +1,60 @@
+{include file="common2/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+
+    <div class="layui-fluid">
+
+        <div class="layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-green">
+                    <i class="layui-icon layui-icon-theme"> 会员信息</i>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                        <tbody>
+                        {foreach $user_arr as $key => $vo }
+
+                        <tr>
+                            <td style="width: 20%;text-align: right"><span class="layui-text">{$vo.title}</span></td>
+                            <td style="width: 80%;text-align: left"><span class="layui-text">{$vo.name}</span></td>
+                        </tr>
+                        {/foreach}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-green"><i class="layui-icon layui-icon-list"> 财务信息</i></div>
+                <div class="layui-card-body">
+
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+{include file="common2/foot"/}
+<script type="text/javascript" src="/static/plugins/echarts.js"></script>
+
+<script>
+    layui.use(['element','layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+
+
+    });
+
+</script>
+
+
+
+</body>
+</html>

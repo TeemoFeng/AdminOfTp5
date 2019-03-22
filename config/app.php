@@ -163,7 +163,7 @@ return [
 
 
     //自定义配置
-    'sys_name' =>'CLTPHP',
+    'sys_name' =>'沙特阿美',
     //文件上传
     'addwater'=>false,
     'watertext'=>'CLTPHP',

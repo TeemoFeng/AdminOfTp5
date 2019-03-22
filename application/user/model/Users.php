@@ -5,6 +5,10 @@ use think\Model;
 
 class Users extends Model
 {
+    public static $baodancenter = [
+        0  => '未审核',
+        1  => '已通过',
+    ];
     public function login($data){
         $user=db('users')->where('email',$data['email'])->find();
         if($user){

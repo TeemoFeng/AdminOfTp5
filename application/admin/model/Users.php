@@ -5,6 +5,7 @@ use think\Model;
 
 class Users extends Model
 {
+
 	protected $name = 'users';
     protected $type       = [
         // 设置addtime为时间戳类型（整型）
