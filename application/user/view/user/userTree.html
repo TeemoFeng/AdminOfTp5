@@ -1,4 +1,4 @@
-{include file="common/head"/}
+{include file="common2/head"/}
 <link rel="stylesheet" href="/static/plugins/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
 <script type="text/javascript" src="/static/plugins/zTree_v3/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="/static/plugins/zTree_v3/js/jquery.ztree.core.js"></script>
@@ -9,7 +9,7 @@
     </fieldset>
     <div class="demoTable layui-row" >
         <div class="layui-col-md4 layui-col-md-offset7">
-            <input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}关键字">
+            <input class="layui-input" name="key" id="key" placeholder="请输入用户名">
 
         </div>
         <div class="layui-col-md1">
@@ -30,12 +30,41 @@
 </div>
 
 
-{include file="common/foot"/}
+{include file="common2/foot"/}
 
 <script type="text/javascript">
     layui.use(['form', 'element'], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
+        // //搜索
+        // $('#search').on('click', function() {
+        //     var key = $('#key').val();
+        //     if($.trim(key)==='') {
+        //         layer.msg('请输入用户名',{icon:0});
+        //         return;
+        //     }
+        //
+        //     var setting2 = {
+        //         async: {
+        //             enable: true,
+        //             url:"{:url('userTree')}",
+        //             autoParam:["id", "name=n", "level=lv"],
+        //             otherParam:{"otherParam":key},
+        //             dataFilter: filter,
+        //             type: "get"
+        //         },
+        //         callback: {
+        //             beforeAsync: beforeAsync,
+        //             onAsyncSuccess: onAsyncSuccess,
+        //             onAsyncError: onAsyncError
+        //         }
+        //     };
+        //     asyncForAll = false;
+        //     goAsync = false;
+        //     $("#demoMsg").text("");
+        //     $.fn.zTree.init($("#treeDemo"), setting2);
+        //
+        // });
 
     });
 
