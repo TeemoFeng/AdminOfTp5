@@ -7,7 +7,14 @@
  */
 namespace app\user\controller;
 
+use app\user\model\UserRunningLog;
+
 class User extends Common{
+    public function initialize(){
+        parent::initialize();
+
+
+    }
     //用户推荐的用户列表
     public function userList()
     {
@@ -139,9 +146,52 @@ class User extends Common{
     //原点复投
     public function originReset()
     {
-        //复投数量
+        $user_id = session('user.id');
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['cash_input_num'])){
+                return ['code' => 0, 'msg' => '复投数量不能为空'];
+            }
+            if((int)$data['cash_input_num'] > (int)$data['can_use_num']){
+                return ['code' => 0, 'msg' => '复投数量不能大于可用数量'];
+            }
+            //查询用户账户信息
+            $user_cash_account = db('user_currency_account')->where(['user_id' => $user_id])->find();
+            if(empty($user_cash_account)){
+                return ['code' => 0, 'msg' => '数据异常'];
+            }
+            $cash_input_num     = bcadd($user_cash_account['cash_input_num'], $data['cash_input_num'], 4); //用户累计投入数量
+            $cash_currency_num  = bcsub($user_cash_account['cash_currency_num'],$data['cash_input_num'],4); //用户现金币数量
+            $save['cash_input_num'] = $cash_input_num;
+            $save['cash_currency_num'] = $cash_currency_num;
+            $res = db('user_currency_account')->where(['user_id' => $user_id])->update($save);
+            if($res === false){
+                return ['code' => 0, 'msg' => '复投失败，请重试'];
+            }
+            //记录流水日志
+            UserRunningLog::create([
+                'user_id'  =>  $user_id,
+                'about_id' =>  $user_id,
+                'running_type'  => UserRunningLog::TYPE16,
+                'account_type'  => 1,
+                'change_num'    => -$data['cash_input_num'],
+                'balance'       =>  $cash_currency_num,
+                'create_time'   => time()
+            ]);
+
+            return ['code' => 1, 'msg' => '复投成功'];
+        }
+        //复投数量设置
         $origin_num = db('bonus_ext_set')->where(['id' => 1])->field('double_throw_num')->find();
-        $this->assign('origin_num', $origin_num['double_throw_num']);
+        //现金币余额
+        $cash_currency_num = db('user_currency_account')->where(['user_id' => $user_id])->value('cash_currency_num');
+        if(empty($cash_currency_num)) $cash_currency_num = '0.0000';
+
+        $can_user_num = floatval($cash_currency_num);
+        $this->assign('origin_num', $origin_num['double_throw_num']); //复投设置的数量
+        $this->assign('cash_currency_num', $cash_currency_num); //现金币余额
+        $this->assign('can_use_num', $can_user_num); //现金币可用数量
+
         return $this->fetch('originReset');
 
     }
@@ -149,8 +199,69 @@ class User extends Common{
     //原点撤回
     public function withdraw()
     {
+
+        $user_id = session('user.id');
         $origin_num = db('bonus_ext_set')->where(['id' => 1])->field('double_throw_recall')->find();
-        $this->assign('origin_num', $origin_num['double_throw_recall']);
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['recall_num'])){
+                return ['code' => 0, 'msg' => '撤回复投数量不能为空'];
+            }
+            if((int)$data['recall_num'] > (int)$data['can_reset_num']){
+                return ['code' => 0, 'msg' => '撤回复投数量不能大于可用数量'];
+            }
+            //查询用户账户信息
+            $user_cash_account = db('user_currency_account')->where(['user_id' => $user_id])->find();
+            if(empty($user_cash_account)){
+                return ['code' => 0, 'msg' => '数据异常'];
+            }
+            if(empty($origin_num)){
+                return ['code' => 0, 'msg' => '配置错误'];
+            }
+
+            $origin_num = $origin_num['double_throw_recall']/100;
+            $rate = bcsub('1',$origin_num,2);
+            $recall_num = bcmul($data['recall_num'],$rate,4);
+            $shoxufei = bcmul($data['recall_num'],$origin_num,4); //撤回复投手续费
+            $cash_currency_num    = bcadd($user_cash_account['cash_currency_num'], $recall_num, 4); //用户累计投入数量
+            $cash_input_num  = bcsub($user_cash_account['cash_input_num'], $data['recall_num'],4); //用户现金币数量
+            $save['cash_input_num'] = $cash_input_num;
+            $save['cash_currency_num'] = $cash_currency_num;
+            $res = db('user_currency_account')->where(['user_id' => $user_id])->update($save);
+            if($res === false){
+                return ['code' => 0, 'msg' => '撤回复投失败，请重试'];
+            }
+            //记录撤回复投流水日志
+            UserRunningLog::create([
+                'user_id'  =>  $user_id,
+                'about_id' =>  $user_id,
+                'running_type'  => UserRunningLog::TYPE33,
+                'account_type'  => 1,
+                'change_num'    => $data['recall_num'],
+                'balance'       => $cash_currency_num,
+                'create_time'   => time()
+            ]);
+            //记录撤回复投手续费日志
+            UserRunningLog::create([
+                'user_id'  =>  $user_id,
+                'about_id' =>  $user_id,
+                'running_type'  => UserRunningLog::TYPE34,
+                'account_type'  => 1,
+                'change_num'    => -$shoxufei,
+                'balance'       => $cash_currency_num,
+                'create_time'   => time()
+            ]);
+
+            return ['code' => 1, 'msg' => '撤回复投成功'];
+        }
+        //现金币余额
+        $cash_input_num = db('user_currency_account')->where(['user_id' => $user_id])->value('cash_input_num');
+        if(empty($cash_input_num)) $cash_input_num = '0.0000';
+
+        $can_reset_num = floatval($cash_input_num);
+        $this->assign('origin_num', $origin_num['double_throw_recall']); //撤回复投扣除比率
+        $this->assign('can_reset_num', $can_reset_num); //可撤回复投数量
+        $this->assign('cash_input_num', $cash_input_num); //复投数量
         return $this->fetch('withdraw');
 
     }

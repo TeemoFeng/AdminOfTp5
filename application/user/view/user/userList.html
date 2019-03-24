@@ -56,10 +56,10 @@
         //搜索
         $('#search').on('click', function() {
             var key = $('#key').val();
-            if($.trim(key)==='') {
-                layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
-                return;
-            }
+            // if($.trim(key)==='') {
+            //     layer.msg('请输入关键字！',{icon:0});
+            //     return;
+            // }
             tableIn.reload({ page: {page: 1},where: {key: key}});
         });
         // 执行一个laydate实例

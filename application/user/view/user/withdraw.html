@@ -11,22 +11,22 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">已复投(余额)</label>
                     <div class="layui-input-4 layui-inline">
-                        <input type="text" name="keys" id="key" placeholder="请输入ID/用户名/邮箱/手机号" class="layui-input" value="{$usernum}">
+                        <input type="text" name="cash_input_num" placeholder="" class="layui-input" disabled value="{$cash_input_num}">
                     </div>
 
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">撤回可用</label>
+                    <label class="layui-form-label">撤回(可用)</label>
                     <div class="layui-input-4">
-                        <input type="text" name="amount" lay-verify="required" placeholder="请填写金额" class="layui-input">
+                        <input type="text" name="can_reset_num"  id="can_reset_num" placeholder="" disabled class="layui-input" value="{$can_reset_num}">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">撤回复投数量</label>
                     <div class="layui-input-4">
-                        <input type="text" name="remark" placeholder="" class="layui-input">
+                        <input type="text" name="recall_num" lay-verify="recall_num" placeholder="" class="layui-input">
                     </div>
                 </div>
 
@@ -35,9 +35,8 @@
 
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <input type="hidden" name="type" value="1">
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
-                <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">提交</button>
+                <a href="{:url('withdraw')}" class="layui-btn layui-btn-primary">返回</a>
             </div>
         </div>
     </form>
@@ -49,55 +48,28 @@
     layui.use(['form', 'layer'], function () {
         var form = layui.form, layer = layui.layer,$= layui.jquery;
         form.verify({
-            usernum : function (value, item) { //手机验证可以直接采用lay-verify
+            recall_num : function (value, item) { //手机验证可以直接采用lay-verify
                 if(value.length < 1){
-                    return '会员编号不能为空';
+                    return '撤回复投数量不能为空';
                 }
-                if(value.length > 16){
-                    return '会员编号长度不能大于15位';
+
+                var can_reset_num = $('#can_reset_num').val();
+                if(Number(value) > Number(can_reset_num)){
+                    return '复投数量不能大于可用数量';
                 }
             }
         });
 
-        //搜索
-        $('#search').on('click', function() {
-            var key = $('#key').val();
-            if($.trim(key)==='') {
-                layer.msg('请输入搜索条件',{icon:0});
-                return;
-            }
-            $.post('{:url("searchUser")}', {'key':key}, function (data) {
-                if(data.code > 0){
-                    var items = data.list;
-                    console.log(data);
-                    if(items != null){
-                        $("#append_user").empty();
-                        var str = '';
-                        $.each(items, function(i, n){
-                            str += "<option value='" + items[i].id + "'>" + items[i].username + "</option>";
-                        });
-                        $("#append_user").append(str);
-                        form.render(); //动态加载html 需要重新渲染form  2019-3-10 踩坑
-                    }
-
-
-                }else{
-                    layer.msg(res.msg, {time: 1800, icon: 2});
-                }
-            });
-
-
-        });
 
         //提交表单
         form.on('submit(submit)', function (data) {
             var loading = layer.load(2, {shade: [0.1,'#fff']});
 
-            $.post('{:url("currencyRecharge")}', data.field, function (res) {
+            $.post('{:url("withdraw")}', data.field, function (res) {
                 layer.close(loading);
                 if (res.code > 0) {
                     layer.msg(res.msg, {time: 1800, icon: 1}, function () {
-                        // location.href = res.url;
+                        location.reload();
                     });
                 } else {
                     layer.msg(res.msg, {time: 1800, icon: 2});

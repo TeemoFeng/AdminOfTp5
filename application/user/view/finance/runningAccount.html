@@ -1,0 +1,338 @@
+{include file="common2/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>财务流水</legend>
+    </fieldset>
+
+    <div class="layui-tab layui-tab-brief" lay-filter="userAccount">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$currency_arr[0]}</li>
+            <li>{$currency_arr[1]}</li>
+            <li>{$currency_arr[2]}</li>
+            <li>{$currency_arr[3]}</li>
+            <li>{$currency_arr[4]}</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+            <div class="layui-tab-item layui-show">
+                <div class="demoTable layui-form">
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <select name="status1" lay-verify="required" id="status1" lay-search>
+                                <option value="">请选择</option>
+                                {foreach $running_type as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="start_date1" id="start_time1" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="end_date1" id="end_time1" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                    </div>
+
+                    <div class="layui-inline">
+                        <input class="layui-input" name="key1" id="key1" placeholder="请输入关键字">
+
+                    </div>
+                    <button class="layui-btn" id="search1" data-type="reload">搜索</button>
+
+                </div>
+                <table class="layui-table" id="table1" lay-filter="table1"></table>
+            </div>
+            <div class="layui-tab-item">
+
+                <div class="demoTable layui-form">
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <select name="status" lay-verify="required" id="status2" lay-search>
+                                <option value="">请选择</option>
+                                {foreach $running_type as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="start_date2" id="start_time2" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="end_date2" id="end_time2" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                    </div>
+
+                    <div class="layui-inline">
+                        <input class="layui-input" name="key2" id="key2" placeholder="请输入关键字">
+
+                    </div>
+                    <button class="layui-btn" id="search2" data-type="reload">搜索</button>
+
+                </div>
+                <table class="layui-table" id="table2" lay-filter="table2"></table>
+
+            </div>
+            <div class="layui-tab-item">
+
+                <div class="demoTable layui-form">
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <select name="status" lay-verify="required" id="status3" lay-search>
+                                <option value="">请选择</option>
+                                {foreach $running_type as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="start_date3" id="start_time3" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="end_date3" id="end_time3" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                    </div>
+
+                    <div class="layui-inline">
+                        <input class="layui-input" name="key3" id="key3" placeholder="请输入关键字">
+
+                    </div>
+                    <button class="layui-btn" id="search3" data-type="reload">搜索</button>
+
+                </div>
+                <table class="layui-table" id="table3" lay-filter="table3"></table>
+
+            </div>
+            <div class="layui-tab-item">
+
+                <div class="demoTable layui-form">
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <select name="status" lay-verify="required" id="status4" lay-search>
+                                <option value="">请选择</option>
+                                {foreach $running_type as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="start_date4" id="start_time4" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="end_date4" id="end_time4" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                    </div>
+
+                    <div class="layui-inline">
+                        <input class="layui-input" name="key4" id="key4" placeholder="请输入关键字">
+
+                    </div>
+                    <button class="layui-btn" id="search4" data-type="reload">搜索</button>
+
+                </div>
+                <table class="layui-table" id="table4" lay-filter="table4"></table>
+
+            </div>
+            <div class="layui-tab-item">
+
+                <div class="demoTable layui-form">
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <select name="status" lay-verify="required" id="status5" lay-search>
+                                <option value="">请选择</option>
+                                {foreach $running_type as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="start_date5" id="start_time5" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="end_date5" id="end_time5" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                    </div>
+
+                    <div class="layui-inline">
+                        <input class="layui-input" name="key5" id="key5" placeholder="请输入关键字">
+
+                    </div>
+                    <button class="layui-btn" id="search5" data-type="reload">搜索</button>
+
+                </div>
+                <table class="layui-table" id="table5" lay-filter="table5"></table>
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/html" id="action">
+    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">查看备注</a>
+
+</script>
+
+
+<script type="text/html" id="topBtn">
+
+</script>
+
+{include file="common2/foot"/}
+<script>
+    layui.use(['table','form','laydate','element'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery, laydate = layui.laydate, element = layui.element;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time1' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time1' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time2' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time2' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time3' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time3' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time4' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time4' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time5' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time5' //指定元素
+        });
+
+        var show_table = function(_type){
+            table.render({
+                id: 'table'+_type,
+                elem: '#table'+_type,
+                url: '{:url("runningAccount")}',
+                where: {'account_type':_type},
+                method: 'post',
+                toolbar: '#topBtn',
+                page: true,
+                cols: [[
+                    {checkbox:true,fixed: true},
+                    {field: 'id', title: 'id', width: 100, fixed: true},
+                    {field: 'username', title: '用户', width: 200, fixed: true},
+                    {field: 'about_user', title: '相关用户', width: 200},
+                    {field: 'running_type', title: '流水类型', width: 200},
+                    {field: 'change_num', title: '变更数量', width: 200},
+                    {field: 'balance', title: '余额', width: 200},
+                    {field: 'create_time', title: '流水时间', width: 100},
+                    {title:'操作', width: 100, align: 'center', toolbar: '#action'}
+                ]],
+                limit: 10 //每页默认显示的数量
+            });
+        };
+
+
+        //搜索
+        $('#search1').on('click', function() {
+            var key = $('#key1').val();
+            var start_time = $('#start_time1').val();
+            var end_time = $('#end_time1').val();
+            var running_type = $('#status1').val();
+            // if($.trim(key)==='') {
+            //     layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
+            //     return;
+            // }
+            table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1}})
+        });
+
+        //搜索2
+        $('#search2').on('click', function() {
+            var key = $('#key2').val();
+            var start_time = $('#start_time2').val();
+            var end_time = $('#end_time2').val();
+            var running_type = $('#status2').val();
+            table.reload('table2',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:2}})
+        });
+
+        //搜索3
+        $('#search3').on('click', function() {
+            var key = $('#key3').val();
+            var start_time = $('#start_time3').val();
+            var end_time = $('#end_time3').val();
+            var running_type = $('#status3').val();
+            table.reload('table3',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:3}})
+        });
+
+        //搜索4
+        $('#search4').on('click', function() {
+            var key = $('#key4').val();
+            var start_time = $('#start_time4').val();
+            var end_time = $('#end_time4').val();
+            var running_type = $('#status4').val();
+            table.reload('table4',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:4}})
+        });
+
+        //搜索5
+        $('#search5').on('click', function() {
+            var key = $('#key5').val();
+            var start_time = $('#start_time5').val();
+            var end_time = $('#end_time5').val();
+            var running_type = $('#status5').val();
+            table.reload('table5',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:5}})
+        });
+
+        show_table(1);
+
+        element.on('tab(userAccount)', function (data) {
+            if(data.index == 0) {
+                // $('#key1').val('');
+                // $('#start_time1').val('');
+                // $('#end_time1').val('');
+                // $('#status1').val('');
+                show_table(1);
+            }else if(data.index == 1){
+                show_table(2);
+            }else if(data.index == 2){
+                show_table(3);
+            }else if(data.index == 3){
+                show_table(4);
+            }else if(data.index == 4){
+                show_table(5);
+            }
+        });
+
+    });
+</script>
+</body>
+</html>
