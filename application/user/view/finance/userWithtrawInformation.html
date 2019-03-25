@@ -1,0 +1,87 @@
+{include file="common2/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+
+    <div class="layui-fluid">
+
+        <div class="layui-row">
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header layui-bg-green">
+                        <i class="layui-icon layui-icon-user">报备提现信息</i>
+                    </div>
+                    <div class="layui-card-body">
+
+
+                        <form class="layui-form " lay-filter="form">
+
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <div class="layui-field-box">
+                                    
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">支付宝账户(必填)</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="alipay_account" lay-verify="alipay_account" disabled placeholder="" class="layui-input" value="{$user_info['alipay_account']}">
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">银行(必填)</label>
+                                        <div class="layui-input-block">
+                                            <select name="bank_id" lay-verify="required" disabled>
+                                                <option value="">请选择</option>
+                                                {foreach $bank_list as $key => $val}
+                                                <option value="{$val['id']}" {if condition="$user_info['bank_id'] eq $val['id']"}selected{/if} >{$val['name']}</option>
+                                                {/foreach}
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">开户名(必填)</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="bank_user" lay-verify="required" disabled placeholder="" class="layui-input" value="{$user_info['bank_user']}">
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">银行账户</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="bank_account" lay-verify="required" disabled disabled placeholder="" class="layui-input" value="{$user_info['bank_account']}">
+                                        </div>
+                                    </div>
+
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">开户行地址(必填)</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="bank_desc" lay-verify="required" disabled  placeholder="" class="layui-input" value="{$user_info['bank_desc']}">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label"></label>
+                                        <h1>已报备，可提现</h1>
+                                    </div>
+
+                                </div>
+                            </fieldset>
+
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{include file="common2/foot"/}
+
+<script>
+    layui.use(['form', 'layer','element'], function () {
+        var form = layui.form, layer = layui.layer, $ = layui.jquery, element = layui.element;
+
+    });
+</script>

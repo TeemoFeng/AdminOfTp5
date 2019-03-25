@@ -10,7 +10,10 @@ namespace app\user\controller;
 use app\admin\model\ApplyCash;
 use app\user\model\UserApplyCash;
 use app\user\model\UserRunningLog;
+use think\Db;
 use think\db\Where;
+use think\Request;
+
 class Finance extends Common{
     public function initialize(){
         parent::initialize();
@@ -164,15 +167,158 @@ class Finance extends Common{
     //申请提现
     public function applyCash()
     {
-
-
+        //bonus 设置
+        $principal_recall = db('bonus_ext_set')->where(['id' => 1])->field('extract_num,extract_deduction_ratio,waller_excract_ratio,waller_excract_multiple')->find();
         $user_id = session('user.id');
+        if(request()->isPost()){
+            //如果是提交
+            $data = input('post.');
+            if(empty($data['user_id']) || empty($data['cash_type']))
+                return ['code' => 0, 'msg' => '非法请求'];
+            if($data['cash_type'] == 1){
+                //1 沙特提交
+                if(empty($data['extract_num'])){
+                    return ['code' => 0, 'msg' => '提取数量不能为空'];
+                }
+                if(bccomp($principal_recall['extract_num'],$data['extract_num'],4) == 1){
+                    return ['code' => 0, 'msg' => '提取数量不能小于'.$principal_recall['extract_num'].'个'];
+                }
+                //查询用户沙特链数量
+                $user_account = db('user_currency_account')->where(['user_id' => $user_id])->find();
+                if(bccomp($data['extract_num'],$user_account['cash_currency_num'],4) == 1){
+                    return ['code' => 0, 'msg' => '提取数量不能大于余额'];
+                }
+                $rate = $user_account['rate'] ? $user_account['rate'] : 7.0;
+                $cash_sum = bcmul($data['extract_num'], $rate, 2); //总额
+                $lixi = $principal_recall['extract_deduction_ratio']/100;
+                $poundage = bcmul($cash_sum, $lixi, 2); //手续费
+                $real_sum = bcsub($cash_sum, $poundage, 2); //实际到账
+                //加入提现表
+                $save = [
+                    'user_id' => $user_id,
+                    'currency_type' => 1, //沙特链
+                    'cash_num' => $data['extract_num'], //提取数量
+                    'cash_sum' => $data['extract_num'], //提现金额就是提取数量 $
+                    'real_sum' => $real_sum,//到账金额
+                    'poundage' => $poundage,//手续费
+                    'status'   => 1,
+                    'create_time' => time()
+                ];
+                //用户钱包
+                $cash_currency_num = bcsub($user_account['cash_currency_num'], $data['extract_num'], 4);
+                $user_account = [
+                    'cash_currency_num' => $cash_currency_num
+                ];
+                Db::startTrans();
+                if(UserApplyCash::create($save)){
+                    //记录log
+                    $log = [
+                        'user_id'  =>  $user_id,
+                        'about_id' =>  $user_id,
+                        'running_type'  => UserRunningLog::TYPE5,
+                        'account_type'  => 1,
+                        'change_num'    => -$poundage,
+                        'balance'       => 0.00,
+                        'create_time'   => time()
+                    ];
+                    //用户钱包减少
+                    $res = db('user_currency_account')->where(['user_id' => $user_id])->update($user_account);
+                    if($res === false){
+                        Db::rollback();
+                        return ['code' => 0, 'msg' => '申请失败，请重试'];
+                    }
+                    if(UserRunningLog::create($log)){
+                        Db::commit();
+                    }else{
+                        Db::rollback();
+                    }
+                    return ['code' => 1, 'msg' => '申请成功'];
+                }else{
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '申请失败，请重试'];
+                }
+
+
+            }elseif($data['cash_type'] == 2){
+                //1 消费钱包提交
+                if(empty($data['consume_num'])){
+                    return ['code' => 0, 'msg' => '提取数量不能为空'];
+                }
+                if(bccomp($principal_recall['waller_excract_ratio'],$data['consume_num'],4) == 1){
+                    return ['code' => 0, 'msg' => '提取数量不能小于'.$principal_recall['extract_num'].'个'];
+                }
+                //查询用户消费钱包数量
+                $user_account = db('user_currency_account')->where(['user_id' => $user_id])->find();
+                if(bccomp($data['extract_num'],$user_account['consume_num'],4) == 1){
+                    return ['code' => 0, 'msg' => '提取数量不能大于余额'];
+                }
+                $rate = $user_account['rate'] ? $user_account['rate'] : 7.0;
+                $cash_sum = bcmul($data['consume_num'], $rate, 2); //总额
+                $lixi = $principal_recall['extract_deduction_ratio']/100;
+                $poundage = bcmul($cash_sum, $lixi, 2); //手续费
+                $real_sum = bcsub($cash_sum, $poundage, 2); //实际到账
+                //加入提现表
+                $save = [
+                    'user_id' => $user_id,
+                    'currency_type' => 3, //消费钱包
+                    'cash_num' => $data['consume_num'], //提取数量
+                    'cash_sum' => $data['consume_num'], //提现金额就是提取数量 $
+                    'real_sum' => $real_sum,//到账金额
+                    'poundage' => $poundage,//手续费
+                    'status'   => 1,
+                    'create_time' => time()
+                ];
+                //用户消费钱包
+                $consume_num = bcsub($user_account['consume_num'], $data['consume_num'], 4);
+                $user_account = [
+                    'consume_num' => $consume_num
+                ];
+
+                Db::startTrans();
+                if(UserApplyCash::create($save)){
+                    //记录log
+                    $log = [
+                        'user_id'  =>  $user_id,
+                        'about_id' =>  $user_id,
+                        'running_type'  => UserRunningLog::TYPE5,
+                        'account_type'  => 1,
+                        'change_num'    => -$poundage,
+                        'balance'       => 0.00,
+                        'create_time'   => time()
+                    ];
+                    //用户钱包减少
+                    $res = db('user_currency_account')->where(['user_id' => $user_id])->update($user_account);
+                    if($res === false){
+                        Db::rollback();
+                        return ['code' => 0, 'msg' => '申请失败，请重试'];
+                    }
+                    if(UserRunningLog::create($log)){
+                        Db::commit();
+                    }else{
+                        Db::rollback();
+                    }
+                    return ['code' => 1, 'msg' => '申请成功'];
+                }else{
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '申请失败，请重试'];
+                }
+
+
+            }else{
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+
+        }
+        $type = Request()->param('type');
+        if(empty($type)){
+            $type = 1;
+        }
         //获取用户和账户信息
         $where['a.id'] = $user_id;
         $user_info = db('users')
             ->alias('a')
             ->join(config('database.prefix').'user_currency_account b','a.id = b.user_id','left')
-            ->field('a.*,b.cash_currency_num')
+            ->field('a.*,b.cash_currency_num,b.rate,b.consume_num')
             ->where($where)
             ->find();
 
@@ -181,8 +327,7 @@ class Finance extends Common{
         $rate = $user_info['rate']; //汇率
         //可提人民币
         $cny_num =  bcmul($cash_currency_num, $rate, 2);
-        //bonus 设置
-        $principal_recall = db('bonus_ext_set')->where(['id' => 1])->field('extract_num,extract_deduction_ratio')->find();
+
         //账户类型
         $currency = db('currency')->select();
         $currency_arr = [];
@@ -200,6 +345,7 @@ class Finance extends Common{
         $this->assign('currency_arr', $currency_arr); //钱包类型
         $this->assign('bank_list', $bank_list);       //银行列表
         $this->assign('cash_method', $cash_method);       //提现方式
+        $this->assign('type', $type);       //访问选择tab
         return $this->fetch('applyCash');
 
     }
@@ -207,7 +353,12 @@ class Finance extends Common{
     //报备提现信息
     public function userWithtrawInformation()
     {
-        
+        $user_id = session('user.id');
+        $user_info = db('users')->where(['id' => $user_id])->find();
+        $bank_list = db('bank')->select();
+        $this->assign('user_info', $user_info);
+        $this->assign('bank_list', $bank_list);
+        return $this->fetch('userWithtrawInformation');
     }
 
     //动态奖转阿美币动态列表

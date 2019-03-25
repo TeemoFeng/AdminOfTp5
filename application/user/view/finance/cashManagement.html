@@ -7,7 +7,7 @@
     <div class="layui-tab layui-tab-brief" lay-filter="userAccount">
         <ul class="layui-tab-title">
             <li class="layui-this">{$currency_arr[0]}</li>
-            <li>{$currency_arr[1]}</li>
+            <li>{$currency_arr[2]}</li>
         </ul>
         <div class="layui-tab-content" style="height: 100px;">
             <div class="layui-tab-item layui-show">
@@ -62,10 +62,12 @@
 </script>
 
 
-<script type="text/html" id="topBtn">
-    <a href="{:url('applyCash')}" class="layui-btn layui-btn-normal layui-btn-sm">申请提现</a>
+<script type="text/html" id="topBtn1">
+    <a href="{:url('applyCash',array('type' => 1))}" class="layui-btn layui-btn-normal layui-btn-sm">申请提现</a>
 </script>
-
+<script type="text/html" id="topBtn2">
+    <a href="{:url('applyCash',array('type' => 2))}" class="layui-btn layui-btn-normal layui-btn-sm">申请提现</a>
+</script>
 {include file="common2/foot"/}
 <script>
     layui.use(['table','form','laydate','element'], function() {
@@ -78,7 +80,7 @@
                 url: '{:url("cashManagement")}',
                 where: {'account_type':_type},
                 method: 'post',
-                toolbar: '#topBtn',
+                toolbar: '#topBtn'+_type,
                 page: true,
                 cols: [[
                     {checkbox:true,fixed: true},
