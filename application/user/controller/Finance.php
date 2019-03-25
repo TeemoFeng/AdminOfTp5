@@ -8,8 +8,9 @@
 namespace app\user\controller;
 
 use app\admin\model\ApplyCash;
+use app\user\model\UserApplyCash;
 use app\user\model\UserRunningLog;
-
+use think\db\Where;
 class Finance extends Common{
     public function initialize(){
         parent::initialize();
@@ -65,7 +66,7 @@ class Finance extends Common{
 
     public function makeSearch($data)
     {
-        $where = [];
+        $where = new Where();
         $where['a.account_type'] = 1;
         if(!empty($data['account_type'])){
             $where['a.account_type'] = $data['account_type']; //流水类型
@@ -97,6 +98,7 @@ class Finance extends Common{
     //币种转换
     public function currencyConversion()
     {
+        $user_id = session('user.id');
         if(request()->isPost()){
             $data = input('post.');
             if(empty($data['change_currency'])){
@@ -105,12 +107,23 @@ class Finance extends Common{
             if(empty($data['change_num'])){
                 return ['code' => 0, 'msg' => '转换数量不能为空'];
             }
+            if((int)$data['change_num'] > (int)$data['cash_currency_num']){
+                return ['code' => 0, 'msg' => '转换数量不能超过刷过沙特链余额'];
+            }
 
+            //记录币种转换日志
+//            UserRunningLog::create([
+//                'user_id'  =>  $user_id,
+//                'about_id' =>  $user_id,
+//                'running_type'  => UserRunningLog::TYPE34,
+//                'account_type'  => 1,
+//                'change_num'    => -$shoxufei,
+//                'balance'       => $cash_currency_num,
+//                'create_time'   => time()
+//            ]);
 
 
         }
-
-        $user_id = session('user.id');
 
         //查询用户钱包
         $user_purse = db('user_currency_account')->where(['user_id' => $user_id])->find();
@@ -140,13 +153,57 @@ class Finance extends Common{
         foreach ($currency as $key => $val){
             $currency_arr[] = $val['name'];
         }
+
         $status = ApplyCash::$status;
         $this->assign('currency_arr', $currency_arr);
         $this->assign('status', $status);
         return $this->fetch('cashManagement');
         
     }
-    
+
+    //申请提现
+    public function applyCash()
+    {
+
+
+        $user_id = session('user.id');
+        //获取用户和账户信息
+        $where['a.id'] = $user_id;
+        $user_info = db('users')
+            ->alias('a')
+            ->join(config('database.prefix').'user_currency_account b','a.id = b.user_id','left')
+            ->field('a.*,b.cash_currency_num')
+            ->where($where)
+            ->find();
+
+        //用户可提现的人民币数值
+        $cash_currency_num = $user_info['cash_currency_num']; //可提现的沙特数
+        $rate = $user_info['rate']; //汇率
+        //可提人民币
+        $cny_num =  bcmul($cash_currency_num, $rate, 2);
+        //bonus 设置
+        $principal_recall = db('bonus_ext_set')->where(['id' => 1])->field('extract_num,extract_deduction_ratio')->find();
+        //账户类型
+        $currency = db('currency')->select();
+        $currency_arr = [];
+        foreach ($currency as $key => $val){
+            $currency_arr[] = $val['name'];
+        }
+        //银行列表
+        $bank_list = db('bank')->select();
+        //提现方式
+        $cash_method = UserApplyCash::$cash_method;
+        $this->assign('user_info', $user_info);
+        $this->assign('cny_num', $cny_num); //可提人民币
+        $this->assign('rate', $rate); //该用户汇率
+        $this->assign('principal_recall', $principal_recall); //该用户汇率
+        $this->assign('currency_arr', $currency_arr); //钱包类型
+        $this->assign('bank_list', $bank_list);       //银行列表
+        $this->assign('cash_method', $cash_method);       //提现方式
+        return $this->fetch('applyCash');
+
+    }
+
     //报备提现信息
     public function userWithtrawInformation()
     {

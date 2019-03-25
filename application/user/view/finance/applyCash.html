@@ -1,0 +1,245 @@
+{include file="common2/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <blockquote class="layui-elem-quote">提现手续费{$principal_recall['extract_deduction_ratio']}%,最少{$principal_recall['extract_num']}枚可提现,10的整数倍可提,兑换比例1美金={$rate}人民币</blockquote>
+
+
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">{$currency_arr[0]}</li>
+            <li>{$currency_arr[1]}</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form " lay-filter="form">
+
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <div class="layui-field-box">
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">余额(枚$)</label>
+                                <div class="layui-input-4 layui-inline">
+                                    <input type="text" name="cash_currency_num" id="cash_currency_num"  placeholder="" class="layui-input" disabled value="{$user_info['cash_currency_num']}">
+                                </div>
+
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">可提人民币</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="cny_num"  id="cny_num" placeholder="" disabled class="layui-input" value="{$cny_num}">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">提取数量(枚)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="extract_num" lay-verify="extract_num" placeholder="" class="layui-input" value="">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">手机号(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="mobile" lay-verify="mobile" disabled placeholder="" class="layui-input" value="{$user_info['mobile']}">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">支付宝账户(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="alipay_account" lay-verify="alipay_account" disabled placeholder="" class="layui-input" value="{$user_info['alipay_account']}">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">银行账户(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="bank_account" lay-verify="bank_account" disabled placeholder="" class="layui-input" value="{$user_info['bank_account']}">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">银行(必填)</label>
+                                <div class="layui-input-4">
+                                    <select name="bank_id" lay-verify="required">
+                                        <option value="">请选择</option>
+                                        {foreach $bank_list as $key => $val}
+                                        <option value="{$val['id']}" {if condition="$user_info['bank_id'] eq $val['id']"}selected{/if} >{$val['name']}</option>
+                                        {/foreach}
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">开户行地址(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="bank_desc" lay-verify="bank_desc"  placeholder="" class="layui-input" value="{$user_info['bank_desc']}">
+                                </div>
+                            </div>
+
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">开户名(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="bank_user" lay-verify="bank_user"  placeholder="" class="layui-input" value="{$user_info['bank_user']}">
+                                </div>
+                            </div>
+
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">提现方式</label>
+                                <div class="layui-input-4">
+                                    <select name="cash_method" lay-verify="required">
+                                        <option value="">请选择</option>
+                                        {foreach $cash_method as $key => $val}
+                                        <option value="{$key}" >{$val}</option>
+                                        {/foreach}
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <input type="hidden" name="user_id" value="{$user_info['id']}" >
+                            <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">确定</button>
+                            <a href="{:url('currencyConversion')}" class="layui-btn layui-btn-primary">返回</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="layui-tab-item">
+                <form class="layui-form " lay-filter="form">
+
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <div class="layui-field-box">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">余额(枚$)</label>
+                                <div class="layui-input-4 layui-inline">
+                                    <input type="text" name="cash_currency_num2" id="cash_currency_num2"  placeholder="" class="layui-input" disabled value="{$user_info['cash_currency_num']}">
+                                </div>
+
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">提取数量(枚)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="extract_num2" lay-verify="extract_num2" placeholder="" class="layui-input" value="">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">手机号(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="transaction_num" lay-verify="cash_input_num" disabled placeholder="" class="layui-input" value="{$user_purse['transaction_num']}">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">支付宝账户(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="corpus" lay-verify="cash_input_num" disabled placeholder="" class="layui-input" value="{$user_purse['corpus']}">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">银行账户(必填)</label>
+                                <div class="layui-input-4">
+                                    <select name="change_currency" lay-verify="required">
+                                        <option value="">请选择</option>
+                                        {foreach $change_currency as $key => $val}
+                                        <option value="{$key}">{$val}</option>
+                                        {/foreach}
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">银行(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="change_num" lay-verify="change_num"  placeholder="" class="layui-input" value="">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">开户行地址(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="change_num" lay-verify="change_num"  placeholder="" class="layui-input" value="">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">开户名(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="change_num" lay-verify="change_num"  placeholder="" class="layui-input" value="">
+                                </div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">提现方式(必填)</label>
+                                <div class="layui-input-4">
+                                    <input type="text" name="change_num" lay-verify="change_num"  placeholder="" class="layui-input" value="">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">确定</button>
+                            <a href="{:url('currencyConversion')}" class="layui-btn layui-btn-primary">返回</a>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{include file="common2/foot"/}
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, layer = layui.layer,$= layui.jquery;
+        form.verify({
+            change_num : function (value, item) { //手机验证可以直接采用lay-verify
+                if(value.length < 1){
+                    return '转换金额不能为空';
+                }
+                var cash_currency_num = $('#cash_currency_num').val();
+                if(Number(value) > Number(cash_currency_num)){
+                    return '转换数量数量不能大于沙特链余额';
+                }
+            }
+        });
+
+
+        //提交表单
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+
+            $.post('{:url("currencyConversion")}', data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        })
+
+
+
+    });
+</script>

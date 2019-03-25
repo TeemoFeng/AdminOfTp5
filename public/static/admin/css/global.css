@@ -10,8 +10,6 @@
 .site-tree{width: 220px; min-height: 900px; padding: 5px 0 20px;}
 .site-content{width: 899px; min-height: 900px; padding: 20px 0 10px 20px;}
 
-/*2019-1-8新增span提示 ywf*/
-.tishi{color: #FF5722;}
 
 /* 头部 */admin-side-toggle
 .header{height: 65px; border-bottom: 1px solid #404553;  background-color: #393D49; color: #fff;}

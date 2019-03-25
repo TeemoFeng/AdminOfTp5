@@ -174,7 +174,7 @@ class Finance extends Common
             $where  = $this->makeSearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
-            $list = db('apply_cash')
+            $list = db('user_apply_cash')
                 ->alias('a')
                 ->join(config('database.prefix').'users u','a.user_id = u.id','left')
                 ->field('a.*,u.mobile,u.username,u.alipay')
