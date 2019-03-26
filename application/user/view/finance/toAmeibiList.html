@@ -1,0 +1,73 @@
+{include file="common2/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>动态奖转阿美币列表</legend>
+    </fieldset>
+    <div class="demoTable">
+        <div class="layui-inline">
+
+            <div class="layui-inline">
+                <input type="text" name="start_date" id="start_time" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+            </div>
+
+            <div class="layui-inline">
+                <input type="text" name="end_date" id="end_time" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+            </div>
+
+        </div>
+
+        <button class="layui-btn" id="search" data-type="reload">搜索</button>
+        <a href="{:url('toAmeibiList')}" class="layui-btn">显示全部</a>
+
+    </div>
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+
+{include file="common2/foot"/}
+<script>
+    layui.use(['table','form','laydate'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery, laydate = layui.laydate;
+
+        var tableIn = table.render({
+            id: 'user',
+            elem: '#list',
+            url: '{:url("toAmeibiList")}',
+            method: 'post',
+            page: true,
+            cols: [[
+                {checkbox:true,fixed: true},
+                {field: 'id', title: 'id', width: 50, fixed: true},
+                {field: 'usernum', title: '用户编号', width: 100, fixed: true},
+                {field: 'username', title: '用户名', width: 100, fixed: true},
+                {field: 'dynamic_bonus', title: '动态奖金$', width: 120, fixed: true},
+                {field: 'rate', title: '1$=￥汇率', width: 150,hide:true},
+                {field: 'ameibi_price', title: '阿美币价格￥', width: 100},
+                {field: 'ameibi_num', title: '应发阿美币数量', width: 100},
+                {field: 'status', title: '状态', width: 100},
+                {field: 'create_time', title: '创建时间', width: 100},
+                {field: 'grant_time', title: '发放时间', width: 100},
+                {field: 'remark', title: '备注', width: 100},
+            ]],
+            limit: 10 //每页默认显示的数量
+        });
+
+        //搜索
+        $('#search').on('click', function() {
+            var start_time = $('#start_time1').val();
+            var end_time = $('#end_time1').val();
+            tableIn.reload({ page: {page: 1},where: {start_time: start_time,end_time:end_time}});
+        });
+        // 执行一个laydate实例
+        laydate.render({
+            elem: '#start_time' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time' //指定元素
+        });
+
+
+    });
+</script>
+</body>
+</html>

@@ -2,16 +2,16 @@
 /**
  * Created by PhpStorm.
  * User: Uroaming
- * Date: 2019/3/25
- * Time: 14:19
+ * Date: 2019/3/26
+ * Time: 17:57
  */
+
 namespace app\user\model;
 
 use think\Model;
 
-class UserApplyCash extends Model
+class UserApplyTradeCash extends Model
 {
-    //用户提现方式
     public static $cash_method = [
         1 => '银行卡提现',
     ];

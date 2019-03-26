@@ -21,12 +21,12 @@ class Index extends Common{
     {
 
         // 获取缓存数据
-        $authRule = cache('UserAuthRule');
-//        cache('UserAuthRule', null);
+        $authRule = cache('userAuthRule');
+//        cache('userAuthRule', null);
         if(!$authRule){
             //2019-3-20添加区分前后台权限
             $authRule = db('user_auth_rule')->where(['menustatus'=>1])->order('sort')->select();
-            cache('UserAuthRule', $authRule, 3600);
+            cache('userAuthRule', $authRule, 3600);
         }
         //声明数组
         $menus = array();

@@ -17,21 +17,21 @@
 
                             <fieldset class="layui-elem-field layui-field-title">
                                 <div class="layui-field-box">
-                                    
+
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">支付宝账户(必填)</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="alipay_account" lay-verify="alipay_account" disabled placeholder="" class="layui-input" value="{$user_info['alipay_account']}">
+                                            <input type="text" name="alipay_account" lay-verify="required"  placeholder="" class="layui-input" value="">
                                         </div>
                                     </div>
 
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">银行(必填)</label>
                                         <div class="layui-input-block">
-                                            <select name="bank_id" lay-verify="required" disabled>
+                                            <select name="bank_id" lay-verify="required">
                                                 <option value="">请选择</option>
                                                 {foreach $bank_list as $key => $val}
-                                                <option value="{$val['id']}" {if condition="$user_info['bank_id'] eq $val['id']"}selected{/if} >{$val['bank_name']}</option>
+                                                <option value="{$val['id']}" >{$val['bank_name']}</option>
                                                 {/foreach}
 
                                             </select>
@@ -48,24 +48,27 @@
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">银行账户</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="bank_account" lay-verify="required" disabled disabled placeholder="" class="layui-input" value="{$user_info['bank_account']}">
+                                            <input type="text" name="bank_account" lay-verify="required"   placeholder="" class="layui-input" value="">
                                         </div>
                                     </div>
 
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">开户行地址(必填)</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="bank_desc" lay-verify="required" disabled  placeholder="" class="layui-input" value="{$user_info['bank_desc']}">
+                                            <input type="text" name="bank_desc" lay-verify="required"   placeholder="" class="layui-input" value="">
                                         </div>
-                                    </div>
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label"></label>
-                                        <h1 style="color: #FF5722;">已报备，可提现</h1>
                                     </div>
 
                                 </div>
-                            </fieldset>
 
+                            </fieldset>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <input type="hidden" name="user_id" value="{$user_info['id']}" >
+                                    <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">提交</button>
+                                </div>
+
+                            </div>
                         </form>
 
 
@@ -83,5 +86,20 @@
     layui.use(['form', 'layer','element'], function () {
         var form = layui.form, layer = layui.layer, $ = layui.jquery, element = layui.element;
 
+        //提交表单
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+
+            $.post('{:url("userWithtrawInformation")}', data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        })
     });
 </script>

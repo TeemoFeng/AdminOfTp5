@@ -1,0 +1,95 @@
+{include file="common2/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <blockquote class="layui-elem-quote">本金账户撤资转换现金币，需扣除{$principal_recall}%的手续费，现金币兑换阿美币，按此时阿美币价格转换多少阿美币</blockquote>
+
+    <form class="layui-form " lay-filter="form">
+
+        <fieldset class="layui-elem-field layui-field-title">
+            <div class="layui-field-box">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">沙特链余额</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="cash_currency_num" id="cash_currency_num"  placeholder="" class="layui-input" disabled value="{$user_purse['cash_currency_num']}">
+                    </div>
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">本金账户余额</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="corpus"  id="corpus" lay-verify="corpus" disabled placeholder="" class="layui-input" value="{$user_purse['corpus']}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">转换关系</label>
+                    <div class="layui-input-4">
+                        <select name="change_currency" lay-verify="required">
+                            <option value="">请选择</option>
+                            {foreach $change_currency as $key => $val}
+                            <option value="{$key}">{$val}</option>
+                            {/foreach}
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">转换金额</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="change_num" lay-verify="change_num"  placeholder="" class="layui-input" value="">
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">确定</button>
+                <a href="{:url('currencyConversion')}" class="layui-btn layui-btn-primary">返回</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{include file="common2/foot"/}
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, layer = layui.layer,$= layui.jquery;
+        form.verify({
+            change_num : function (value, item) { //手机验证可以直接采用lay-verify
+                if(value.length < 1){
+                    return '转换金额不能为空';
+                }
+                var corpus = $('#corpus').val();
+                if(Number(value) > Number(corpus)){
+                    return '转换数量数量不能大于本金余额';
+                }
+            }
+        });
+
+
+        //提交表单
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+
+            $.post('{:url("corpusConvert")}', data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        })
+
+
+
+    });
+</script>

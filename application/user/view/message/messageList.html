@@ -1,0 +1,100 @@
+{include file="common2/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>信息列表</legend>
+    </fieldset>
+
+    <div class="layui-tab layui-tab-brief" lay-filter="userMessage">
+        <ul class="layui-tab-title">
+            <li class="layui-this">发件箱</li>
+            <li>收件箱</li>
+        </ul>
+        <div class="layui-tab-content" style="height: 100px;">
+            <div class="layui-tab-item layui-show">
+                <table class="layui-table" id="table1" lay-filter="table1"></table>
+            </div>
+            <div class="layui-tab-item">
+
+                <table class="layui-table" id="table2" lay-filter="table2"></table>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/html" id="action">
+    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">详情</a>
+    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">已读</a>
+</script>
+
+{include file="common2/foot"/}
+<script>
+    layui.use(['table','form','laydate','element'], function() {
+        var table = layui.table,form = layui.form, $ = layui.jquery, laydate = layui.laydate, element = layui.element;
+
+        var show_table = function(_type){
+            table.render({
+                id: 'table'+_type,
+                elem: '#table'+_type,
+                url: '{:url("messageList")}',
+                where: {'type':_type},
+                method: 'post',
+                page: true,
+                cols: [[
+                    {checkbox:true,fixed: true},
+                    {field: 'id', title: 'id', width: 100, fixed: true},
+                    {field: 'title', title: '标题', width: 200, fixed: true},
+                    {field: 'from_user', title: '发件人', width: 200},
+                    {field: 'to_user', title: '收件人', width: 200},
+                    {field: 'create_time', title: '录入时间', width: 200},
+                    {field: 'response_time', title: '最后回复时间', width: 200},
+                    {title:'操作', width: 100, align: 'center', toolbar: '#action'}
+                ]],
+                limit: 10 //每页默认显示的数量
+            });
+        };
+
+
+        //搜索
+        // $('#search1').on('click', function() {
+        //     var key = $('#key1').val();
+        //     var start_time = $('#start_time1').val();
+        //     var end_time = $('#end_time1').val();
+        //     var running_type = $('#status1').val();
+        //     // if($.trim(key)==='') {
+        //     //     layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
+        //     //     return;
+        //     // }
+        //     table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1}})
+        // });
+        //
+        // //搜索2
+        // $('#search2').on('click', function() {
+        //     var key = $('#key2').val();
+        //     var start_time = $('#start_time2').val();
+        //     var end_time = $('#end_time2').val();
+        //     var running_type = $('#status2').val();
+        //     table.reload('table2',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:2}})
+        // });
+
+        show_table(1);
+
+        element.on('tab(userMessage)', function (data) {
+            if(data.index == 0) {
+                // $('#key1').val('');
+                // $('#start_time1').val('');
+                // $('#end_time1').val('');
+                // $('#status1').val('');
+                show_table(1);
+            }else if(data.index == 1){
+                show_table(2);
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

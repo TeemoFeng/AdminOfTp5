@@ -8,6 +8,7 @@
 namespace app\user\controller;
 
 use app\user\model\UserRunningLog;
+use think\db\Where;
 
 class User extends Common{
     public function initialize(){
@@ -49,7 +50,7 @@ class User extends Common{
     //搜索条件
     public function makeSearch($data)
     {
-        $where = [];
+        $where = $where = new Where();
         if(!empty($data['status'])){
             $where['a.status'] = $data['status'];
         }
@@ -60,7 +61,7 @@ class User extends Common{
             $where['a.create_time'] = array('elt',$data['end_time']);
         }
         if(!empty($data['start_time']) && !empty($data['end_time'])){
-            $where['a.create_time'] = array('between', array($data['start_time'], $data['end_time']));
+            $where['a.create_time'] = array('between time', array($data['start_time'], $data['end_time']));
         }
         if(!empty($data['key'])){
             $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');

@@ -7,8 +7,10 @@
     <div class="layui-tab layui-tab-brief" lay-filter="userAccount">
         <ul class="layui-tab-title">
             <li class="layui-this">{$currency_arr[0]}</li>
+            <li>{$currency_arr[1]}</li>
             <li>{$currency_arr[2]}</li>
             <li>{$currency_arr[3]}</li>
+            <li>{$currency_arr[4]}</li>
         </ul>
         <div class="layui-tab-content" style="height: 100px;">
             <div class="layui-tab-item layui-show">
@@ -17,7 +19,7 @@
                         <div class="layui-inline">
                             <select name="status1" lay-verify="required" id="status1" lay-search>
                                 <option value="">请选择</option>
-                                {foreach $status as $key => $val}
+                                {foreach $running_type as $key => $val}
                                 <option value="{$key}">{$val}</option>
                                 {/foreach}
                             </select>
@@ -49,7 +51,7 @@
                         <div class="layui-inline">
                             <select name="status" lay-verify="required" id="status2" lay-search>
                                 <option value="">请选择</option>
-                                {foreach $status as $key => $val}
+                                {foreach $running_type as $key => $val}
                                 <option value="{$key}">{$val}</option>
                                 {/foreach}
                             </select>
@@ -82,7 +84,7 @@
                         <div class="layui-inline">
                             <select name="status" lay-verify="required" id="status3" lay-search>
                                 <option value="">请选择</option>
-                                {foreach $status as $key => $val}
+                                {foreach $running_type as $key => $val}
                                 <option value="{$key}">{$val}</option>
                                 {/foreach}
                             </select>
@@ -108,6 +110,72 @@
                 <table class="layui-table" id="table3" lay-filter="table3"></table>
 
             </div>
+            <div class="layui-tab-item">
+
+                <div class="demoTable layui-form">
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <select name="status" lay-verify="required" id="status4" lay-search>
+                                <option value="">请选择</option>
+                                {foreach $running_type as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="start_date4" id="start_time4" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="end_date4" id="end_time4" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                    </div>
+
+                    <div class="layui-inline">
+                        <input class="layui-input" name="key4" id="key4" placeholder="请输入关键字">
+
+                    </div>
+                    <button class="layui-btn" id="search4" data-type="reload">搜索</button>
+
+                </div>
+                <table class="layui-table" id="table4" lay-filter="table4"></table>
+
+            </div>
+            <div class="layui-tab-item">
+
+                <div class="demoTable layui-form">
+                    <div class="layui-inline">
+                        <div class="layui-inline">
+                            <select name="status" lay-verify="required" id="status5" lay-search>
+                                <option value="">请选择</option>
+                                {foreach $running_type as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="start_date5" id="start_time5" lay-verify="date" placeholder="开始时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="end_date5" id="end_time5" lay-verify="date" placeholder="结束时间" autocomplete="off" class="layui-input">
+                        </div>
+
+                    </div>
+
+                    <div class="layui-inline">
+                        <input class="layui-input" name="key5" id="key5" placeholder="请输入关键字">
+
+                    </div>
+                    <button class="layui-btn" id="search5" data-type="reload">搜索</button>
+
+                </div>
+                <table class="layui-table" id="table5" lay-filter="table5"></table>
+
+            </div>
         </div>
     </div>
 
@@ -115,17 +183,13 @@
 </div>
 
 <script type="text/html" id="action">
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">详情</a>
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">删除</a>
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">拒绝</a>
+    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">查看备注</a>
 
 </script>
 
 
 <script type="text/html" id="topBtn">
-    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="delAll">批量删除</button>
-    <a href="{:url('register')}" class="layui-btn layui-btn-normal layui-btn-sm">批量批准</a>
-    <a href="{:url('register')}" class="layui-btn layui-btn-warm layui-btn-sm">直接批准（不提交到第四方）</a>
+
 </script>
 
 {include file="common/foot"/}
@@ -157,28 +221,42 @@
         laydate.render({
             elem: '#end_time3' //指定元素
         });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time4' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time4' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time5' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time5' //指定元素
+        });
 
         var show_table = function(_type){
             table.render({
                 id: 'table'+_type,
                 elem: '#table'+_type,
-                url: '{:url("applicationForCash")}',
+                url: '{:url("financialFlow")}',
                 where: {'account_type':_type},
                 method: 'post',
                 toolbar: '#topBtn',
                 page: true,
                 cols: [[
                     {checkbox:true,fixed: true},
-                    {field: 'id', title: 'id', width: 50, fixed: true},
+                    {field: 'id', title: 'id', width: 100, fixed: true},
                     {field: 'username', title: '用户', width: 200, fixed: true},
-                    {field: 'amount', title: '提现金额($)', width: 100},
-                    {field: 'cash_method', title: '提现方式', width: 100},
-                    {field: 'transfer_fee', title: '手续费', width: 100},
-                    {field: 'real_amount', title: '到账金额', width: 100},
-                    {field: 'alipay', title: '支付宝账户', width: 100},
-                    {field: 'status_str', title: '状态', width: 150},
-                    {field: 'create_time', title: '申请时间', width: 150},
-                    {title:'操作', width: 300, align: 'center', toolbar: '#action'}
+                    {field: 'about_user', title: '相关用户', width: 200},
+                    {field: 'running_type', title: '流水类型', width: 200},
+                    {field: 'change_num', title: '变更数量', width: 200},
+                    {field: 'balance', title: '余额', width: 200},
+                    {field: 'create_time', title: '流水时间', width: 100},
+                    {title:'操作', width: 100, align: 'center', toolbar: '#action'}
                 ]],
                 limit: 10 //每页默认显示的数量
             });
@@ -216,7 +294,23 @@
             table.reload('table3',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:3}})
         });
 
+        //搜索4
+        $('#search4').on('click', function() {
+            var key = $('#key4').val();
+            var start_time = $('#start_time4').val();
+            var end_time = $('#end_time4').val();
+            var running_type = $('#status4').val();
+            table.reload('table4',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:4}})
+        });
 
+        //搜索5
+        $('#search5').on('click', function() {
+            var key = $('#key5').val();
+            var start_time = $('#start_time5').val();
+            var end_time = $('#end_time5').val();
+            var running_type = $('#status5').val();
+            table.reload('table5',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:5}})
+        });
 
         show_table(1);
 
@@ -253,49 +347,6 @@
                 show_table(5);
             }
         });
-
-
-
-        //删除一条记录
-        table.on('tool(list)', function(obj) {
-            var data = obj.data;
-            if (obj.event === 'del') {
-                layer.confirm('您确定要删除吗？', function(index){
-                    var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("{:url('applyCashDel')}",{id:data.id},function(res){
-                        layer.close(loading);
-                        if(res.code===1){
-                            layer.msg(res.msg,{time:1000,icon:1});
-                            tableIn.reload();
-                        }else{
-                            layer.msg('操作失败！',{time:1000,icon:2});
-                        }
-                    });
-                    layer.close(index);
-                });
-            }
-        });
-
-        $('body').on('click','#delAll',function() {
-            layer.confirm('确认要删除选中信息吗？', {icon: 3}, function(index) {
-                layer.close(index);
-                var checkStatus = table.checkStatus('user'); //user即为参数id设定的值
-                var ids = [];
-                $(checkStatus.data).each(function (i, o) {
-                    ids.push(o.id);
-                });
-                var loading = layer.load(2, {shade: [0.1, '#fff']});
-                $.post("{:url('applyCashDelall')}", {ids: ids}, function (data) {
-                    layer.close(loading);
-                    if (data.code === 1) {
-                        layer.msg(data.msg, {time: 1000, icon: 1});
-                        tableIn.reload();
-                    } else {
-                        layer.msg(data.msg, {time: 1000, icon: 2});
-                    }
-                });
-            });
-        })
 
     });
 </script>

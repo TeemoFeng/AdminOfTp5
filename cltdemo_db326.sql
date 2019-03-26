@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : local
+Source Server         : localhost_3306
 Source Server Version : 50553
 Source Host           : localhost:3306
 Source Database       : cltdemo_db
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2019-03-26 00:06:44
+Date: 2019-03-26 18:03:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -203,10 +203,10 @@ CREATE TABLE `clt_auth_rule` (
 -- ----------------------------
 INSERT INTO `clt_auth_rule` VALUES ('1', 'System', '系统设置', '1', '1', '0', 'icon-cogs', '', '0', '0', '1446535750', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('2', 'System/system', '系统设置', '1', '1', '0', '', '', '1', '1', '1446535789', '1', '1');
-INSERT INTO `clt_auth_rule` VALUES ('3', 'Database/database', '数据库管理', '1', '1', '0', 'icon-database', '', '0', '2', '1446535805', '1', '1');
+INSERT INTO `clt_auth_rule` VALUES ('3', 'Database/database', '数据库管理', '1', '1', '0', 'icon-database', '', '0', '50', '1446535805', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('4', 'Database/restore', '还原数据库', '1', '1', '0', '', '', '3', '10', '1446535750', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('5', 'Database/database', '数据库备份', '1', '1', '0', '', '', '3', '1', '1446535834', '1', '1');
-INSERT INTO `clt_auth_rule` VALUES ('7', 'Category', '栏目管理', '1', '1', '0', 'icon-list', '', '0', '4', '1446535875', '1', '1');
+INSERT INTO `clt_auth_rule` VALUES ('7', 'Category', '栏目管理', '1', '1', '0', 'icon-list', '', '0', '50', '1446535875', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('9', 'Category/index', '栏目列表', '1', '1', '0', '', '', '7', '0', '1446535750', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('13', 'Category/edit', '操作-修改', '1', '1', '0', '', '', '9', '3', '1446535750', '1', '0');
 INSERT INTO `clt_auth_rule` VALUES ('14', 'Category/add', '操作-添加', '1', '1', '0', '', '', '9', '0', '1446535750', '1', '0');
@@ -216,7 +216,7 @@ INSERT INTO `clt_auth_rule` VALUES ('17', 'Auth/adminGroup', '用户组列表', 
 INSERT INTO `clt_auth_rule` VALUES ('18', 'Auth/adminRule', '权限管理', '1', '1', '0', '', '', '15', '2', '1446535750', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('23', 'Help/soft', '软件下载', '1', '1', '0', '', '', '22', '50', '1446711421', '0', '1');
 INSERT INTO `clt_auth_rule` VALUES ('27', 'Users', '会员管理', '1', '1', '0', 'icon-user', '', '0', '5', '1447231507', '1', '1');
-INSERT INTO `clt_auth_rule` VALUES ('28', 'Function', '网站功能', '1', '1', '0', 'icon-cog', '', '0', '6', '1447231590', '1', '1');
+INSERT INTO `clt_auth_rule` VALUES ('28', 'Function', '网站功能', '1', '1', '0', 'icon-cog', '', '0', '11', '1447231590', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('29', 'Users/index', '会员列表', '1', '1', '0', '', '', '27', '10', '1447232085', '1', '1');
 INSERT INTO `clt_auth_rule` VALUES ('31', 'Link/index', '友情链接', '1', '1', '0', '', '', '28', '2', '1447232183', '0', '1');
 INSERT INTO `clt_auth_rule` VALUES ('32', 'Link/add', '操作-添加', '1', '1', '0', '', '', '31', '1', '1447639935', '0', '0');
@@ -286,7 +286,7 @@ INSERT INTO `clt_auth_rule` VALUES ('181', 'Auth/groupState', '操作-状态', '
 INSERT INTO `clt_auth_rule` VALUES ('182', 'Users/groupEdit', '操作-修改', '1', '1', '0', '', '', '38', '15', '1461834780', '1', '0');
 INSERT INTO `clt_auth_rule` VALUES ('183', 'Ad/editType', '操作-修改', '1', '1', '0', '', '', '46', '2', '1461834988', '1', '0');
 INSERT INTO `clt_auth_rule` VALUES ('188', 'Plug/donation', '捐赠列表', '1', '1', '0', '', '', '187', '50', '1466563673', '0', '1');
-INSERT INTO `clt_auth_rule` VALUES ('189', 'Module', '模型管理', '1', '1', '0', 'icon-ungroup', '', '0', '3', '1466825363', '0', '1');
+INSERT INTO `clt_auth_rule` VALUES ('189', 'Module', '模型管理', '1', '1', '0', 'icon-ungroup', '', '0', '50', '1466825363', '0', '1');
 INSERT INTO `clt_auth_rule` VALUES ('190', 'Module/index', '模型列表', '1', '1', '0', '', '', '189', '1', '1466826681', '0', '1');
 INSERT INTO `clt_auth_rule` VALUES ('192', 'Module/edit', '操作-修改', '1', '1', '0', '', '', '190', '2', '1467007920', '0', '0');
 INSERT INTO `clt_auth_rule` VALUES ('193', 'Module/add', '操作-添加', '1', '1', '0', '', '', '190', '1', '1467007955', '0', '0');
@@ -335,9 +335,9 @@ INSERT INTO `clt_auth_rule` VALUES ('269', 'Plugin/index', '第三方', '1', '1'
 INSERT INTO `clt_auth_rule` VALUES ('270', 'System/email', '邮箱配置', '1', '1', '0', '', '', '1', '2', '1502331829', '0', '1');
 INSERT INTO `clt_auth_rule` VALUES ('272', 'Debris/type', '碎片分类', '1', '1', '1', '', '', '196', '3', '1504082720', '0', '1');
 INSERT INTO `clt_auth_rule` VALUES ('278', 'Feast/index', '节日气氛', '1', '1', '1', '', '', '267', '50', '1532416207', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('279', 'Direct', '直销管理', '1', '1', '0', 'icon-paste', '', '0', '50', '1552116282', null, '1');
+INSERT INTO `clt_auth_rule` VALUES ('279', 'Direct', '直销管理', '1', '1', '0', 'icon-paste', '', '0', '6', '1552116282', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('280', 'Direct/index', '直销制度', '1', '1', '1', '', '', '279', '50', '1552116458', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('281', 'Finance', '财务管理', '1', '1', '1', 'icon-clipboard', '', '0', '50', '1552312528', null, '1');
+INSERT INTO `clt_auth_rule` VALUES ('281', 'Finance', '财务管理', '1', '1', '1', 'icon-clipboard', '', '0', '6', '1552312528', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('282', 'Finance/convert', '动态奖转阿美币列表', '1', '1', '1', '', '', '281', '50', '1552312629', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('283', 'Finance/lockPosition', '转账锁仓列表', '1', '1', '1', '', '', '281', '50', '1552312726', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('284', 'Finance/bonusStatistics', '奖金统计', '1', '1', '1', '', '', '281', '50', '1552312796', null, '1');
@@ -351,7 +351,6 @@ INSERT INTO `clt_auth_rule` VALUES ('291', 'Users/userTree', '直推架构树', 
 INSERT INTO `clt_auth_rule` VALUES ('292', 'Users/register', '新用户注册', '1', '1', '1', '', '', '27', '50', '1552742637', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('293', 'Users/userChart', '会员概况图示', '1', '1', '1', '', '', '27', '50', '1552802104', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('294', 'Users/userContact', '会员接点图', '1', '1', '1', '', '', '27', '50', '1552831344', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('296', 'User', '会员管理', '2', '1', '1', 'icon-user', '', '0', '1', '1553097902', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('297', 'Auth/userRule', '会员管理权限', '1', '1', '1', '', '', '15', '50', '1553176063', null, '1');
 
 -- ----------------------------
@@ -4692,7 +4691,9 @@ CREATE TABLE `clt_users` (
   `npid` int(10) NOT NULL DEFAULT '0' COMMENT '接点关系',
   `have_tree` tinyint(2) NOT NULL DEFAULT '0' COMMENT '有没有子tree,直推图用到',
   `create_time` date NOT NULL DEFAULT '0000-00-00' COMMENT '创建时间',
-  `baodan_center` tinyint(2) NOT NULL,
+  `baodan_center` tinyint(2) DEFAULT '0' COMMENT '保单中心 1设置保单中心，0取消保单中心',
+  `is_report` tinyint(2) DEFAULT '0' COMMENT '是否报备银行 0未报备，1报备',
+  `enabled` tinyint(2) DEFAULT '0' COMMENT '是否有效：0无效，1有效',
   PRIMARY KEY (`id`),
   KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
@@ -4700,18 +4701,18 @@ CREATE TABLE `clt_users` (
 -- ----------------------------
 -- Records of clt_users
 -- ----------------------------
-INSERT INTO `clt_users` VALUES ('1', '', '123@qq.com', 'e10adc3949ba59abbe56e057f20f883e', '', null, '1', '0', '1552320022', '0', '0', '', '', '44311', '0', '', null, null, '/uploads/20180613/fcb729987d8e9339bd9b2e85c85f3028.jpg', '24', '311', '2599', '0', 'chichu', '1', '0', '', '不要应为走得太远，就忘了当初为什么出发！', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '0', '0', '1', '2019-03-12', '0');
-INSERT INTO `clt_users` VALUES ('2', '1234', '', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552406420', '0', '0', '', '', '11111111111', '0', '', null, null, null, '0', '0', '0', '0', 'ywf01', '2', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '1', '1', '1', '2019-03-13', '0');
-INSERT INTO `clt_users` VALUES ('3', '123', '', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552492820', '0', '0', '', '', '11111111112', '0', '', null, null, null, '0', '0', '0', '0', 'ywf02', '3', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '1', '1', '0', '2019-03-14', '0');
-INSERT INTO `clt_users` VALUES ('5', '111', '', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552579220', '0', '0', '', '', '11111111114', '0', '', null, null, null, '0', '0', '0', '0', 'ywfa', '4', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '2', '2', '0', '2019-03-15', '0');
-INSERT INTO `clt_users` VALUES ('6', '12345', '97633852@qq.com', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '1', '0', '1552665600', '0', '0', '', '', '11111111115', '0', '', null, null, null, '2', '52', '503', '0', 'yangpingping', '5', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '0', '5', '0', '2019-03-16', '0');
-INSERT INTO `clt_users` VALUES ('7', 'vip2019030', '1109305987@qq.com', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552826664', '0', '0', '', '', '12345678911', '0', '', null, null, null, '0', '0', '0', '0', 'dfdfdf', '1', '0', '', '', '1', 'vip2019030827838', '0.00', '0.00', '0.00', '123456', '', '', '0', '', '', '', '0', '3', '0', '2019-03-17', '0');
+INSERT INTO `clt_users` VALUES ('1', '', '123@qq.com', 'e10adc3949ba59abbe56e057f20f883e', '', null, '1', '0', '1552320022', '0', '0', '', '', '44311', '0', '', null, null, '/uploads/20180613/fcb729987d8e9339bd9b2e85c85f3028.jpg', '24', '311', '2599', '0', 'chichu', '1', '0', '', '不要应为走得太远，就忘了当初为什么出发！', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '0', '0', '1', '2019-03-12', '0', '0', '0');
+INSERT INTO `clt_users` VALUES ('2', '1234', '', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552406420', '0', '0', '', '', '11111111111', '0', '', null, null, null, '0', '0', '0', '0', 'ywf01', '2', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '1', '1', '1', '2019-03-13', '0', '0', '0');
+INSERT INTO `clt_users` VALUES ('3', '123', '', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552492820', '0', '0', '', '', '11111111112', '0', '', null, null, null, '0', '0', '0', '0', 'ywf02', '3', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '1', '1', '0', '2019-03-14', '0', '0', '0');
+INSERT INTO `clt_users` VALUES ('5', '111', '', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552579220', '0', '0', '', '', '11111111114', '0', '', null, null, null, '0', '0', '0', '0', 'ywfa', '4', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '2', '2', '0', '2019-03-15', '0', '0', '0');
+INSERT INTO `clt_users` VALUES ('6', '12345', '97633852@qq.com', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '1', '0', '1552665600', '0', '0', '', '', '11111111115', '0', '', null, null, null, '2', '52', '503', '0', 'yangpingping', '5', '0', '', '', '0', '', '0.00', '0.00', '0.00', '', '', '', '0', '', '', '', '0', '5', '0', '2019-03-16', '0', '0', '0');
+INSERT INTO `clt_users` VALUES ('7', 'vip2019030', '1109305987@qq.com', 'e10adc3949ba59abbe56e057f20f883e', '123456', null, '0', '0', '1552826664', '0', '0', '', '', '12345678911', '0', '', null, null, null, '0', '0', '0', '0', 'dfdfdf', '1', '0', '', '', '1', 'vip2019030827838', '0.00', '0.00', '0.00', '123456', '', '', '0', '', '', '', '0', '3', '0', '2019-03-17', '0', '0', '0');
 
 -- ----------------------------
--- Table structure for clt_user_apply_cash
+-- Table structure for clt_user_apply_consume_cash
 -- ----------------------------
-DROP TABLE IF EXISTS `clt_user_apply_cash`;
-CREATE TABLE `clt_user_apply_cash` (
+DROP TABLE IF EXISTS `clt_user_apply_consume_cash`;
+CREATE TABLE `clt_user_apply_consume_cash` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL DEFAULT '0' COMMENT '申请提现用户id',
   `currency_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT '提现类型',
@@ -4721,11 +4722,56 @@ CREATE TABLE `clt_user_apply_cash` (
   `poundage` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '手续费',
   `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '申请状态，1未审核，2已审核，3未通过',
   `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '提现时间',
+  `cash_method` tinyint(3) DEFAULT '0' COMMENT '提现方式',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of clt_user_apply_cash
+-- Records of clt_user_apply_consume_cash
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for clt_user_apply_shate_cash
+-- ----------------------------
+DROP TABLE IF EXISTS `clt_user_apply_shate_cash`;
+CREATE TABLE `clt_user_apply_shate_cash` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) NOT NULL DEFAULT '0' COMMENT '申请提现用户id',
+  `currency_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT '提现类型',
+  `cash_num` decimal(10,4) NOT NULL DEFAULT '0.0000' COMMENT '提现数量',
+  `cash_sum` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '提现金额',
+  `real_sum` decimal(10,2) DEFAULT NULL,
+  `poundage` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '手续费',
+  `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '申请状态，1未审核，2已审核，3未通过',
+  `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '提现时间',
+  `cash_method` tinyint(3) DEFAULT '0' COMMENT '提现方式',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of clt_user_apply_shate_cash
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for clt_user_apply_trade_cash
+-- ----------------------------
+DROP TABLE IF EXISTS `clt_user_apply_trade_cash`;
+CREATE TABLE `clt_user_apply_trade_cash` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) NOT NULL DEFAULT '0' COMMENT '申请提现用户id',
+  `currency_type` tinyint(2) NOT NULL DEFAULT '0' COMMENT '提现类型',
+  `cash_num` decimal(10,4) NOT NULL DEFAULT '0.0000' COMMENT '提现数量',
+  `cash_sum` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '提现金额',
+  `real_sum` decimal(10,2) DEFAULT NULL,
+  `poundage` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '手续费',
+  `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '申请状态，1未审核，2已审核，3未通过',
+  `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '提现时间',
+  `cash_method` tinyint(3) DEFAULT '0' COMMENT '提现方式',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of clt_user_apply_trade_cash
 -- ----------------------------
 
 -- ----------------------------
@@ -4747,7 +4793,7 @@ CREATE TABLE `clt_user_auth_rule` (
   `zt` int(1) DEFAULT NULL,
   `menustatus` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of clt_user_auth_rule
@@ -4758,14 +4804,21 @@ INSERT INTO `clt_user_auth_rule` VALUES ('3', 'User/notActivate', '未激活列�
 INSERT INTO `clt_user_auth_rule` VALUES ('4', 'User/userTree', '直推架构树', '1', '1', '0', '', '', '1', '50', '1553178138', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('5', 'User/originReset', '原点复投', '1', '1', '0', '', '', '1', '50', '1553178210', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('7', 'User/withdraw', '撤回复投', '1', '1', '0', '', '', '1', '50', '1553178755', null, '1');
-INSERT INTO `clt_user_auth_rule` VALUES ('8', 'Finance', '财务管理', '1', '1', '0', 'icon-clipboard', '', '0', '50', '1553340731', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('8', 'Finance', '财务管理', '1', '1', '0', 'icon-clipboard', '', '0', '11', '1553340731', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('9', 'Finance/runningAccount', '财务流水', '1', '1', '0', '', '', '8', '1', '1553340948', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('10', 'Finance/currencyConversion', '币种转换', '1', '1', '0', '', '', '8', '2', '1553341047', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('11', 'Finance/cashManagement', '提现管理', '1', '1', '0', '', '', '8', '3', '1553341133', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('12', 'Finance/userWithtrawInformation', '报备提现信息', '1', '1', '0', '', '', '8', '4', '1553341278', null, '1');
-INSERT INTO `clt_user_auth_rule` VALUES ('14', 'toAmeibiList', '动态奖转阿美币动态列表', '1', '1', '0', '', '', '8', '5', '1553341417', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('14', 'Finance/toAmeibiList', '动态奖转阿美币动态列表', '1', '1', '0', '', '', '8', '5', '1553341417', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('15', 'Finance/corpusConvert', '本金转换', '1', '1', '0', '', '', '8', '6', '1553341566', null, '1');
 INSERT INTO `clt_user_auth_rule` VALUES ('16', 'Finance/aMeibiLogList', '阿美币记录列表', '1', '1', '0', '', '', '8', '7', '1553341647', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('17', 'Message', '信息中心', '1', '1', '0', 'icon-mail', '', '0', '12', '1553580866', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('18', 'Set', '个人中心', '1', '1', '0', 'icon-user-tie', '', '0', '13', '1553580951', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('19', 'Bourse', '交易所', '1', '1', '0', 'icon-fire', '', '0', '14', '1553581098', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('20', 'Set/index', '修改资料', '1', '1', '0', '', '', '18', '50', '1553581167', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('21', 'Message/publish', '发布信息', '1', '1', '0', '', '', '17', '1', '1553581225', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('22', 's', '信息列表', '1', '1', '0', '', '', '17', '2', '1553581258', null, '1');
+INSERT INTO `clt_user_auth_rule` VALUES ('23', 'Bourse/index', '交易中心', '1', '1', '0', '', '', '19', '1', '1553581296', null, '1');
 
 -- ----------------------------
 -- Table structure for clt_user_currency_account
@@ -4788,6 +4841,28 @@ CREATE TABLE `clt_user_currency_account` (
 -- Records of clt_user_currency_account
 -- ----------------------------
 INSERT INTO `clt_user_currency_account` VALUES ('1', '1', '4.0000', '91.0000', '10000.0000', '0.0000', '0.0000', '0.0000', '7.00');
+
+-- ----------------------------
+-- Table structure for clt_user_dynamic_amei_bonus
+-- ----------------------------
+DROP TABLE IF EXISTS `clt_user_dynamic_amei_bonus`;
+CREATE TABLE `clt_user_dynamic_amei_bonus` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) NOT NULL,
+  `dynamic_bonus` decimal(10,4) NOT NULL DEFAULT '0.0000' COMMENT '动态奖金',
+  `rate` decimal(5,2) DEFAULT '0.00' COMMENT '本次汇率',
+  `ameibi_price` decimal(5,2) DEFAULT '0.00' COMMENT '阿美币价格',
+  `ameibi_num` decimal(5,4) DEFAULT '0.0000',
+  `status` tinyint(3) DEFAULT NULL COMMENT '状态，1冻结，2已发放，3未发放',
+  `create_time` date DEFAULT '0000-00-00' COMMENT '创建时间',
+  `grant_time` date DEFAULT '0000-00-00' COMMENT '发放时间',
+  `remark` varchar(500) DEFAULT '' COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of clt_user_dynamic_amei_bonus
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for clt_user_level
@@ -4813,6 +4888,28 @@ INSERT INTO `clt_user_level` VALUES ('2', '铜牌会员', '2', '501', '1000', '6
 INSERT INTO `clt_user_level` VALUES ('3', '白银会员', '3', '1001', '2000', '8', '0.50', 'F2');
 INSERT INTO `clt_user_level` VALUES ('4', '黄金会员', '4', '2001', '3500', '10', '2.50', 'F3');
 INSERT INTO `clt_user_level` VALUES ('5', '钻石会员', '5', '3501', '5500', '12', '5.00', 'F4');
+
+-- ----------------------------
+-- Table structure for clt_user_message
+-- ----------------------------
+DROP TABLE IF EXISTS `clt_user_message`;
+CREATE TABLE `clt_user_message` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `from_id` int(10) NOT NULL DEFAULT '0' COMMENT '发件人',
+  `to_id` int(10) DEFAULT '0' COMMENT '管理员id',
+  `title` varchar(300) NOT NULL DEFAULT '' COMMENT '标题',
+  `content` tinytext COMMENT '内容',
+  `type` tinyint(2) DEFAULT '1' COMMENT '1用户来信，2管理员回信',
+  `status` tinyint(4) DEFAULT '1' COMMENT '0删除，1正常',
+  `is_read` tinyint(3) NOT NULL DEFAULT '0' COMMENT '状态0未读，1已读',
+  `create_time` datetime DEFAULT '0000-00-00 00:00:00' COMMENT '录入时间',
+  `response_time` datetime DEFAULT '0000-00-00 00:00:00' COMMENT '回复时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of clt_user_message
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for clt_user_node

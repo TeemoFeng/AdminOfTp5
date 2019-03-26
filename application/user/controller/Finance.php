@@ -9,7 +9,11 @@ namespace app\user\controller;
 
 use app\admin\model\ApplyCash;
 use app\user\model\UserApplyCash;
+use app\user\model\UserApplyConsumeCash;
+use app\user\model\UserApplyShateCash;
+use app\user\model\UserDynamicAmeiBonus;
 use app\user\model\UserRunningLog;
+use app\user\model\Users;
 use think\Db;
 use think\db\Where;
 use think\Request;
@@ -196,7 +200,6 @@ class Finance extends Common{
                 //加入提现表
                 $save = [
                     'user_id' => $user_id,
-                    'currency_type' => 1, //沙特链
                     'cash_num' => $data['extract_num'], //提取数量
                     'cash_sum' => $data['extract_num'], //提现金额就是提取数量 $
                     'real_sum' => $real_sum,//到账金额
@@ -210,7 +213,7 @@ class Finance extends Common{
                     'cash_currency_num' => $cash_currency_num
                 ];
                 Db::startTrans();
-                if(UserApplyCash::create($save)){
+                if(UserApplyShateCash::create($save)){
                     //记录log
                     $log = [
                         'user_id'  =>  $user_id,
@@ -231,6 +234,7 @@ class Finance extends Common{
                         Db::commit();
                     }else{
                         Db::rollback();
+                        return ['code' => 0, 'msg' => '申请失败，请重试'];
                     }
                     return ['code' => 1, 'msg' => '申请成功'];
                 }else{
@@ -260,7 +264,6 @@ class Finance extends Common{
                 //加入提现表
                 $save = [
                     'user_id' => $user_id,
-                    'currency_type' => 3, //消费钱包
                     'cash_num' => $data['consume_num'], //提取数量
                     'cash_sum' => $data['consume_num'], //提现金额就是提取数量 $
                     'real_sum' => $real_sum,//到账金额
@@ -275,7 +278,7 @@ class Finance extends Common{
                 ];
 
                 Db::startTrans();
-                if(UserApplyCash::create($save)){
+                if(UserApplyConsumeCash::create($save)){
                     //记录log
                     $log = [
                         'user_id'  =>  $user_id,
@@ -296,6 +299,7 @@ class Finance extends Common{
                         Db::commit();
                     }else{
                         Db::rollback();
+                        return ['code' => 0, 'msg' => '申请失败，请重试'];
                     }
                     return ['code' => 1, 'msg' => '申请成功'];
                 }else{
@@ -353,29 +357,165 @@ class Finance extends Common{
     //报备提现信息
     public function userWithtrawInformation()
     {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['alipay_account']) || empty($data['bank_id']) || empty($data['bank_user']) || empty($data['bank_account']) || empty($data['user_id'])){
+                return ['code' => 0, 'msg' => '缺少必填项'];
+            }
+            $userModel = new Users();
+            $res = $userModel->allowField(['alipay_account','bank_id','bank_user','bank_account','bank_desc'])->save($data, ['id' => $data['user_id']]);
+            if($res === false){
+                return ['code' => 0, 'msg' => '保存失败，请重试'];
+            }
+            return ['code' => 1, 'msg' => '保存成功'];
+
+        }
         $user_id = session('user.id');
         $user_info = db('users')->where(['id' => $user_id])->find();
         $bank_list = db('bank')->select();
         $this->assign('user_info', $user_info);
         $this->assign('bank_list', $bank_list);
-        return $this->fetch('userWithtrawInformation');
+        //判断用户是否报备银行
+        if($user_info['is_report'] == 0){
+            return $this->fetch('userWithtrawInformationForm');
+        }else{
+            return $this->fetch('userWithtrawInformation');
+
+        }
+
+    }
+
+
+    //本金转换
+    public function corpusConvert()
+    {
+        $user_id = session('user_id');
+        $principal_recall = db('bonus_ext_set')->where(['id' => 1])->field('principal_recall')->find();
+
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['change_num'])){
+                return ['code' => 0, 'msg' => '转换数量不能为空'];
+            }
+            //查询用户消费钱包数量
+            $user_account = db('user_currency_account')->where(['user_id' => $user_id])->find();
+            if(bccomp($data['change_num'],$user_account['corpus'],4) == 1){
+                return ['code' => 0, 'msg' => '提取数量不能大于本金余额'];
+            }
+
+            //沙特链余额增加，本金账户余额减少
+            $corpus = bcsub($user_account['corpus'], $data['change_num'], 4); //本金账户减去扣除的
+            $rate = 1-$principal_recall['principal_recall']/100;
+            $real_num = bcmul($data['change_num'], $rate, 4);
+            $poundage = bcsub($data['change_num'], $real_num, 4); //手续扣除
+            $cash_currency_num = bcadd($user_account['cash_currency_num'], $real_num, 4); //实际装换多少沙特链
+            Db::startTrans();
+            $res = db('user_currency_account')->where(['user_id' => $user_id])->update(['cash_currency_num' => $cash_currency_num, 'corpus' => $corpus]);
+            if($res !== false){
+                //记录log
+                $log = [
+                    'user_id'  =>  $user_id,
+                    'about_id' =>  $user_id,
+                    'running_type'  => UserRunningLog::TYPE24, //转换手续费
+                    'account_type'  => 5,
+                    'change_num'    => -$poundage,
+                    'balance'       => $cash_currency_num,
+                    'create_time'   => time()
+                ];
+                //用户转换之后失去所有收益，变成无效会员
+               $res2 = db('users')->where(['id' => $user_id])->update(['enabled' => 0]);
+                if($res2 === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '转换失败，请重试'];
+                }
+
+                if(UserRunningLog::create($log)){
+                    Db::commit();
+                }else{
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '转换失败，请重试'];
+                }
+                return ['code' => 1, 'msg' => '转换成功'];
+            }else{
+                Db::rollback();
+                return ['code' => 0, 'msg' => '转换失败，请重试'];
+            }
+
+        }
+
+        //查询用户钱包
+        $user_purse = db('user_currency_account')->where(['user_id' => $user_id])->find();
+        if(empty($user_purse)){
+            $user_purse ['cash_currency_num'] = 0.0000; //沙特链余额
+            $user_purse ['corpus'] = 0.0000;            //用户本金账户余额
+        }
+
+        $change_currency[1] = '本金账户100%转换沙特链';
+        $this->assign('change_currency', $change_currency);
+        $this->assign('user_purse', $user_purse);
+        $this->assign('principal_recall', $principal_recall['principal_recall']); //转换扣除比例
+
+        return $this->fetch('corpusConvert');
     }
 
     //动态奖转阿美币动态列表
     public function toAmeibiList()
     {
+        //获取用户动态转阿美币的列表
+        if(request()->isPost()){
+            $data   = input('post.');
+            $where  = $this->makeSearch2($data);
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+
+            $user_id = session('user.id');
+            $where['a.user_id'] = $user_id;
+
+            //根绝用户id获取推荐的人员信息
+            $list = db('user_dynamic_amei_bonus')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->field('a.*,u.usernum,u.username')
+                ->where($where)
+                ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                ->toArray();
+            foreach ($list['data'] as $k=>$v){
+                $list['data'][$k]['status'] = UserDynamicAmeiBonus::$status[$v['status']];
+            }
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+        }
+
+        return $this->fetch('toAmeibiList');
 
     }
-    
-    //本金转换
-    public function corpusConvert()
+
+    //搜索条件
+    public function makeSearch2($data)
     {
-        
+        $where = new Where();
+        if(!empty($data['status'])){
+            $where['a.status'] = $data['status'];
+        }
+        if(!empty($data['start_time']) && empty($data['end_time'])){
+            $where['a.create_time'] = array('egt', $data['start_time']);
+        }
+        if(!empty($data['end_time']) && empty($data['start_time'])){
+            $where['a.create_time'] = array('elt',$data['end_time']);
+        }
+        if(!empty($data['start_time']) && !empty($data['end_time'])){
+            $where['a.create_time'] = array('between time', array($data['start_time'], $data['end_time']));
+        }
+        if(!empty($data['key'])){
+            $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
+        }
+        return $where;
     }
 
     //阿美币记录列表
     public function aMeibiLogList()
-    {}
+    {
+        return $this->fetch('aMeibiLogList');
+    }
 
 
 }

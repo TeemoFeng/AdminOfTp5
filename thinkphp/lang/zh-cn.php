@@ -92,7 +92,7 @@ return [
 
     'The middleware must return Response instance'              => '中间件方法必须返回Response对象实例',
     'The queue was exhausted, with no response returned'        => '中间件队列为空',
-    // Validate Error Message
+    // Validate Error UserMessage
     ':attribute require'                                        => ':attribute不能为空',
     ':attribute must'                                           => ':attribute必须',
     ':attribute must be numeric'                                => ':attribute必须是数字',

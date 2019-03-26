@@ -64,7 +64,7 @@
                                     <select name="bank_id" lay-verify="required">
                                         <option value="">请选择</option>
                                         {foreach $bank_list as $key => $val}
-                                        <option value="{$val['id']}" {if condition="$user_info['bank_id'] eq $val['id']"}selected{/if} >{$val['name']}</option>
+                                        <option value="{$val['id']}" {if condition="$user_info['bank_id'] eq $val['id']"}selected{/if} >{$val['bank_name']}</option>
                                         {/foreach}
 
                                     </select>
