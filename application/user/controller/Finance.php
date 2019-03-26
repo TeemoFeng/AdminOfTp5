@@ -153,6 +153,54 @@ class Finance extends Common{
     //提现管理
     public function cashManagement()
     {
+        if(request()->isPost()){
+            $user_id = session('user.id');
+            $data = input('post.');
+            if(empty($user_id) || empty($data['type'])){
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+            if($data['type'] == 1){
+                //沙特链申请列表
+                $where['a.user_id'] = $user_id;
+                $list = db('user_apply_shate_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+            }
+
+            if($data['type'] == 2){
+                //消费钱包申请列表
+                $where['a.user_id'] = $user_id;
+                $list = db('user_apply_consume_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+            }
+
+        }
 
         //账户类型
         $currency = db('currency')->select();
@@ -341,7 +389,7 @@ class Finance extends Common{
         //银行列表
         $bank_list = db('bank')->select();
         //提现方式
-        $cash_method = UserApplyCash::$cash_method;
+        $cash_method = UserApplyShateCash::$cash_method;
         $this->assign('user_info', $user_info);
         $this->assign('cny_num', $cny_num); //可提人民币
         $this->assign('rate', $rate); //该用户汇率

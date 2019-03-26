@@ -158,25 +158,26 @@
             elem: '#end_time3' //指定元素
         });
 
-        var show_table = function(_type){
+        function show_table(_type){
             table.render({
                 id: 'table'+_type,
                 elem: '#table'+_type,
                 url: '{:url("applicationForCash")}',
-                where: {'account_type':_type},
+                where: {'type':_type},
                 method: 'post',
                 toolbar: '#topBtn',
                 page: true,
                 cols: [[
                     {checkbox:true,fixed: true},
                     {field: 'id', title: 'id', width: 50, fixed: true},
-                    {field: 'username', title: '用户', width: 200, fixed: true},
-                    {field: 'amount', title: '提现金额($)', width: 100},
+                    {field: 'usernum', title: '用户编号', width: 200, fixed: true},
+                    {field: 'username', title: '用户名', width: 200, fixed: true},
+                    {field: 'cash_sum', title: '提现金额($)', width: 100},
                     {field: 'cash_method', title: '提现方式', width: 100},
-                    {field: 'transfer_fee', title: '手续费', width: 100},
-                    {field: 'real_amount', title: '到账金额', width: 100},
-                    {field: 'alipay', title: '支付宝账户', width: 100},
-                    {field: 'status_str', title: '状态', width: 150},
+                    {field: 'poundage', title: '手续费', width: 100},
+                    {field: 'real_sum', title: '到账金额', width: 100},
+                    {field: 'alipay_account', title: '支付宝账户', width: 100},
+                    {field: 'status', title: '状态', width: 150},
                     {field: 'create_time', title: '申请时间', width: 150},
                     {title:'操作', width: 300, align: 'center', toolbar: '#action'}
                 ]],
@@ -184,18 +185,71 @@
             });
         };
 
+        function show_table2(_type){
+            table.render({
+                id: 'table'+_type,
+                elem: '#table'+_type,
+                url: '{:url("applicationForCash")}',
+                where: {'type':_type},
+                method: 'post',
+                toolbar: '#topBtn',
+                page: true,
+                cols: [[
+                    {checkbox:true,fixed: true},
+                    {field: 'id', title: 'id', width: 50, fixed: true},
+                    {field: 'usernum', title: '用户编号', width: 200, fixed: true},
+                    {field: 'username', title: '用户名', width: 200, fixed: true},
+                    {field: 'cash_sum', title: '提现金额($)', width: 100},
+                    {field: 'cash_method', title: '提现方式', width: 100},
+                    {field: 'poundage', title: '手续费', width: 100},
+                    {field: 'real_sum', title: '到账金额', width: 100},
+                    {field: 'alipay_account', title: '支付宝账户', width: 100},
+                    {field: 'status', title: '状态', width: 150},
+                    {field: 'create_time', title: '申请时间', width: 150},
+                    {title:'操作', width: 300, align: 'center', toolbar: '#action'}
+                ]],
+                limit: 10 //每页默认显示的数量
+            });
+        };
+
+        function show_table3(_type){
+            table.render({
+                id: 'table'+_type,
+                elem: '#table'+_type,
+                url: '{:url("applicationForCash")}',
+                where: {'type':_type},
+                method: 'post',
+                toolbar: '#topBtn',
+                page: true,
+                cols: [[
+                    {checkbox:true,fixed: true},
+                    {field: 'id', title: 'id', width: 50, fixed: true},
+                    {field: 'usernum', title: '用户编号', width: 200, fixed: true},
+                    {field: 'username', title: '用户名', width: 200, fixed: true},
+                    {field: 'cash_sum', title: '提现金额($)', width: 100},
+                    {field: 'cash_method', title: '提现方式', width: 100},
+                    {field: 'poundage', title: '手续费', width: 100},
+                    {field: 'real_sum', title: '到账金额', width: 100},
+                    {field: 'alipay_account', title: '支付宝账户', width: 100},
+                    {field: 'status', title: '状态', width: 150},
+                    {field: 'create_time', title: '申请时间', width: 150},
+                    {title:'操作', width: 300, align: 'center', toolbar: '#action'}
+                ]],
+                limit: 10 //每页默认显示的数量
+            });
+        };
 
         //搜索
         $('#search1').on('click', function() {
             var key = $('#key1').val();
             var start_time = $('#start_time1').val();
             var end_time = $('#end_time1').val();
-            var running_type = $('#status1').val();
+            var status = $('#status1').val();
             // if($.trim(key)==='') {
             //     layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
             //     return;
             // }
-            table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1}})
+            table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status,type:1}})
         });
 
         //搜索2
@@ -203,8 +257,8 @@
             var key = $('#key2').val();
             var start_time = $('#start_time2').val();
             var end_time = $('#end_time2').val();
-            var running_type = $('#status2').val();
-            table.reload('table2',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:2}})
+            var status = $('#status2').val();
+            table.reload('table2',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status,type:2}})
         });
 
         //搜索3
@@ -212,8 +266,8 @@
             var key = $('#key3').val();
             var start_time = $('#start_time3').val();
             var end_time = $('#end_time3').val();
-            var running_type = $('#status3').val();
-            table.reload('table3',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:3}})
+            var status = $('#status3').val();
+            table.reload('table3',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status,type:3}})
         });
 
 
@@ -225,32 +279,19 @@
                 $('#key1').val('');
                 $('#start_time1').val('');
                 $('#end_time1').val('');
-                $('#status1').val('');
                 show_table(1);
             }else if(data.index == 1){
                 $('#key2').val('');
                 $('#start_time2').val('');
                 $('#end_time2').val('');
                 $('#status2').val('');
-                show_table(2);
+                show_table2(2);
             }else if(data.index == 2){
                 $('#key3').val('');
                 $('#start_time3').val('');
                 $('#end_time3').val('');
                 $('#status3').val('');
-                show_table(3);
-            }else if(data.index == 3){
-                $('#key4').val('');
-                $('#start_time4').val('');
-                $('#end_time4').val('');
-                $('#status4').val('');
-                show_table(4);
-            }else if(data.index == 4){
-                $('#key5').val('');
-                $('#start_time5').val('');
-                $('#end_time5').val('');
-                $('#status5').val('');
-                show_table(5);
+                show_table3(3);
             }
         });
 

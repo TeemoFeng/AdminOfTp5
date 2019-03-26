@@ -10,6 +10,7 @@ use app\admin\model\ApplyCash;
 use app\admin\model\ApplyRecharge;
 use app\admin\model\Currency;
 use app\admin\model\CurrencyRecharge;
+use app\user\model\UserApplyShateCash;
 use app\user\model\UserRunningLog;
 use think\Db;
 use think\db\Where;
@@ -217,20 +218,60 @@ class Finance extends Common
             $where  = $this->makeSearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
-            $list = db('apply_recharge')
-                ->alias('a')
-                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                ->field('a.*,u.mobile,u.username')
-                ->where($where)
-                ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
-                ->order('a.id desc')
-                ->toArray();
-            $cash_method = ApplyRecharge::$recharge_method;
-            array_walk($list, function (&$v) use($status,$cash_method) {
-                $v['status_str']  = $status[$v['status']];
-                $v['apply_method'] = $cash_method[$v['recharge_method']];
-            });
-            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+            if($data['type'] == 1){
+                //沙特链申请列表
+                $list = db('user_apply_shate_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+            }
+
+            if($data['type'] == 2){
+                //消费钱包申请列表
+                $list = db('user_apply_consume_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+            }
+
+            if($data['type'] == 3){
+                //交易账号申请列表
+                $list = db('user_apply_trade_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+            }
 
         }
 
@@ -241,18 +282,22 @@ class Finance extends Common
     //搜索
     public function makeSearch($data)
     {
-        $where = [];
+        $where = new Where();
         if(!empty($data['status'])){
             $where['a.status'] = $data['status'];
         }
         if(!empty($data['start_time']) && empty($data['end_time'])){
-            $where['a.create_time'] = array('egt', $data['start_time']);
+            $start_time = strtotime($data['start_time']);
+            $where['a.create_time'] = array('egt', $start_time);
         }
         if(!empty($data['end_time']) && empty($data['start_time'])){
-            $where['a.create_time'] = array('elt',$data['end_time']);
+            $end_time = strtotime($data['end_time']);
+            $where['a.create_time'] = array('elt',$end_time);
         }
         if(!empty($data['start_time']) && !empty($data['end_time'])){
-            $where['a.create_time'] = array('between', array($data['start_time'], $data['end_time']));
+            $start_time = strtotime($data['start_time']);
+            $end_time = strtotime($data['end_time']);
+            $where['a.create_time'] = array('between time', array($start_time, $end_time));
         }
         if(!empty($data['key'])){
             $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
@@ -289,20 +334,60 @@ class Finance extends Common
             $where  = $this->makeSearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
-            $list = db('user_apply_cash')
-                ->alias('a')
-                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                ->field('a.*,u.mobile,u.username,u.alipay')
-                ->where($where)
-                ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
-                ->order('a.id desc')
-                ->toArray();
-            $cash_method = ApplyRecharge::$recharge_method;
-            array_walk($list, function (&$v) use($status,$cash_method) {
-                $v['status_str']  = $status[$v['status']];
-                $v['cash_method'] = $cash_method[$v['cash_method']];
-            });
-            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+            if($data['type'] == 1){
+                //沙特链申请列表
+                $list = db('user_apply_shate_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+            }
+
+            if($data['type'] == 2){
+                //消费钱包申请列表
+                $list = db('user_apply_consume_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+            }
+
+            if($data['type'] == 3){
+                //交易账号申请列表
+                $list = db('user_apply_trade_cash')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->field('a.*,u.usernum,u.username')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+            }
 
         }
         $currency = db('currency')->select();
