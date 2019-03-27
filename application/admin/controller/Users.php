@@ -3,29 +3,80 @@ namespace app\admin\controller;
 use app\admin\model\UserNode;
 use app\admin\model\UserReferee;
 use app\admin\model\Users as UsersModel;
+use app\user\controller\User;
+use think\db\Where;
 use think\Validate;
 
 class Users extends Common{
     //会员列表
     public function index(){
         if(request()->isPost()){
-            $key=input('post.key');
-            $page =input('page')?input('page'):1;
-            $pageSize =input('limit')?input('limit'):config('pageSize');
+
+            $data   =input('post.');
+            $where  = $this->makeSearch($data);
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             $list=db('users')->alias('u')
                 ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-                ->field('u.*,ul.level_name')
-                ->where('u.email|u.mobile|u.username','like',"%".$key."%")
+                ->join(config('database.prefix').'user_currency_account c','c.user_id = u.id','left')
+                ->field('u.*,ul.level_name,c.cash_currency_num,c.cash_input_num,c.corpus,c.activation_num,c.consume_num,c.transaction_num')
+                ->where($where)
                 ->order('u.id desc')
                 ->paginate(array('list_rows'=>$pageSize,'page'=>$page))
                 ->toArray();
             foreach ($list['data'] as $k=>$v){
                 $list['data'][$k]['reg_time'] = date('Y-m-d H:s',$v['reg_time']);
+                $list['data'][$k]['status'] = UsersModel::$acstatus[$v['status']];
+                $list['data'][$k]['enabled'] = UsersModel::$vastatus[$v['enabled']];
+                $list['data'][$k]['baodan_center'] = UsersModel::$bdstatus[$v['baodan_center']];
+                $list['data'][$k]['is_report'] = UsersModel::$bdstatus[$v['$yhstatus']];
             }
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
         }
+
+        //status
+        $status = UsersModel::$status;
+        $this->assign('status', $status);
         return $this->fetch();
     }
+
+    //搜索
+    public function makeSearch($data)
+    {
+        $where = new Where();
+        if(!empty($data['status'])){
+            if($data['status'] == 1){
+                $where['u.enabled'] = 0; //无效会员
+            }
+            if($data['status'] ==2){
+                $where['u.enabled'] = 1; //有效会员
+            }
+            if($data['status'] == 3){
+                $where['u.is_lock'] = 1; //冻结会员
+            }
+            if($data['status'] == 4){
+                $where['u.baodan_center'] = 1; //报单中心
+            }
+        }
+        if(!empty($data['start_time']) && empty($data['end_time'])){
+            $start_time = strtotime($data['start_time']);
+            $where['u.reg_time'] = array('egt', $start_time);
+        }
+        if(!empty($data['end_time']) && empty($data['start_time'])){
+            $end_time = strtotime($data['end_time']);
+            $where['u.reg_time'] = array('elt',$end_time);
+        }
+        if(!empty($data['start_time']) && !empty($data['end_time'])){
+            $start_time = strtotime($data['start_time']);
+            $end_time = strtotime($data['end_time']);
+            $where['u.reg_time'] = array('between time', array($start_time, $end_time));
+        }
+        if(!empty($data['key'])){
+            $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
+        }
+        return $where;
+    }
+
     //设置会员状态
     public function usersState(){
         $id=input('post.id');
@@ -105,6 +156,24 @@ class Users extends Common{
         return $result;
     }
 
+    //访问前台
+
+
+    //会员详情
+    public function userDetail($id)
+    {
+        //获取用户信息
+        $user_info = UsersModel::get($id);
+        $user_currency_account = db('user_currency_account')->where(['user_id' => $id])->find();
+        $user_level = db('user_level')->where(['id' => $user_info['level_id']])->find();
+        $user_info['level_name'] = $user_level['level_name'];
+        $this->assign('user_info', $user_info);
+        $this->assign('user_currency_account', $user_currency_account);
+        return $this->fetch('userDetail');
+
+    }
+
+
     /***********************************会员组***********************************/
     public function userGroup(){
         if(request()->isPost()){
@@ -176,7 +245,7 @@ class Users extends Common{
 //            $district       = explode(':',$data['district']);
 //            $data['district'] = isset( $district[1]) ? $district[1] : '';
             if (empty($data['mobile'])) return ['code' => 0, 'msg' => '手机号不能为空'];
-            $check_user = UsersModel::get(['mobile' => $data['mobile']]);
+            $check_user = UsersModel::where(['mobile' => $data['mobile']])->find();
             if ($check_user) {
                 return $result = ['code' => 0, 'msg' => '该手机号已存在'];
             }
@@ -202,21 +271,35 @@ class Users extends Common{
 
             $data['password'] = md5($data['password']);
             //接入用户和推荐人关系
-            if (empty($data['referee'])) {
+            if ($data['referee'] == '0000') {
                 $data['pid'] = 0;
+                $data['referee'] = '0000|公司';
             } else {
                 //查询推荐人id
-               $referrr_info =  UsersModel::get(['referee' => $data['referee']]);
-               //查询接点人id
-               $node_info    = UsersModel::get(['contact_person' => $data['contact_person']]);
+               $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
                $data['pid'] = $referrr_info['id'];
-               $data['npid'] = $node_info['id'];
+               $data['referee'] = $referrr_info['usernum'] .'|' .$referrr_info['username'];
+
             }
 
+            if($data['contact_person'] == '0000'){
+                $data['npid'] = 0;
+                $data['contact_person'] = '0000|公司';
+            }else{
+                //查询接点人id
+                $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
+                $data['npid'] = $node_info['id'];
+                $data['contact_person'] = $node_info['usernum'] .'|' .$node_info['username'];
+            }
 
+            //是否报备银行
+            if(!empty($data['bank_id']) && !empty($data['bank_user']) && !empty($data['bank_account']) &&!empty($data['bank_desc'])){
+                $data['is_report'] = 1; //报备银行
+            }else{
+                $data['is_report'] = 0;
+            }
 
             $data['create_time'] = date('Y-m-d',time()); //添加时间方便做折线图
-
             $new_user_id = UsersModel::create($data);
             if ($new_user_id) {
                 //推荐人邀请成功用户，修改users表 have_tree 为1
@@ -249,9 +332,6 @@ class Users extends Common{
                 return ['code' => 0, 'msg' => '注册失败'];
             }
 
-
-
-
         } else {
             $province   = db('Region')->where ( array('pid'=>1) )->select ();
             $user_level = db('user_level')->order('sort')->select();
@@ -277,10 +357,10 @@ class Users extends Common{
         }
         if($type == 1){
             //推荐人
-            $where['referee'] = $search;
+            $where['usernum'] = $search;
         }else{
             //接点人
-            $where['contact_person'] = $search;
+            $where['usernum'] = $search;
         }
 
         $user_info = UsersModel::get($where);

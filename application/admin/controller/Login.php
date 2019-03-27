@@ -31,6 +31,7 @@ class Login extends Controller
     }
     public function verify(){
         $config =    [
+            'codeSet'     => '123456789',
             // 验证码字体大小
             'fontSize'    =>    25,
             // 验证码位数

@@ -12,7 +12,7 @@ layui.define(['element', 'common'], function (exports) {
             this.config = {
                 elem: undefined,
                 closed: true, //是否包含删除按钮
-                autoRefresh: false,
+                autoRefresh: true,
                 contextMenu: false,
                 onSwitch: undefined,
                 openWait: true
