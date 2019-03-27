@@ -352,15 +352,15 @@ INSERT INTO `clt_auth_rule` VALUES ('292', 'Users/register', '新用户注册', 
 INSERT INTO `clt_auth_rule` VALUES ('293', 'Users/userChart', '会员概况图示', '1', '1', '1', '', '', '27', '50', '1552802104', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('294', 'Users/userContact', '会员接点图', '1', '1', '1', '', '', '27', '50', '1552831344', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('297', 'Auth/userRule', '会员管理权限', '1', '1', '1', '', '', '15', '50', '1553176063', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('298', 'Currency', '币种管理', '1', '1', '1', 'icon-coin-dollar', '', '0', '50', '1553611800', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('299', 'Currency/currencyList', '币种列表', '1', '1', '1', '', '', '298', '50', '1553611847', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('300', 'Currency/userCurrency', '用户货币', '1', '1', '1', '', '', '298', '2', '1553611889', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('301', 'Currency/currencyRunLog', '币种流水记录', '1', '1', '1', '', '', '298', '3', '1553611941', null, '1');
+INSERT INTO `clt_auth_rule` VALUES ('298', 'currency', '币种管理', '1', '1', '1', 'icon-coin-dollar', '', '0', '50', '1553611800', null, '1');
+INSERT INTO `clt_auth_rule` VALUES ('299', 'currency/currencyList', '币种列表', '1', '1', '1', '', '', '298', '50', '1553611847', null, '1');
+INSERT INTO `clt_auth_rule` VALUES ('300', 'currency/userCurrency', '用户货币', '1', '1', '1', '', '', '298', '2', '1553611889', null, '1');
+INSERT INTO `clt_auth_rule` VALUES ('301', 'currency/currencyRunLog', '币种流水记录', '1', '1', '1', '', '', '298', '3', '1553611941', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('302', 'Trade', '交易管理', '1', '1', '1', 'icon-stats-dots', '', '0', '50', '1553612103', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('303', 'Trade/deputeList', '委托记录', '1', '1', '1', '', '', '302', '1', '1553612161', null, '1');
 INSERT INTO `clt_auth_rule` VALUES ('304', 'Trade/tradeList', '交易记录', '1', '1', '1', '', '', '302', '2', '1553612203', null, '1');
-INSERT INTO `clt_auth_rule` VALUES ('305', 'Currency/addCurrency', '添加货币', '1', '1', '1', '', '', '298', '50', '1553614383', null, '0');
-INSERT INTO `clt_auth_rule` VALUES ('306', 'Currency/editCurrency', '币种编辑', '1', '1', '1', '', '', '298', '50', '1553614496', null, '0');
+INSERT INTO `clt_auth_rule` VALUES ('305', 'currency/addCurrency', '添加货币', '1', '1', '1', '', '', '298', '50', '1553614383', null, '0');
+INSERT INTO `clt_auth_rule` VALUES ('306', 'currency/editCurrency', '币种编辑', '1', '1', '1', '', '', '298', '50', '1553614496', null, '0');
 
 -- ----------------------------
 -- Table structure for clt_bank

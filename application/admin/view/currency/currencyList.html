@@ -43,13 +43,13 @@
                 {field: 'name', title: '货币名称', width: 100, fixed: true},
                 {field: 'status', title: '上线状态', width: 120, fixed: true},
                 {field: 'trade_status', title: '交易状态', width: 100},
-                {field: 'draw_num', title: '最大(单次提币额度)', width: 150,hide:true},
-                {field: 'num', title: '发行总量', width: 250,templet:'#email'},
+                {field: 'draw_num', title: '最大(单次提币额度)', width: 150},
+                {field: 'num', title: '发行总量', width: 150,templet:'#email'},
                 {field: 'en_name', title: '英文标识', width: 100},
-                {field: 'virtual_trans', title: '24H虚拟成交量', width: 100},
-                {field: 'virtual_trans_num', title: '24虚拟成交额', width: 100},
-                {field: 'update_time', title: '修改时间', width: 100},
-                {title:'操作', width: 300, align: 'center', toolbar: '#action'}
+                {field: 'virtual_trans', title: '24H虚拟成交量', width: 150},
+                {field: 'virtual_trans_num', title: '24虚拟成交额', width: 150},
+                {field: 'update_time', title: '修改时间', width: 200},
+                {title:'操作', width: 200, align: 'center', toolbar: '#action'}
             ]],
             limit: 10 //每页默认显示的数量
         });
@@ -81,7 +81,7 @@
             if (obj.event === 'del') {
                 layer.confirm('您确定要删除吗？', function(index){
                     var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("{:url('usersDel')}",{id:data.id},function(res){
+                    $.post("{:url('delCurrency')}",{id:data.id},function(res){
                         layer.close(loading);
                         if(res.code===1){
                             layer.msg(res.msg,{time:1000,icon:1});
@@ -94,26 +94,8 @@
                 });
             }
         });
-        $('body').on('click','#delAll',function() {
-            layer.confirm('确认要删除选中信息吗？', {icon: 3}, function(index) {
-                layer.close(index);
-                var checkStatus = table.checkStatus('user'); //test即为参数id设定的值
-                var ids = [];
-                $(checkStatus.data).each(function (i, o) {
-                    ids.push(o.id);
-                });
-                var loading = layer.load(2, {shade: [0.1, '#fff']});
-                $.post("{:url('delall')}", {ids: ids}, function (data) {
-                    layer.close(loading);
-                    if (data.code === 1) {
-                        layer.msg(data.msg, {time: 1000, icon: 1});
-                        tableIn.reload();
-                    } else {
-                        layer.msg(data.msg, {time: 1000, icon: 2});
-                    }
-                });
-            });
-        })
+
+
     });
 </script>
 </body>
