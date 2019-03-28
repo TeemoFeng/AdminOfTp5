@@ -64,7 +64,7 @@
             <div class="layui-input-block">
                 <input type="hidden" name="type" value="2">
                 <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
-                <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+                <a href="{:url('currencyDeduction')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
             </div>
         </div>
     </form>
@@ -120,11 +120,11 @@
         form.on('submit(submit)', function (data) {
             var loading = layer.load(2, {shade: [0.1,'#fff']});
 
-            $.post('{:url("currencyRecharge")}', data.field, function (res) {
+            $.post('{:url("currencyDeduction")}', data.field, function (res) {
                 layer.close(loading);
                 if (res.code > 0) {
                     layer.msg(res.msg, {time: 1800, icon: 1}, function () {
-                        // location.href = res.url;
+                        location.reload();
                     });
                 } else {
                     layer.msg(res.msg, {time: 1800, icon: 2});

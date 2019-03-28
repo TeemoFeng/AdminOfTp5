@@ -1,5 +1,6 @@
 <?php
 namespace app\admin\controller;
+use app\admin\model\UserCurrencyAccount;
 use app\admin\model\UserNode;
 use app\admin\model\UserReferee;
 use app\admin\model\Users as UsersModel;
@@ -222,8 +223,29 @@ class Users extends Common{
         //获取用户信息
         $user_info = UsersModel::get($id);
         $user_currency_account = db('user_currency_account')->where(['user_id' => $id])->find();
-        $user_level = db('user_level')->where(['id' => $user_info['level_id']])->find();
+        if(empty($user_currency_account)){
+            $user_currency_account['cash_currency_num'] = '0.0000';
+            $user_currency_account['corpus'] = '0.0000';
+            $user_currency_account['activation_num'] = '0.0000';
+            $user_currency_account['consume_num'] = '0.0000';
+            $user_currency_account['transaction_num'] = '0.0000';
+        }
+        $user_level = db('user_level')->where(['level_id' => $user_info['level']])->find();
         $user_info['level_name'] = $user_level['level_name'];
+        if(empty($user_info['email'])){
+            $user_info['email'] = '无';
+        }
+
+        if($user_info['enabled'] == 0){
+            $user_info['enabled'] = '不是有效会员';
+        }else{
+            $user_info['enabled'] = '是有效会员';
+        }
+        if($user_info['baodan_center'] == 0){
+            $user_info['baodan_center'] = '否';
+        }else{
+            $user_info['baodan_center'] = '是';
+        }
         $this->assign('user_info', $user_info);
         $this->assign('user_currency_account', $user_currency_account);
         return $this->fetch('userDetail');
@@ -383,6 +405,12 @@ class Users extends Common{
 
                 UserReferee::create($data2);
                 UserNode::create($data3);
+                //获取当前设置的汇率
+                $sate = db('bonus_ext_set')->where(['id' => 1])->value('money_change');
+                //创建用户钱包账户
+                $account['user_id'] = $new_user_id;
+                $account['rate'] = $sate;
+                UserCurrencyAccount::create($account);
 
                 return ['code' => 1, 'msg' => '注册成功', 'url' => url('index')];
             } else {

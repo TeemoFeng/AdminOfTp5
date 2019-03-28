@@ -68,72 +68,103 @@
                 </div>
                 <div class="layui-card-body">
                     <div class="layui-row">
-                        <div class="layui-col-xs6 layui-col-md3 layui-col-sm6 layui-col-lg3  fanzhuan">
+                        <div class="layui-col-xs4 layui-col-md2 layui-col-sm4 layui-col-lg2  fanzhuan">
                             <div class="box">
                                 <div class="front layui-row">
                                     <div class="layui-inline icon_index">
-                                        <i class="layui-icon layui-icon-username icon_style"></i>
+                                        <i class="layui-icon layui-icon-rate-solid icon_style"></i>
                                     </div>
                                     <div class="layui-inline icon_index">
-                                        <h2>{$init.user_num}</h2>
+                                        <h2>{$user_currency_account['cash_currency_num']}</h2>
                                     </div>
 
-                                    <h2 class="title_index">会员总数</h2>
+                                    <h2 class="title_index">沙特链</h2>
 
                                 </div>
-                                <div class="backface user_list">
+                                <a href="{:url('finance/currencyRecharge')}?id={$user_info['id']}&type=1">
+                                <div class="backface cash_currency_num">
                                     <div class="layui-inline icon_index">
                                         <i class="layui-icon layui-icon-user icon_style"></i>
                                     </div>
-                                    <h2 class="title_index">会员列表</h2>
+                                    <h2 class="title_index">沙特链充值</h2>
 
                                 </div>
+                                </a>
                             </div>
                         </div>
-                        <div class="layui-col-xs6 layui-col-md3 layui-col-sm6 layui-col-lg3  fanzhuan">
+                        <div class="layui-col-xs4 layui-col-md2 layui-col-sm4 layui-col-lg2  fanzhuan">
                             <div class="box">
                                 <div class="front">
                                     <div class="layui-inline icon_index">
-                                        <i class="layui-icon layui-icon-user icon_style"></i>
+                                        <i class="layui-icon layui-icon-cart-simple icon_style"></i>
                                     </div>
                                     <div class="layui-inline icon_index">
-                                        <h2>{$init.no_ac_num}</h2>
+                                        <h2>{$user_currency_account['activation_num']}</h2>
                                     </div>
 
-                                    <h2 class="title_index">新增会员</h2>
+                                    <h2 class="title_index">激活钱包</h2>
                                 </div>
-
+                                <a href="{:url('finance/currencyRecharge')}?id={$user_info['id']}&type=2">
                                 <div class="backface add_user">
                                     <div class="layui-inline icon_index">
                                         <i class="layui-icon layui-icon-user icon_style"></i>
                                     </div>
-                                    <h2 class="title_index">未激活会员列表</h2>
+                                    <h2 class="title_index">激活钱包充值</h2>
                                 </div>
+                                </a>
                             </div>
                         </div>
-                        <div class="layui-col-xs6 layui-col-md3 layui-col-sm6 layui-col-lg3   fanzhuan">
+                        <div class="layui-col-xs4 layui-col-md2 layui-col-sm4 layui-col-lg2   fanzhuan">
                             <div class="box">
                                 <div class="front">
                                     <div class="layui-inline icon_index">
-                                        <i class="layui-icon layui-icon-add-circle icon_style"></i>
+                                        <i class="layui-icon layui-icon-cart icon_style"></i>
                                     </div>
                                     <div class="layui-inline icon_index">
-                                        <h2>22</h2>
+                                        <h2>{$user_currency_account['consume_num']}</h2>
                                     </div>
 
-                                    <h2 class="title_index">申请充值</h2>
+                                    <h2 class="title_index">消费钱包</h2>
                                 </div>
+                                <a href="{:url('finance/currencyRecharge')}?id={$user_info['id']}&type=3">
                                 <div class="backface apply_recharge">
                                     <div class="layui-inline icon_index">
                                         <i class="layui-icon layui-icon-add-circle icon_style"></i>
                                     </div>
 
-                                    <h2 class="title_index">申请充值列表</h2>
+                                    <h2 class="title_index">消费钱包充值</h2>
 
                                 </div>
+                                </a>
                             </div>
                         </div>
-                        <div class="layui-col-xs6 layui-col-md3 layui-col-sm6 layui-col-lg3   fanzhuan">
+                        <div class="layui-col-xs4 layui-col-md2 layui-col-sm4 layui-col-lg2   fanzhuan">
+                            <div class="box">
+
+
+                                <div class="front">
+                                    <div class="layui-inline icon_index">
+                                        <i class="layui-icon layui-icon-rmb icon_style"></i>
+                                    </div>
+                                    <div class="layui-inline icon_index">
+                                        <h2>{$user_currency_account['transaction_num']}</h2>
+                                    </div>
+                                    <h2 class="title_index">交易账户</h2>
+
+                                </div>
+                                <a href="{:url('finance/currencyRecharge')}?id={$user_info['id']}&type=4">
+                                <div class="backface apply_cash">
+                                    <div class="layui-inline icon_index">
+                                        <i class="layui-icon layui-icon-dollar icon_style"></i>
+                                    </div>
+
+                                    <h2 class="title_index">交易账户充值</h2>
+
+                                </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md2 layui-col-sm4 layui-col-lg2   fanzhuan">
                             <div class="box">
 
 
@@ -142,19 +173,21 @@
                                         <i class="layui-icon layui-icon-dollar icon_style"></i>
                                     </div>
                                     <div class="layui-inline icon_index">
-                                        <h2>22</h2>
+                                        <h2>{$user_currency_account['corpus']}</h2>
                                     </div>
-                                    <h2 class="title_index">申请提现</h2>
+                                    <h2 class="title_index">本金账户</h2>
 
                                 </div>
+                                <a href="{:url('finance/currencyRecharge')}?id={$user_info['id']}&type=5">
                                 <div class="backface apply_cash">
                                     <div class="layui-inline icon_index">
                                         <i class="layui-icon layui-icon-dollar icon_style"></i>
                                     </div>
 
-                                    <h2 class="title_index">申请提现</h2>
+                                    <h2 class="title_index">本金账户充值</h2>
 
                                 </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -165,25 +198,25 @@
 
         <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
             <div class="layui-card">
-                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">数量显示</i></div>
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">基本信息</i></div>
                 <div class="layui-card-body">
-                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: left">
                         <tbody>
                         <tr>
-                            {foreach $num_arr as $key=>$vo }
-                            <td style="width: 20%"><span class="layui-text">{$vo.name}</span></td>
-                            {/foreach}
-
+                            <td style="width: 35%"><span class="layui-text">会员编号</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['usernum']}</span></td>
                         </tr>
-                        </tbody>
-                    </table>
-                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
-                        <tbody>
                         <tr>
-                            {foreach $num_arr as $key=>$vo }
-                            <td style="width: 20%"><span class="layui-text">{$vo.num}</span></td>
-                            {/foreach}
-
+                            <td style="width: 35%"><span class="layui-text">会员姓名</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['username']}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 35%"><span class="layui-text">邮箱</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['email']}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 35%"><span class="layui-text">邮箱</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['mobile']}</span></td>
                         </tr>
                         </tbody>
                     </table>
@@ -193,43 +226,39 @@
 
         <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
             <div class="layui-card">
-                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">公司财务</i></div>
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">加盟信息</i></div>
                 <div class="layui-card-body">
-                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: left">
                         <tbody>
                         <tr>
-                            {foreach finance_arr as $key=>$vo }
-                            <td style="width: 20%"><span class="layui-text">{$vo.name}</span></td>
-                            {/foreach}
-
+                            <td style="width: 35%"><span class="layui-text">用户级别</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['level_name']}</span></td>
                         </tr>
-                        </tbody>
-                    </table>
-                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
-                        <tbody>
                         <tr>
-                            {foreach finance_arr as $key=>$vo }
-                            <td style="width: 20%"><span class="layui-text">{$vo.num}</span></td>
-                            {/foreach}
-
+                            <td style="width: 35%"><span class="layui-text">是否有效会员</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['enabled']}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 35%"><span class="layui-text">是否报单中心</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['baodan_center']}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 35%"><span class="layui-text">推荐人</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['referee']}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 35%"><span class="layui-text">接点人</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['contact_person']}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 35%"><span class="layui-text">所属报单中心</span></td>
+                            <td style="width: 65%"><span class="layui-text">{$user_info['baodan_user']}</span></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
-        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
-            <div class="layui-card">
-                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">公司财务走势图</i></div>
-                <div class="layui-card-body">
-
-                    <div id="main" style="width: auto;height:400px;"></div>
-
-                </div>
-            </div>
-        </div>
-
 
     </div>
 
@@ -242,23 +271,18 @@
         var element = layui.element;
         var layer = layui.layer;
         var $ = layui.jquery;
+        // $(document).on('click','.cash_currency_num',function(){
+        //     $.get('{:url("finance/currencyRecharge")}',{'id':id},function (res) {
+        //         if (res.status==1) {
+        //             tableIn.reload();
+        //         }else{
+        //             layer.msg(res.msg,{time:1000,icon:2});
+        //             return false;
+        //         }
+        //     })
+        //     window.location.href="{:url('')}"
+        // });
 
-        $(document).on('click','.user_list',function(){
-            window.location.href="{:url('Users/index')}"
-        });
-
-        $(document).on('click','.add_user',function(){
-            self.location.href="{:url('Users/index')}"
-        });
-
-        $(document).on('click','.apply_recharge',function(){
-            self.location.href="{:url('Finance/applicationRecharge')}"
-        });
-
-
-        $(document).on('click','.apply_cash',function(){
-            self.location.href="{:url('Finance/applicationForCash')}"
-        });
 
         // $(function () {
         //     $.post("{:url('index/expenditureAndGeneral')}", {'key': 'key'}, function (data) {

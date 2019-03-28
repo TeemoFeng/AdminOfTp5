@@ -10,6 +10,7 @@ use app\admin\model\ApplyCash;
 use app\admin\model\ApplyRecharge;
 use app\admin\model\Currency;
 use app\admin\model\CurrencyRecharge;
+use app\admin\model\UserCurrencyAccount;
 use app\user\model\UserApplyShateCash;
 use app\user\model\UserRunningLog;
 use think\Db;
@@ -128,6 +129,8 @@ class Finance extends Common
         return $this->fetch('financialFlow');
     }
 
+
+
     public function makeSearch2($data)
     {
         $where = new Where();
@@ -164,23 +167,97 @@ class Finance extends Common
     //货币充值
     public function currencyRecharge()
     {
-        //待解决用户币种余额问题
         if(request()->isPost()){
             //如果是充值提交
             $data = input('post.');
             $admin_id = session('aid'); //管理员id
             $data['admin_id'] = $admin_id;
-            if(CurrencyRecharge::create($data)){
-                return ['code' => 1, 'msg' => '充值成功'];
-            }else{
-                return ['code' => 0, 'msg' => '充值失败'];
+            if(empty($data['currency_id']) || empty($data['user_id']) || empty($data['amount'])){
+                return ['code' => 0, 'msg' => '缺少必填项'];
             }
+
+
+            //用户钱包
+            $user_currency_account = db('user_currency_account')->where(['user_id' => $data['user_id']])->find();
+            if(empty($user_currency_account)){
+                //如果用户不存在钱包
+                //创建用户钱包账户
+                $sate = db('bonus_ext_set')->where(['id' => 1])->value('money_change');
+                $account['user_id'] = $data['user_id'];
+                $account['rate'] = $sate;
+                if($data['currency_id'] == 1){
+                    $account['cash_currency_num'] = $data['amount'];
+                }elseif ($data['currency_id'] == 2){
+                    $account['activation_num'] = $data['amount'];
+                }elseif ($data['currency_id'] == 3){
+                    $account['consume_num'] = $data['amount'];
+                }elseif ($data['currency_id'] == 4){
+                    $account['transaction_num'] = $data['amount'];
+                }elseif ($data['currency_id'] == 5){
+                    $account['corpus'] = $data['amount'];
+                }
+                $blance = $data['amount'];
+                $res = UserCurrencyAccount::create($account);
+            }else{
+                //加上用户之前的余额
+                if($data['currency_id'] == 1){
+                    $blance =  $account['cash_currency_num']  = bcadd($user_currency_account['cash_currency_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 2){
+                    $blance = $account['activation_num']      = bcadd($user_currency_account['activation_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 3){
+                    $blance = $account['consume_num']         = bcadd($user_currency_account['consume_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 4){
+                    $blance = $account['transaction_num']     = bcadd($user_currency_account['transaction_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 5){
+                    $blance = $account['corpus']              = bcadd($user_currency_account['corpus'], $data['amount'], 4);
+                }
+                $res = UserCurrencyAccount::where('id',$user_currency_account['id'])->update($account);
+
+            }
+            Db::startTrans();
+            if($res === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '充值失败请重试'];
+            }else{
+                //添加充值记录
+               $res2 =  UserRunningLog::create([
+                    'user_id'  =>  $data['user_id'],
+                    'about_id' =>  -session('aid'),
+                    'running_type'  => UserRunningLog::TYPE1,
+                    'account_type'  => $data['currency_id'],
+                    'change_num'    => $data['amount'],
+                    'balance'       =>  $blance,
+                    'create_time'   => time(),
+                    'remark'        => $data['remark']
+                ]);
+               if($res2 !== false){
+                   Db::commit();
+                   return ['code' => 1, 'msg' => '充值成功'];
+               }else{
+                   Db::rollback();
+                   return ['code' => 0, 'msg' => '充值失败请重试'];
+               }
+
+            }
+
         }else{
+            if(request()->isGet()){
+                $id = input('get.id');
+                $type = input('get.type');
+                $user = db('users')->where(['id' => $id])->find();
+                $this->assign('user',$user);
+                $this->assign('type',$type);
+            }else{
+                $this->assign('user', '');
+                $this->assign('type', '');
+            }
             //获取币种类型
             $currency_model = model('currency');
             $currency_list = $currency_model->select();
             $this->assign('currency_list', $currency_list);
+
             return $this->fetch('currencyRecharge');
+
         }
 
     }
@@ -188,16 +265,81 @@ class Finance extends Common
     //货币扣除
     public function currencyDeduction()
     {
-        //待解决用户币种余额问题 扣除不能大于用户所拥有的最大值
         if(request()->isPost()){
             $data = input('post.');
             $admin_id = session('aid'); //管理员id
             $data['admin_id'] = $admin_id;
-            if(CurrencyRecharge::create($data)){
-                return ['code' => 1, 'msg' => '扣除成功'];
-            }else{
-                return ['code' => 0, 'msg' => '扣除失败'];
+            if(empty($data['currency_id']) || empty($data['user_id']) || empty($data['amount'])){
+                return ['code' => 0, 'msg' => '缺少必填项'];
             }
+            //用户钱包
+            $user_currency_account = db('user_currency_account')->where(['user_id' => $data['user_id']])->find();
+            if(empty($user_currency_account)){
+                //如果用户不存在钱包
+                //创建用户钱包账户
+                $sate = db('bonus_ext_set')->where(['id' => 1])->value('money_change');
+                $account['user_id'] = $data['user_id'];
+                $account['rate'] = $sate;
+                $blance = '0.0000';
+                UserCurrencyAccount::create($account);
+                return ['code' => 0, 'msg' => '用户所剩余额不足'];
+            }else{
+                //加上用户之前的余额
+                if($data['currency_id'] == 1){
+                    if(bccomp($data['amount'], $user_currency_account['cash_currency_num'], 4) == 1){
+                        return ['code' => 0, 'msg' => '扣除数量大于账户余额'];
+                    }
+                    $blance =  $account['cash_currency_num']  = bcsub($user_currency_account['cash_currency_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 2){
+                    if(bccomp($data['amount'], $user_currency_account['activation_num'], 4) == 1){
+                        return ['code' => 0, 'msg' => '扣除数量大于账户余额'];
+                    }
+                    $blance = $account['activation_num']      = bcsub($user_currency_account['activation_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 3){
+                    if(bccomp($data['amount'], $user_currency_account['consume_num'], 4) == 1){
+                        return ['code' => 0, 'msg' => '扣除数量大于账户余额'];
+                    }
+                    $blance = $account['consume_num']         = bcsub($user_currency_account['consume_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 4){
+                    if(bccomp($data['amount'], $user_currency_account['transaction_num'], 4) == 1){
+                        return ['code' => 0, 'msg' => '扣除数量大于账户余额'];
+                    }
+                    $blance = $account['transaction_num']     = bcsub($user_currency_account['transaction_num'], $data['amount'], 4);
+                }elseif ($data['currency_id'] == 5){
+                    if(bccomp($data['amount'], $user_currency_account['corpus'], 4) == 1){
+                        return ['code' => 0, 'msg' => '扣除数量大于账户余额'];
+                    }
+                    $blance = $account['corpus']              = bcsub($user_currency_account['corpus'], $data['amount'], 4);
+                }
+                $res = UserCurrencyAccount::where('id',$user_currency_account['id'])->update($account);
+                Db::startTrans();
+                if($res === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '扣除失败请重试'];
+                }else{
+                    //添加扣除记录
+                    $res2 =  UserRunningLog::create([
+                        'user_id'  =>  $data['user_id'],
+                        'about_id' =>  -session('aid'),
+                        'running_type'  => UserRunningLog::TYPE2,
+                        'account_type'  => $data['currency_id'],
+                        'change_num'    => -$data['amount'],
+                        'balance'       => $blance,
+                        'create_time'   => time(),
+                        'remark'        => $data['remark']
+                    ]);
+                    if($res2 !== false){
+                        Db::commit();
+                        return ['code' => 1, 'msg' => '扣除成功'];
+                    }else{
+                        Db::rollback();
+                        return ['code' => 0, 'msg' => '扣除失败请重试'];
+                    }
+
+                }
+
+            }
+
         }else{
             //获取币种类型
             $currency_model = model('currency');

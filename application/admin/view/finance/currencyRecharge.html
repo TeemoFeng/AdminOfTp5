@@ -15,7 +15,7 @@
                     <label class="layui-form-label">币种类型</label>
                     <div class="layui-input-block">
                         {foreach $currency_list as $key => $val}
-                            <input type="radio" name="currency_id" value="{$val.id}" title="{$val.name}" checked="">
+                            <input type="radio" name="currency_id" lay-verify="required" value="{$val.id}" title="{$val.name}" {if condition="$val['id'] eq $type"}checked{/if}>
                         {/foreach}
                     </div>
                 </div>
@@ -23,7 +23,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户</label>
                     <div class="layui-input-4 layui-inline">
-                        <input type="text" name="keys" id="key" placeholder="请输入ID/用户名/邮箱/手机号" class="layui-input" value="{$usernum}">
+                        <input type="text" name="keys" id="key" placeholder="请输入ID/用户名/邮箱/手机号" class="layui-input" value="">
                     </div>
 
                     <div class="layui-inline">
@@ -38,7 +38,11 @@
                     <label class="layui-form-label"></label>
                     <div class="layui-input-4">
                         <select name="user_id" lay-verify="required" id="append_user">
-                            <option value="">请选择会员</option>
+                            {if !empty($user)}
+                            <option value="{$user['id']}">{$user['usernum']}[{$user['username']}]</option>
+                            {else /}
+                                <option value="">请选择会员</option>
+                            {/if}
                         </select>
                     </div>
                 </div>
@@ -64,7 +68,7 @@
             <div class="layui-input-block">
                 <input type="hidden" name="type" value="1">
                 <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
-                <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+                <a href="{:url('currencyRecharge')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
             </div>
         </div>
     </form>
@@ -124,7 +128,7 @@
                 layer.close(loading);
                 if (res.code > 0) {
                     layer.msg(res.msg, {time: 1800, icon: 1}, function () {
-                        // location.href = res.url;
+                        location.reload();
                     });
                 } else {
                     layer.msg(res.msg, {time: 1800, icon: 2});

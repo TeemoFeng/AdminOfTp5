@@ -183,7 +183,7 @@
 </div>
 
 <script type="text/html" id="action">
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">查看备注</a>
+    <a href="{:url('beizhu')}?id={{d.id}}" class="layui-btn layui-btn-xs" lay-even="beizhu">查看备注</a>
 
 </script>
 
@@ -255,7 +255,7 @@
                     {field: 'running_type', title: '流水类型', width: 200},
                     {field: 'change_num', title: '变更数量', width: 200},
                     {field: 'balance', title: '余额', width: 200},
-                    {field: 'create_time', title: '流水时间', width: 100},
+                    {field: 'create_time', title: '流水时间', width: 200},
                     {title:'操作', width: 100, align: 'center', toolbar: '#action'}
                 ]],
                 limit: 10 //每页默认显示的数量
