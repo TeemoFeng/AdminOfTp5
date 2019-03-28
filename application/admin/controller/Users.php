@@ -156,7 +156,64 @@ class Users extends Common{
         return $result;
     }
 
+    //重置密码
+    public function resetPas()
+    {
+        $map[] =array('id','IN',input('param.ids/a'));
+        $data['password'] = md5('123456');
+        $data['safeword'] = '123456';
+        $res = db('users')->where($map)->update($data);
+        if($res === false){
+            return ['code' => 0, 'msg' => '重置失败，请重试'];
+        }
+        $result['msg'] = '密码重置成功！';
+        $result['code'] = 1;
+        $result['url'] = url('index');
+        return $result;
+    }
+
+    //设置报单中心
+    public function setBaodan()
+    {
+        $map[] =array('id','IN',input('param.ids/a'));
+        $data['baodan_center'] = 1;
+        $res = db('users')->where($map)->update($data);
+        if($res === false){
+            return ['code' => 0, 'msg' => '设置失败，请重试'];
+        }
+        return ['code' => 1, 'msg' => '设置报单中心成功', 'url' => url('index')];
+    }
+
+    //取消报单中心
+    public function cancelBaodan()
+    {
+        $map[] =array('id','IN',input('param.ids/a'));
+        $data['baodan_center'] = 0;
+        $res = db('users')->where($map)->update($data);
+        if($res === false){
+            return ['code' => 0, 'msg' => '设置失败，请重试'];
+        }
+        return ['code' => 1, 'msg' => '取消报单中心成功', 'url' => url('index')];
+    }
+
     //访问前台
+    public function userJump()
+    {
+        $user_id = input('id');
+        $user_info = UsersModel::get($user_id);
+        if(empty($user_info)){
+            return ['code' => 0, 'msg' => '未找到该用户'];
+
+        }else{
+            if(empty($user_info['mobile'])){
+                $info['username'] = $user_info['email'];
+            }else{
+                $info['username'] = $user_info['mobile'];
+            }
+            $info['password'] = $user_info['password'];
+        }
+        return ['code' => 1, 'info' => $info];
+    }
 
 
     //会员详情

@@ -6,15 +6,15 @@ use think\captcha\Captcha;
 class Login extends Controller{
     protected $sys;
     public function initialize(){
-        if (session('user.id')) {
-            $this->redirect('index/index');
-        }
+//        if (session('user.id')) {
+//            $this->redirect('index/index');
+//        }
         $this->sys = cache('System');
         $this->assign('sys',$this->sys);
     }
     public function index(){
+        $table = db('users');
         if(request()->isPost()) {
-            $table = db('users');
             $username = input('username');
             $password = input('password');
             if($this->sys['code']=='open'){
@@ -43,6 +43,16 @@ class Login extends Controller{
                 session('user',$sessionUser);
                 return array('code'=>1,'msg'=>'登录成功','url' => url('index/index'));
             }
+        }elseif(request()->isGet()){
+            $mobile = input('get.mobile');
+
+            $password = input('get.password');
+            $user = $table->where(["mobile" => $mobile, 'password' => $password])->find();
+
+            session('user', $user);
+            return $this->redirect(url('index/index'));
+
+
         }else{
             $plugin = db('plugin')->where(['type'=>'login','status'=>1])->select();
             $this->assign('plugin', $plugin);
