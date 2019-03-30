@@ -20,7 +20,7 @@
                         <p data-v-c9fe8806="" class="login-div1 login-div3 hc-color3">还没有</p>
                         <p data-v-c9fe8806="" class="login-div1 hc-color3">Hotcoin账号?</p>
                         <p data-v-c9fe8806="" class="login-div2 hc-color">立即注册,在Hotcoin区块连资产交易所进行交易。</p>
-                        <p data-v-c9fe8806="" class="hc-btn login-regbtn">免费注册</p></div>
+                        <a href="{:url('user/login/reg')}"><p data-v-c9fe8806="" class="hc-btn login-regbtn">免费注册</p></a></div>
                 </div>
                 <div data-v-c9fe8806="" class="login-main2 hc-bgColor2">
                     <form action="" class="layui-form">
@@ -43,7 +43,7 @@
                                            class="login-input" placeholder="请输入您的登录密码"
                                            autocomplete="off">
                                 </div>
-                                <div data-v-c9fe8806="" class="hc-color4 login-div6">忘记密码?</div>
+                                <a href="{:url('user/login/forget')}"><div data-v-c9fe8806="" class="hc-color4 login-div6">忘记密码?</div></a>
                             </div>
                             <div data-v-c9fe8806="" class="login-form">
                                 <div data-v-c9fe8806="" class="login-div5 hc-color3">验证码</div>
@@ -110,7 +110,7 @@
                     layer.close(loading);
                     if(res.code > 0){
                         layer.msg(res.msg,{time:1000,icon:1},function(){
-                            location.href = "{:url('index/index')}";
+                            location.href = res.url;
                         });
                     }else{
                         layer.msg(res.msg,{time:1000,icon:2});

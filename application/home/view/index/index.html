@@ -173,17 +173,19 @@
                         <a href="#">矿池理财</a>
                     </li>
                 </ul>
+                {if empty($user) }
                 <!-- todo 未登录 -->
                 <ul data-v-5056b940="" class="header-ul2">
                     <li data-v-5056b940="" class="">
                         <a href="{:url('user/login/index')}">登录</a>
                     </li>
                     <li data-v-5056b940="" style="margin: 0px 4px; color: rgb(113, 113, 113);">|</li>
-                    <li data-v-5056b940="" class="">注册</li>
+                    <li data-v-5056b940="" class=""><a href="{:url('user/login/reg')}">注册</a></li>
                     <li data-v-5056b940="" class="header-media">
                         <i data-v-5056b940="" class="fa fa-gear"></i>
                     </li>
                 </ul>
+                {else /}
                 <!--TODO 未登录 end-->
                 <!--已登录-->
                 <ul data-v-5056b940="" class="header-ul2" style="display: block">
@@ -237,7 +239,7 @@
                         <div data-v-5056b940="" class="el-dropdown">
                         <span data-v-5056b940="" class="el-dropdown-link el-dropdown-selfdefine" aria-haspopup="list"
                               aria-controls="dropdown-menu-5309" role="button" tabindex="0">
-                            qwer143800
+                            {$user.username}
                             <i data-v-5056b940="" class="fa fa-caret-down" style="margin-left: 10px;"></i>
                         </span>
                             <ul data-v-5056b940="" class="el-dropdown-menu el-popper" id="dropdown-menu-5309"
@@ -248,7 +250,7 @@
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-street-view header-icon"></i>
-                                    <a href="#">商户信息</a>
+                                    <a href="{:url('user/index/index')}">商户信息</a>
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-unlock-alt header-icon"></i>
@@ -256,11 +258,11 @@
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-tasks header-icon"></i>
-                                    <a href="#">个人设置</a>
+                                    <a href="{:url('user/set/setup')}">个人设置</a>
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-sign-out header-icon"></i>
-                                    <a href="#">退出</a>
+                                    <a href="{:url('user/index/logout')}">退出</a>
                                 </li>
                             </ul>
                         </div>
@@ -268,6 +270,7 @@
                     <!-- todo 个人中心 end-->
                 </ul>
                 <!-- TODO 已登录end -->
+                {/if}
             </div>
         </div>
         <div data-v-5056b940="" class="el-dialog__wrapper" style="display: none;">

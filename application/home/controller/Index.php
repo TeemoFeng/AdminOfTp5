@@ -10,6 +10,10 @@ class Index extends Common{
 
     public function index()
     {
+        //首页各项待加
+
+        $user = session('user');
+        $this->assign('user', $user);
         return $this->fetch('index');
     }
 

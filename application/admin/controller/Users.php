@@ -418,7 +418,7 @@ class Users extends Common{
             }
 
         } else {
-            $province   = db('Region')->where ( array('pid'=>1) )->select ();
+            $province   = db('Region')->where ( array('pid'=>1) )->select();
             $user_level = db('user_level')->order('sort')->select();
             $bank = db('Bank')->order('id ASC')->select();
             $user_num = createVipNum();

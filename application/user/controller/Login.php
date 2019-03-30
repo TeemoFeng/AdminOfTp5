@@ -6,13 +6,14 @@ use think\captcha\Captcha;
 class Login extends Controller{
     protected $sys;
     public function initialize(){
-        if (session('user.id')) {
-            $this->redirect('index/index');
-        }
+//        if (session('user.id')) {
+//            $this->redirect('index/index');
+//        }
         $this->sys = cache('System');
         $this->assign('sys',$this->sys);
     }
     public function index(){
+
         $table = db('users');
         if(request()->isPost()) {
             $username = input('username');
@@ -41,23 +42,23 @@ class Login extends Controller{
                     $sessionUser['qq'] = 1;
                 }
                 session('user',$sessionUser);
-                return array('code'=>1,'msg'=>'登录成功','url' => url('index/index'));
+                return array('code'=>1,'msg'=>'登录成功','url' => url('home/index/index'));
             }
-        }elseif(request()->isGet()){
+        }elseif(request()->isGet() && !empty(input('get.mobile'))){
             $mobile = input('get.mobile');
 
             $password = input('get.password');
             $user = $table->where(["mobile" => $mobile, 'password' => $password])->find();
 
             session('user', $user);
-            return $this->redirect(url('index/index'));
+            return $this->redirect(url('user/index/index'));
 
 
         }else{
             $plugin = db('plugin')->where(['type'=>'login','status'=>1])->select();
             $this->assign('plugin', $plugin);
             $this->assign('title','会员登录');
-            return $this->fetch();
+            return $this->fetch('login');
         }
     }
     public function verify(){
@@ -134,6 +135,42 @@ class Login extends Controller{
         }
     }
 
+    //找回密码
+    public function retrieve()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['username']) || empty($data['code'])){
+                return ['code' => 0, 'msg' => '账号或者验证码不能为空'];
+            }
+            $table = db('users');
+            //获取验证码待写
+            $code  = true;
+            if($data['code'] == $code){
+                $user = $table->where("mobile","=",$data['username'])->whereOr('email','=',$data['username'])->find();
+                if(!$user){
+                    return ['code' => 0, 'msg' => '用户不存在'];
+                }
+                //给用户发送他的密码
+                if(!empty($user['mobile'])){
+                    //手机不空发送短信信息
+
+                    return ['code' => 1, 'msg' => '密码已经发送到您的手机'];
+                }else{
+                    //邮箱不空发送邮箱信息
+
+                    return ['code' => 1, 'msg' => '密码已经发送到您的邮箱'];
+                }
+
+            }else{
+                return ['code' => 0, 'msg' => '验证码错误'];
+            }
+        }else{
+            return ['code' => 0, 'msg' =>'非法请求'];
+        }
+    }
+
+    //找回密码旧
     public function forget(){
         if(request()->isPost()) {
             $sender = input('email');
@@ -166,7 +203,7 @@ class Login extends Controller{
             }
         }else{
             $this->assign('title','找回密码');
-            return $this->fetch();
+            return $this->fetch('retrieve');
         }
     }
     /**

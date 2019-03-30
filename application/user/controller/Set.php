@@ -1,5 +1,6 @@
 <?php
 namespace app\user\controller;
+use app\user\model\Users;
 use think\Db;
 class Set extends Common{
     protected $uid;
@@ -79,4 +80,88 @@ class Set extends Common{
         session('user.qq','0');
         return array('status'=>1,'msg'=>'QQ已解绑','action'=>url('index'));
     }
+
+    //个人设置
+    public function setup()
+    {
+        //获取用户的收款账号信息
+        $userModel = new Users();
+        $id = session('user.id');
+        if(empty($id))
+            $this->redirect('home/index/index');
+        $user_info = $userModel->where(['id' => $id])->find();
+        $bank_name = db('bank')->where(['id' => $user_info['bank_id']])->value('bank_name');
+        $user_info['bank_name'] = $bank_name;
+        $account_num = 0;
+        if(!empty($user_info['bank_account']) && !empty($user_info['alipay_account']) && !empty($user_info['wexin_account'])){
+            $account_num = 3;
+        }
+        $bank = db('Bank')->order('id ASC')->select(); //银行列表
+        $province   = db('Region')->where ( array('pid'=>1) )->select();
+        $this->assign('province',$province);
+        $this->assign('bank_list', $bank); //银行列表
+        $this->assign('user_info', $user_info);
+        $this->assign('account_num', $account_num);
+        return $this->fetch('personSetting');
+    }
+
+    //保存个人设置
+    public function personSetSave()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+
+            if(empty($data['bank_user']) || empty($data['bank_id']) || empty($data['province']) || empty($data['city']) || empty($data['bank_account']) || empty($data['id']) || empty($data['safeword']) || empty($data['type'])){
+                return ['code' => 0, 'msg' => '缺少必填项'];
+            }
+            $userModel = new Users();
+            $id = $data['id'];
+            if($data['type'] == 1){
+                //添加银行卡
+                $bank = $userModel->where(['id' => $id])->value('bank_id');
+                if($bank){
+                    return ['code' => 0, 'msg' => '已绑定银行卡'];
+                }
+                $res = Users::update($data);
+
+
+            }elseif($data['type'] == 2){
+                dump($data);die;
+                //添加支付宝
+                $bank = $userModel->where(['id' => $data['id']])->value('alipay_account');
+                if($bank){
+                    return ['code' => 0, 'msg' => '已绑定支付宝'];
+                }
+                $res = Users::update($data);
+
+            }elseif($data['type'] == 3){
+                //添加微信
+                $bank = $userModel->where(['id' => $data['id']])->value('weixin_account');
+                if($bank){
+                    return ['code' => 0, 'msg' => '已绑定微信'];
+                }
+                $res =  Users::update($data);
+
+            }
+
+            if($res !== false){
+                return ['code' => 1, 'msg' => '添加成功'];
+            }else{
+                return ['code' => 0, 'msg' => '添加失败'];
+            }
+
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+    }
+
+    public function getRegion2(){
+        $Region=db("region");
+        $pid = input("pid");
+        $map['pid'] = $pid;
+        $list= $Region->where($map)->select();
+        return $list;
+    }
+
+
 }
