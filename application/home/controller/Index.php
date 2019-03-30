@@ -2,12 +2,19 @@
 namespace app\home\controller;
 use think\Db;
 use clt\Lunar;
-use think\facade\Env;
+//use think\facade\Env;
 class Index extends Common{
-    public function initialize(){
-        parent::initialize();
+//    public function initialize(){
+//        parent::initialize();
+//    }
+
+    public function index()
+    {
+        return $this->fetch('index');
     }
-    public function index(){
+
+
+    public function index_old(){
         $order = input('order','createtime');
         $time = time();
         $list=db('article')->alias('a')

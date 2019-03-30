@@ -6,9 +6,9 @@ use think\captcha\Captcha;
 class Login extends Controller{
     protected $sys;
     public function initialize(){
-//        if (session('user.id')) {
-//            $this->redirect('index/index');
-//        }
+        if (session('user.id')) {
+            $this->redirect('index/index');
+        }
         $this->sys = cache('System');
         $this->assign('sys',$this->sys);
     }
@@ -130,7 +130,7 @@ class Login extends Controller{
             $plugin = db('plugin')->where(['type' => 'login', 'status' => 1])->select();
             $this->assign('plugin', $plugin);
             $this->assign('title', '会员注册');
-            return $this->fetch();
+            return $this->fetch('register');
         }
     }
 

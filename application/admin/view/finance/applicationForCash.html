@@ -1,7 +1,7 @@
 {include file="common/head"/}
 <div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>财务流水</legend>
+        <legend>申请提现列表</legend>
     </fieldset>
 
     <div class="layui-tab layui-tab-brief" lay-filter="userAccount">
@@ -115,17 +115,23 @@
 </div>
 
 <script type="text/html" id="action">
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">详情</a>
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">删除</a>
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">拒绝</a>
+    <a href="#" class="layui-btn  layui-btn-xs" data-user="{{d.user_id}}" id="detail">详情</a>
+    <a href="#" class="layui-btn layui-btn-warm layui-btn-xs" data-id="{{d.id}}" data-type="{{d.type}}" id="del">删除</a>
+
+    {{#  if(d.status_str == '未审核'){ }}
+    <a href="#" class="layui-btn layui-btn-primary layui-btn-xs" data-id="{{d.id}}" data-type="{{d.type}}" id="decline">拒绝</a>
+
+    {{#  } }}
+
 
 </script>
 
 
 <script type="text/html" id="topBtn">
+    <input type="hidden" id="type" value="1">
     <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="delAll">批量删除</button>
-    <a href="{:url('register')}" class="layui-btn layui-btn-normal layui-btn-sm">批量批准</a>
-    <a href="{:url('register')}" class="layui-btn layui-btn-warm layui-btn-sm">直接批准（不提交到第四方）</a>
+    <a class="layui-btn layui-btn-normal layui-btn-sm" id="mulApprove">批量批准</a>
+    <a  class="layui-btn layui-btn-warm layui-btn-sm">直接批准（不提交到第四方）</a>
 </script>
 
 {include file="common/foot"/}
@@ -177,8 +183,10 @@
                     {field: 'poundage', title: '手续费', width: 100},
                     {field: 'real_sum', title: '到账金额', width: 100},
                     {field: 'alipay_account', title: '支付宝账户', width: 100},
-                    {field: 'status', title: '状态', width: 150},
+                    {field: 'status_str', title: '状态', width: 150},
                     {field: 'create_time', title: '申请时间', width: 150},
+                    {field: 'type', title: '提现类型', width: 150, hide:true},
+                    {field: 'user_id', title: '用户id', width: 150, hide:true},
                     {title:'操作', width: 300, align: 'center', toolbar: '#action'}
                 ]],
                 limit: 10 //每页默认显示的数量
@@ -204,8 +212,10 @@
                     {field: 'poundage', title: '手续费', width: 100},
                     {field: 'real_sum', title: '到账金额', width: 100},
                     {field: 'alipay_account', title: '支付宝账户', width: 100},
-                    {field: 'status', title: '状态', width: 150},
+                    {field: 'status_str', title: '状态', width: 150},
                     {field: 'create_time', title: '申请时间', width: 150},
+                    {field: 'type', title: '提现类型', width: 150, hide:true},
+                    {field: 'user_id', title: '用户id', width: 150, hide:true},
                     {title:'操作', width: 300, align: 'center', toolbar: '#action'}
                 ]],
                 limit: 10 //每页默认显示的数量
@@ -231,8 +241,10 @@
                     {field: 'poundage', title: '手续费', width: 100},
                     {field: 'real_sum', title: '到账金额', width: 100},
                     {field: 'alipay_account', title: '支付宝账户', width: 100},
-                    {field: 'status', title: '状态', width: 150},
+                    {field: 'status_str', title: '状态', width: 150},
                     {field: 'create_time', title: '申请时间', width: 150},
+                    {field: 'type', title: '提现类型', width: 150, hide:true},
+                    {field: 'user_id', title: '用户id', width: 150, hide:true},
                     {title:'操作', width: 300, align: 'center', toolbar: '#action'}
                 ]],
                 limit: 10 //每页默认显示的数量
@@ -279,64 +291,148 @@
                 $('#key1').val('');
                 $('#start_time1').val('');
                 $('#end_time1').val('');
+                $('#type').val('1');
                 show_table(1);
             }else if(data.index == 1){
                 $('#key2').val('');
                 $('#start_time2').val('');
                 $('#end_time2').val('');
                 $('#status2').val('');
+                $('#type').val('2');
                 show_table2(2);
             }else if(data.index == 2){
                 $('#key3').val('');
                 $('#start_time3').val('');
                 $('#end_time3').val('');
                 $('#status3').val('');
+                $('#type').val('3');
                 show_table3(3);
             }
         });
 
-
-
         //删除一条记录
-        table.on('tool(list)', function(obj) {
-            var data = obj.data;
-            if (obj.event === 'del') {
-                layer.confirm('您确定要删除吗？', function(index){
-                    var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("{:url('applyCashDel')}",{id:data.id},function(res){
-                        layer.close(loading);
-                        if(res.code===1){
-                            layer.msg(res.msg,{time:1000,icon:1});
-                            tableIn.reload();
-                        }else{
-                            layer.msg('操作失败！',{time:1000,icon:2});
-                        }
-                    });
-                    layer.close(index);
+        $('body').on('click','#del',function() {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            layer.confirm('您确定要删除吗？', function(index){
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.post("{:url('applyCashDel')}",{id:id,type:type},function(res){
+                    layer.close(loading);
+                    if(res.code===1){
+                        layer.msg(res.msg,{time:1000,icon:1});
+                        table.reload('table'+type);
+                    }else{
+                        layer.msg('操作失败！',{time:1000,icon:2});
+                    }
                 });
-            }
+                layer.close(index);
+            });
         });
 
+
+        //拒绝
+        $('body').on('click','#decline',function() {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            layer.prompt({
+                formType: 2,
+                title: '请输入拒绝原因',
+                area: ['300px', '200px'] //自定义文本域宽高
+            }, function(value, index, elem){
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('decline')}",{id:id,type:type,reason:value},function(res){
+                    layer.close(loading);
+                    if(res.code===1){
+                        layer.msg(data.msg, {time: 1000, icon: 1});
+                        table.reload('table'+type);
+                    }else{
+                        layer.msg('操作失败！',{time:1000,icon:2});
+                    }
+                });
+                layer.close(index);
+
+            });
+
+
+
+        });
+
+
+        //查看详情
+        $('body').on('click','#detail',function() {
+            var user_id = $(this).attr('data-user');
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("{:url('cashDetail')}",{user_id:user_id},function(res){
+                layer.close(loading);
+                if(res.code===1){
+                    layer.open({
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['420px', '240px'], //宽高
+                        content: '开户名：'+res.info.bank_user+'<br />'+'开户行：'+res.info.bank_name+'<br />'+'银行账号：'+res.info.bank_account,
+                    });
+                }else{
+                    layer.msg('操作失败！',{time:1000,icon:2});
+                }
+            });
+        });
+
+        //批量删除
         $('body').on('click','#delAll',function() {
             layer.confirm('确认要删除选中信息吗？', {icon: 3}, function(index) {
                 layer.close(index);
-                var checkStatus = table.checkStatus('user'); //user即为参数id设定的值
+                var type = $('#type').val();
+                var checkStatus = table.checkStatus('table'+type);
                 var ids = [];
                 $(checkStatus.data).each(function (i, o) {
                     ids.push(o.id);
                 });
+                if(ids.length < 1){
+                    layer.msg('请选择要删除的数据', {time: 1000, icon: 2});
+                    return;
+                }
                 var loading = layer.load(2, {shade: [0.1, '#fff']});
-                $.post("{:url('applyCashDelall')}", {ids: ids}, function (data) {
+                $.post("{:url('applyCashDelall')}", {ids: ids,type:type}, function (data) {
                     layer.close(loading);
                     if (data.code === 1) {
                         layer.msg(data.msg, {time: 1000, icon: 1});
-                        tableIn.reload();
+                        table.reload('table'+type);
+                    } else {
+                        layer.msg(data.msg, {time: 1000, icon: 2});
+                    }
+                });
+            });
+        });
+
+        //批量批准
+        $('body').on('click','#mulApprove',function() {
+            layer.confirm('确认此操作吗？', {icon: 3}, function(index) {
+                layer.close(index);
+                var type = $('#type').val();
+                var checkStatus = table.checkStatus('table'+type);
+                var ids = [];
+                $(checkStatus.data).each(function (i, o) {
+                    ids.push(o.id);
+                });
+                if(ids.length < 1){
+                    layer.msg('请选择要批准的id', {time: 1000, icon: 2});
+                    return;
+                }
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('mulApprove')}", {ids: ids,type:type}, function (data) {
+                    layer.close(loading);
+                    if (data.code === 1) {
+                        layer.msg(data.msg, {time: 1000, icon: 1});
+                        table.reload('table'+type);
                     } else {
                         layer.msg(data.msg, {time: 1000, icon: 2});
                     }
                 });
             });
         })
+
+
+
 
     });
 </script>

@@ -15,7 +15,10 @@
             </div>
 
         </div>
+        <div class="layui-inline">
+            <input class="layui-input" name="key" id="key" placeholder="请输入关键字">
 
+        </div>
         <button class="layui-btn" id="search" data-type="reload">搜索</button>
         <a href="{:url('toAmeibiList')}" class="layui-btn">显示全部</a>
 
@@ -44,7 +47,7 @@
                 {field: 'usernum', title: '用户编号', width: 100, fixed: true},
                 {field: 'username', title: '用户名', width: 100, fixed: true},
                 {field: 'dynamic_bonus', title: '动态奖金$', width: 120, fixed: true},
-                {field: 'rate', title: '1$=￥汇率', width: 150,hide:true},
+                {field: 'rate', title: '1$=￥汇率', width: 150},
                 {field: 'ameibi_price', title: '阿美币价格￥', width: 100},
                 {field: 'ameibi_num', title: '应发阿美币数量', width: 100},
                 {field: 'status', title: '状态', width: 100},
@@ -59,7 +62,8 @@
         $('#search').on('click', function() {
             var start_time = $('#start_time1').val();
             var end_time = $('#end_time1').val();
-            tableIn.reload({ page: {page: 1},where: {start_time: start_time,end_time:end_time}});
+            var key = $('#key').val();
+            tableIn.reload({page: {page: 1},where: {key:key,start_time: start_time,end_time:end_time}});
         });
         // 执行一个laydate实例
         laydate.render({

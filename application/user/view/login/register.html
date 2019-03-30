@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" class="night-style">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" href="/static/home/css/app.css">
+    <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="/static/home/css/style.css">
+    <link rel="stylesheet" href="/static/home/layui/css/layui.css">
+</head>
+<body>
+<div style="width: 100%; margin: 0px auto; min-height: 500px;">
+    <div data-v-30b93510="" class="reg-night-warp">
+        <div data-v-30b93510="" class="reg-div">
+            <div data-v-30b93510="" class="reg-main hc-bgColor2">
+                <div data-v-30b93510="" class="reg-div1">
+                    <div data-v-30b93510="" class="hc-color"
+                         style="animation-name: fadeIn; animation-duration: 3s;"><p data-v-30b93510="">
+                        昵称与邮箱注册后不可修改,请务必如实选择。</p>
+                        <p data-v-30b93510="">验证邮件可能会被误判为垃圾邮件，请注意查收。</p>
+                        <p data-v-30b93510="">请妥善保存您的Hotcoin账号及登录密码。</p>
+                        <p data-v-30b93510="">请勿和其他网址使用相同的登录密码。</p></div>
+                    <div data-v-30b93510="" class="hc-btn reg-loginbtn">已有账号立即登录</div>
+                </div>
+            </div>
+            <div data-v-30b93510="" class="reg-main2 hc-bgColor2">
+                <div data-v-30b93510="" style="margin-left: 60px; padding-top: 30px;">
+                    <form class="layui-form" action="">
+                        <div data-v-30b93510="" class="login-div4">新用户注册</div>
+                        <div data-v-30b93510="" class="login-form">
+                            <div data-v-30b93510="" class="login-div5 hc-color3">昵称</div>
+                            <div data-v-30b93510="">
+                                <span data-v-30b93510="">
+                                    <div role="tooltip" id="el-popover-7041" aria-hidden="true"
+                                         class="el-popover el-popper" style="display: none;" tabindex="0">
+                                        <div data-v-30b93510="" style="width: 200px; padding: 10px;">
+                                            <div data-v-30b93510="" class="nick-notice">此用户昵称为用户唯一标识，确定后不可修改，请谨慎填写</div>
+                                        </div>
+                                    </div>
+                                    <button data-v-30b93510="" type="button"
+                                            class="el-button userInfo-button el-button--default el-popover__reference"
+                                            aria-describedby="el-popover-7041" tabindex="0">
+                                        <span>
+                                            <!--<input  data-v-30b93510=""  placeholder="请输入您的昵称" id="nickname" name="input-name input-color" class="login-input">-->
+                                            <input data-v-30b93510="" type="text" maxlength=10
+                                                   name="nickname" id="nickname"
+                                                   lay-verify="require|validateName"
+                                                   class="login-input" placeholder="请输入您的昵称" autocomplete="off">
+                                        </span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div data-v-30b93510="" class="login-form">
+                            <div data-v-30b93510="" class="login-div5 hc-color3">账号</div>
+                            <div data-v-30b93510="">
+                                <!--<input data-v-30b93510="" name="input-name"  placeholder="请输入您的手机号码或电子邮箱" id="regName" class="login-input">-->
+                                <input data-v-30b93510="" type="text" name="email" id="regName"
+                                       lay-verify="require|phoneEmail"
+                                       class="login-input" placeholder="请输入您的手机号码或电子邮箱" autocomplete="off">
+                            </div>
+                        </div>
+                        <div data-v-30b93510="" class="login-form">
+                            <div data-v-30b93510="" class="login-div5 hc-color3">登录密码</div>
+                            <div data-v-30b93510="">
+                                    <span data-v-30b93510="">
+                                        <button data-v-30b93510="" type="button"
+                                                class="el-button userInfo-button el-button--default el-popover__reference"
+                                                aria-describedby="el-popover-4649" tabindex="0">
+                                            <span>
+                                                <!--<input data-v-30b93510="" placeholder="请输入您的登录密码" name="input-name" type="password" id="loginname" class="login-input input-color">-->
+                                                  <input data-v-30b93510="" type="password" name="password"
+                                                         lay-verify="require|validatePwd" id="loginname"
+                                                         class="login-input input-color new-pwd" placeholder="请输入您的登录密码"
+                                                         autocomplete="off">
+                                            </span>
+                                        </button>
+                                    </span>
+                            </div>
+                        </div>
+                        <div data-v-30b93510="" class="login-form">
+                            <div data-v-30b93510="" class="login-div5 hc-color3">确认密码</div>
+                            <div data-v-30b93510="">
+                                <!--<input data-v-30b93510="" placeholder="请确认登录密码" name="input-name" type="password" class="login-input">-->
+                                <input data-v-30b93510="" type="password" name="password2"
+                                       lay-verify="require|validateRNewPwd"
+                                       class="login-input" placeholder="请确认登录密码" autocomplete="off">
+                            </div>
+                        </div>
+                        <div data-v-30b93510="" class="login-form">
+                            <div data-v-30b93510="" class="login-div5 hc-color3">邀请码</div>
+                            <div data-v-30b93510="">
+                                <input data-v-30b93510="" placeholder="非必填" name="referee" class="login-input">
+                            </div>
+                        </div>
+                        <div data-v-30b93510="" class="login-form">
+
+                            <div data-v-c9fe8806="" class="login-div5 hc-color3">验证码</div>
+                            <div data-v-c9fe8806="" style="width: 50%;">
+                                <input data-v-c9fe8806="" type="text" placeholder="验证码"  lay-verify="require|validateCode" name="input-name" class="login-input" style="padding-left: 20px">
+                            </div>
+                            <div data-v-c9fe8806="" class="hc-color4 login-div6"><span data-v-f7be4836="" class="numbtn">获取验证码</span></div>
+                        </div>
+                        <div data-v-30b93510="">
+                            <div data-v-30b93510="" class="login-div6 hc-color3">
+                                <input data-v-30b93510="" type="checkbox" checked="checked">
+                                <span data-v-30b93510="" style="color: rgb(125, 139, 179);">我已阅读并同意</span>
+                                <a data-v-30b93510="" href="#" class="hc-color4">《用户协议》</a>
+                            </div>
+                            <button data-v-30b93510="" lay-submit="" lay-filter="demo1" type="button"
+                                    class="el-button login-logbtn el-button--warning">
+                                <span><span data-v-30b93510="">完成注册</span></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/home/js/jQuery-2.2.3.min.js"></script>
+<script src="/static/home/layui/layui.js"></script>
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form, layer = layui.layer
+        //自定义验证规则
+        form.verify({
+            validateName: function (value) {
+                var result = validateName(value);
+                if (result != "UName") {
+                    return result;
+                }
+            },
+            phoneEmail: function (value) {
+                var result = phoneEmail(value);
+                if (result != "num") {
+                    return result;
+                }
+            },
+            validatePwd: function (value) {
+                var result = validatePwd(value);
+                if (result != "pwd") {
+                    return result;
+                }
+            },
+            validateRNewPwd: function (value) {
+                var result = validateRNewPwd(value);
+                if (result != "RPWD") {
+                    return result;
+                }
+
+            },
+            validateCode:function (value) {
+                var result = validateCode(value);
+                if (result != "CODE") {
+                    return result;
+                }
+            }
+
+
+        });
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            // layer.msg('验证通过', {time: 1000}, function () {
+            //     // $(".dialog_pwd").hide()
+            // })
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        })
+    });
+
+    /**
+     * 昵称
+     * @param truename
+     * @returns {*}
+     */
+
+    function validateName(truename) {
+        var str = truename;
+        //在JavaScript中，正则表达式只能使用"/"开头和结束，不能使用双引号
+        var Expression = /^[\u4E00-\u9FA5a-zA-Z]{2,10}/;
+        var objExp = new RegExp(Expression);
+        if (objExp.test(str) == true) {
+            return 'UName'
+        } else {
+            return "昵称长度2到10个字符!"
+        }
+    }
+
+    /**
+     * 账号
+     * @param id
+     * @returns {*}
+     */
+    function phoneEmail(id) {
+        var _id = id;
+        var PReg = /^1[3|4|5|7|8]\d{9}$/;
+        var EReg = /^[a-z0-9._%-]+@([a-z0-9-]+\.)+[a-z]{2,4}$|^1[3|4|5|7|8]\d{9}$/;
+        if (PReg.test(_id) || EReg.test(_id)) {
+            return "num"
+        }
+        return "手机号码或邮箱格式不正确!"
+    }
+
+
+    /**
+     * 密码
+     * @param newPwd
+     * @returns {*}
+     */
+    function validatePwd(newPwd) {
+        var reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/;
+        if (reg.test(newPwd)) {
+            return 'pwd'
+        }
+        return "请输入6到16位字母加数字的密码!";
+    }
+
+    //
+    // /**
+    //  * 重复密码
+    //  * @param RNewPwd
+    //  * @returns {*}
+    //  */
+    function validateRNewPwd(RNewPwd) {
+        if (RNewPwd === '') {
+            return "重复密码不能为空";
+        }
+        var pwd = $(".new-pwd").val();
+        if (pwd === RNewPwd) {
+            return 'RPWD'
+        }
+        return "两次密码不一致!";
+    }
+    /**
+     * 验证码     *
+     * */
+    function validateCode(code) {
+        if(code !== ""){
+            return "CODE"
+        }
+        return "验证码不能为空";
+    }
+</script>
+<script>
+    //获取验证码
+    var countdown = 60;
+    $('.numbtn').on('click', function () {
+        var obj = $(".numbtn");
+        settime(obj);
+    })
+    function settime(obj) { //发送验证码倒计时
+        if (countdown == 0) {
+            obj.attr('disabled', false);
+            //obj.removeattr("disabled");
+            obj.html("免费获取验证码");
+            countdown = 60;
+            return;
+        } else {
+            obj.attr('disabled', true);
+            obj.html("重新发送(" + countdown + ")");
+            countdown--;
+        }
+        setTimeout(function () {
+            settime(obj)
+        }, 1000)
+    }
+</script>
+</body>
+</html>

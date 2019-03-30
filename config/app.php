@@ -166,7 +166,7 @@ return [
     'sys_name' =>'沙特阿美',
     //文件上传
     'addwater'=>false,
-    'watertext'=>'CLTPHP',
+    'watertext'=>'沙特阿美',
     'version'=>'5.7.3'
 
 ];

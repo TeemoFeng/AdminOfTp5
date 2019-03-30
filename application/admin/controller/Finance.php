@@ -16,6 +16,7 @@ use app\user\model\UserRunningLog;
 use think\Db;
 use think\db\Where;
 use think\Exception;
+use app\admin\model\Users as UsersModel;
 use think\facade\Request;
 class Finance extends Common
 {
@@ -49,9 +50,6 @@ class Finance extends Common
     public function convertSearch($data)
     {
         $where = new Where();
-        if(!empty($data['status'])){
-            $where['a.status'] = $data['status'];
-        }
         if(!empty($data['start_time']) && empty($data['end_time'])){
             $where['a.create_time'] = array('egt', $data['start_time']);
         }
@@ -82,7 +80,65 @@ class Finance extends Common
     //公司拨比列表
     public function allocationRatio()
     {
-        
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['type'])){
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+            if($data['type'] == 1){
+                //日拨比
+                $where = $this->makeSearch3($data);
+                $list = db('company_day_running')
+                    ->where($where)
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
+                    $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                    $list['data'][$k]['ratio'] = ($ratio*100).'%';
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+            }else{
+                //总拨比
+                $list = db('company_day_running')
+                    ->field('sum(income) income,sum(expenses) expenses')
+                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                    ->toArray();
+                foreach ($list['data'] as $k=>$v){
+                    $list['data'][$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
+                    $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                    $list['data'][$k]['ratio'] = ($ratio*100).'%';
+                    $list['data'][$k]['time'] = date('Y-m-d',time());
+                }
+                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+
+            }
+
+        }
+
+        return $this->fetch('allocationRatio');
+    }
+
+    //拨比条件搜索
+    public function makeSearch3($data)
+    {
+        $where = new Where();
+
+        if(!empty($data['start_time']) && empty($data['end_time'])){
+            $where['a.create_time'] = array('egt', $data['start_time']);
+        }
+        if(!empty($data['end_time']) && empty($data['start_time'])){
+            $where['a.create_time'] = array('elt',$data['end_time']);
+        }
+        if(!empty($data['start_time']) && !empty($data['end_time'])){
+
+            $where['a.create_time'] = array('between time', array($data['start_time'], $data['end_time']));
+        }
+        return $where;
     }
 
     //财务流水列表
@@ -284,7 +340,6 @@ class Finance extends Common
                 UserCurrencyAccount::create($account);
                 return ['code' => 0, 'msg' => '用户所剩余额不足'];
             }else{
-                //加上用户之前的余额
                 if($data['currency_id'] == 1){
                     if(bccomp($data['amount'], $user_currency_account['cash_currency_num'], 4) == 1){
                         return ['code' => 0, 'msg' => '扣除数量大于账户余额'];
@@ -425,6 +480,7 @@ class Finance extends Common
     public function makeSearch($data)
     {
         $where = new Where();
+        $where['a.del'] = 1;
         if(!empty($data['status'])){
             $where['a.status'] = $data['status'];
         }
@@ -481,15 +537,16 @@ class Finance extends Common
                 $list = db('user_apply_shate_cash')
                     ->alias('a')
                     ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username')
+                    ->field('a.*,u.usernum,u.username,u.id user_id')
                     ->where($where)
                     ->order('id DESC')
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                     ->toArray();
                 foreach ($list['data'] as $k=>$v){
-                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['status_str'] = UserApplyShateCash::$status[$v['status']];
                     $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
                     $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                    $list['data'][$k]['type'] = $data['type'];
                 }
                 return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
 
@@ -500,7 +557,7 @@ class Finance extends Common
                 $list = db('user_apply_consume_cash')
                     ->alias('a')
                     ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username')
+                    ->field('a.*,u.usernum,u.username,u.id user_id')
                     ->where($where)
                     ->order('id DESC')
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
@@ -509,6 +566,7 @@ class Finance extends Common
                     $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
                     $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
                     $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                    $list['data'][$k]['type'] = $data['type'];
                 }
                 return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
             }
@@ -518,7 +576,7 @@ class Finance extends Common
                 $list = db('user_apply_trade_cash')
                     ->alias('a')
                     ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username')
+                    ->field('a.*,u.usernum,u.username,u.id user_id')
                     ->where($where)
                     ->order('id DESC')
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
@@ -527,6 +585,7 @@ class Finance extends Common
                     $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
                     $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
                     $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                    $list['data'][$k]['type'] = $data['type'];
                 }
                 return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
             }
@@ -545,12 +604,131 @@ class Finance extends Common
     //提现申请删除
     public function applyCashDel()
     {
+        $data = input('post.');
+        if(!empty($data['type']) && !empty($data['id'])){
+            if($data['type'] == 1){
+                Db::name('user_apply_shate_cash')
+                    ->update(['del' => 0, 'id' => $data['id']]);
+            }elseif ($data['type'] == 2){
+                Db::name('user_apply_consume_cash')
+                    ->where('id', $data['id'])
+                    ->update(['del' => 0]);
+            }elseif ($data['type'] == 3){
+                Db::name('user_apply_trade_cash')
+                    ->where('id', $data['id'])
+                    ->update(['del' => 0]);
+            }
+            return $result = ['code'=>1,'msg'=>'删除成功!'];
 
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+    }
+
+    //拒绝
+    public function decline()
+    {
+        if(request()->isPost()){
+            $data= input('post.');
+            if(!empty($data['type']) && !empty($data['id'])){
+                if($data['type'] == 1){
+                    Db::name('user_apply_shate_cash')
+                        ->where('id', $data['id'])
+                        ->update(['status' => 3, 'reason' => $data['reason']]);
+                }elseif ($data['type'] == 2){
+                    Db::name('user_apply_consume_cash')
+                        ->where('id', $data['id'])
+                        ->update(['status' => 3, 'reason' => $data['reason']]);
+                }elseif ($data['type'] == 3){
+                    Db::name('user_apply_trade_cash')
+                        ->where('id', $data['id'])
+                        ->update(['status' => 3, 'reason' => $data['reason']]);
+                }
+                return ['code' => 1, 'msg' => '操作成功'];
+            }else{
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+
+    }
+
+    //提现详情
+    public function cashDetail()
+    {
+        $user_id = input('user_id');
+        if(empty($user_id)){
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+        //查询用户信息
+        $user_info = UsersModel::get($user_id);
+        $bank_name = db('bank')->where(['id' => $user_info['bank_id']])->value('bank_name');
+        $user_info['bank_name'] = $bank_name;
+        return ['code' => 1, 'info' => $user_info];
+
+    }
+
+    //提现批量批准
+    public function mulApprove()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+
+            $map[] =array('id','IN',$data['ids']);
+            if(!empty($data['type']) && !empty($data['ids'])){
+                if($data['type'] == 1){
+                    Db::table(config('database.prefix').'user_apply_shate_cash')
+                        ->where($map)
+                        ->update(['status' => 2]);
+                }elseif ($data['type'] == 2){
+                    Db::table(config('database.prefix').'user_apply_consume_cash')
+                        ->where($map)
+                        ->update(['status' => 2]);
+                }elseif ($data['type'] == 3){
+                    Db::table(config('database.prefix').'user_apply_trade_cash')
+                        ->where($map)
+                        ->update(['status' => 2]);
+                }
+                return $result = ['code'=>1,'msg'=>'操作成功!'];
+
+            }else{
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
     }
 
     //提现申请批量删除
     public function applyCashDelall()
     {
+        if(request()->isPost()){
+            $data = input('post.');
+
+            $map[] =array('id','IN',$data['ids']);
+            if(!empty($data['type']) && !empty($data['ids'])){
+                if($data['type'] == 1){
+                    Db::table(config('database.prefix').'user_apply_shate_cash')
+                        ->where($map)
+                        ->update(['del' => 0]);
+                }elseif ($data['type'] == 2){
+                    Db::table(config('database.prefix').'user_apply_consume_cash')
+                        ->where($map)
+                        ->update(['del' => 0]);
+                }elseif ($data['type'] == 3){
+                    Db::table(config('database.prefix').'user_apply_trade_cash')
+                        ->where($map)
+                        ->update(['del' => 0]);
+                }
+                return $result = ['code'=>1,'msg'=>'删除成功!'];
+
+            }else{
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
 
     }
 
