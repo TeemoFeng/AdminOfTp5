@@ -8,6 +8,7 @@
 namespace app\user\controller;
 
 use app\admin\model\ApplyCash;
+use app\admin\model\UserCurrencyAccount;
 use app\user\model\UserApplyCash;
 use app\user\model\UserApplyConsumeCash;
 use app\user\model\UserApplyShateCash;
@@ -117,6 +118,8 @@ class Finance extends Common{
             if((int)$data['change_num'] > (int)$data['cash_currency_num']){
                 return ['code' => 0, 'msg' => '转换数量不能超过刷过沙特链余额'];
             }
+
+            $rate = UserCurrencyAccount::where(['user_id' => $user_id])->value('rate'); //转换费率
 
             //记录币种转换日志
 //            UserRunningLog::create([

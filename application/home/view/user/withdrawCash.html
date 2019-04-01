@@ -129,7 +129,8 @@
 
                         </div>
                     </div>
-
+                    <input type="hidden" id="poundage" name="poundage">
+                    <input type="hidden" id="geiyouka" name="geiyouka">
                     <button data-v-22eb5e9c="" type="button" class="el-button address-form-btn el-button--danger" lay-submit="" lay-filter="submit">
                     <span>
                         <span data-v-22eb5e9c="">确认提现</span>
@@ -279,12 +280,21 @@
                 var ratio2 = FloatDiv(ratio,100);
                 var ratio3 = FloatSub(1, ratio2);
                 var real_num = FloatMul(val,ratio3);
-                real_num = parseFloat(real_num).toFixed(2);
+                real_num = parseFloat(real_num).toFixed(2); //到账金额
+                var geiyouka_ratio = FloatDiv(trans_to_waller_ratio,100);
+                var shouxu_ratio = FloatDiv(trans_ratio,100);
+                var geiyouka = FloatMul(val,geiyouka_ratio); //给油卡费用
+                var poundage = FloatMul(val,shouxu_ratio); //交易手续费
+
+                $('#geiyouka').val(geiyouka);
+                $('#poundage').val(poundage);
                 $('#real_sum').val(real_num);
 
             }else{
                 //如果输入的格式不对，清空
                 $(this).val('');
+                $('#geiyouka').val('');
+                $('#poundage').val('');
             }
         });
 

@@ -10,6 +10,8 @@ use app\admin\model\ApplyCash;
 use app\admin\model\ApplyRecharge;
 use app\admin\model\Currency;
 use app\admin\model\CurrencyRecharge;
+use app\admin\model\UserApplyConsumeCash;
+use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
 use app\user\model\UserApplyShateCash;
 use app\user\model\UserRunningLog;
@@ -159,6 +161,7 @@ class Finance extends Common
                 ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
                 ->field('a.*,u.username,ab.username about_user')
                 ->where($where)
+                ->order('id DESC')
                 ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                 ->toArray();
             if(empty($list))
@@ -191,6 +194,7 @@ class Finance extends Common
     {
         $where = new Where();
         $where['a.account_type'] = 1;
+        $where['a.status'] = 1;
         if(!empty($data['account_type'])){
             $where['a.account_type'] = $data['account_type']; //流水类型
         }
@@ -563,7 +567,7 @@ class Finance extends Common
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                     ->toArray();
                 foreach ($list['data'] as $k=>$v){
-                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['status_str'] = UserApplyShateCash::$status[$v['status']];
                     $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
                     $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
                     $list['data'][$k]['type'] = $data['type'];
@@ -582,7 +586,7 @@ class Finance extends Common
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                     ->toArray();
                 foreach ($list['data'] as $k=>$v){
-                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
+                    $list['data'][$k]['status_str'] = UserApplyShateCash::$status[$v['status']];
                     $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
                     $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
                     $list['data'][$k]['type'] = $data['type'];
@@ -625,24 +629,60 @@ class Finance extends Common
         }
     }
 
-    //拒绝
+    //拒绝 要将用户的余额返回
     public function decline()
     {
         if(request()->isPost()){
             $data= input('post.');
             if(!empty($data['type']) && !empty($data['id'])){
                 if($data['type'] == 1){
-                    Db::name('user_apply_shate_cash')
+                    $res = Db::name('user_apply_shate_cash')
                         ->where('id', $data['id'])
                         ->update(['status' => 3, 'reason' => $data['reason']]);
+
+                    if(false === $res) {
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
+                    //
+                    $tarde_info = UserApplyShateCash::where('id',$data['id'])->find();
+                    $cash_currency_num = UserCurrencyAccount::where(['user_id' => $tarde_info['user_id']])->value('cash_currency_num');
+                    ;
+                    $cash_currency_num2 = bcadd($tarde_info['cash_num'],$cash_currency_num,4);
+                    $res2 = UserCurrencyAccount::where(['user_id' => $tarde_info['user_id']])->update(['cash_currency_num' => $cash_currency_num2]);
+                    if(false === $res2){
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
                 }elseif ($data['type'] == 2){
-                    Db::name('user_apply_consume_cash')
+                    $res = Db::name('user_apply_consume_cash')
                         ->where('id', $data['id'])
                         ->update(['status' => 3, 'reason' => $data['reason']]);
+
+                    if(false === $res) {
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
+                    $tarde_info =  UserApplyConsumeCash::where('id',$data['id'])->find();
+                    $consume_num = UserCurrencyAccount::where(['user_id' => $tarde_info['user_id']])->value('consume_num');
+                    $cash_currency_num2 = bcadd($tarde_info['cash_num'],$consume_num,4);
+                    $res2 = UserCurrencyAccount::where(['user_id' => $tarde_info['user_id']])->update(['consume_num' => $cash_currency_num2]);
+                    if(false === $res2){
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
                 }elseif ($data['type'] == 3){
-                    Db::name('user_apply_trade_cash')
+                    $res = Db::name('user_apply_trade_cash')
                         ->where('id', $data['id'])
                         ->update(['status' => 3, 'reason' => $data['reason']]);
+
+                    if(false === $res) {
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
+                    $tarde_info = UserApplyTradeCash::where('id',$data['id'])->value('cash_sum');
+                    $transaction_num = UserCurrencyAccount::where(['user_id' => $tarde_info['user_id']])->value('transaction_num');
+                    $cash_currency_num2 = bcadd($tarde_info['cash_num'],$transaction_num,2);
+                    $res2 = UserCurrencyAccount::where(['user_id' => $tarde_info['user_id']])->update(['transaction_num' => $cash_currency_num2]);
+                    if(false === $res2){
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
+
                 }
                 return ['code' => 1, 'msg' => '操作成功'];
             }else{
@@ -678,17 +718,44 @@ class Finance extends Common
             $map[] =array('id','IN',$data['ids']);
             if(!empty($data['type']) && !empty($data['ids'])){
                 if($data['type'] == 1){
-                    Db::table(config('database.prefix').'user_apply_shate_cash')
+                    $res = Db::table(config('database.prefix').'user_apply_shate_cash')
                         ->where($map)
                         ->update(['status' => 2]);
+
+                    if(false === $res) {
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
+
+                    //流水记录生效
+                    $map2[] =array('order_id','IN',$data['ids']);
+                    $map2[] =array('account_type','=', 1);
+                    UserRunningLog::where($map2)->update(['status' => 1]);
+
                 }elseif ($data['type'] == 2){
-                    Db::table(config('database.prefix').'user_apply_consume_cash')
+                    $res = Db::table(config('database.prefix').'user_apply_consume_cash')
                         ->where($map)
                         ->update(['status' => 2]);
+                    if(false === $res) {
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
+
+                    //流水记录生效
+                    $map2[] =array('order_id','IN',$data['ids']);
+                    $map2[] =array('account_type','=', 3);
+                    UserRunningLog::where($map2)->update(['status' => 1]);
                 }elseif ($data['type'] == 3){
-                    Db::table(config('database.prefix').'user_apply_trade_cash')
+                    $res = Db::table(config('database.prefix').'user_apply_trade_cash')
                         ->where($map)
                         ->update(['status' => 2]);
+                    if(false === $res) {
+                        return ['code' => 0, 'msg' => '操作失败'];
+                    }
+
+                    //流水记录生效
+                    $map2[] =array('order_id','IN',$data['ids']);
+                    $map2[] =array('account_type','=', 4);
+                    UserRunningLog::where($map2)->update(['status' => 1]);
+
                 }
                 return $result = ['code'=>1,'msg'=>'操作成功!'];
 

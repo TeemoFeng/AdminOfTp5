@@ -8,6 +8,7 @@
 namespace app\home\controller;
 use app\admin\model\ApplyCash;
 use app\admin\model\ApplyRecharge;
+use app\admin\model\Currency;
 use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
 use app\home\model\UserTradeDepute;
@@ -74,9 +75,71 @@ class User extends Common
             $save['create_time'] = time();
             $save['cash_method'] = $data['cash_method'];
             $save['remark'] = $data['remark'];
-            if(UserApplyTradeCash::create($save)){
-                return ['code' => 1, 'msg' => '提现申请成功'];
+
+            Db::startTrans();
+            $ins = UserApplyTradeCash::create($save);
+            if($ins){
+                //用户钱包账户减去交易钱包额度
+                $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $user_info['id']])->value('transaction_num'); //获取交易钱包余额
+                $transaction_num = bcsub($user_transaction_num, $data['cash_sum'], 2); //用户钱包剩余
+                $up_data = [
+                    'transaction_num' => $transaction_num,
+                ];
+
+                $res2 = UserCurrencyAccount::where(['user_id' => $user_info['id']])->update($up_data);
+                if($res2 !== false){
+                    Db::commit();
+                    //提现扣除记录
+                    $tran_num = bcsub($user_transaction_num, $data['real_sum'], 2); //用户钱包减去真是交易剩余
+                    UserRunningLog::create([
+                        'user_id'  =>  $user_info['id'],
+                        'about_id' =>  $user_info['id'],
+                        'running_type'  => UserRunningLog::TYPE5, //提现扣除
+                        'account_type'  => Currency::TRADE,
+                        'change_num'    => -$data['real_sum'],
+                        'balance'       => $tran_num,
+                        'create_time'   => time(),
+                        'remark'        => $data['remark'],
+                        'order_id'      => $ins->id,
+                        'status'        => 0, //提现扣除装填默认为0 待批准之后更新显示
+                    ]);
+                    //提现手续费记录
+                    $tran_num2 = bcsub($tran_num, $data['poundage'], 2); //继续减去手续费剩余
+                    UserRunningLog::create([
+                        'user_id'  =>  $user_info['id'],
+                        'about_id' =>  $user_info['id'],
+                        'running_type'  => UserRunningLog::TYPE26,
+                        'account_type'  => Currency::TRADE,
+                        'change_num'    => -$data['poundage'],
+                        'balance'       => $tran_num2,
+                        'create_time'   => time(),
+                        'remark'        => $data['remark'],
+                        'order_id'      => $ins->id,
+                        'status'        => 0, //提现扣除装填默认为0 待批准之后更新显示
+                    ]);
+                    //提现给油卡记录
+                    $tran_num3 = bcsub($tran_num2, $data['geiyouka'], 2); //继续减去手续费剩余
+                    UserRunningLog::create([
+                        'user_id'  =>  $user_info['id'],
+                        'about_id' =>  $user_info['id'],
+                        'running_type'  => UserRunningLog::TYPE27,
+                        'account_type'  => Currency::TRADE,
+                        'change_num'    => -$data['geiyouka'],
+                        'balance'       => $tran_num3,
+                        'create_time'   => time(),
+                        'remark'        => $data['remark'],
+                        'order_id'      => $ins->id,
+                        'status'        => 0, //提现扣除装填默认为0 待批准之后更新显示
+                    ]);
+
+                    return ['code' => 1, 'msg' => '提现申请成功'];
+
+                }else{
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '申请失败请重试'];
+                }
             }else{
+                Db::rollback();
                 return ['code' => 0, 'msg' => '申请失败请重试'];
             }
 

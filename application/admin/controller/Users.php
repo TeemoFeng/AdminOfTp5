@@ -30,7 +30,7 @@ class Users extends Common{
                 $list['data'][$k]['status'] = UsersModel::$acstatus[$v['status']];
                 $list['data'][$k]['enabled'] = UsersModel::$vastatus[$v['enabled']];
                 $list['data'][$k]['baodan_center'] = UsersModel::$bdstatus[$v['baodan_center']];
-                $list['data'][$k]['is_report'] = UsersModel::$bdstatus[$v['$yhstatus']];
+                $list['data'][$k]['is_report'] = UsersModel::$yhstatus[$v['is_report']];
             }
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
         }

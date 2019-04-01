@@ -1,6 +1,8 @@
 <?php
 namespace app\admin\controller;
+use app\admin\model\UserApplyConsumeCash;
 use app\admin\model\UserApplyShateCash;
+use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
 use think\Db;
 use app\admin\model\Users;
@@ -76,7 +78,10 @@ class Index extends Common
         //获取申请充值的用户数量
         $apply_recharge = 0;
         //获取申请提现的用户数量
-        $apply_cash = UserApplyShateCash::where(['status' => 1])->count();
+        $apply_shate_cash = UserApplyShateCash::where(['status' => 1])->count();
+        $apply_trade_cash = UserApplyTradeCash::where(['status' => 1])->count();
+        $apply_consume_cash = UserApplyConsumeCash::where(['status' => 1])->count(); //消费钱包
+        $apply_cash = $apply_shate_cash+$apply_trade_cash+$apply_consume_cash;
         $init = [
             'user_num'          => $user_num,
             'no_ac_num'         => $no_ac_num,
