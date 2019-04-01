@@ -1,5 +1,6 @@
 <?php
 namespace app\home\controller;
+use app\user\model\Users;
 use think\Db;
 use clt\Lunar;
 //use think\facade\Env;

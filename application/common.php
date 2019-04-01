@@ -511,7 +511,7 @@ function is_alipay() {
 function get_user_info($user_id_or_name,$type = 0,$oauth=''){
     $map = array();
     if($type == 0){
-        $map[] = ['user_id','=',$user_id_or_name];
+        $map[] = ['id','=',$user_id_or_name];
     }
     if($type == 1){
         $map[] = ['email','=',$user_id_or_name];

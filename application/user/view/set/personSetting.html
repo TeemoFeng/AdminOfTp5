@@ -62,7 +62,7 @@
                             <div data-v-1766f510="" class="single-center">{$user_info['bank_account']}</div>
                             <div data-v-1766f510="" class="single-bottom clearfix">
                                 <div data-v-1766f510="" class="hc-bgColor5 hc-bgColor55-selected delete-bank">
-                                    <i data-v-1766f510="" class="el-icon-close hc-color"></i>
+                                    <i data-v-1766f510="" class="el-icon-close hc-color" id="delBank" data-id="{$user_info['id']}" data-type="1"></i>
                                 </div>
                             </div>
                         </div>
@@ -98,14 +98,14 @@
                             </div>
                             <div data-v-1766f510="" class="single-bottom clearfix">
                                 <div data-v-1766f510="" class="hc-bgColor5 hc-bgColor55-selected delete-bank">
-                                    <i data-v-1766f510="" class="el-icon-close hc-color"></i>
+                                    <i data-v-1766f510="" class="el-icon-close hc-color" id="delAlipay" data-id="{$user_info['id']}" data-type="2"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {/if}
 
-                    {if !empty($user_info['weixni_account'])}
+                    {if !empty($user_info['weixin_account'])}
                     <div data-v-1766f510="" class="hc-bgColor1">
                         <div data-v-1766f510="" class="card-single hc-bgColor4 clearfix" style="margin-top: 50px;">
                             <div data-v-1766f510="" class="single-top">
@@ -135,7 +135,7 @@
                             </div>
                             <div data-v-1766f510="" class="single-bottom clearfix">
                                 <div data-v-1766f510="" class="hc-bgColor5 hc-bgColor55-selected delete-bank">
-                                    <i data-v-1766f510="" class="el-icon-close hc-color"></i>
+                                    <i data-v-1766f510="" class="el-icon-close hc-color" id="delWeixin" data-id="{$user_info['id']}" data-type="3"></i>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +201,7 @@
                                                     <span data-v-1d8dd908="" class="title_left">姓名</span>
                                                 </div>
                                                 <div data-v-1d8dd908="" class="el-input is-disabled">
-                                                    <input type="text" autocomplete="off" placeholder="" name="bank_user" class="el-input__inner" value="{$user_info['bank_user']}" {if condition="!empty($user_info['bank_user'])"}disabled{/if}>
+                                                    <input type="text" autocomplete="off" placeholder="" name="username" class="el-input__inner" value="{$user_info['username']}" {if condition="!empty($user_info['username'])"}disabled{/if}>
 
                                                 </div>
                                             </div>
@@ -278,7 +278,7 @@
                                                 </div>
                                                 <div data-v-1d8dd908="" class="el-input">
                                                     <input type="password" autocomplete="off" placeholder="请填写资金密码"
-                                                           id="password" name="safeword" class="el-input__inner">
+                                                           id="password" name="bank_pass" class="el-input__inner">
                                                 </div>
                                             </div>
                                         </div>
@@ -308,7 +308,7 @@
                                                     <span data-v-1d8dd908="" class="title_left">姓名</span>
                                                 </div>
                                                 <div data-v-1d8dd908="" class="el-input is-disabled">
-                                                    <input type="text" autocomplete="off" placeholder="" name="bank_user" class="el-input__inner" value="{$user_info['bank_user']}" {if condition="!empty($user_info['bank_user'])"}disabled{/if}>
+                                                    <input type="text" autocomplete="off" placeholder="" name="username" class="el-input__inner" value="{$user_info['username']}" {if condition="!empty($user_info['username'])"}disabled{/if}>
 
                                                 </div>
                                             </div>
@@ -330,7 +330,7 @@
                                                 </div>
                                                 <div data-v-1d8dd908="">
                                                     <div data-v-1d8dd908="" class="upload-demo">
-                                                        <button type="button" class="layui-btn" id="test1" style="background: #8275ff">
+                                                        <button type="button" class="layui-btn" id="aliImage" style="background: #8275ff">
                                                             上传图片
                                                         </button>
                                                         <input type="hidden" name="alipay_img_code" id="alipay_img_code">
@@ -339,7 +339,7 @@
                                                                 <i data-v-469a90da="" class="el-icon-upload"></i>
                                                                 <div class="layui-upload-list"
                                                                      style="margin:0;position: absolute; top:0; left: 0; z-index: 10;width: 100%;height: 100% ">
-                                                                    <img class="layui-upload-img" id="demo1"
+                                                                    <img class="layui-upload-img" id="aliImageShow"
                                                                          style="width: 100%;height: 100% ">
                                                                     <!--<p id="demoText"></p>-->
                                                                 </div>
@@ -353,7 +353,7 @@
                                                     <span data-v-1d8dd908="" class="title_left">资金密码</span>
                                                 </div>
                                                 <div data-v-1d8dd908="" class="el-input">
-                                                    <input type="password"  autocomplete="off"  placeholder="请填写资金密码"  id="trade_password"  name="input-name" class="el-input__inner">
+                                                    <input type="password"  autocomplete="off"  placeholder="请填写资金密码"  id="trade_password"  name="alipay_pass" class="el-input__inner">
                                                 </div>
                                             </div>
                                         </div>
@@ -384,7 +384,8 @@
                                                     <span data-v-1d8dd908="" class="title_left">姓名</span>
                                                 </div>
                                                 <div data-v-1d8dd908="" class="el-input is-disabled">
-                                                    <input  type="text" disabled="disabled" autocomplete="off" placeholder="zhangxinze"  name="input-name" class="el-input__inner">
+                                                    <input type="text" autocomplete="off" placeholder="" name="username" class="el-input__inner" value="{$user_info['username']}" {if condition="!empty($user_info['username'])"}disabled{/if}>
+
                                                 </div>
                                             </div>
                                         </div> <!---->
@@ -395,7 +396,7 @@
                                                     <span data-v-1d8dd908="" class="title_right">* 提示:只可以添加本人名下账号</span>
                                                 </div>
                                                 <div data-v-1d8dd908="" class="el-input">
-                                                    <input type="text" autocomplete="off" placeholder="请填写账号" id="trade_realName" name="input-name" class="el-input__inner">
+                                                    <input type="text" autocomplete="off" placeholder="请填写账号" id="trade_realName" name="weixin_account" class="el-input__inner">
                                                 </div>
                                             </div>
                                             <div data-v-1d8dd908="" class="row-style el-row">
@@ -405,7 +406,7 @@
                                                 </div>
                                                 <div data-v-1d8dd908="">
                                                     <div data-v-1d8dd908="" class="upload-demo">
-                                                        <button type="button" class="layui-btn" id="aliImage" style="background: #8275ff">
+                                                        <button type="button" class="layui-btn" id="weixinImage" style="background: #8275ff">
                                                             上传图片
                                                         </button>
                                                         <input type="hidden" name="weixin_img_code" id="weixin_img_code">
@@ -414,7 +415,7 @@
                                                                 <i data-v-469a90da="" class="el-icon-upload"></i>
                                                                 <div class="layui-upload-list"
                                                                      style="margin:0;position: absolute; top:0; left: 0; z-index: 10;width: 100%;height: 100% ">
-                                                                    <img class="layui-upload-img" id="aliImageShow"
+                                                                    <img class="layui-upload-img" id="weixinImageShow"
                                                                          style="width: 100%;height: 100% ">
                                                                     <!--<p id="demoText"></p>-->
                                                                 </div>
@@ -428,7 +429,7 @@
                                                     <span data-v-1d8dd908="" class="title_left">资金密码</span>
                                                 </div>
                                                 <div data-v-1d8dd908="" class="el-input">
-                                                    <input type="password"  autocomplete="off"  placeholder="请填写资金密码"   name="safeword" class="el-input__inner">
+                                                    <input type="password"  autocomplete="off"  placeholder="请填写资金密码"   name="weixin_pass" class="el-input__inner">
                                                 </div>
                                             </div>
                                         </div>
@@ -436,7 +437,7 @@
                                         <span>
                                                        <input type="hidden" name="id" value="{$user_info['id']}">
                                             <input type="hidden" name="type" value="3">
-                                            <span data-v-1d8dd908="" lay-submit="" lay-filter="submit2">确认添加</span>
+                                            <span data-v-1d8dd908="" lay-submit="" lay-filter="submit3">确认添加</span>
                                         </span>
                                         </button>
                                         <div data-v-1d8dd908="" class="bottom-notice hc-color">
@@ -483,7 +484,67 @@
         var form = layui.form
             , layer = layui.layer
             , layedit = layui.layedit
-            , laydate = layui.laydate;
+            , laydate = layui.laydate
+            , $ = layui.jquery;
+
+        //删除银行卡
+        $('body').on('click','#delBank', function () {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            layer.confirm('您确定要删除吗？', function(index){
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.post("{:url('delPaymethod')}",{id:id,type:type},function(res){
+                    layer.close(loading);
+                    if(res.code===1){
+                        layer.msg(res.msg,{time:1000,icon:1});
+                        location.reload();
+                    }else{
+                        layer.msg('操作失败！',{time:1000,icon:2});
+                    }
+                });
+                layer.close(index);
+            });
+        });
+
+        //删除支付宝
+        $('body').on('click','#delAlipay', function () {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            layer.confirm('您确定要删除吗？', function(index){
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.post("{:url('delPaymethod')}",{id:id,type:type},function(res){
+                    layer.close(loading);
+                    if(res.code===1){
+                        layer.msg(res.msg,{time:1000,icon:1});
+                        location.reload();
+                    }else{
+                        layer.msg('操作失败！',{time:1000,icon:2});
+                    }
+                });
+                layer.close(index);
+            });
+        });
+
+        //删除银行卡
+        $('body').on('click','#delWeixin', function () {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            layer.confirm('您确定要删除吗？', function(index){
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.post("{:url('delPaymethod')}",{id:id,type:type},function(res){
+                    layer.close(loading);
+                    if(res.code===1){
+                        layer.msg(res.msg,{time:1000,icon:1});
+                        location.reload();
+                    }else{
+                        layer.msg('操作失败！',{time:1000,icon:2});
+                    }
+                });
+                layer.close(index);
+            });
+        });
+
+
 
         //自定义验证规则
         form.verify({
@@ -579,19 +640,21 @@
         // 普通图片上传
         var uploadInst = upload.render({
             elem: '#aliImage'
-            , url: '{:url("admin/UpFiles/upload")}'
+            , url: '{:url("Upfiles/upload")}'
             , before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
-                    $('#alipay_img_code').attr('src', result); //图片链接（base64）
+                    $('#aliImageShow').attr('src', result); //图片链接（base64）
                 });
             }
             , done: function (res) {
                 //如果上传失败
                 if (res.code > 0) {
+                    $('#alipay_img_code').val(res.url);
+                }else{
+                    //如果上传失败
                     return layer.msg('上传失败');
                 }
-                //上传成功
             }
             , error: function () {
                 //演示失败状态，并实现重传
@@ -604,20 +667,22 @@
         });
 
         var uploadInst2 = upload.render({
-            elem: '#aliImage'
-            , url: '{:url("admin/UpFiles/upload")}'
+            elem: '#weixinImage'
+            , url: '{:url("Upfiles/upload")}'
             , before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
-                    $('#weixin_img_code').attr('src', result); //图片链接（base64）
+                    $('#weixinImageShow').attr('src', result); //图片链接（base64）
                 });
             }
             , done: function (res) {
                 //如果上传失败
                 if (res.code > 0) {
+                    $('#weixin_img_code').val(res.url);
+                }else{
+                    //如果上传失败
                     return layer.msg('上传失败');
                 }
-                //上传成功
             }
             , error: function () {
                 //演示失败状态，并实现重传

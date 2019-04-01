@@ -50,7 +50,7 @@ class User extends Common{
     //搜索条件
     public function makeSearch($data)
     {
-        $where = $where = new Where();
+        $where = new Where();
         if(!empty($data['status'])){
             $where['a.status'] = $data['status'];
         }

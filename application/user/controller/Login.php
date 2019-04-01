@@ -1,5 +1,6 @@
 <?php
 namespace app\user\controller;
+use app\user\model\UserLoginLog;
 use think\Controller;
 use think\facade\Request;
 use think\captcha\Captcha;
@@ -28,10 +29,20 @@ class Login extends Controller{
                 return array('code'=>0,'msg'=>'请填写账号或密码');
             }
             $user = $table->where("mobile","=",$username)->whereOr('email','=',$username)->find();
+            $userLogin = new UserLoginLog();
+            $user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
+            $user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];
             if(!$user){
                 return array('code'=>0,'msg'=>'账号不存在!');
             }elseif(md5($password) != $user['password']){
 
+                $userLogin->save([
+                    'user_id'       => $user['id'],
+                    'login_method'  => 'WEB',
+                    'status'        => 0,
+                    'ip'            => $user_IP,
+                    'create_time'   => date('Y-m-d H:i:s',time()),
+                ]);
                 return array('code'=>0,'msg'=>'密码错误!');
             }elseif($user['is_lock'] == 1){
                 return array('code'=>0,'msg'=>'账号异常已被锁定！！！');
@@ -41,6 +52,15 @@ class Login extends Controller{
                 if($openid){
                     $sessionUser['qq'] = 1;
                 }
+                //记录用户登录日志
+                $userLogin->save([
+                    'user_id'       =>  $user['id'],
+                    'login_method'  =>  'WEB',
+                    'status'        => 1,
+                    'ip'            => $user_IP,
+                    'create_time'   => date('Y-m-d H:i:s',time()),
+                ]);
+
                 session('user',$sessionUser);
                 return array('code'=>1,'msg'=>'登录成功','url' => url('home/index/index'));
             }
@@ -117,7 +137,8 @@ class Login extends Controller{
             unset($data['password2']);
             unset($data['vercode']);
             //验证是否存在用户名
-
+            $user_num = createVipNum();
+            $data['usernum'] = $user_num;
             $data['password'] = md5($data['password']);
             $data['reg_time'] = time();
             $id = db('users')->insertGetId($data);

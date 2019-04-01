@@ -164,10 +164,17 @@
             // layer.msg('验证通过', {time: 1000}, function () {
             //     // $(".dialog_pwd").hide()
             // })
-            layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            })
-            return false;
+            var loading = layer.load(2, {shade: [0.1, '#fff']});
+            $.post("{:url('reg')}",data.field,function(res){
+                layer.close(loading);
+                if(res.code > 0){
+                    layer.msg(res.msg,{time:1000,icon:1},function(){
+                        location.href = "{:url('user/login/index')}";
+                    });
+                }else{
+                    layer.msg(res.msg,{time:1000,icon:2});
+                }
+            });
         })
     });
 

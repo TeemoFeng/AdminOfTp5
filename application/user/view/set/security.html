@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en" class="night-style">
+<head>
+    <meta charset="UTF-8">
+    <title>帐号完全</title>
+    <link rel="stylesheet" href="/static/home/css/app.css">
+    <link rel="stylesheet" href="/static/home/css/style.css">
+    <link rel="stylesheet" href="/static/home/layui/css/layui.css">
+</head>
+<body>
+<div>
+
+    <div style="width: 100%; margin: 0px auto; min-height: 500px;">
+        <div data-v-6eea9c7f="" class="security hc-bgColor5">
+            <!--todo 头部-->
+            <div data-v-6eea9c7f="" class="header hc-bgColor7">
+                <div data-v-6eea9c7f="" class="header-title-wrap local-width" style="position: relative;">
+                    <div data-v-6eea9c7f="" style="position: absolute; left: 0px; top: 60px;" class="avatar">
+                        <div data-v-6eea9c7f="" style="display: none" class="personal-add"><i data-v-6eea9c7f=""
+                                                                                              class="fa fa-camera"
+                                                                                              style="font-size: 30px;"></i>
+                        </div>
+                        <div data-v-6eea9c7f="">
+                            {if !empty($user_info['avatar'])}
+                            <img data-v-6eea9c7f="" src="{$user_info['avatar']}" class="personal">
+                            {else /}
+                            <img data-v-6eea9c7f="" src="/static/home/images/Avatar.png" class="personal">
+                            {/if}
+
+                        </div>
+                    </div>
+                    <div data-v-6eea9c7f="" class="security-content-title clearfix">
+                        <div data-v-6eea9c7f="" class="security-one-content">{$user_info['nickname']}</div>
+                        <div data-v-6eea9c7f="" class="security-two-content">
+                            <div data-v-6eea9c7f="" class="login">登录密码：******
+                                <button data-v-6eea9c7f="" class="hc-btn button-title hc-bgColor5 login_xg">修改</button>
+                            </div>
+                            <div data-v-6eea9c7f="" class="capital">资金密码：<span data-v-6eea9c7f="">******</span>
+                                <button data-v-6eea9c7f="" class="hc-btn button-title hc-bgColor5 zj-xg">修改</button>
+                                <!--<button data-v-6eea9c7f="" class="hc-btn button-title hc-bgColor5 hc-btn-specail"-->
+                                        <!--style="margin-left: 5px;">找回-->
+                                <!--</button>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div data-v-6eea9c7f="" class="security-notice-wrap clearfix">
+                        <div data-v-6eea9c7f="" class="security-one-notice hc-color3">UID:<span data-v-6eea9c7f="">{$user_info['usernum']}</span>
+                        </div>
+                        <div data-v-6eea9c7f="" class="security-two-notice hc-color">
+                            <div data-v-6eea9c7f="">互联网账号存在被盗风险，建议您定期更改密码以保护账户安全。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--todo 头部end-->
+            <!--主体-->
+            <div data-v-6eea9c7f="" class="body hc-bgColor5 local-width ">
+                <!--todo 安全认证-->
+                <div data-v-6eea9c7f="" class="content hc-bgColor5">
+                    <div data-v-6eea9c7f="" class="content-wrap hc-bgColor1">
+                        <div data-v-6eea9c7f="" class="title hc-bgColor3 clearfix">
+                            <div data-v-6eea9c7f="" class="title_one"><span data-v-6eea9c7f="">安全认证</span><span
+                                    data-v-6eea9c7f="" class="hc-color2">（强烈建议开启3项安全认证）</span></div>
+                            <div data-v-6eea9c7f="" class="title_two hc-color">
+                                <div data-v-6eea9c7f="" class="title_two_left">安全级别：</div>
+                                <div data-v-6eea9c7f="" class="title_two_center hc-bgColor1">
+                                    <div data-v-6eea9c7f="" style="width: 50%; background: rgb(54, 153, 100);"></div>
+                                </div>
+                                <div data-v-6eea9c7f="" class="title_two_right hc-color2"
+                                     style="color: rgb(54, 153, 100);">较低
+                                </div>
+                            </div>
+                        </div>
+                        <div data-v-6eea9c7f="" class="auth-list">
+                            <div data-v-6eea9c7f="" class="auth-list-one auth-list-common">
+                                <div data-v-6eea9c7f="" class="security-email hc-bgColor4">
+                                    <div data-v-6eea9c7f="" class="security-email-center">
+                                        <div data-v-6eea9c7f="" class="security-center-one security-center">
+                                            <img data-v-6eea9c7f="" src="/static/home/images/emal.png">
+                                        </div>
+                                        <div data-v-6eea9c7f="" class="security-center-two security-center">电子邮箱</div>
+
+                                        {if empty($user_info['email'])}
+                                        <div data-v-6eea9c7f="" class="security-center-three security-center hc-color1">
+                                            <i data-v-6eea9c7f="" class="el-icon-warning"></i> <span data-v-6eea9c7f="">未绑定</span>
+                                        </div>
+                                        <div data-v-6eea9c7f="" class="security-center-four hc-color6">
+                                            <button data-v-6eea9c7f="" class="hc-btn button hc-bgColor5 band_email">
+                                                去绑定
+                                            </button>
+                                        </div>
+                                        {else /}
+                                        <div data-v-6eea9c7f="" class="security-center-three security-center hc-color2">
+                                            <i data-v-6eea9c7f="" class="el-icon-success"></i> <span data-v-6eea9c7f="">已绑定</span>
+                                        </div>
+                                        <div data-v-6eea9c7f="" class="security-center-four hc-color6">
+                                                不可修改
+                                        </div>
+                                        {/if}
+
+
+                                    </div>
+                                </div>
+                                <div data-v-6eea9c7f="" class="security-email-desc hc-color">
+                                    <div data-v-6eea9c7f="" class="security-center-five">
+                                        用于提币、找回密码、修改安全设置、管理API时使用，激活后不可修改
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-v-6eea9c7f="" class="auth-list-two auth-list-common">
+                                <div data-v-6eea9c7f="" class="security-email hc-bgColor4">
+                                    <div data-v-6eea9c7f="" class="security-email-center">
+                                        <div data-v-6eea9c7f="" class="security-center-one security-center">
+                                            <img data-v-6eea9c7f="" src="/static/home/images/phone.png">
+                                        </div>
+                                        <div data-v-6eea9c7f="" class="security-center-two security-center">电话号码</div>
+
+                                        {if empty($user_info['mobile'])}
+                                        <div data-v-6eea9c7f="" class="security-center-three security-center hc-color1">
+                                            <i data-v-6eea9c7f="" class="el-icon-warning"></i> <span data-v-6eea9c7f="">未绑定</span>
+                                        </div>
+                                        <div data-v-6eea9c7f="" class="security-center-four hc-color6">
+                                            <button data-v-6eea9c7f="" class="hc-btn button hc-bgColor5 band_mobile">
+                                                去绑定
+                                            </button>
+                                        </div>
+                                        {else /}
+                                        <div data-v-6eea9c7f="" class="security-center-three security-center hc-color2">
+                                            <i data-v-6eea9c7f="" class="el-icon-success"></i> <span data-v-6eea9c7f="">已绑定</span>
+                                        </div>
+                                        <div data-v-6eea9c7f="" class="security-center-four hc-color6">
+                                            <button data-v-6eea9c7f="" class="hc-btn button hc-bgColor5 xg_phone">去修改
+                                            </button>
+                                        </div>
+                                        {/if}
+
+                                    </div>
+                                </div>
+                                <div data-v-6eea9c7f="" class="security-email-desc hc-color">
+                                    <div data-v-6eea9c7f="" class="security-center-five">
+                                        用于提币、找回密码、修改安全设置、管理API时用以收取验证短信
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-v-6eea9c7f="" class="auth-list-three auth-list-common">
+                                <div data-v-6eea9c7f="" class="security-email hc-bgColor4">
+                                    <div data-v-6eea9c7f="" class="security-email-center">
+                                        <div data-v-6eea9c7f="" class="security-center-one security-center">
+                                            <img data-v-6eea9c7f="" src="/static/home/images/userName.png">
+                                        </div>
+
+                                        {if empty($user_info['username'])}
+                                        <div data-v-6eea9c7f="" class="security-center-two security-center">实名认证</div>
+                                        <div data-v-6eea9c7f="" class="security-center-three security-center hc-color1">
+                                            <i data-v-6eea9c7f="" class="el-icon-warning"></i> <span data-v-6eea9c7f="">未绑定</span>
+                                        </div>
+                                        </div>
+                                    <div data-v-6eea9c7f="" class="security-center-four hc-color6">
+                                        <button data-v-6eea9c7f="" class="hc-btn button hc-bgColor5 band_user">
+                                            去绑定
+                                        </button>
+                                    </div>
+                                        {else /}
+                                        <div data-v-6eea9c7f="" class="security-center-two security-center">姓名:<span
+                                                data-v-6eea9c7f="">{$user_info['username']}</span></div>
+                                        <div data-v-6eea9c7f="" class="security-center-three security-center hc-color2">
+                                            <i data-v-6eea9c7f="" class="el-icon-success"></i> <span data-v-6eea9c7f="">已完成KYC认证</span>
+                                        </div>
+                                        <div data-v-6eea9c7f=""
+                                             class="security-center-four-no hc-color mod-no hc-bgColor1">不可修改
+                                        </div>
+                                        {/if}
+
+
+
+                                    </div>
+                                </div>
+                                <div data-v-6eea9c7f="" class="security-email-desc hc-color">
+                                    <div data-v-6eea9c7f="" class="security-center-five">根据政策法规要求，请用户务必实名认证，才能进行相关交易操作
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!--todo 安全认证end-->
+                <!--todo 历史记录-->
+                <div data-v-6eea9c7f="" class="hc-bgColor3" style="margin-top: 10px;">
+                    <div data-v-6eea9c7f="" class="el-tabs el-tabs--card el-tabs--top" mode="horizontal"
+                         style="margin-bottom: 0px;">
+                        <div class="el-tabs__header is-top">
+                            <div class="el-tabs__nav-wrap is-top">
+                                <div class="el-tabs__nav-scroll">
+                                    <ul role="tablist" class="el-tabs__nav is-top" style="transform: translateX(0px);">
+                                        <li id="tab-first" aria-controls="pane-first" role="tab" tabindex="-1"
+                                            class="el-tabs__item is-top">
+                                            <a href="#" name="#tab1">登录历史</a>
+                                        </li>
+                                        <li id="tab-second" aria-controls="pane-second" role="tab" tabindex="0"
+                                            class="el-tabs__item is-top" aria-selected="true">
+                                            <a href="#" name="#tab2">安全设置历史</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="el-tabs__content">
+                            <div data-v-6eea9c7f="" role="tabpanel" id="tab1" aria-labelledby="tab-first"
+                                 class="el-tab-pane hc-bgColor1  tab-content" style="padding: 10px 30px 30px;">
+                                <div data-v-6eea9c7f=""
+                                     class="el-table el-table--fit el-table--enable-row-hover el-table--enable-row-transition"
+                                     style="width: 100%;">
+                                    <div class="hidden-columns">
+                                        <div data-v-6eea9c7f=""></div>
+                                        <div data-v-6eea9c7f=""></div>
+                                        <div data-v-6eea9c7f=""></div>
+                                        <div data-v-6eea9c7f=""></div>
+                                    </div>
+                                    <div class="el-table__header-wrapper">
+                                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
+                                               style="width: 1140px;">
+                                            <colgroup>
+                                                <col name="el-table_1_column_1" width="180">
+                                                <col name="el-table_1_column_2" width="430">
+                                                <col name="el-table_1_column_3" width="430">
+                                                <col name="el-table_1_column_4" width="100">
+                                                <col name="gutter" width="0">
+                                            </colgroup>
+                                            <thead class="has-gutter">
+                                            <tr class="">
+                                                <th colspan="1" rowspan="1"
+                                                    class="el-table_1_column_1  is-center   is-leaf">
+                                                    <div class="cell">时间</div>
+                                                </th>
+                                                <th colspan="1" rowspan="1"
+                                                    class="el-table_1_column_2  is-center   is-leaf">
+                                                    <div class="cell">登录方式</div>
+                                                </th>
+                                                <th colspan="1" rowspan="1"
+                                                    class="el-table_1_column_3  is-center   is-leaf">
+                                                    <div class="cell">IP地址</div>
+                                                </th>
+                                                <th colspan="1" rowspan="1"
+                                                    class="el-table_1_column_4  is-center   is-leaf">
+                                                    <div class="cell">状态</div>
+                                                </th>
+                                                <th class="gutter" style="width: 0px; display: none;"></th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="el-table__body-wrapper is-scrolling-none">
+                                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
+                                               style="width: 1140px;">
+                                            <colgroup>
+                                                <col name="el-table_1_column_1" width="180">
+                                                <col name="el-table_1_column_2" width="430">
+                                                <col name="el-table_1_column_3" width="430">
+                                                <col name="el-table_1_column_4" width="100">
+                                            </colgroup>
+                                            <tbody>
+                                            {foreach $login_list as $k => $v}
+                                            <tr class="el-table__row">
+                                                <td rowspan="1" colspan="1" class="el-table_1_column_1 is-center ">
+                                                    <div class="cell">
+                                                        {$v['create_time']}
+                                                    </div>
+                                                </td>
+                                                <td rowspan="1" colspan="1" class="el-table_1_column_2 is-center ">
+                                                    <div class="cell">{$v['login_method']}</div>
+                                                </td>
+                                                <td rowspan="1" colspan="1" class="el-table_1_column_3 is-center ">
+                                                    <div class="cell">{$v['ip']}</div>
+                                                </td>
+                                                <td rowspan="1" colspan="1" class="el-table_1_column_4 is-center ">
+                                                    <div class="cell">{$v['status']}</div>
+                                                </td>
+                                            </tr>
+                                            {/foreach}
+
+                                            <!----></tbody>
+                                        </table><!----><!----></div><!----><!----><!----><!---->
+                                    <div class="el-table__column-resize-proxy" style="display: none;"></div>
+                                </div>
+                            </div>
+
+
+                            <div data-v-6eea9c7f="" role="tabpanel" id="tab2" aria-labelledby="tab-second"
+                                 class="el-tab-pane hc-bgColor1 tab-content" style="padding: 10px 30px 30px;">
+                                <div data-v-6eea9c7f=""
+                                     class="el-table el-table--fit el-table--enable-row-hover el-table--enable-row-transition"
+                                     style="width: 100%;">
+                                    <div class="hidden-columns">
+                                        <div data-v-6eea9c7f=""></div>
+                                        <div data-v-6eea9c7f=""></div>
+                                        <div data-v-6eea9c7f=""></div>
+                                    </div>
+                                    <div class="el-table__header-wrapper">
+                                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
+                                               style="width: 1140px;">
+                                            <colgroup>
+                                                <col name="el-table_60_column_307" width="200">
+                                                <col name="el-table_60_column_308" width="740">
+                                                <col name="el-table_60_column_309" width="200">
+                                                <col name="gutter" width="0">
+                                            </colgroup>
+                                            <thead class="has-gutter">
+                                            <tr class="">
+                                                <th colspan="1" rowspan="1"
+                                                    class="el-table_60_column_307  is-center   is-leaf">
+                                                    <div class="cell">时间</div>
+                                                </th>
+                                                <th colspan="1" rowspan="1"
+                                                    class="el-table_60_column_308  is-center   is-leaf">
+                                                    <div class="cell">安全设置</div>
+                                                </th>
+                                                <th colspan="1" rowspan="1"
+                                                    class="el-table_60_column_309  is-center   is-leaf">
+                                                    <div class="cell">IP地址</div>
+                                                </th>
+                                                <th class="gutter" style="width: 0px; display: none;"></th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="el-table__body-wrapper is-scrolling-none">
+                                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
+                                               style="width: 1140px;">
+                                            <colgroup>
+                                                <col name="el-table_60_column_307" width="200">
+                                                <col name="el-table_60_column_308" width="740">
+                                                <col name="el-table_60_column_309" width="200">
+                                            </colgroup>
+                                            <tbody>
+                                            {foreach $bind_list as $k => $v}
+                                            <tr class="el-table__row">
+                                                <td rowspan="1" colspan="1" class="el-table_60_column_307 is-center ">
+                                                    <div class="cell">
+                                                        {$v['create_time']}
+                                                    </div>
+                                                </td>
+                                                <td rowspan="1" colspan="1" class="el-table_60_column_308 is-center ">
+                                                    <div class="cell">{$v['type']}</div>
+                                                </td>
+                                                <td rowspan="1" colspan="1" class="el-table_60_column_309 is-center ">
+                                                    <div class="cell">{$v['ip']}</div>
+                                                </td>
+                                            </tr>
+                                            {/foreach}
+                                          </tbody>
+                                        </table><!----><!----></div><!----><!----><!----><!---->
+                                    <div class="el-table__column-resize-proxy" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-v-6eea9c7f="" class="bottom-div"></div>
+                </div>
+                <!--TODO 历史记录-->
+            </div>
+            <!--todo 主体end-->
+
+
+            <!--TODO 弹窗-->
+            <!-- todo 上传头像弹窗-->
+            <div data-v-469a90da="" data-v-6eea9c7f="" class="el-dialog__wrapper avatar_dialog"
+                 style="z-index: 2001;display: none">
+                <div role="dialog" aria-modal="true" aria-label="设置头像" class="el-dialog el-dialog--center"
+                     style="margin-top: 15vh; width: 600px;">
+                    <div class="el-dialog__header">
+                        <span class="el-dialog__title">设置头像</span>
+                        <button type="button" aria-label="Close" class="el-dialog__headerbtn">
+                            <i class="el-dialog__close el-icon el-icon-close"></i>
+                        </button>
+                    </div>
+                    <div class="el-dialog__body">
+                        <form action="" class="layui-form">
+                        <div data-v-469a90da="" class="add-head hc-color3">
+                            <div data-v-469a90da="" class="row-style el-row">
+                                <div data-v-469a90da="" class="title clearfix">
+                                    <span data-v-469a90da="" class="title_left">上传图像</span>
+                                    <span data-v-469a90da="" class="title_right">* 请上传您的个人图片(* . jpg / * . png / * . jpeg / * . gif)</span>
+                                </div>
+                                <div data-v-469a90da="" class="upload-demo">
+
+                                    <button type="button" class="layui-btn" id="test1" style="background: #8275ff">
+                                        上传图片
+                                    </button>
+                                    <input type="hidden" name="avatar" id="avatar">
+                                    <div tabindex="0" class="el-upload el-upload--text">
+                                        <div class="el-upload-dragger" style="position: relative">
+                                            <i data-v-469a90da="" class="el-icon-upload"></i>
+                                            <div class="layui-upload-list"
+                                                 style="margin:0;position: absolute; top:0; left: 0; z-index: 10;width: 100%;height: 100% ">
+                                                <img class="layui-upload-img" id="upload_img_show"
+                                                     style="width: 100%;height: 100% ">
+                                                <!--<p id="demoText"></p>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button data-v-469a90da="" type="button"
+                                        class="el-button submit el-button--warning close" lay-submit="" lay-filter="demo7">
+                                    <!---->
+                                    <!----><span><span data-v-469a90da="">确定</span></span></button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- todo 上传头像弹窗 end-->
+            <!-- TODO 修改登录密码 -->
+            <div data-v-e5dbbe9a="" data-v-6eea9c7f="" class="el-dialog__wrapper dialog_pwd"
+                 style="z-index: 2017; display: none">
+                <div role="dialog" aria-modal="true" aria-label="修改登录密码" class="el-dialog el-dialog--center"
+                     style="margin-top: 15vh; width: 600px;">
+                    <div class="el-dialog__header"><span class="el-dialog__title">修改登录密码</span>
+                        <button type="button" aria-label="Close" class="el-dialog__headerbtn"><i
+                                class="el-dialog__close el-icon el-icon-close"></i></button>
+                    </div>
+                    <div class="el-dialog__body">
+                        <form action="" class="layui-form">
+                            <div data-v-e5dbbe9a="" class="login-pass hc-color3">
+                                <div data-v-e5dbbe9a="" class="row-style el-row">
+                                    <div data-v-e5dbbe9a="" class="title clearfix">
+                                        <span data-v-e5dbbe9a="" class="title_left">旧密码</span>
+                                    </div>
+                                    <div data-v-e5dbbe9a="" class="el-input">
+                                        <!--<input type="password" autocomplete="off"  placeholder="请输入旧密码" id="origin-pwd" name="input-name" class="el-input__inner">-->
+                                        <input type="password" name="nowpass" lay-verify="require|validateOldPwd"
+                                               class="el-input__inner" placeholder="请输入旧密码" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div data-v-e5dbbe9a="" class="row-style el-row">
+                                    <div data-v-e5dbbe9a="" class="title clearfix">
+                                        <span data-v-e5dbbe9a="" class="title_left">新密码</span>
+                                    </div>
+                                    <span data-v-e5dbbe9a="">
+                                        <button data-v-e5dbbe9a="" type="button"
+                                                class="el-button userInfo-button el-button--default el-popover__reference"
+                                                aria-describedby="el-popover-4342" tabindex="0">
+
+                                            <span>
+                                                <div data-v-e5dbbe9a="" class="input-color el-input">
+                                                    <!--<input type="password" autocomplete="off" placeholder="请输入新密码" id="new-pwd" name="input-name" class="el-input__inner">-->
+                                                     <input type="password" name="pass"
+                                                            lay-verify="require|validateNewPwd" id=""
+                                                            class="el-input__inner new-pwd" placeholder="请输入新密码"
+                                                            autocomplete="off">
+                                                </div>
+
+                                            </span>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div data-v-e5dbbe9a="" class="row-style el-row">
+                                    <div data-v-e5dbbe9a="" class="title clearfix">
+                                        <span data-v-e5dbbe9a="" class="title_left"> 确认新密码</span>
+                                    </div>
+                                    <div data-v-e5dbbe9a="" class="el-input">
+                                        <!--<input type="password" autocomplete="off" placeholder="请确认新密码" id="re-new-pwd" name="input-name" class="el-input__inner">-->
+                                        <input type="password" name="repass" lay-verify="require|validateRNewPwd"
+                                               class="el-input__inner" placeholder="请确认密码" autocomplete="off">
+                                    </div>
+                                </div>
+                                <button data-v-e5dbbe9a="" lay-submit="" lay-filter="demo1" type="button"
+                                        class="el-button submit el-button--warning">
+                                    <!--submit-->
+                                    <span>
+                                        <span data-v-e5dbbe9a="">确定</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--TODO 修改登录密码end -->
+            <!--todo 修改资金密码-->
+            <div data-v-36d7535e="" data-v-6eea9c7f="" class="el-dialog__wrapper dialog_ZJPwd"
+                 style="z-index: 2010;display: none">
+                <div role="dialog" aria-modal="true" aria-label="修改资金密码" class="el-dialog el-dialog--center"
+                     style="margin-top: 15vh; width: 600px;">
+                    <div class="el-dialog__header"><span class="el-dialog__title">修改资金密码</span>
+                        <button type="button" aria-label="Close" class="el-dialog__headerbtn">
+                            <i class="el-dialog__close el-icon el-icon-close"></i>
+                        </button>
+                    </div>
+                    <div class="el-dialog__body">
+                        <form action="" class="layui-form">
+                            <div data-v-36d7535e="" class="modify_asset_pass hc-color">
+                                <div data-v-36d7535e="" class="row-style el-row">
+                                    <div data-v-36d7535e="" class="title clearfix">
+                                        <span data-v-36d7535e="" class="title_left">旧密码</span>
+                                    </div>
+                                    <div data-v-36d7535e="" class="el-input">
+                                        <input type="password" name="oldSafe" lay-verify="require|validateOldPwd"
+                                               class="el-input__inner" placeholder="请输入旧密码" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div data-v-36d7535e="" class="row-style el-row">
+                                    <div data-v-36d7535e="" class="title clearfix">
+                                        <span data-v-36d7535e="" class="title_left">新密码</span>
+                                    </div>
+                                    <div data-v-36d7535e="" class="el-input">
+                                        <input type="password" name="newSafe"
+                                               lay-verify="require|validateNewPwd"
+                                               class="el-input__inner new-pwd" placeholder="请输入新密码"
+                                               autocomplete="off">
+                                    </div>
+                                </div>
+                                <div data-v-36d7535e="" class="row-style el-row">
+                                    <div data-v-36d7535e="" class="title clearfix">
+                                        <span data-v-36d7535e="" class="title_left">确认新密码</span>
+                                    </div>
+                                    <div data-v-36d7535e="" class="el-input">
+                                        <input type="password" name="reSafe" lay-verify="require|validateRNewPwd"
+                                               class="el-input__inner" placeholder="请确认密码" autocomplete="off">
+                                    </div>
+                                </div>
+                                <button data-v-36d7535e="" type="button" lay-submit="" lay-filter="demo2"
+                                        class="el-button submit el-button--warning">
+                                    <span><span data-v-36d7535e="">确认修改</span></span>
+                                </button>
+                                <p data-v-36d7535e="" class="hc-color" style="font-size: 12px; text-align: center;">
+                                    提醒您，在修改密码成功后的 24 小时之间将会暂时锁定提币功能，以确保账户安全
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- todo 修改资金密码end-->
+            <!-- todo  绑定邮件-->
+            <div data-v-f7be4836="" data-v-6eea9c7f="" class="el-dialog__wrapper dialog_email"
+                 style="z-index: 2014;display:none">
+                <div role="dialog" aria-modal="true" aria-label="设置邮箱" class="el-dialog el-dialog--center"
+                     style="margin-top: 15vh; width: 600px;">
+                    <div class="el-dialog__header"><span class="el-dialog__title">设置邮箱</span>
+                        <button type="button" aria-label="Close" class="el-dialog__headerbtn"><i
+                                class="el-dialog__close el-icon el-icon-close"></i></button>
+                    </div>
+                    <div class="el-dialog__body">
+                        <div data-v-f7be4836="" class="email hc-color3">
+                            <form action="" class="layui-form">
+                                <div data-v-f7be4836="" class="row-style el-row">
+                                    <div data-v-f7be4836="" class="title">电子邮箱</div>
+                                    <div data-v-f7be4836="" class="el-input">
+                                        <!--<input type="text" autocomplete="off" placeholder="请输入电子邮箱" id="email" name="input-name" class="el-input__inner">-->
+                                        <input name="email" class="el-input__inner" type="text" autocomplete="off"
+                                               id="email" placeholder="请输入电子邮箱" lay-verify="email">
+                                    </div>
+                                </div>
+                                <div data-v-f7be4836="" class="row-style el-row">
+                                    <div data-v-f7be4836="" class="title">
+                                        <span data-v-f7be4836="" class="title_left">动态验证</span></div>
+                                    <div data-v-f7be4836="" class="address-form-input1 hc-form">
+                                        <div data-v-f7be4836="" class="hc-form-div1">
+                                            <input data-v-f7be4836="" name="input-name" id="code" class="hc-form-input">
+                                        </div>
+                                        <div data-v-f7be4836="" class="hc-color4 hc-form-div2">
+                                            <span data-v-f7be4836="" class="numbtn">获取验证码</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button data-v-f7be4836="" type="button" lay-submit="" lay-filter="demo3"
+                                        class="el-button submit el-button--warning">
+                               <span>
+                                   <span data-v-f7be4836="">确定</span>
+                               </span>
+                                </button>
+                            </form>
+
+                            <div data-v-f7be4836="" class="dialog-bottom-notice hc-color">
+                                提醒您，邮箱在绑定后不可更换，请绑定您的常用邮箱，以确保账户安全。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- TODO 绑定邮件 end-->
+
+            <!-- TODO 绑定手机号-->
+            <div data-v-1c327b04="" data-v-6eea9c7f="" class="el-dialog__wrapper dialog_bind_phone"
+                 style="z-index: 2003;display: none">
+                <div role="dialog" aria-modal="true" aria-label="绑定手机" class="el-dialog el-dialog--center"
+                     style="margin-top: 15vh; width: 600px;">
+                    <div class="el-dialog__header"><span class="el-dialog__title">绑定手机</span>
+                        <button type="button" aria-label="Close" class="el-dialog__headerbtn"><i
+                                class="el-dialog__close el-icon el-icon-close"></i></button>
+                    </div>
+                    <div class="el-dialog__body">
+                        <div data-v-1c327b04="" class="phone hc-color3">
+                            <form action="" class="layui-form">
+                                <div data-v-1c327b04="" class="row-style el-row">
+                                    <div data-v-1c327b04="" class="title clearfix" style="position: relative;"><span
+                                            data-v-1c327b04="" class="title_left">手机号码</span></div>
+
+                                    <div data-v-1c327b04=""
+                                         class="input-with-select el-input el-input-group el-input-group--prepend">
+                                        <!--<input type="text" autocomplete="off" placeholder="请输入内容" name="input-name" id="phone" class="el-input__inner">-->
+                                        <input name="mobile" class="layui-input el-input__inner" type="tel"
+                                               autocomplete="off" placeholder="请输入手机" id="bind_phone" lay-verify="phone">
+                                    </div>
+
+                                </div>
+                                <div data-v-1c327b04="" class="row-style el-row">
+                                    <div data-v-1c327b04="" class="title clearfix">
+                                        <span data-v-1c327b04="" class="title_left">动态验证</span>
+                                    </div>
+                                    <div data-v-1c327b04="" class="address-form-input1 hc-form">
+                                        <div data-v-1c327b04="" class="hc-form-div1">
+                                            <input data-v-1c327b04="" name="code" class="hc-form-input"></div>
+                                        <div data-v-1c327b04="" class="hc-color4 hc-form-div2">
+                                            <span data-v-1c327b04="" class="numbtn">获取验证码</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button data-v-1c327b04="" type="button" lay-submit="" lay-filter="demo5"
+                                        class="el-button submit el-button--warning">
+                                    <span><span data-v-1c327b04="">确定</span></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TODO 绑定手机号end-->
+
+            <!-- TODO 修改手机号-->
+            <div data-v-1c327b04="" data-v-6eea9c7f="" class="el-dialog__wrapper dialog_phone"
+                 style="z-index: 2003;display: none">
+                <div role="dialog" aria-modal="true" aria-label="更换绑定手机" class="el-dialog el-dialog--center"
+                     style="margin-top: 15vh; width: 600px;">
+                    <div class="el-dialog__header"><span class="el-dialog__title">更换绑定手机</span>
+                        <button type="button" aria-label="Close" class="el-dialog__headerbtn"><i
+                                class="el-dialog__close el-icon el-icon-close"></i></button>
+                    </div>
+                    <div class="el-dialog__body">
+                        <div data-v-1c327b04="" class="phone hc-color3">
+                            <form action="" class="layui-form">
+                                <div data-v-1c327b04="" class="row-style el-row">
+                                    <div data-v-1c327b04="" class="title clearfix" style="position: relative;"><span
+                                            data-v-1c327b04="" class="title_left">新手机号码</span></div>
+
+                                    <div data-v-1c327b04=""
+                                         class="input-with-select el-input el-input-group el-input-group--prepend">
+                                        <!--<input type="text" autocomplete="off" placeholder="请输入内容" name="input-name" id="phone" class="el-input__inner">-->
+                                        <input name="mobile" class="layui-input el-input__inner" type="tel"
+                                               autocomplete="off" placeholder="请输入手机" id="phone" lay-verify="phone">
+                                    </div>
+
+                                </div>
+                                <div data-v-1c327b04="" class="row-style el-row">
+                                    <div data-v-1c327b04="" class="title clearfix">
+                                        <span data-v-1c327b04="" class="title_left">动态验证</span>
+                                    </div>
+                                    <div data-v-1c327b04="" class="address-form-input1 hc-form">
+                                        <div data-v-1c327b04="" class="hc-form-div1">
+                                            <input data-v-1c327b04="" name="code" class="hc-form-input"></div>
+                                        <div data-v-1c327b04="" class="hc-color4 hc-form-div2">
+                                            <span data-v-1c327b04="" class="numbtn">获取验证码</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button data-v-1c327b04="" type="button" lay-submit="" lay-filter="demo4"
+                                        class="el-button submit el-button--warning">
+                                    <span><span data-v-1c327b04="">确定</span></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TODO 修改手机号end-->
+        <!-- TODO 实名绑定-->
+        <div data-v-1c327b04="" data-v-6eea9c7f="" class="el-dialog__wrapper dialog_identity"
+             style="z-index: 2003;display: none">
+            <div role="dialog" aria-modal="true" aria-label="实名绑定" class="el-dialog el-dialog--center"
+                 style="margin-top: 15vh; width: 600px;">
+                <div class="el-dialog__header"><span class="el-dialog__title">姓名</span>
+                    <button type="button" aria-label="Close" class="el-dialog__headerbtn"><i
+                            class="el-dialog__close el-icon el-icon-close"></i></button>
+                </div>
+                <div class="el-dialog__body">
+                    <div data-v-1c327b04="" class="phone hc-color3">
+                        <form action="" class="layui-form">
+                            <div data-v-1c327b04="" class="row-style el-row">
+                                <div data-v-1c327b04="" class="title clearfix" style="position: relative;"><span
+                                        data-v-1c327b04="" class="title_left">身份证号</span></div>
+
+                                <div data-v-1c327b04=""
+                                     class="input-with-select el-input el-input-group el-input-group--prepend">
+                                    <!--<input type="text" autocomplete="off" placeholder="请输入内容" name="input-name" id="phone" class="el-input__inner">-->
+                                    <input name="identity" class="layui-input el-input__inner" type="identity"
+                                           autocomplete="off" placeholder="请输入身份证号" id="identity" lay-verify="identity">
+                                </div>
+
+                            </div>
+
+                            <button data-v-1c327b04="" type="button" lay-submit="" lay-filter="demo6"
+                                    class="el-button submit el-button--warning">
+                                <span><span data-v-1c327b04="">确定</span></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TODO 实名绑定end-->
+
+        </div>
+    </div>
+
+    <script src="/static/home/js/jQuery-2.2.3.min.js"></script>
+    <script src="/static/home/layui/layui.js"></script>
+    <script src="/static/home/js/tab.js"></script>
+    <script>
+        layui.use(['form', 'layedit', 'laydate','upload'], function () {
+            var form = layui.form, layer = layui.layer, upload = layui.upload,$ = layui.jquery;
+            //自定义验证规则
+            form.verify({
+                validateOldPwd: function (value) {
+                    var result = validateOldPwd(value);
+                    if (result != "PWD") {
+                        return result;
+                    }
+                },
+                validateNewPwd: function (value) {
+                    var result = validateNewPwd(value);
+                    if (result != "NPWD") {
+                        return result;
+                    }
+                },
+                validateRNewPwd: function (value) {
+                    var result = validateRNewPwd(value);
+                    if (result != "RPWD") {
+                        return result;
+                    }
+
+                },
+                email: [/^[a-z0-9._%-]+@([a-z0-9-]+\.)+[a-z]{2,4}$|^1[3|4|5|7|8]\d{9}$/, '邮箱格式不对']
+                , phone: [/^1[3|4|5|7|8]\d{9}$/, '手机必须11位，只能是数字！']
+            });
+            //修改密码
+            form.on('submit(demo1)', function (data) {
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('repass')}",data.field,function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg, {time: 1000,icon:1}, function () {
+                            $(".dialog_pwd").hide()
+                        })
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            });
+            //修改资金密码
+            form.on('submit(demo2)', function (data) {
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('reZJpass')}",data.field,function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg, {time: 1000,icon:1}, function () {
+                            $(".dialog_ZJPwd").hide()
+                        })
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            });
+
+            //绑定邮箱
+            form.on('submit(demo3)', function (data) {
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('bindEmail')}",data.field,function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg, {time: 1000,icon:1}, function () {
+                            $(".dialog_email").hide()
+                        })
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            });
+
+            //绑定手机号
+            form.on('submit(demo5)', function (data) {
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('bindMobile')}",data.field,function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg, {time: 1000,icon:1}, function () {
+                            $(".dialog_bind_phone").hide()
+                        })
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            });
+
+            //修改手机号
+            form.on('submit(demo4)', function (data) {
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('bindMobile')}",data.field,function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg, {time: 1000,icon:1}, function () {
+                            $(".dialog_phone").hide()
+                        })
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            });
+
+            //实名认证
+            form.on('submit(demo6)', function (data) {
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('bindIdentity')}",data.field,function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg, {time: 1000,icon:1}, function () {
+                            $(".dialog_phone").hide()
+                        })
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            });
+
+            //上传头像
+            form.on('submit(demo7)', function (data) {
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('uploadAvatar')}",data.field,function(res){
+                    layer.close(loading);
+                    if(res.code > 0){
+                        layer.msg(res.msg, {time: 1000,icon:1}, function () {
+                            $(".avatar_dialog").hide();
+                            location.reload();
+                        })
+                    }else{
+                        layer.msg(res.msg,{time:1000,icon:2});
+                    }
+                });
+            });
+
+        });
+
+        /**
+         * 旧密码
+         * @param oldPwd
+         * @returns {*}
+         */
+
+        function validateOldPwd(oldPwd) {
+            var reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/;
+            if (reg.test(oldPwd)) {
+                return 'PWD'
+            }
+            return "请输入正确的密码!";
+        }
+
+        /**
+         * 新密码
+         * @param newPwd
+         * @returns {*}
+         */
+        function validateNewPwd(newPwd) {
+            var reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$/;
+            if (reg.test(newPwd)) {
+                return 'NPWD'
+            }
+            return "请输入6到16位字母加数字的密码!";
+        }
+
+        /**
+         * 重复密码
+         * @param RNewPwd
+         * @returns {*}
+         */
+        function validateRNewPwd(RNewPwd) {
+            if (RNewPwd === '') {
+                return "密码不能为空";
+            }
+            var pwd = $(".new-pwd").val();
+            if (pwd === RNewPwd) {
+                return 'RPWD'
+            }
+            return "两次密码不一致!";
+        }
+    </script>
+    <script>
+        /*显示上传图片*/
+        $(".avatar").mouseover(function () {
+            $(".personal-add").show()
+        });
+        $(".avatar").mouseout(function () {
+            $(".personal-add").hide()
+        });
+        // 上传图片弹出
+        $(".personal-add").click(function () {
+            $(".avatar_dialog").fadeIn(500)
+        })
+        // 确定关闭弹窗 待判断是否上传成功
+        $('.close').click(function () {
+            $(".el-dialog__wrapper").hide()
+        })
+        // 关闭按钮关闭弹窗
+        $('.el-dialog__headerbtn').click(function () {
+            $(".el-dialog__wrapper").hide()
+        })
+
+        // todo 修改密码
+        $(".login_xg").click(function () {
+            console.log($(".dialog_pwd"))
+            $(".dialog_pwd").fadeIn(500)
+        })
+        // TODO 修改资金密码
+        $(".zj-xg").click(function () {
+            $(".dialog_ZJPwd").fadeIn(500)
+        })
+        //  todo 验证邮箱
+        $(".band_email").click(function () {
+            $(".dialog_email").fadeIn(500)
+        })
+
+        //  todo 绑定手机号
+        $(".band_phone").click(function () {
+            $(".dialog_bind_phone").fadeIn(500)
+        })
+        // todo 修改手机号码
+        $(".xg_phone").click(function () {
+            $(".dialog_phone").fadeIn(500)
+        })
+
+
+        // todo 实名认证
+        $(".band_user").click(function () {
+            $(".dialog_identity").fadeIn(500)
+        })
+        //获取验证码
+        var countdown = 60;
+        $('.numbtn').on('click', function () {
+            var obj = $(".numbtn");
+            settime(obj);
+        })
+
+        function settime(obj) { //发送验证码倒计时
+            if (countdown == 0) {
+                obj.attr('disabled', false);
+                //obj.removeattr("disabled");
+                obj.html("免费获取验证码");
+                countdown = 60;
+                return;
+            } else {
+                obj.attr('disabled', true);
+                obj.html("重新发送(" + countdown + ")");
+                countdown--;
+            }
+            setTimeout(function () {
+                settime(obj)
+            }, 1000)
+        }
+
+    </script>
+
+<script>
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+
+        // 普通图片上传
+        var uploadInst = upload.render({
+            elem: '#test1'
+            , url: '{:url("Upfiles/upload")}'
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#upload_img_show').attr('src', result); //图片链接（base64）
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    $('#avatar').val(res.url);
+                }else{
+                    //如果上传失败
+                    return layer.msg('上传失败');
+                }
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                // var demoText = $('#demoText');
+                // demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                // demoText.find('.demo-reload').on('click', function(){
+                //     uploadInst.upload();
+                // });
+            }
+        });
+
+
+    });
+</script>
+
+</body>
+</html>

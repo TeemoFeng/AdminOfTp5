@@ -198,7 +198,7 @@
                         <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
                             <tbody>
                             <tr>
-                                {foreach finance_arr as $key=>$vo }
+                                {foreach $finance_arr as $key=>$vo }
                                 <td style="width: 20%"><span class="layui-text">{$vo.name}</span></td>
                                 {/foreach}
 
@@ -208,13 +208,42 @@
                         <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
                             <tbody>
                             <tr>
-                                {foreach finance_arr as $key=>$vo }
+                                {foreach $finance_arr as $key=>$vo }
                                 <td style="width: 20%"><span class="layui-text">{$vo.num}</span></td>
                                 {/foreach}
 
                             </tr>
                             </tbody>
                         </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray"><i class="layui-icon layui-icon-list">近7天内公司财务</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                        <tbody>
+                        <th style="width: 20%;text-align: center">日期</th>
+                        <th style="width: 20%;text-align: center">总收入</th>
+                        <th style="width: 20%;text-align: center">总支出</th>
+                        <th style="width: 20%;text-align: center">总沉淀</th>
+                        <th style="width: 20%;text-align: center">拨比</th>
+                        {foreach $finance_7day as $key=>$vo }
+                        <tr>
+                            <td style="width: 20%"><span class="layui-text">{$vo.time}</span></td>
+                            <td style="width: 20%"><span class="layui-text">{$vo.income}</span></td>
+                            <td style="width: 20%"><span class="layui-text">{$vo.expenses}</span></td>
+                            <td style="width: 20%"><span class="layui-text">{$vo.subside}</span></td>
+                            <td style="width: 20%"><span class="layui-text">{$vo.ratio}</span></td>
+
+                        </tr>
+                        {/foreach}
+
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
@@ -260,77 +289,86 @@
             self.location.href="{:url('Finance/applicationForCash')}"
         });
 
-        // $(function () {
-        //     $.post("{:url('index/expenditureAndGeneral')}", {'key': 'key'}, function (data) {
-        //
-        //         if(data.code == 0){
-        //             layer.msg(data.msg,{icon:0});
-        //             return;
-        //         }
-        //         $.each(data.level_chart, function (i, v) {
-        //             data1[i] = v.level; //饼状图会员级别名称
-        //             data2[i] = {value: v.num, name: v.level}; //饼状图会员各级别数量
-        //         });
-        //         option2 = {
-        //             title: {
-        //                 text: '公司收入\/支出\/拨比走势图'
-        //             },
-        //             tooltip : {
-        //                 trigger: 'axis',
-        //                 axisPointer: {
-        //                     type: 'cross',
-        //                     label: {
-        //                         backgroundColor: '#6a7985'
-        //                     }
-        //                 }
-        //             },
-        //             legend: {
-        //                 data:['拨比走势（单位：%）','收入走势（单位：元）','支出走势（单位：元）']
-        //             },
-        //             toolbox: {
-        //                 feature: {
-        //                     saveAsImage: {}
-        //                 }
-        //             },
-        //             grid: {
-        //                 left: '3%',
-        //                 right: '4%',
-        //                 bottom: '3%',
-        //                 containLabel: true
-        //             },
-        //             xAxis : [
-        //                 {
-        //                     type : 'category',
-        //                     boundaryGap : false,
-        //                     // data : ['周一','周二','周三','周四','周五','周六','周日']
-        //                     data : data3
-        //                 }
-        //             ],
-        //             yAxis : [
-        //                 {
-        //                     type : 'value'
-        //                 }
-        //             ],
-        //             series : [
-        //                 {
-        //                     name:'全部注册会员数量',
-        //                     type:'line',
-        //                     stack: '总量',
-        //                     areaStyle: {},
-        //                     data: data4
-        //                 },
-        //                 {
-        //                     name:'未激活会员数量',
-        //                     type:'line',
-        //                     stack: '总量',
-        //                     areaStyle: {},
-        //                     data: data5
-        //                 }
-        //             ]
-        //         };
-        //         myChart2.setOption(option2);
-        //     });
-        // });
+        var myChart2 = echarts.init(document.getElementById('main'));
+
+        $(function () {
+            $.post("{:url('index/expenditureAndGeneral')}", {'key': 'key'}, function (data) {
+                var data3 = [], data4 = [], data5 = [], data6 = [];
+                //全部会员折线图信息
+                $.each(data.finance, function (i, v) {
+                    data3[i] = v.time; //时间
+                    data4[i] = v.income; //总收入
+                    data5[i] = v.expenses; //总支出
+                    data6[i] = v.ratio; //拨比
+
+                });
+                option2 = {
+                    title: {
+                        text: '公司收入\/支出\/拨比走势图'
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data:['收入走势（单位：元）','支出走势（单位：元）','拨比走势（单位：%）']
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            // data : ['周一','周二','周三','周四','周五','周六','周日']
+                            data : data3
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'收入走势（单位：元）',
+                            type:'line',
+                            stack: '总量',
+                            areaStyle: {},
+                            data: data4
+                        },
+                        {
+                            name:'支出走势（单位：元）',
+                            type:'line',
+                            stack: '总量',
+                            areaStyle: {},
+                            data: data5
+                        },
+                        {
+                            name:'拨比走势（单位：%）',
+                            type:'line',
+                            stack: '总量',
+                            areaStyle: {},
+                            data: data6
+                        }
+                    ]
+                };
+                myChart2.setOption(option2);
+            });
+        });
 
 
 

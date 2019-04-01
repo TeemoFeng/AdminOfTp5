@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" class="night-style">
+<head>
+    <meta charset="UTF-8">
+    <title>商户信息</title>
+    <link rel="stylesheet" href="/static/home/css/app.css">
+    <link rel="stylesheet" href="/static/home/css/style.css">
+</head>
+<body>
+<div style="width: 100%; margin: 0px auto; min-height: 500px;">
+    <div data-v-58c71dcd="" class="global-width">
+        <div data-v-58c71dcd="" class="hc-breadcrumb hc-bgColor1"><span data-v-58c71dcd="">商户主页</span></div>
+        <div data-v-58c71dcd="" class="hc-breadcrumb hc-bgColor3" style="margin-top: 20px; margin-bottom: 0px;">
+            <span data-v-58c71dcd="" style="font-size: 16px;">商户信息</span></div>
+        <div data-v-58c71dcd="" class="userHome-info hc-bgColor1">
+            <div data-v-58c71dcd="" class="userHome-user">
+                <img data-v-58c71dcd=""
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACLz2ctAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkYyQjM1NzNFQjY4MjExRTg4NjJFQkQ0NzIwNUEzQTk1IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkYyQjM1NzNGQjY4MjExRTg4NjJFQkQ0NzIwNUEzQTk1Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RjJCMzU3M0NCNjgyMTFFODg2MkVCRDQ3MjA1QTNBOTUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RjJCMzU3M0RCNjgyMTFFODg2MkVCRDQ3MjA1QTNBOTUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7zcwlnAAAcgElEQVR42uxd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"
+                     class="userHome-img userHome-img-personal">
+                <div data-v-58c71dcd="" class="userHome-nickname">{$user_info['nickname']}</div>
+                <div data-v-58c71dcd="" class="userHome-bottom-ul">
+                    <div data-v-58c71dcd="" class="userHome-li">
+                        <div data-v-58c71dcd="" class="hc-color">好评度</div>
+                        <div data-v-58c71dcd="" class="userHome-li-num">0%</div>
+                    </div>
+                    <div data-v-58c71dcd="" class="userHome-li">
+                        <div data-v-58c71dcd="" class="hc-color">交易次数</div>
+                        <div data-v-58c71dcd="" class="userHome-li-num">0</div>
+                    </div>
+                    <div data-v-58c71dcd="" class="userHome-li">
+                        <div data-v-58c71dcd="" class="hc-color">历史成交额</div>
+                        <div data-v-58c71dcd="" class="userHome-li-num">0 (BTC)</div>
+                    </div>
+                    <div data-v-58c71dcd="" class="userHome-li">
+                        <div data-v-58c71dcd="" class="hc-color">评价数</div>
+                        <div data-v-58c71dcd="" class="userHome-li-num">
+                            <span data-v-58c71dcd="" class="hc-color2">+0</span>
+                            <span data-v-58c71dcd="" class="hc-color">/</span>
+                            <span data-v-58c71dcd="" class="hc-color1">-0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-v-58c71dcd="" class="userHome-bottom">
+                <span data-v-58c71dcd="" class="hc-color">注册时间：{$user_info['reg_time'] | date='Y-m-d H:i:s'}</span>
+                <span data-v-58c71dcd="" style="float: right;">
+                    <span data-v-58c71dcd="" class="hc-color userHome-bottom-li">
+                        邮箱验证
+                        {if empty($user_info['email'])}
+                        <i data-v-58c71dcd="" class="fa fa-exclamation-circle hc-color1"></i>
+
+                        {else /}
+                        <i data-v-58c71dcd="" class="fa fa-check-circle-o hc-color2"></i>
+                        {/if}
+                    </span>
+                    <span data-v-58c71dcd="" class="hc-color userHome-bottom-li">
+                        手机验证
+                        {if empty($user_info['mobile'])}
+                        <i data-v-58c71dcd="" class="fa fa-exclamation-circle hc-color1"></i>
+
+                        {else /}
+                        <i data-v-58c71dcd="" class="fa fa-check-circle-o hc-color2"></i>
+                        {/if}
+                    </span>
+                    <span data-v-58c71dcd="" class="hc-color">
+                        实名验证
+                         {if empty($user_info['username'])}
+                        <i data-v-58c71dcd="" class="fa fa-exclamation-circle hc-color1"></i>
+
+                        {else /}
+                        <i data-v-58c71dcd="" class="fa fa-check-circle-o hc-color2"></i>
+                        {/if}
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div data-v-58c71dcd="" class="userHome-table hc-bgColor1">
+            <div data-v-58c71dcd="" class="el-tabs el-tabs--card el-tabs--top">
+                <!--TODO 标签页头部-->
+                <div class="el-tabs__header is-top">
+                    <div class="el-tabs__nav-wrap is-top">
+                        <div class="el-tabs__nav-scroll">
+                            <ul role="tablist" class="el-tabs__nav is-top" style="transform: translateX(0px);">
+                                <li id="tab-2" aria-controls="pane-2" role="tab" tabindex="0"
+                                    class="el-tabs__item is-top" aria-selected="true">
+                                    <a href="#" name="#tab1">出售广告</a>
+                                </li>
+                                <li id="tab-1" aria-controls="pane-1" role="tab" tabindex="-1"
+                                    class="el-tabs__item is-top">
+                                    <a href="#" name="#tab2">购买广告</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="el-tabs__content">
+                    <!--TODO 标签页主体-->
+                    <div data-v-58c71dcd="" role="tabpanel" id="tab1" aria-labelledby="tab-2"
+                         class="el-tab-pane tab-content" style="">
+                        <div data-v-58c71dcd="" class="el-table el-table--fit el-table--enable-row-hover"
+                             style="min-height: 300px;">
+                            <div class="el-table__header-wrapper">
+                                <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
+                                       style="width: 1140px;">
+                                    <colgroup>
+                                        <col name="el-table_3_column_8" width="152">
+                                        <col name="el-table_3_column_9" width="148">
+                                        <col name="el-table_3_column_10" width="148">
+                                        <col name="el-table_3_column_11" width="148">
+                                        <col name="el-table_3_column_12" width="148">
+                                        <col name="el-table_3_column_13" width="148">
+                                        <col name="el-table_3_column_14" width="148">
+                                        <col name="el-table_3_column_15" width="100">
+                                        <col name="gutter" width="0">
+                                    </colgroup>
+                                    <thead class="has-gutter">
+                                    <tr class="">
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_8  is-left   is-leaf">
+                                            <div class="cell">币种</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_9  is-center   is-leaf">
+                                            <div class="cell">收款币种</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_10  is-center   is-leaf">
+                                            <div class="cell">单价</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_11  is-center   is-leaf">
+                                            <div class="cell">交易限额</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_12  is-center   is-leaf">
+                                            <div class="cell">交易方式</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_13  is-center   is-leaf">
+                                            <div class="cell">最后更新时间</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_14  is-center   is-leaf">
+                                            <div class="cell">广告状态</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_3_column_15  is-center   is-leaf">
+                                            <div class="cell">操作</div>
+                                        </th>
+                                        <th class="gutter" style="width: 0px; display: none;"></th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="el-table__body-wrapper is-scrolling-none">
+                                <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
+                                       style="width: 1140px;">
+                                    <colgroup>
+                                        <col name="el-table_3_column_8" width="152">
+                                        <col name="el-table_3_column_9" width="148">
+                                        <col name="el-table_3_column_10" width="148">
+                                        <col name="el-table_3_column_11" width="148">
+                                        <col name="el-table_3_column_12" width="148">
+                                        <col name="el-table_3_column_13" width="148">
+                                        <col name="el-table_3_column_14" width="148">
+                                        <col name="el-table_3_column_15" width="100">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr class="el-table__row">
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_17 is-left ">
+                                            <div class="cell"><img data-v-58c71dcd=""
+                                                                   src="https://hotcoin-hk-static.oss-cn-hongkong.aliyuncs.com/hotcoin/upload/coin/4e990c4d3dda4f68ab6a38e472b20cd7GSET.png"
+                                                                   class="userHome-table-img1"> <span
+                                                    data-v-58c71dcd="">GAVC</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_18 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">CNY</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_19 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">1 CNY</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_20 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">200 ~ 1000000 CNY</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_21 is-center ">
+                                            <div class="cell"><img data-v-58c71dcd=""
+                                                                   src="https://hotcoin-hk-static.oss-cn-hongkong.aliyuncs.com/hotcoin/upload/bankIcon/Bank.png"
+                                                                   class="userHome-table-img2"></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_22 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">2019-03-21 07:22:13</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_23 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="" class="hc-color2">已上架</span>
+                                            </div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_24 is-center ">
+                                            <div class="cell">
+                                                <div data-v-58c71dcd="" class="el-button--success userHome-table-btn">
+                                                    去购买
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="el-table__empty-block" style="width: 1140px;">
+                                    <span class="el-table__empty-text">暂无数据111111</span>
+                                </div>
+                            </div>
+                            <div class="el-table__column-resize-proxy" style="display: none;"></div>
+                        </div>
+                    </div>
+                    <div data-v-58c71dcd="" role="tabpanel" id="tab2" aria-labelledby="tab-1"
+                         class="el-tab-pane tab-content" style="">
+                        <div data-v-58c71dcd="" class="el-table el-table--fit el-table--enable-row-hover"
+                             style="min-height: 300px;">
+
+                            <div class="el-table__header-wrapper">
+                                <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
+                                       style="width: 1140px;">
+                                    <colgroup>
+                                        <col name="el-table_21_column_123" width="152">
+                                        <col name="el-table_21_column_124" width="148">
+                                        <col name="el-table_21_column_125" width="148">
+                                        <col name="el-table_21_column_126" width="148">
+                                        <col name="el-table_21_column_127" width="148">
+                                        <col name="el-table_21_column_128" width="148">
+                                        <col name="el-table_21_column_129" width="148">
+                                        <col name="el-table_21_column_130" width="100">
+                                        <col name="gutter" width="0">
+                                    </colgroup>
+                                    <thead class="has-gutter">
+                                    <tr class="">
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_123  is-left   is-leaf">
+                                            <div class="cell">币种</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_124  is-center   is-leaf">
+                                            <div class="cell">收款币种</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_125  is-center   is-leaf">
+                                            <div class="cell">单价</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_126  is-center   is-leaf">
+                                            <div class="cell">交易限额</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_127  is-center   is-leaf">
+                                            <div class="cell">交易方式</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_128  is-center   is-leaf">
+                                            <div class="cell">最后更新时间</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_129  is-center   is-leaf">
+                                            <div class="cell">广告状态</div>
+                                        </th>
+                                        <th colspan="1" rowspan="1" class="el-table_21_column_130  is-center   is-leaf">
+                                            <div class="cell">操作</div>
+                                        </th>
+                                        <th class="gutter" style="width: 0px; display: none;"></th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="el-table__body-wrapper is-scrolling-none">
+                                <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
+                                       style="width: 1140px;">
+                                    <colgroup>
+                                        <col name="el-table_21_column_123" width="152">
+                                        <col name="el-table_21_column_124" width="148">
+                                        <col name="el-table_21_column_125" width="148">
+                                        <col name="el-table_21_column_126" width="148">
+                                        <col name="el-table_21_column_127" width="148">
+                                        <col name="el-table_21_column_128" width="148">
+                                        <col name="el-table_21_column_129" width="148">
+                                        <col name="el-table_21_column_130" width="100">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr class="el-table__row">
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_17 is-left ">
+                                            <div class="cell"><img data-v-58c71dcd=""
+                                                                   src="https://hotcoin-hk-static.oss-cn-hongkong.aliyuncs.com/hotcoin/upload/coin/4e990c4d3dda4f68ab6a38e472b20cd7GSET.png"
+                                                                   class="userHome-table-img1"> <span
+                                                    data-v-58c71dcd="">GAVC</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_18 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">CNY</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_19 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">1 CNY</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_20 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">200 ~ 1000000 CNY</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_21 is-center ">
+                                            <div class="cell"><img data-v-58c71dcd=""
+                                                                   src="https://hotcoin-hk-static.oss-cn-hongkong.aliyuncs.com/hotcoin/upload/bankIcon/Bank.png"
+                                                                   class="userHome-table-img2"></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_22 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="">2019-03-21 07:22:13</span></div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_23 is-center ">
+                                            <div class="cell"><span data-v-58c71dcd="" class="hc-color2">已上架</span>
+                                            </div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_3_column_24 is-center ">
+                                            <div class="cell">
+                                                <div data-v-58c71dcd="" class="el-button--success userHome-table-btn">
+                                                    去购买
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="el-table__empty-block" style="width: 1140px;">
+                                    <span class="el-table__empty-text">暂无数据2222</span>
+                                </div>
+                            </div>
+                            <div class="el-table__column-resize-proxy" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/home/js/jQuery-2.2.3.min.js"></script>
+<script src="/static/home/js/tab.js"></script>
+
+</body>
+</html>

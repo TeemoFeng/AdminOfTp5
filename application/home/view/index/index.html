@@ -167,11 +167,11 @@
                         </div>
                     </li>
                     <li data-v-5056b940="" class="">
-                        <a href="#">币币交易</a>
+                        <a href="{:url('home/user/currencyExchange')}">币币交易</a>
                     </li>
-                    <li data-v-5056b940="" class="">
-                        <a href="#">矿池理财</a>
-                    </li>
+                    <!--<li data-v-5056b940="" class="">-->
+                        <!--<a href="#">矿池理财</a>-->
+                    <!--</li>-->
                 </ul>
                 {if empty($user) }
                 <!-- todo 未登录 -->
@@ -202,10 +202,10 @@
                             <ul data-v-5056b940="" class="el-dropdown-menu el-popper" id="dropdown-menu-8616"
                                 style="display: none; min-width: 106px;">
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
-                                    <a href="#">充币&amp;提币</a>
+                                    <a href="{:url('home/user/withdrawCash')}">交易账户提现</a>
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
-                                    <a href="#">OTC账户</a>
+                                    <a href="#">阿美币账户</a>
                                 </li>
                             </ul>
                         </div>
@@ -225,10 +225,10 @@
                             <ul data-v-5056b940="" class="el-dropdown-menu el-popper" id="dropdown-menu-5763"
                                 style="display: none; min-width:103px;">
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
-                                    <a href="#">当前委托</a>
+                                    <a href="{:url('home/user/entrustment')}">当前委托</a>
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
-                                    <a href="#">历史委托</a>
+                                    <a href="{:url('home/user/historical')}">历史委托</a>
                                 </li>
                             </ul>
                         </div>
@@ -246,7 +246,7 @@
                                 style="display: none; min-width: 150px;">
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-user-plus header-icon"></i>
-                                    <a href="#"> 我的邀请码</a>
+                                    <a href="{:url('home/user/ic')}"> 我的邀请码</a>
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-street-view header-icon"></i>
@@ -254,7 +254,7 @@
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-unlock-alt header-icon"></i>
-                                    <a href="#">账号安全</a>
+                                    <a href="{:url('user/set/security')}">账号安全</a>
                                 </li>
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-tasks header-icon"></i>

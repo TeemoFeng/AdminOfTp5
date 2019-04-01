@@ -23,11 +23,17 @@ class ApplyRecharge extends Model
 
     //充值方式 recharge_method
     const YINHANGKA = 1;
-    const WEIXIN    = 2;
-    const ZHIFUBAO   = 3;
+    const ZHIFUBAO   = 2;
+    const WEIXIN    = 3;
     public static $recharge_method = [
         self::YINHANGKA => '银行卡',
+        self::ZHIFUBAO  => '支付宝',
         self::WEIXIN    => '微信',
+
+    ];
+
+    public static $cash_method = [
+        self::YINHANGKA => '银行卡',
         self::ZHIFUBAO  => '支付宝',
     ];
 

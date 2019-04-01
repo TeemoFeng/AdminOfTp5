@@ -1,5 +1,7 @@
 <?php
 namespace app\admin\controller;
+use app\admin\model\UserApplyShateCash;
+use app\admin\model\UserCurrencyAccount;
 use think\Db;
 use app\admin\model\Users;
 use think\facade\Env;
@@ -74,7 +76,7 @@ class Index extends Common
         //获取申请充值的用户数量
         $apply_recharge = 0;
         //获取申请提现的用户数量
-        $apply_cash = 0;
+        $apply_cash = UserApplyShateCash::where(['status' => 1])->count();
         $init = [
             'user_num'          => $user_num,
             'no_ac_num'         => $no_ac_num,
@@ -87,30 +89,46 @@ class Index extends Common
         $today_add_user = $user_model->where(['create_time' => $now_date, 'status' => 1])->count(); //获取今天注册有效会员
         $today_noval_user = $user_model->where(['create_time' => $now_date, 'status' => 0])->count(); //获取今天注册无效会员
         $lock_user = $user_model->where(['is_lock' => 1])->count(); //获取今天冻结会员
-        $all_invest_money = $user_model->where(['is_lock' => 1])->count(); //平台总投资额
-        $all_double_num = $user_model->where(['is_lock' => 1])->count(); //平台复投数量
+        $touzi = db('user_currency_account')
+            ->field('sum(corpus) corpus,sum(cash_input_num) cash_input_num')
+            ->find();
         $num_arr = [];
         $num_arr[] = ['name' => '今天新增有效会员', 'num' => $today_add_user];
         $num_arr[] = ['name' => '今天新增无效会员', 'num' => $today_noval_user];
         $num_arr[] = ['name' => '冻结会员', 'num' => $lock_user];
-        $num_arr[] = ['name' => '平台投资总额', 'num' => $all_invest_money];
-        $num_arr[] = ['name' => '平台复投数量', 'num' => $all_double_num];
+        $num_arr[] = ['name' => '平台投资总额', 'num' => $touzi['corpus']];
+        $num_arr[] = ['name' => '平台复投数量', 'num' => $touzi['cash_input_num']];
         //公司财务
-        $general_all = 0;           //总收入
-        $total_expenditure = 0;     //总支出
-        $total_precipitation = 0;   //总沉淀
-        $allocation_ratio = 0;      //拨比
+        $finance = db('company_day_running')
+            ->field('sum(income) income,sum(expenses) expenses')
+            ->find();
+        $general_all = $finance['income'];
+        $total_expenditure = $finance['expenses'];
+        $total_precipitation = bcsub($finance['income'], $finance['expenses'], 4);
+        $ratio = bcdiv($finance['expenses'],$finance['income'], 4);
+        $allocation_ratio = ($ratio*100).'%';
+
         $finance_arr[] = ['name' => '总收入', 'num' => $general_all];
         $finance_arr[] = ['name' => '总支出', 'num' => $total_expenditure];
         $finance_arr[] = ['name' => '总沉淀', 'num' => $total_precipitation];
         $finance_arr[] = ['name' => '拨比',   'num' => $allocation_ratio];
         //近7天内公司财务
-
+        $finance_7day = db('company_day_running')
+            ->order('time DESC')
+            ->limit(7)
+            ->select();
+        foreach($finance_7day as $k => $v){
+            $finance_7day[$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
+            $ratio = bcdiv($v['expenses'],$v['income'], 4);
+            $finance_7day[$k]['ratio'] = ($ratio*100).'%';
+            $finance_7day[$k]['time'] = date('Y-m-d',time());
+        }
 
 
         $this->assign('init', $init);
         $this->assign('num_arr', $num_arr);
         $this->assign('finance_arr', $finance_arr);
+        $this->assign('finance_7day', $finance_7day);
 
         return $this->fetch();
     }
@@ -121,21 +139,25 @@ class Index extends Common
         if(request()->isPost()){
             $data = input('post.');
             if(empty($data['start_time']) && empty($data['end_time'])){
-
-            }else{
-                return ['code' => 0];
                 //初始化最近七天的
                 $year = date("Y");
                 $month = date("m");
                 $day = date("d");
                 $end_time = mktime(23,59,59,$month,$day,$year);//当天结束时间戳
                 $start_time = $end_time-(7*86400); //获取7天前的时间戳
-                $where = [$start_time, $end_time];
-                $user_info = db('users')
-                    ->whereTime('reg_time','between', $where)
-                    ->group('create_time')
-                    ->field('id,create_time as date,count("id") as count')
+                $end_time2 = date('Y-m-d', time());
+                $start_time = date('Y-m-d', $start_time);
+                $where = [$start_time, $end_time2];
+                $finance = db('company_day_running')
+                    ->whereTime('time','between', $where)
                     ->select();
+                foreach($finance as $k => $v){
+                    $finance[$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
+                    $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                    $finance[$k]['ratio'] = ($ratio*100);
+                }
+
+                return ['finance' => $finance];
 
             }
 

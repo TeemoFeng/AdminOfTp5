@@ -458,6 +458,7 @@ class Users extends Common{
 
     }
 
+    //直推架构树
     public function usertree()
     {
         if (request()->isPost()) {
@@ -491,6 +492,7 @@ class Users extends Common{
                     'id' => $v['id'],
                     'name' => $v['referee'] . '(' . $v['username'] . ' 级别:' . $v['level_name']. ')',
                     'isParent'  => $v['have_tree'],
+                    'icon' => "/static/admin/images/user.png"
                 ];
             },$user_info);
 

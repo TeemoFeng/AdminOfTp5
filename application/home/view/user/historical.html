@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" class="night-style">
+<head>
+    <meta charset="UTF-8">
+    <title>历史委托</title>
+    <link href="/static/home/css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/home/css/style.css">
+    <link rel="stylesheet" href="/static/home/layui/css/layui.css">
+    <style>
+        .layui-form input {
+            background: #1c1e2d;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #3a3b54;
+        }
+
+        .layui-form-select dl {
+            background: #2e2f43;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 100%; margin: 0px auto; min-height: 500px;">
+    <div data-v-4700ee89="" class="global-width">
+        <div data-v-4700ee89="" class="hc-breadcrumb hc-bgColor1"><span data-v-4700ee89="">历史委托</span></div>
+        <div data-v-4700ee89="" class="order-table-top hc-bgColor3">
+            <form class="layui-form" action="historical" method="post">
+                <div data-v-4700ee89=""
+                     class="el-date-editor el-range-editor el-input__inner order-top-div1 order-input1 el-date-editor--daterange">
+                    <i class="el-input__icon el-range__icon el-icon-date"></i>
+                    <input type="text" autocomplete="off" style="width: 100%" class="layui-input el-range-input" name="time" value="{$search['time']}"
+                           id="test6" placeholder="开始日期 - 开始日期 ">
+                </div>
+                <div data-v-4700ee89="" class="el-select order-top-div1 order-input2">
+                    <select name="depute_type" lay-filter="aihao">
+                        <option value="">交易类型</option>
+                        <option value="0">全部</option>
+                        {foreach $type as $k => $v}
+                        <option value="{$k}" {if condition="$k eq $search['depute_type']")}selected {/if}>{$v}</option>
+                        {/foreach}
+
+                    </select>
+                </div>
+                <div data-v-4700ee89="" class="el-select order-top-div1 order-input2">
+                    <select name="status" lay-filter="aihao">
+                        <option value="">交易状态</option>
+                        <option value="0">全部</option>
+                        {foreach $status as $k => $v}
+                        <option value="{$k}" {if condition="$k == $search['status']")}selected {/if}>{$v}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div data-v-4700ee89="" class="el-select order-top-div1 order-input3">
+                    <select name="interest" lay-filter="aihao">
+                        <option value="">交易对</option>
+
+                        <option value="0">AMEI</option>
+                    </select>
+                </div>
+                <span data-v-4700ee89="">/</span>
+                <div data-v-4700ee89="" class="el-select order-input3">
+                    <select name="interest" lay-filter="aihao">
+                        <option value="">交易区</option>
+                        <option value="0">AMEI</option>
+
+                    </select>
+                </div>
+                <button data-v-4700ee89="" class="order-top-div1 order-btn el-button--warning hc-cursor" lay-submit="" lay-filter="submit">搜索</button>
+
+            </form>
+
+        </div>
+        <div data-v-4700ee89="" class="order-table-warp hc-bgColor1">
+            <div data-v-4700ee89="" class="el-table el-table--fit el-table--enable-row-hover"
+                 style="min-height: 350px;">
+
+                <div class="el-table__header-wrapper">
+                    <table cellspacing="0" cellpadding="0" border="0" class="el-table__header layui-table" style="width: 1160px;" >
+                        <colgroup>
+                            <col name="el-table_12_column_95" width="48">
+                            <col name="el-table_12_column_96" width="200">
+                            <col name="el-table_12_column_97" width="132">
+                            <col name="el-table_12_column_98" width="130">
+                            <col name="el-table_12_column_99" width="130">
+                            <col name="el-table_12_column_100" width="130">
+                            <col name="el-table_12_column_101" width="130">
+                            <col name="el-table_12_column_102" width="130">
+                            <col name="el-table_12_column_103" width="130">
+                            <col name="gutter" width="0">
+                        </colgroup>
+                        <thead class="has-gutter">
+                        <tr class="">
+                            <th colspan="1" rowspan="1"
+                                class="el-table_12_column_95   undefined el-table__expand-column  is-leaf">
+                                <div class="cell"></div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_96  is-center   is-leaf">
+                                <div class="cell">时间</div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_97  is-center   is-leaf">
+                                <div class="cell">交易类型</div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_98  is-center   is-leaf">
+                                <div class="cell">交易对</div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_99  is-center   is-leaf">
+                                <div class="cell">价格</div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_100  is-center   is-leaf">
+                                <div class="cell">数量</div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_101  is-center   is-leaf">
+                                <div class="cell">委托总额</div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_102  is-center   is-leaf">
+                                <div class="cell">已成交</div>
+                            </th>
+                            <th colspan="1" rowspan="1" class="el-table_12_column_103  is-center   is-leaf">
+                                <div class="cell">状态</div>
+                            </th>
+                            <th class="gutter" style="width: 0px; display: none;"></th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="el-table__body-wrapper is-scrolling-none">
+                    <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 1160px;">
+                        <colgroup>
+                            <col name="el-table_12_column_95" width="48">
+                            <col name="el-table_12_column_96" width="200">
+                            <col name="el-table_12_column_97" width="132">
+                            <col name="el-table_12_column_98" width="130">
+                            <col name="el-table_12_column_99" width="130">
+                            <col name="el-table_12_column_100" width="130">
+                            <col name="el-table_12_column_101" width="130">
+                            <col name="el-table_12_column_102" width="130">
+                            <col name="el-table_12_column_103" width="130">
+                        </colgroup>
+                        <tbody>
+                        {foreach $list as $k => $v}
+                        <tr class="el-table__row">
+
+                            <td rowspan="1" colspan="1" class="el-table_12_column_95  ">
+                                <div class="cell">
+
+                                </div>
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_96  is-center">
+                                <div data-v-48b6e8a5="" class="order-color">{$v['create_time']|date='Y-m-d H:i:s'}</div>
+
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_97  is-center">
+                                <div class="cell"><img data-v-48b6e8a5=""
+                                                       src="https://hotcoin-hk-static.oss-cn-hongkong.aliyuncs.com/hotcoin/upload/bankIcon/Bank.png"
+                                                       width="20"></div>
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_98 is-center ">
+                                <div class="cell">
+                                    <div data-v-48b6e8a5="">AMEI/AMEI</div>
+                                </div>
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_99  is-center">
+                                <div class="cell">
+                                    <div data-v-48b6e8a5="">{$v['price']} AMEI</div>
+                                </div>
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_100  is-center">
+                                <div class="cell">
+                                    <div data-v-48b6e8a5="">{$v['num']}</div>
+                                </div>
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_101  is-center">
+                                <div class="cell">{$v['sum']}</div>
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_102  is-center">
+                                <div class="cell">{$v['have_trade']}</div>
+                            </td>
+                            <td rowspan="1" colspan="1" class="el-table_12_column_103  is-center">
+                                <div class="cell">
+                                    <div class="cell"><span data-v-48b6e8a5="" class="status-color">{$status[$v['status']]}</span></div>
+                                </div>
+                            </td>
+                        </tr>
+                        {/foreach}
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="el-table__column-resize-proxy" style="display: none;"></div>
+            </div>
+            <div class="el-loading-mask" style="display: none;">
+                <div class="el-loading-spinner">
+                    <svg viewBox="25 25 50 50" class="circular">
+                        <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                    </svg><!----></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="/static/home/layui/layui.js" charset="utf-8"></script>
+
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+
+        //日期范围
+        laydate.render({
+            elem: '#test6'
+            , range: true
+        });
+
+
+        // //监听提交
+        // form.on('submit(submit)', function (data) {
+        //     var loading = layer.load(2, {shade: [0.1,'#fff']});
+        //
+        //     $.post("{:url('personSetSave')}", data.field, function (res) {
+        //         layer.close(loading);
+        //         if (res.code > 0) {
+        //             layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+        //                 location.reload();
+        //             });
+        //         } else {
+        //             layer.msg(res.msg, {time: 1800, icon: 2});
+        //         }
+        //     });
+        // });
+
+    });
+</script>
+
+</body>
+</html>

@@ -6,6 +6,18 @@ use think\Controller;
 class Common extends Controller{
 
     protected $pagesize,$changyan;
+    public function initialize(){
+        if (!session('user.id')) {
+            $this->redirect('user/login/index');
+        }
+//        $this->userInfo=db('users')->alias('u')
+//            ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
+//            ->where('u.id','=',session('user.id'))
+//            ->field('u.*,ul.level_name')
+//            ->find();
+//        $this->assign('user_info',$this->userInfo);
+    }
+
 //    public function initialize(){
 //        $sys = cache('System');
 //        $this->assign('sys',$sys);
