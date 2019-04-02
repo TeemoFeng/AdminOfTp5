@@ -20,7 +20,7 @@
                     <div data-v-42598332="" class="list-div1 hc-bgColor3">
                         <!--TODO  已登录-->
                         {if !empty($user_info)}
-                        <div data-v-42598332="" class="list-div1-div1" style="display: none;padding-top: 18px;">
+                        <div data-v-42598332="" class="list-div1-div1" style="padding-top: 18px;">
                             <div data-v-42598332="">
                                 <div data-v-42598332="" style="float: left;">净资产折合:</div>
                                 <div data-v-42598332="" style="float: right; font-size: 16px; margin-top: -2px;"><span
@@ -28,8 +28,8 @@
                                                               class="fa fa-eye hc-cursor hc-color"></i></span></div>
                             </div>
                             <div data-v-42598332="" style="clear: both; font-size: 12px;"><span
-                                    data-v-42598332="">0 BTC</span> <span data-v-42598332="" class="hc-color"
-                                                                          style="margin-left: 12px;">≈ 0.00 CNY</span>
+                                    data-v-42598332="">{$user_account['transaction_num']} AMB</span> <span data-v-42598332="" class="hc-color"
+                                                                          style="margin-left: 12px;">≈ {$user_account['transaction_num']} CNY</span>
                             </div>
                         </div>
                         {else /}
@@ -47,28 +47,12 @@
                         <div data-v-42598332="" style="float: left; margin-top: 20px; font-size: 16px;"><span
                                 data-v-42598332="">市场</span></div>
                         <div data-v-42598332="" style="float: right; margin-top: 16px;">
-                            <div data-v-42598332="" class="el-input el-input--suffix"><!----><input type="text"
-                                                                                                    autocomplete="off"
-                                                                                                    placeholder="搜索币种"
-                                                                                                    class="el-input__inner">
-                                <!----><span class="el-input__suffix"><span class="el-input__suffix-inner"><i
-                                        data-v-42598332="" class="el-input__icon el-icon-search"></i><!----></span>
-                                    <!----></span><!----></div>
+
                         </div>
-                        <div data-v-42598332="" style="float: right; margin-top: 16px;">
-                            <div data-v-42598332="" class="list-btn list-btn1 list-btnColor1">自选</div>
-                        </div>
+
                         <div data-v-42598332="" style="clear: both;"></div>
                         <div data-v-42598332="" style="margin-top: 32px;" id="clickColor">
-                            <div data-v-42598332="" class="list-btn hc-color4 ">GAVC</div>
-                            <div data-v-42598332="" class="list-btn list-btnColor1">BTC</div>
-                            <div data-v-42598332="" class="list-btn list-btnColor1">ETH</div>
-                            <div data-v-42598332="" class="list-btn list-btnColor1">USDT</div>
-                            <div data-v-42598332="" class="list-btn list-btn2 list-btnColor1">
-                                <img data-v-42598332=""
-                                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAQCAYAAAAiYZ4HAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjFEMTYxQTM5MEZGMjExRTlBMDY1RTQ5M0QzNEM0QTg1IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjFEMTYxQTNBMEZGMjExRTlBMDY1RTQ5M0QzNEM0QTg1Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MUQxNjFBMzcwRkYyMTFFOUEwNjVFNDkzRDM0QzRBODUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MUQxNjFBMzgwRkYyMTFFOUEwNjVFNDkzRDM0QzRBODUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4e1kiCAAAA1klEQVR42mL80S/NgAWIAnExEFegSzBhUawCxGeBOAObSegaGIF4GRDL4jAMQ9AViE2hbF4g5oCyQbQuNg2eaHx1IBYE4lNAXAoSYEGSuAnEylgMYIGazgTToArEp4FYAogF0DTkAPFtKFsbpBGkoRLqXi+op5GBNBTDQAIL1KMg0ATE3xnwgyCQBkkoR5OBMJAGeeQNA/HgNUjDERI0HAZpmEaChqkgDfuAeAYRimfCbICF91Qg/o9F4X+oK7LBiQ0teYPSUSwQ60P5F4F4MTRiwQAgwAB0/B91oYktWwAAAABJRU5ErkJggg=="
-                                     style="display: inline-block; vertical-align: text-top;">
-                                <span data-v-42598332="" class="list-btn2-text">创新</span></div>
+
                         </div>
                     </div>
                     <div data-v-42598332="" class="list-div3">
@@ -120,14 +104,21 @@
                                         <col name="el-table_31_column_192" width="99">
                                     </colgroup>
                                     <tbody>
-                                    <tr class="el-table__row select-row">
+                                    {foreach $currency_list as $k => $v}
+                                    <tr class="el-table__row default-row">
                                         <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">BTC</span></div>
+                                            <div class="cell"><span data-v-42598332="">
+                                                {if condition="$v['en_name'] == 'AMB'"}
+                                                <i data-v-42598332="" class="fa fa-star hc-cursor hc-color4"></i>
+                                                {else /}
+                                                <i data-v-42598332="" class="fa fa-star-o hc-color hc-cursor "></i>
+                                                {/if}
+
+                                            </span>
+                                                <span data-v-42598332="">{$v['name']} {$v['en_name']}</span></div>
                                         </td>
                                         <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">27226.65</div>
+                                            <div class="cell">{$v['price']}</div>
                                         </td>
                                         <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
                                             <div class="cell">
@@ -137,401 +128,10 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    {/foreach}
                                     <tr class="el-table__row default-row">
                                         <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">LTC</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">400.44</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -0.13%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">BCHABC</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">1051.51</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +1.48%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ETH</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">929.57</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.76%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ETC</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">33.46</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +5.52%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">DOGE</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.013745</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -0.21%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">EOS</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">24.607</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.15%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ADCC</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">1.6125</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +2.17%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">HTEC</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.070464</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.18%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">1ST</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.364</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.28%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">BAT</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">1.35</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +3.53%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">DASH</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">616.17</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.19%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">OMG</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">10.65</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +2.01%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ZB</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">2.187</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +13.32%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">FOD</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.2198</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -7.26%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ECOY</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.354686</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.76%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">SNT</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.1507</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +2.94%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">USDT</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">6.8265</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -0.29%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">AE</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">3.15</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -0.32%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">MANA</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.3374</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +2.55%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ICTA</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">1.1001</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.00%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">BTM</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.777</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +8.22%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star hc-cursor hc-color4"></i></span>
-                                                <span data-v-42598332="">BCHSV</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">447.41</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.74%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">BIZ</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.004</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -6.98%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star hc-cursor hc-color4"></i></span>
+                                            <div class="cell"><span data-v-42598332=""></span>
                                                 <span data-v-42598332="">ROGA</span></div>
                                         </td>
                                         <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
@@ -562,142 +162,7 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">SUM</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.025</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +2.04%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ISE</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.062</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.00%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">MXT</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">1.0609</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -0.02%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">WGT</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.8</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.00%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">OFO</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">1.0067</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.28%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">ATMB</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.04</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.00%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">GFH</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.0045</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.00%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">MUCP</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">1</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color2">
-                                                    +0.00%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr><!----></tbody>
+<!----></tbody>
                                 </table><!----><!----></div><!----><!----><!----><!---->
                             <div class="el-table__column-resize-proxy" style="display: none;"></div>
                         </div>
@@ -812,10 +277,10 @@
                         <div data-v-ed42075c="" class="latestPrice-top-div1">
                             <div data-v-ed42075c="" class="latestPrice-top-div2"><span data-v-ed42075c=""
                                                                                        style="font-size: 16px;">最新价</span>
-                                <span data-v-ed42075c="">27226.65</span>GAVC
+                                <span data-v-ed42075c="">{$amb_price}</span>AMB
                             </div>
                             <span data-v-ed42075c="" class="hc-color latestPrice-top-span">
-        ≈27226.65 CNY
+        ≈{$amb_price} CNY
       </span></div>
                     </div>
                     <div data-v-ed42075c="" class="latestPrice-bot">
@@ -824,201 +289,53 @@
                                 &nbsp;
                             </div>
                             <div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-th">
-                                价格(GAVC)
+                                价格(AMB)
                             </div>
                             <div data-v-ed42075c="" class="latestPrice-table-td3 latestPrice-table-td latestPrice-th">
-                                数量(BTC)
+                                数量(AMB)
                             </div>
                             <div data-v-ed42075c="" class="latestPrice-table-td4 latestPrice-table-td latestPrice-th">
-                                累计(BTC)
+                                累计(AMB)
                             </div>
                         </div>
-                        <div data-v-ed42075c="" class="latestPrice-table">
+                        <div data-v-ed42075c="" class="latestPrice-table" id="sell">
+                            {foreach $list_sell as $k => $v}
                             <div data-v-ed42075c="" class="latestPrice-table-div">
                                 <div data-v-ed42075c=""
                                      class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color1">卖6</span></div>
+                                        data-v-ed42075c="" class="hc-color1">卖{$v['num2']}</span></div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27309.55
+                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">{$v['price']}
                                 </div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.04
+                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">
+                                    {$v['num']}
                                 </div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.49
+                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">{$v['account']}
                                 </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 100%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color1">卖5</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27304.5
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.12
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.45
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 91%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color1">卖4</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27302.21
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.17
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.33
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 67%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color1">卖3</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27298.12
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.02
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.16
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 32%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color1">卖2</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27290.89
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.13
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.14
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 28%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color1">卖1</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27289.1
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.01
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.01
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 2%;"></b></div>
+                                <b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 50%;"></b></div>
+                            {/foreach}
                         </div>
                         <div data-v-ed42075c="" class="latestPrice-line"></div>
-                        <div data-v-ed42075c="" class="latestPrice-table">
+
+                        <div data-v-ed42075c="" class="latestPrice-table" id="buy">
+                            {foreach $list_buy as $k => $v}
                             <div data-v-ed42075c="" class="latestPrice-table-div">
                                 <div data-v-ed42075c=""
                                      class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color2">买1</span></div>
+                                        data-v-ed42075c="" class="hc-color2">买{$v['num2']}</span></div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27165.91
+                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">{$v['price']}
                                 </div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.01
+                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">{$v['num']}
                                 </div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.01
+                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">{$v['account']}
                                 </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 1%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color2">买2</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27165.77
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.14
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.15
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 18%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color2">买3</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27160.61
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.07
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.22
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 27%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color2">买4</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27156.1
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.12
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.34
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 42%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color2">买5</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27155.7
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.12
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.46
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 57%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color2">买6</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27146.56
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.15
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.61
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 76%;"></b></div>
-                            <div data-v-ed42075c="" class="latestPrice-table-div">
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
-                                        data-v-ed42075c="" class="hc-color2">买7</span></div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">27141.22
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">0.19
-                                </div>
-                                <div data-v-ed42075c=""
-                                     class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">0.8
-                                </div>
-                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 100%;"></b></div>
+                                <b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 50%;"></b></div>
+                            {/foreach}
                         </div>
                         <div class="el-loading-mask" style="display: none;">
                             <div class="el-loading-spinner">
@@ -1054,11 +371,9 @@
                                         <div data-v-658fd8cc="" class="exchange-div2">
                                             <!-- TODO 登录显示-->
                                             <div data-v-658fd8cc="" style="float: left; font-size: 12px; display: none">
-                                                可用: 0 GAVC
+                                                可用: 0 AMB
                                             </div>
-                                            <div data-v-658fd8cc="" class="hc-color5"
-                                                 style="float: right; cursor: pointer;">充币
-                                            </div>
+
                                             <!-- TODO 登录显示 end-->
                                             <!-- TODO 未登录显示-->
                                             <div data-v-658fd8cc="" class="exchange-div2">
@@ -1250,10 +565,10 @@
                                             <div class="cell">方向</div>
                                         </th>
                                         <th colspan="1" rowspan="1" class="el-table_32_column_195  is-center   is-leaf">
-                                            <div class="cell">价格(GAVC)</div>
+                                            <div class="cell">价格(AMB)</div>
                                         </th>
                                         <th colspan="1" rowspan="1" class="el-table_32_column_196  is-center   is-leaf">
-                                            <div class="cell">数量(BTC)</div>
+                                            <div class="cell">数量(AMB)</div>
                                         </th>
                                         <th class="gutter" style="width: 7px;"></th>
                                     </tr>
@@ -1269,967 +584,32 @@
                                         <col name="el-table_32_column_195" width="157">
                                         <col name="el-table_32_column_196" width="157">
                                     </colgroup>
-                                    <tbody>
+                                    <tbody id="trade">
+                                    {foreach $trade_list as $k => $v}
                                     <tr class="el-table__row">
                                         <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:32:17</div>
+                                            <div class="cell">{$v['time']}</div>
                                         </td>
                                         <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
+                                            {if condition="$v['type'] eq 1"}
                                             <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
+                                                <div data-v-77d8c010="" class="hc-color2">{$v['type_str']}</div>
                                             </div>
+                                            {else /}
+                                            <div class="cell">
+                                                <div data-v-77d8c010="" class="hc-color1">{$v['type_str']}</div>
+                                            </div>
+                                            {/if}
                                         </td>
                                         <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27226.65</div>
+                                            <div class="cell">{$v['price']}</div>
                                         </td>
                                         <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
+                                            <div class="cell">{$v['trade_num']}</div>
                                         </td>
                                     </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:32:06</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27230.43</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.01</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:31:56</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27229.13</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.07</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:31:45</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27220.82</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.09</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:31:34</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27225.26</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.04</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:31:24</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27229.47</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:31:14</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27219.62</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.01</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:31:03</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.07</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.02</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:30:54</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.99</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:30:44</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27239.5</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.05</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:30:33</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27235.63</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:30:22</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27233.92</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.05</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:30:13</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27239.58</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.06</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:30:03</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27237.57</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.03</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:29:52</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27240.33</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.07</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:29:41</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color2">买入</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27235.06</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.06</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:29:32</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.06</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.09</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:29:20</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27235.86</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:29:09</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.54</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.05</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:28:58</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27238.52</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.03</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:28:49</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.87</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.07</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:28:39</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27228.35</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.06</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:28:28</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27238.61</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.02</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:28:18</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27243.93</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:28:07</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27236.4</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.01</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:27:56</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27243.49</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.07</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:27:45</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27233.54</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.07</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:27:33</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27231.89</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.05</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:27:22</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27230.52</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.05</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:27:10</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27237.78</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:27:00</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27232.65</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:26:50</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27236.31</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.04</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:26:40</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27231.19</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.02</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:26:31</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27233.16</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.01</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:26:21</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.33</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.03</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:26:11</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27232.16</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.09</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:26:02</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.91</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.06</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:25:52</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27237.06</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:25:41</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27233.66</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:25:30</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27235.58</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:25:20</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27227.28</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:25:11</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27233.85</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.03</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:25:00</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27235.5</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.01</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:24:49</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27232.28</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.09</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:24:38</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27229.35</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:24:27</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27223.62</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:24:16</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27227.44</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:24:05</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27230.15</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:23:54</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27231.4</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.1</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:23:44</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27233.76</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.08</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:23:34</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27232.73</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.09</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:23:23</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27232.82</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.04</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:23:12</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27234.06</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.09</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:23:01</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27243.57</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.06</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:22:51</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27235.53</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.01</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:22:39</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27237.29</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.06</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:22:28</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27242.26</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.05</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:22:17</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27248.54</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.01</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:22:07</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27242.14</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.06</div>
-                                        </td>
-                                    </tr>
-                                    <tr class="el-table__row">
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
-                                            <div class="cell">18:21:58</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">卖出</div>
-                                            </div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
-                                            <div class="cell">27237.01</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
-                                            <div class="cell">0.02</div>
-                                        </td>
-                                    </tr><!----></tbody>
+                                    {/foreach}
+                                    <!----></tbody>
                                 </table><!----><!----></div><!----><!----><!----><!---->
                             <div class="el-table__column-resize-proxy" style="display: none;"></div>
                         </div>
@@ -2617,6 +997,84 @@
             $(this).addClass('hc-color4');                            // 添加当前元素的样式
 
         });
+    });
+
+
+    function runEvery10Sec(){
+        setTimeout(runEvery10Sec, 1000 * 10);
+        $.ajax({
+            type: 'post',
+            url: "{:url('home/user/getCurrencyExchange')}",
+            dataType: "json",
+            async: false,
+            cache: false,
+            success: function (data) {
+
+                if(data.code > 0){
+                    var html1 = '';
+                    var html2 = '';
+                    var html3 = '';
+                    $.each(data.sell, function (i, v) {
+                            html1 += '<div data-v-ed42075c="" class="latestPrice-table-div">';
+                            html1 +='<div data-v-ed42075c="" class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span data-v-ed42075c="" class="hc-color1">卖 '+ v.num2 +'</span></div>';
+                            html1 += '<div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">'+ v.price +' </div>';
+                           html1 += '<div data-v-ed42075c="" class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">'+ v.num +'</div>';
+                            html1 += '<div data-v-ed42075c="" class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">'+ v.account +'</div>';
+                            html1 += '<b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 50%;"></b></div>';
+
+                    });
+
+                    $.each(data.buy,function(i, v){
+                        html2 += '<div data-v-ed42075c="" class="latestPrice-table-div">';
+                        html2 +='<div data-v-ed42075c="" class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span data-v-ed42075c="" class="hc-color1">卖 '+ v.num2 +'</span></div>';
+                        html2 += '<div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">'+ v.price +' </div>';
+                        html2 += '<div data-v-ed42075c="" class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">'+ v.num +'</div>';
+                        html2 += '<div data-v-ed42075c="" class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">'+ v.account +'</div>';
+                        html2 += '<b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 50%;"></b></div>';
+                    });
+
+                    $.each(data.trade,function(i,v){
+                        html3 += '<tr class="el-table__row">';
+                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_193 is-center "> <div class="cell">'+ v.time +'</div></td>';
+                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">';
+                        if(v.type == 1){
+                            html3 += '<div class="cell"><div data-v-77d8c010="" class="hc-color2">'+v.type_str+'</div></div></td>';
+                        }else{
+                            html3 += '<div class="cell"><div data-v-77d8c010="" class="hc-color1">'+v.type_str+'</div></div></td>'
+                        }
+
+
+                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_195 is-center "><div class="cell">'+v.price+'</div></td>';
+
+                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_196 is-center "><div class="cell">'+v.trade_num+'</div></td>';
+                        html3 += '</tr>';
+
+                    });
+
+                    if(html1 != ''){
+                        $('#sell').empty();
+                        $('#sell').html(html1);
+                    }
+
+                    if(html2 != ''){
+                        $('#buy').empty();
+                        $('#buy').html(html2);
+                    }
+
+                    if(html3 != ''){
+                        $('#trade').empty();
+                        $('#trade').html(html3);
+                    }
+
+                }
+            }
+        });
+    }
+
+    runEvery10Sec();
+
+    layui.use(['form', 'layedit', 'laydate'], function () {
+
     });
 
 </script>

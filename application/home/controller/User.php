@@ -9,9 +9,11 @@ namespace app\home\controller;
 use app\admin\model\ApplyCash;
 use app\admin\model\ApplyRecharge;
 use app\admin\model\Currency;
+use app\admin\model\CurrencyList;
 use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
 use app\home\model\UserTradeDepute;
+use app\home\model\UserTradeDeputeLog;
 use app\user\model\UserRunningLog;
 use think\Db;
 use think\db\Where;
@@ -251,13 +253,90 @@ class User extends Common
         return $this->fetch('entrustment');
     }
 
-    //币币交易
+    //交易大厅
     public function currencyExchange()
     {
         $user_info = session('user');
+        //获取用户交易账户
+        $user_account = UserCurrencyAccount::where(['user_id' => $user_info['id']])->find();
+        //币种列表
+        $currency_list = CurrencyList::where(['status' => 'open'])->select();
+        $amb_price = 0;
+        foreach ($currency_list as $k => $v){
+            if($v['en_name'] == 'AMB'){
+                $trade = db('user_trade_depute_log')->where(['status' =>1,'trade_type' => 2])->order('price DESC')->find();
+                $currency_list[$k]['price'] = $trade; //阿美币最新价格
+                $amb_price = $trade;
+            }else{
+                $currency_list[$k]['price'] = 0;
+            }
 
+        }
+        //从委托表中取出卖价前7位
+        $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->select();
+        foreach ($list_sell as $key => $val){
+            $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
+            $list_sell[$key]['account'] = $user_account['ameibi_num'];
+            $list_sell[$key]['num2'] = 7-$key;
+
+        }
+        //获取用户托管买币前7位
+        $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->select();
+        foreach ($list_buy as $key => $val){
+            $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
+            $list_buy[$key]['account'] = $user_account['ameibi_num'];
+            $list_buy[$key]['num2'] = 7-$key;
+        }
+        //实时成交前30位
+        $trade_list = db('user_trade_depute_log')->where(['status' => 1])->limit(30)->order('create_time DESC')->select();
+        foreach ($trade_list as $k => $v){
+            $trade_list[$k]['time'] = date('m-d H:i', $v['crate_time']);
+            $trade_list[$k]['type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']] ;
+        }
         $this->assign('user_info', $user_info);
+        $this->assign('user_account', $user_account);
+        $this->assign('currency_list', $currency_list);
+        $this->assign('list_sell', $list_sell); //挂单卖出列表
+        $this->assign('list_buy', $list_buy);   //挂单购买列表
+        $this->assign('amb_price', $amb_price); //阿美币现在价格
+        $this->assign('trade_list', $trade_list); //实时成交列表
         return $this->fetch('currencyExchange');
+    }
+
+
+    //实时获取数据
+    public function getCurrencyExchange()
+    {
+        if(request()->isAjax()){
+            $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->select();
+            foreach ($list_sell as $key => $val){
+                $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
+                $list_sell[$key]['account'] = $user_account['ameibi_num'];
+                $list_sell[$key]['num2'] = 7-$key;
+
+            }
+            //获取用户托管买币前7位
+            $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->select();
+            foreach ($list_buy as $key => $val){
+                $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
+                $list_buy[$key]['account'] = $user_account['ameibi_num'];
+                $list_buy[$key]['num2'] = 7-$key;
+            }
+            $trade_list = db('user_trade_depute_log')->where(['status' => 1])->limit(30)->order('create_time DESC')->select();
+            foreach ($trade_list as $k => $v){
+                $trade_list[$k]['time'] = date('H:i:s', $v['crate_time']);
+                $trade_list[$k]['type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']] ;
+            }
+
+            return['code' => 1, 'sell' => $list_sell, 'buy' => $list_buy, 'trade' => $trade_list];
+        }
+
+    }
+
+    //从委托表中取出卖价前7位
+    public function getCurrencyExchangeBuy()
+    {
+
     }
 
 

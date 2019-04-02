@@ -1,5 +1,6 @@
 <?php
 namespace app\user\controller;
+use app\admin\model\UserCurrencyAccount;
 use app\user\model\Users;
 use think\Input;
 use think\Session;
@@ -64,6 +65,9 @@ class Index extends Common{
             ->find();
         //推荐人数
         $count = $userModel->where(['pid' => $user_id])->count();
+        if(empty($count)){
+            $count = 0;
+        }
         $baodancenter = Users::$baodancenter;
         $user_arr[] = [
             'title' => '会员编号：',
@@ -91,8 +95,34 @@ class Index extends Common{
         ];
 
         //用户账户信息
+        $user_account_info = UserCurrencyAccount::where(['user_id' => $user_id])->find();
 
+        $user_account[] = [
+            'title' => '沙特链：',
+            'name'  => !empty($user_account_info['cash_currency_num']) ? $user_account_info['cash_currency_num'] : 0,
+        ];
+        $user_account[]= [
+            'title' => '激活钱包：',
+            'name'  => !empty($user_account_info['activation_num']) ? $user_account_info['activation_num'] : 0,
+        ];
+        $user_account[]= [
+            'title' => '消费钱包：',
+            'name'  => !empty($user_account_info['consume_num']) ? $user_account_info['consume_num'] : 0,
+        ];
+        $user_account[]= [
+            'title' => '交易账户：',
+            'name'  => !empty($user_account_info['transaction_num']) ? $user_account_info['transaction_num'] : 0,
+        ];
+        $user_account[]= [
+            'title' => '本金账户：',
+            'name'  => !empty($user_account_info['corpus']) ? $user_account_info['corpus'] : 0,
+        ];
+        $user_account[]= [
+            'title' => '复投数量：',
+            'name'  => !empty($user_account_info['cash_input_num']) ? $user_account_info['cash_input_num'] : 0,
+        ];
 
+        $this->assign('user_account', $user_account);
         $this->assign('user_arr', $user_arr);
 
         return $this->fetch();

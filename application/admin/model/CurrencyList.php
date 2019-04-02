@@ -10,8 +10,8 @@ use think\Model;
 use think\Db;
 class CurrencyList extends Model
 {
-    const STATUS1 = 0;
-    const STATUS2 = 1;
+    const STATUS1 = 'close';
+    const STATUS2 = 'open';
     public static $status = [
         self::STATUS1 => '未上线',
         self::STATUS2 => '已上线',

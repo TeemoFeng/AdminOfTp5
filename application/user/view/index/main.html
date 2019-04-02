@@ -30,7 +30,18 @@
             <div class="layui-card">
                 <div class="layui-card-header layui-bg-green"><i class="layui-icon layui-icon-list"> 财务信息</i></div>
                 <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="line" style="text-align: center">
+                        <tbody>
+                        {foreach $user_account as $key => $vo }
 
+                        <tr>
+                            <td style="width: 20%;text-align: right"><span class="layui-text">{$vo.title}</span></td>
+                            <td style="width: 80%;text-align: left"><span class="layui-text">{$vo.name}</span></td>
+                        </tr>
+                        {/foreach}
+
+                        </tbody>
+                    </table>
 
                 </div>
             </div>

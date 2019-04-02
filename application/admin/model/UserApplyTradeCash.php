@@ -10,15 +10,5 @@ use think\Model;
 
 class UserApplyTradeCash extends Model
 {
-    //提现申请管理员审核通过
-    public function cashPass()
-    {
 
-
-
-
-
-
-
-    }
 }

@@ -6,8 +6,8 @@ use think\Model;
 class Users extends Model
 {
     public static $baodancenter = [
-        0  => '未审核',
-        1  => '已通过',
+        0  => '否',
+        1  => '是',
     ];
     public function login($data){
         $user=db('users')->where('email',$data['email'])->find();
