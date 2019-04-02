@@ -262,16 +262,26 @@ class User extends Common
         //币种列表
         $currency_list = CurrencyList::where(['status' => 'open'])->select();
         $amb_price = 0;
+
         foreach ($currency_list as $k => $v){
             if($v['en_name'] == 'AMB'){
                 $trade = db('user_trade_depute_log')->where(['status' =>1,'trade_type' => 2])->order('price DESC')->find();
-                $currency_list[$k]['price'] = $trade; //阿美币最新价格
+                $currency_list[$k]['price_s'] = 0; //阿美币最新价格
                 $amb_price = $trade;
             }else{
-                $currency_list[$k]['price'] = 0;
+                $currency_list[$k]['price_s'] = 0;
             }
+            $currency_list[$k]['high'] = 34.15; //最高价
+            $currency_list[$k]['last'] = 33.15; //最新成交价
+            $currency_list[$k]['low'] = 32.05; //最低价
+            $currency_list[$k]['vol'] = 10532696.3919; //24成交量
+            $currency_list[$k]['ratio'] = 0.3; //24成交量
 
         }
+
+        //阿美币
+        $amei_info = $currency_list[0];
+
         //从委托表中取出卖价前7位
         $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->select();
         foreach ($list_sell as $key => $val){
@@ -280,6 +290,7 @@ class User extends Common
             $list_sell[$key]['num2'] = 7-$key;
 
         }
+
         //获取用户托管买币前7位
         $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->select();
         foreach ($list_buy as $key => $val){
@@ -293,7 +304,9 @@ class User extends Common
             $trade_list[$k]['time'] = date('m-d H:i', $v['crate_time']);
             $trade_list[$k]['type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']] ;
         }
+
         $this->assign('user_info', $user_info);
+        $this->assign('amei_info', $amei_info);
         $this->assign('user_account', $user_account);
         $this->assign('currency_list', $currency_list);
         $this->assign('list_sell', $list_sell); //挂单卖出列表
@@ -333,11 +346,6 @@ class User extends Common
 
     }
 
-    //从委托表中取出卖价前7位
-    public function getCurrencyExchangeBuy()
-    {
-
-    }
 
 
 
