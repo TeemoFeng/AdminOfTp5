@@ -7,9 +7,9 @@ class Common extends Controller{
 
     protected $pagesize,$changyan;
     public function initialize(){
-        if (!session('user.id')) {
-            $this->redirect('user/login/index');
-        }
+//        if (!session('user.id')) {
+//            $this->redirect('home/index/index');
+//        }
 //        $this->userInfo=db('users')->alias('u')
 //            ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
 //            ->where('u.id','=',session('user.id'))

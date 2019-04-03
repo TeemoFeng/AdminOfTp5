@@ -32,6 +32,12 @@ class Users extends Common{
                 $list['data'][$k]['enabled'] = UsersModel::$vastatus[$v['enabled']];
                 $list['data'][$k]['baodan_center'] = UsersModel::$bdstatus[$v['baodan_center']];
                 $list['data'][$k]['is_report'] = UsersModel::$yhstatus[$v['is_report']];
+                $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
+                $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
+                $baodan_user = UsersModel::where(['id' => $v['baodan_center']])->value('username');
+                $list['data'][$k]['referee'] = $v['referee'] . '【' .$tuijian_user . '】';
+                $list['data'][$k]['contact_person'] = $v['contact_person'] . '【' .$jidianren_user . '】';
+                $list['data'][$k]['baodan_user'] = $v['baodan_user'] . '【' .$baodan_user . '】';
             }
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
         }
@@ -318,8 +324,6 @@ class Users extends Common{
     {
         if (request()->isPost()) {
             $data   = input('post.');
-            $level          = explode(':',$data['level']); //ng 获取的值要单独去除number:
-            $data['level']  = $level[1]; //默认会员等级为注册会员
 //            $province       = explode(':',$data['province']);
 //            $data['province'] = isset($province[1]) ? $province[1] : '';
 //            $city           = explode(':',$data['city']);
@@ -355,23 +359,33 @@ class Users extends Common{
             //接入用户和推荐人关系
             if ($data['referee'] == '0000') {
                 $data['pid'] = 0;
-                $data['referee'] = '0000|公司';
+                $data['referee'] = '0000';
             } else {
                 //查询推荐人id
                $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
                $data['pid'] = $referrr_info['id'];
-               $data['referee'] = $referrr_info['usernum'] .'|' .$referrr_info['username'];
+               $data['referee'] = $referrr_info['usernum'];
 
             }
-
+            //报单人
+            if($data['baodan_user'] == '0000'){
+                $data['npid'] = 0;
+                $data['baodan_user'] = '0000';
+            }else{
+                //查询接点人id
+                $node_info    = UsersModel::get(['usernum' => $data['baodan_user']]);
+                $data['npid'] = $node_info['id'];
+                $data['baodan_user'] = $node_info['usernum'];
+            }
+            //接点人
             if($data['contact_person'] == '0000'){
                 $data['npid'] = 0;
-                $data['contact_person'] = '0000|公司';
+                $data['contact_person'] = '0000';
             }else{
                 //查询接点人id
                 $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
                 $data['npid'] = $node_info['id'];
-                $data['contact_person'] = $node_info['usernum'] .'|' .$node_info['username'];
+                $data['contact_person'] = $node_info['usernum'];
             }
 
             //是否报备银行
@@ -390,20 +404,20 @@ class Users extends Common{
                 $user_node_model = new UserNode();
                 if($data['pid'] == 0){
                     //接入用户和接点人关系
-                    $data2['user_id'] = $new_user_id;
+                    $data2['user_id'] = $new_user_id->id;
                     $data2['user_son_str'] = 0 . ',';
                     //接入用户和推荐人的关系
-                    $data3['user_id'] = $new_user_id;
+                    $data3['user_id'] = $new_user_id->id;
                     $data3['user_son_str'] = 0 . ',';
                 }else{
                     $son_str = $user_referee_model->where(['user_id' => $referrr_info['id'] ])->value('user_son_str');
                     $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
                     //接入用户和接点人关系
-                    $data2['user_id'] = $new_user_id;
-                    $data2['user_son_str'] = $son_str . $referrr_info["id"];
+                    $data2['user_id'] = $new_user_id->id;
+                    $data2['user_son_str'] = $son_str .','. $referrr_info["id"];
                     //接入用户和推荐人的关系
-                    $data3['user_id'] = $new_user_id;
-                    $data3['user_son_str'] = $son_node_str . $node_info['id'];
+                    $data3['user_id'] = $new_user_id->id;
+                    $data3['user_son_str'] = $son_node_str .','. $node_info['id'];
                 }
 
                 UserReferee::create($data2);
@@ -411,7 +425,7 @@ class Users extends Common{
                 //获取当前设置的汇率
                 $sate = db('bonus_ext_set')->where(['id' => 1])->value('money_change');
                 //创建用户钱包账户
-                $account['user_id'] = $new_user_id;
+                $account['user_id'] = $new_user_id->id;
                 $account['rate'] = $sate;
                 UserCurrencyAccount::create($account);
 
@@ -435,7 +449,7 @@ class Users extends Common{
 
     }
 
-    //验证推荐人和接点人
+    //验证推荐人和接点人报单中心
     public function validateUser()
     {
         $search = input('post.search');
@@ -446,8 +460,10 @@ class Users extends Common{
         if($type == 1){
             //推荐人
             $where['usernum'] = $search;
-        }else{
+        }elseif($type == 2){
             //接点人
+            $where['usernum'] = $search;
+        }elseif($type == 3){
             $where['usernum'] = $search;
         }
 
@@ -480,8 +496,10 @@ class Users extends Common{
                 $list['data'][$k]['reg_time'] = date('Y-m-d H:s',$v['reg_time']);
                 $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
                 $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
+                $baodan_user = UsersModel::where(['id' => $v['baodan_center']])->value('username');
                 $list['data'][$k]['referee'] = $v['referee'] . '【' .$tuijian_user . '】';
                 $list['data'][$k]['contact_person'] = $v['contact_person'] . '【' .$jidianren_user . '】';
+                $list['data'][$k]['baodan_user'] = $v['baodan_user'] . '【' .$baodan_user . '】';
             }
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
         }

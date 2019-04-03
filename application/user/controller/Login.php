@@ -4,7 +4,7 @@ use app\user\model\UserLoginLog;
 use think\Controller;
 use think\facade\Request;
 use think\captcha\Captcha;
-class Login extends Controller{
+class Login extends Common {
     protected $sys;
     public function initialize(){
 //        if (session('user.id')) {

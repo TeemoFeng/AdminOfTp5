@@ -717,7 +717,11 @@ function safe_html($html){
 //创建会员编号
 function createVipNum()
 {
-    $num = rand(10000,99999);
-    $vip_num = 'vip'.date('Ymd').$num;
+    $str = '';
+    for ($i = 1; $i <= 3; $i++) {
+        $str .= chr(rand(97, 122));
+    }
+    $num = rand(1000,9999);
+    $vip_num = $str.date('d').$num;
     return $vip_num;
 }

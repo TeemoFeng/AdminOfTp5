@@ -6,7 +6,7 @@ class Common extends Controller{
     protected $userInfo;
     public function initialize(){
         if (!session('user.id')) {
-            $this->redirect('login/index');
+            $this->redirect('home/index/index');
         }
         $this->userInfo=db('users')->alias('u')
             ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
@@ -22,6 +22,6 @@ class Common extends Controller{
     //退出登陆
     public function logout(){
         session('user',null);
-        $this->redirect('login/index');
+        $this->redirect('home/index/index');
     }
 }

@@ -7,7 +7,7 @@ class Users extends Validate
 {
     protected $rule =   [
         'usernum'       => 'require',
-        'username'      => 'require|length:4,25',
+        'username'      => 'require|length:3,25',
         'mobile'        => 'require|number|length:11',
         'password'      => 'require|length:6,25',
         'confirmPwd'    => 'require|length:6,25',
@@ -17,9 +17,9 @@ class Users extends Validate
 
 
     protected $message  =   [
-        'usernum.require'       => '用户编号不能为空',
-        'username.require'      => '用户名不能为空',
-        'username.length'       => '用户名在4到25个字符之间',
+        'usernum.require'       => '会员编号不能为空',
+        'username.require'      => '会员名不能为空',
+        'username.length'       => '会员名在4到25个字符之间',
         'mobile.require'        => '手机号不能为空',
         'mobile.length'         => '手机号长度必须是11位',
         'password.require'      => '密码不能为空',

@@ -17,7 +17,7 @@ class Index extends Common{
 //        return $this->fetch();
 //    }
 
-    //前台用户首页
+    //商户后台首页
     public function index()
     {
 
@@ -42,13 +42,14 @@ class Index extends Common{
         $baodan_center = session('user.baodan_center');
         foreach ($menus as $k=>$v){
             foreach ($authRule as $kk=>$vv){
-                if($vv['href'] == 'User/register' && $baodan_center == 0)
+                if($vv['href'] == '/user/user/register.html' && $baodan_center == 0)
                     continue;
                 if($v['id']==$vv['pid']){
                     $menus[$k]['children'][] = $vv;
                 }
             }
         }
+
         $this->assign('menus',json_encode($menus,true));
         return $this->fetch();
 
