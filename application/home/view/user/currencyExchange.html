@@ -359,7 +359,7 @@
                                             <!-- TODO 登录显示-->
                                             {if condition="!empty($user_info)"}
                                             <div data-v-658fd8cc="" style="float: left; font-size: 12px">
-                                                阿美币资产: 可用{$user_account['ameibi_num']} 冻结:{$user_account['ameibi_freeze_num']} 锁仓:{$user_account['ameibi_lock_num']} 总量:{$user_account['ameibi_all_num']}
+                                                可交易资产: 可用{$user_account['transaction_num']}
                                             </div>
                                             <!-- TODO 登录显示 end-->
                                             {else /}
@@ -373,7 +373,7 @@
 
 
                                         </div>
-                                        <form action=""  class="layui-form" lay-filter="buy_amb">
+                                        <form action=""  class="layui-form" lay-filter="buy_amb_form">
                                             <div data-v-658fd8cc="" class="exchange-div3 hc-color3">买入价</div>
                                             <div data-v-658fd8cc="" class="exchange-div4 hc-bgColor2">
                                                 <div data-v-658fd8cc="" class="el-input"><!----><input type="number"
@@ -384,7 +384,7 @@
                                                                                                        lay-verify="required" id="buy_amb">
                                                     <!----><!----><!----></div>
                                                 <div data-v-658fd8cc="" class="exchange-div5">最大可买<span id="input_tishi"></span></div>
-                                                <div data-v-658fd8cc="" class="exchange-div4-title1 hc-color">AMB</div>
+                                                <div data-v-658fd8cc="" class="exchange-div4-title1 hc-color">JF</div>
                                             </div>
                                             <div data-v-658fd8cc="" class="exchange-div3 hc-color3">买入数量</div>
                                             <div data-v-658fd8cc="" class="exchange-div6">
@@ -394,7 +394,7 @@
                                                                                                        onmousewheel="return false;"
                                                                                                        class="el-input__inner" id="input_amb">
                                                     <!----><!----><!----></div>
-                                                <div data-v-658fd8cc="" class="exchange-div4-title2 hc-color">AMB</div>
+                                                <div data-v-658fd8cc="" class="exchange-div4-title2 hc-color">JF</div>
                                             </div>
                                             <div data-v-658fd8cc="" class="exchange-div7 exchange-buy">
                                                 <div data-v-658fd8cc="" role="slider" aria-valuemin="0" aria-valuemax="100"
@@ -420,11 +420,14 @@
                                                     data-v-658fd8cc="" id="trade_num_span">0</span> JF   &nbsp;&nbsp;&nbsp;&nbsp;手续费<span
                                                     data-v-658fd8cc="" id="poundage_span">0</span> &nbsp;&nbsp;JF(0.1%手续费)
                                                 <input type="hidden" name="trade_num" id="trade_num">
+                                                <input type="hidden" name="sum" id="all_num">
                                                 <input type="hidden" name="poundage" id="poundage">
+                                                <input type="hidden" name="depute_type" value="1">
+                                                <input type="hidden" name="user_id" value="{$user_info['id']}">
                                             </div>
                                             <div data-v-658fd8cc="" class="exchange-div10">
                                                 <button data-v-658fd8cc="" type="button"
-                                                        class="el-button exchange-btn el-button--success"><!---->
+                                                        class="el-button exchange-btn el-button--success" lay-submit="" lay-filter="submit"><!---->
                                                     <!----><span>买入 AMB</span></button>
                                             </div>
                                         </form>
@@ -432,20 +435,19 @@
                                     <div data-v-658fd8cc="" class="exchange-div1">
                                         <div data-v-658fd8cc="" class="exchange-div2">
                                             <!-- TODO 登录显示-->
-                                            <div data-v-658fd8cc="" style="float: left; font-size: 12px; display: none">
-                                                可用: 0 AMB
-                                            </div>
-                                            <div data-v-658fd8cc="" class="hc-color5"
-                                                 style="float: right; cursor: pointer;">充币
+                                            {if condition="!empty($user_info)"}
+                                            <div data-v-658fd8cc="" style="float: left; font-size: 12px">
+                                                阿美币资产: 可用{$user_account['ameibi_num']} 冻结:{$user_account['ameibi_freeze_num']} 锁仓:{$user_account['ameibi_lock_num']} 总量:{$user_account['ameibi_all_num']}
                                             </div>
                                             <!-- TODO 登录显示 end-->
+                                            {else /}
                                             <!-- TODO 未登录显示-->
                                             <div data-v-658fd8cc="" class="exchange-div2">
                                                 <span data-v-658fd8cc="" class="hc-color4 hc-cursor">登录</span>
                                                 或 <span data-v-658fd8cc="" class="hc-color4 hc-cursor">注册</span> 开始交易
                                             </div>
-
                                             <!-- TODO 未登录显示 end-->
+                                            {/if}
 
                                         </div>
                                         <form action=""  class="layui-form" lay-filter="sell_amb">
@@ -454,25 +456,25 @@
                                                 <div data-v-658fd8cc="" class="el-input"><!----><input type="number"
                                                                                                        autocomplete="off"
                                                                                                        placeholder=""
-                                                                                                       name="input-name"
-                                                                                                       id="inp2"
+                                                                                                       name="price"
+                                                                                                       id="input_sell"
                                                                                                        onmousewheel="return false;"
                                                                                                        class="el-input__inner">
                                                     <!----><!----><!----></div>
-                                                <div data-v-658fd8cc="" class="exchange-div5">≈ 27308.50 CNY</div>
-                                                <div data-v-658fd8cc="" class="exchange-div4-title1 hc-color">AMB</div>
+                                                <div data-v-658fd8cc="" class="exchange-div5">最大可卖<span id="input_tishi2"></span></div>
+                                                <div data-v-658fd8cc="" class="exchange-div4-title1 hc-color">JF</div>
                                             </div>
                                             <div data-v-658fd8cc="" class="exchange-div3 hc-color3">卖出数量</div>
                                             <div data-v-658fd8cc="" class="exchange-div6">
                                                 <div data-v-658fd8cc="" class="el-input"><!----><input type="number"
                                                                                                        autocomplete="off"
                                                                                                        placeholder=""
-                                                                                                       name="input-name"
-                                                                                                       id="inp1"
+                                                                                                       name="sell_num"
+                                                                                                       id="sell_num"
                                                                                                        onmousewheel="return false;"
                                                                                                        class="el-input__inner">
                                                     <!----><!----><!----></div>
-                                                <div data-v-658fd8cc="" class="exchange-div4-title2 hc-color">AMB</div>
+                                                <div data-v-658fd8cc="" class="exchange-div4-title2 hc-color">JF</div>
                                             </div>
                                             <div data-v-658fd8cc="" class="exchange-div7 exchange-sell">
                                                 <div data-v-658fd8cc="" role="slider" aria-valuemin="0" aria-valuemax="100"
@@ -495,11 +497,17 @@
                                                 </div>
                                             </div>
                                             <div data-v-658fd8cc="" class="exchange-div9">交易额 <span
-                                                    data-v-658fd8cc="">0</span> AMB
+                                                    data-v-658fd8cc="" id="trade_num_span2">0</span> JF   &nbsp;&nbsp;&nbsp;&nbsp;手续费<span
+                                                    data-v-658fd8cc="" id="poundage_span2">0</span> &nbsp;&nbsp;JF(0.1%手续费)
+                                                <input type="hidden" name="trade_num" id="trade_num2">
+                                                <input type="hidden" name="sum" id="all_num2">
+                                                <input type="hidden" name="poundage" id="poundage2">
+                                                <input type="hidden" name="depute_type" value="2">
+                                                <input type="hidden" name="user_id" value="{$user_info['id']}">
                                             </div>
                                             <div data-v-658fd8cc="" class="exchange-div10">
                                                 <button data-v-658fd8cc="" type="button"
-                                                        class="el-button exchange-btn el-button--danger"><!---->
+                                                        class="el-button exchange-btn el-button--danger" lay-submit="" lay-filter="submit2"><!---->
                                                     <!----><span>卖出 AMB</span></button>
                                             </div>
                                         </form>
@@ -980,6 +988,36 @@
             , $ = layui.jquery
             , layedit = layui.layedit
             , laydate = layui.laydate;
+        //买入提交
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+            $.post("{:url('buyCurrency')}", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+
+        //卖出提交
+        form.on('submit(submit2)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+            $.post("{:url('sellCurrency')}", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+
 
         $(function () {
 
@@ -1027,7 +1065,7 @@
 
                     $.each(data.buy,function(i, v){
                         html2 += '<div data-v-ed42075c="" class="latestPrice-table-div">';
-                        html2 +='<div data-v-ed42075c="" class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span data-v-ed42075c="" class="hc-color1">卖 '+ v.num2 +'</span></div>';
+                        html2 +='<div data-v-ed42075c="" class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span data-v-ed42075c="" class="hc-color2">买 '+ v.num2 +'</span></div>';
                         html2 += '<div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">'+ v.price +' </div>';
                         html2 += '<div data-v-ed42075c="" class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">'+ v.num +'</div>';
                         html2 += '<div data-v-ed42075c="" class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">'+ v.account +'</div>';
@@ -1075,7 +1113,7 @@
     runEvery10Sec();
 
         var price = 0;
-        //点击切换
+        //点击币种切换信息
         $('body').on('click','.get_price',function() {
             price = $(this).find("[name='coin_price']").html();
             var name = $(this).find("[name='coin_name']").html();
@@ -1093,16 +1131,26 @@
 
         });
 
+
         //买入
         var user_trade_num = {$user_account['transaction_num']}; //用户可交易余额
         var can_buy_num;
         var ratio = 0.1; //手续费
         var price;
+        //买入价格控制
         $("#buy_amb").bind('input propertychange',function(){
             var val = $(this).val();
             price = val;
             var regPos = /^\d+(\.\d+)?$/; //非负浮点数
-
+            var buy_num = $('#input_amb').val(); //如果已经输入过数量 清空数量和之前计算
+            if(buy_num.length > 0){
+                $('#input_amb').val('');
+                $('#trade_num_span').html(0);
+                $('#poundage_span').html(0);
+                $('#trade_num').val('');
+                $('#poundage').val('');
+                $('#all_num').val('');
+            }
             if(regPos.test(val)){
                 //计算可买数量
                 can_buy_num = FloatDiv(user_trade_num,val);
@@ -1116,7 +1164,7 @@
             }
         });
 
-        //买入
+        //买入数量控制
         $("#input_amb").bind('input propertychange',function(){
             var val = $(this).val();
             var regPos = /^\d+(\.\d+)?$/; //非负浮点数
@@ -1139,13 +1187,15 @@
                 var real_num = FloatMul(all_price,ratio3);
 
                 //手续费
-                $poundage = FloatMul(all_price,ratio2);
+                poundage = FloatMul(all_price,ratio2);
                 //计算交易额
                 real_num = parseFloat(real_num).toFixed(4);
+                poundage = parseFloat(poundage).toFixed(4);
+                $('#all_num').val(all_price);
                 $('#trade_num').val(real_num);
                 $('#trade_num_span').html(real_num);
-                $('#poundage').val(real_num);
-                $('#poundage_span').html(real_num);
+                $('#poundage').val(poundage);
+                $('#poundage_span').html(poundage);
             }else{
                 //如果输入的格式不对，清空
                 $(this).val('');
@@ -1153,8 +1203,76 @@
                 $('#poundage_span').html(0);
                 $('#trade_num').val('');
                 $('#poundage').val('');
+                $('#all_num').val('');
             }
         });
+
+        //卖出输入价格
+        var can_sell_num = {$user_account['ameibi_num']}; //卖出的最大数量即用户拥有的阿美币的数量
+        var sell_price;
+        $("#input_sell").bind('input propertychange',function(){
+            var val = $(this).val();
+            sell_price = val; //价格
+            var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+            var buy_num = $('#sell_num').val(); //如果已经输入过数量 清空数量和之前计算
+            if(buy_num.length > 0){
+                $('#sell_num').val('');
+                $('#trade_num_span2').html(0);
+                $('#poundage_span2').html(0);
+                $('#trade_num2').val('');
+                $('#poundage2').val('');
+                $('#all_num2').val('');
+            }
+            if(!regPos.test(val)){
+                //如果输入的格式不对，清空
+                $(this).val('');
+                $('#input_tishi2').html('');
+            }
+        });
+
+        //卖出输入数量
+        $("#sell_num").bind('input propertychange',function(){
+            var val = $(this).val();
+            var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+
+            if(regPos.test(val)){
+                if(parseFloat(val)>parseFloat(can_sell_num)){
+                    layer.msg('超过可卖出最大数量', {time: 1800, icon: 2});
+                    $(this).val('');
+                    $('#trade_num_span2').html(0);
+                    $('#poundage_span2').html(0);
+                    $('#trade_num2').val('');
+                    $('#poundage2').val('');
+                    return ;
+                }
+                //计算手续费
+                var all_price2 = FloatMul(val,sell_price); //卖出个数乘单价
+                all_price2 = parseFloat(all_price2).toFixed(4);
+                var ratio2 = FloatDiv(ratio,100); //手续费
+                var ratio3 = FloatSub(1, ratio2);
+                var real_num2 = FloatMul(all_price2,ratio3);
+
+                //手续费
+                poundage2 = FloatMul(all_price2,ratio2);
+                //计算交易额
+                real_num2 = parseFloat(real_num2).toFixed(4);
+                poundage2 = parseFloat(poundage2).toFixed(4);
+                $('#all_num2').val(all_price2);
+                $('#trade_num2').val(real_num2);
+                $('#trade_num_span2').html(real_num2);
+                $('#poundage2').val(poundage2);
+                $('#poundage_span2').html(poundage2);
+            }else{
+                //如果输入的格式不对，清空
+                $(this).val('');
+                $('#trade_num_span2').html(0);
+                $('#poundage_span2').html(0);
+                $('#trade_num2').val('');
+                $('#poundage2').val('');
+                $('#all_num2').val('');
+            }
+        });
+
 
         //除法
         function FloatDiv(arg1,arg2){
@@ -1204,6 +1322,9 @@
             return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 
         }
+
+
+
 
 
     });

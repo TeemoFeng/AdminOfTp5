@@ -216,7 +216,6 @@ class User extends Common
             $end_time = strtotime($time_arr[1]);
             $where['create_time'] = array('between time', array($start_time, $end_time));
         }
-
         return $where;
     }
 
@@ -244,7 +243,7 @@ class User extends Common
             $this->assign('status', $status);
             $this->assign('list', $list);
             $this->assign('search', $data);
-            return $this->fetch('historical');
+            return $this->fetch('entrustment');
         }
         $list = Db::name('user_trade_depute')->where($map)->select();
         $this->assign('type', $type);
@@ -344,6 +343,175 @@ class User extends Common
             return['code' => 1, 'sell' => $list_sell, 'buy' => $list_buy, 'trade' => $trade_list];
         }
 
+    }
+
+    //买入阿美币提交
+    public function buyCurrency()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            //记录到用户交易委托表
+            if(empty($data['user_id']) || empty($data['buy_num']) || empty($data['trade_num']) || empty($data['poundage'])){
+                return ['code' => 0, 'msg' => '缺少必填项'];
+            }
+            $save = [
+                'user_id'           => $data['user_id'],
+                'depute_type'       => $data['depute_type'],
+                'status'            => 1,
+                'price'             => $data['price'],
+                'depute_currency'   => 1, //购买币种默认为阿美币
+                'trade_currency'    => 1, //购买币种默认为阿美币
+                'num'               => $data['buy_num'], //购买数量
+                'sum'               => $data['sum'],
+                'poundage'          => $data['poundage'],
+                'real_sum'          => $data['trade_num'],
+                'depute_status'     => UserTradeDepute::DEPUTE1,
+                'create_time'       => time()
+            ];
+            Db::startTrans();
+            $res =  UserTradeDepute::create($save);
+            if($res !== false){
+                $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $data['user_id']])->value('transaction_num'); //获取交易钱包余额
+                $transaction_num = bcsub($user_transaction_num, $data['sum'], 2); //用户交易钱包直接减钱（人民币）
+                $up_data = [
+                    'transaction_num' => $transaction_num,
+                ];
+
+                $res2 = UserCurrencyAccount::where(['user_id' => $data['user_id']])->update($up_data);
+                if($res2 !== false){
+                    Db::commit();
+                    //购买阿美币记录
+                    $tran_num = bcsub($user_transaction_num, $data['sum'], 2); //用户钱包减去交易总数
+//                    UserRunningLog::create([
+//                        'user_id'  =>  $data['user_id'],
+//                        'about_id' =>  $data['user_id'],
+//                        'running_type'  => UserRunningLog::TYPE29, //交易扣除
+//                        'account_type'  => Currency::TRADE,
+//                        'change_num'    => -$data['sum'],
+//                        'balance'       => $tran_num,
+//                        'create_time'   => time(),
+//                        'remark'        => $data['remark'],
+//                        'order_id'      => $res->id,
+//                        'status'        => 1, //提现扣除装填默认为0 待批准之后更新显示
+//                    ]);
+//                    //购买手续费记录
+//                    $tran_num2 = bcsub($tran_num, $data['poundage'], 2); //继续减去手续费剩余
+//                    UserRunningLog::create([
+//                        'user_id'  =>  $data['user_id'],
+//                        'about_id' =>  $data['user_id'],
+//                        'running_type'  => UserRunningLog::TYPE30,
+//                        'account_type'  => Currency::TRADE,
+//                        'change_num'    => -$data['poundage'],
+//                        'balance'       => $tran_num2,
+//                        'create_time'   => time(),
+//                        'remark'        => $data['remark'],
+//                        'order_id'      => $res->id,
+//                        'status'        => 1,
+//                    ]);
+
+                    return ['code' => 1, 'msg' => '购买挂单上架成功'];
+
+                }else{
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '购买申请失败请重试'];
+                }
+            }else{
+                Db::rollback();
+                return ['code' => 0, 'msg' => '购买申请失败请重试'];
+            }
+
+
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+    }
+
+    //卖出阿美币提交
+    public function sellCurrency()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            //记录到用户交易委托表
+            if(empty($data['user_id']) || empty($data['sell_num']) || empty($data['trade_num']) || empty($data['poundage'])){
+                return ['code' => 0, 'msg' => '缺少必填项'];
+            }
+            $save = [
+                'user_id'           => $data['user_id'],
+                'depute_type'       => $data['depute_type'],
+                'status'            => 1,
+                'price'             => $data['price'],
+                'depute_currency'   => 1, //卖出币种默认为阿美币
+                'trade_currency'    => 1, //卖出币种默认为阿美币
+                'num'               => $data['sell_num'], //卖出数量
+                'sum'               => $data['sum'],
+                'poundage'          => $data['poundage'],
+                'real_sum'          => $data['trade_num'],
+                'depute_status'     => UserTradeDepute::DEPUTE1, //正在委托
+                'create_time'       => time()
+            ];
+            Db::startTrans();
+            $res =  UserTradeDepute::create($save);
+            if($res !== false){
+                $ameibi_num =  UserCurrencyAccount::where(['user_id' => $data['user_id']])->value('ameibi_num'); //获取交易钱包阿美币余额
+                $ameibi_num = bcsub($ameibi_num, $data['num'], 2); //用户阿美币钱包直接减数量
+                $up_data = [
+                    'ameibi_num' => $ameibi_num,
+                ];
+
+                $res2 = UserCurrencyAccount::where(['user_id' => $data['user_id']])->update($up_data);
+                if($res2 !== false){
+                    Db::commit();
+                    //卖出阿美币数量记录
+//                    $tran_num = bcsub($ameibi_num, $data['num'], 2); //用户钱包减去真是交易剩余
+//                    UserRunningLog::create([
+//                        'user_id'  =>  $data['user_id'],
+//                        'about_id' =>  $data['user_id'],
+//                        'running_type'  => UserRunningLog::TYPE29, //交易扣除
+//                        'account_type'  => Currency::TRADE,
+//                        'change_num'    => -$data['trade_num'],
+//                        'balance'       => $tran_num,
+//                        'create_time'   => time(),
+//                        'remark'        => $data['remark'],
+//                        'order_id'      => $res->id,
+//                        'status'        => 1, //提现扣除装填默认为0 待批准之后更新显示
+//                    ]);
+//                    //购买手续费记录
+//                    $tran_num2 = bcsub($tran_num, $data['poundage'], 2); //继续减去手续费剩余
+//                    UserRunningLog::create([
+//                        'user_id'  =>  $data['user_id'],
+//                        'about_id' =>  $data['user_id'],
+//                        'running_type'  => UserRunningLog::TYPE30,
+//                        'account_type'  => Currency::TRADE,
+//                        'change_num'    => -$data['poundage'],
+//                        'balance'       => $tran_num,
+//                        'create_time'   => time(),
+//                        'remark'        => $data['remark'],
+//                        'order_id'      => $res->id,
+//                        'status'        => 1,
+//                    ]);
+
+                    return ['code' => 1, 'msg' => '购买挂单上架成功'];
+
+                }else{
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '购买申请失败请重试'];
+                }
+            }else{
+                Db::rollback();
+                return ['code' => 0, 'msg' => '购买申请失败请重试'];
+            }
+
+
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+
+    }
+
+    //用户托管记录
+    public function otcTrade()
+    {
+        return $this->fetch('trade');
     }
 
 

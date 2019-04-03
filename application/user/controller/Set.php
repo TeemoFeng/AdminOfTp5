@@ -376,13 +376,13 @@ class Set extends Common{
             $num ++;
         }
         //登录记录
-        $login_list = $userLoingModel->where(['user_id' => $user_info['id']])->select();
+        $login_list = $userLoingModel->where(['user_id' => $user_info['id']])->limit(20)->select();
         foreach ($login_list as $key => $val){
             $login_list[$key]['status'] = UserLoginLog::$status[$val['status']];
         }
 
         //绑定记录
-        $bind_list = $userBindModel->where(['user_id' => $user_info['id']])->select();
+        $bind_list = $userBindModel->where(['user_id' => $user_info['id']])->limit(20)->select();
         foreach ($bind_list as $key => $val){
             $bind_list[$key]['type'] = UserBindLog::$type_list[$val['type']];
         }

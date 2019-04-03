@@ -91,14 +91,23 @@ class User extends Common{
                 ->toArray();
             foreach ($list['data'] as $k=>$v){
                 $list['data'][$k]['active_time'] = date('Y-m-d H:s',$v['active_time']);
+                $list['data'][$k]['reg_time'] = date('Y-m-d H:s',$v['reg_time']);
             }
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
         }
 
-        return $this->fetch('userList');
+        return $this->fetch('noActivateList');
 
 
     }
+
+    //报单中心删除自己推荐的无效会员
+    public function usersDel(){
+        db('users')->delete(['id'=>input('id')]);
+        db('oauth')->delete(['uid'=>input('id')]);
+        return $result = ['code'=>1,'msg'=>'删除成功!'];
+    }
+
 
     //直推架构树
     public function userTree()
@@ -135,6 +144,7 @@ class User extends Common{
                     'id' => $v['id'],
                     'name' => $v['referee'] . '(' . $v['username'] . ' 级别:' . $v['level_name']. ')',
                     'isParent'  => $v['have_tree'],
+                    'icon' => "/static/admin/images/user.png"
                 ];
             },$user_info);
 
@@ -266,5 +276,128 @@ class User extends Common{
         return $this->fetch('withdraw');
 
     }
+
+    //报单中心用户注册
+    public function register()
+    {
+        if (request()->isPost()) {
+            $data   = input('post.');
+            $level          = explode(':',$data['level']); //ng 获取的值要单独去除number:
+            $data['level']  = $level[1]; //默认会员等级为注册会员
+//            $province       = explode(':',$data['province']);
+//            $data['province'] = isset($province[1]) ? $province[1] : '';
+//            $city           = explode(':',$data['city']);
+//            $data['city']   = isset( $city[1]) ? $city[1] : '';
+//            $district       = explode(':',$data['district']);
+//            $data['district'] = isset( $district[1]) ? $district[1] : '';
+            if (empty($data['mobile'])) return ['code' => 0, 'msg' => '手机号不能为空'];
+            $check_user = UsersModel::where(['mobile' => $data['mobile']])->find();
+            if ($check_user) {
+                return $result = ['code' => 0, 'msg' => '该手机号已存在'];
+            }
+            //验证
+            $check = [
+                'usernum'           => $data['usernum'],
+                'username'          => $data['username'],
+                'mobile'            => $data['mobile'],
+                'password'          => $data['password'],
+                'confirmPwd'        => $data['confirmPwd'],
+                'safeword'          => $data['safeword'],
+                'confirmSafePwd'    => $data['confirmSafePwd'],
+            ];
+            //检测
+            $validate = new \app\admin\validate\Users();
+            $result = $validate->check($check);
+            if (!$result) {
+                return ['code' => 0, 'msg' => $validate->getError()];
+            }
+            //检测密码是否相等
+            if($data['password'] != $data['confirmPwd']) return ['code' => 0, 'msg' => '两次输入的登录密码不一致'];
+            if($data['safeword'] != $data['confirmSafePwd']) return ['code' => 0, 'msg' => '两次输入的安全密码不一致'];
+
+            $data['password'] = md5($data['password']);
+            //接入用户和推荐人关系
+            if ($data['referee'] == '0000') {
+                $data['pid'] = 0;
+                $data['referee'] = '0000|公司';
+            } else {
+                //查询推荐人id
+                $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
+                $data['pid'] = $referrr_info['id'];
+                $data['referee'] = $referrr_info['usernum'] .'|' .$referrr_info['username'];
+
+            }
+
+            if($data['contact_person'] == '0000'){
+                $data['npid'] = 0;
+                $data['contact_person'] = '0000|公司';
+            }else{
+                //查询接点人id
+                $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
+                $data['npid'] = $node_info['id'];
+                $data['contact_person'] = $node_info['usernum'] .'|' .$node_info['username'];
+            }
+
+            //是否报备银行
+            if(!empty($data['bank_id']) && !empty($data['bank_user']) && !empty($data['bank_account']) &&!empty($data['bank_desc'])){
+                $data['is_report'] = 1; //报备银行
+            }else{
+                $data['is_report'] = 0;
+            }
+            $data['enabled'] = 1;
+            $data['create_time'] = date('Y-m-d',time()); //添加时间方便做折线图
+            $new_user_id = UsersModel::create($data);
+            if ($new_user_id) {
+                //推荐人邀请成功用户，修改users表 have_tree 为1
+                UsersModel::where('id', $referrr_info['id'])->update(['have_tree' => 1]);
+                $user_referee_model = new UserReferee();
+                $user_node_model = new UserNode();
+                if($data['pid'] == 0){
+                    //接入用户和接点人关系
+                    $data2['user_id'] = $new_user_id;
+                    $data2['user_son_str'] = 0 . ',';
+                    //接入用户和推荐人的关系
+                    $data3['user_id'] = $new_user_id;
+                    $data3['user_son_str'] = 0 . ',';
+                }else{
+                    $son_str = $user_referee_model->where(['user_id' => $referrr_info['id'] ])->value('user_son_str');
+                    $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
+                    //接入用户和接点人关系
+                    $data2['user_id'] = $new_user_id;
+                    $data2['user_son_str'] = $son_str . $referrr_info["id"];
+                    //接入用户和推荐人的关系
+                    $data3['user_id'] = $new_user_id;
+                    $data3['user_son_str'] = $son_node_str . $node_info['id'];
+                }
+
+                UserReferee::create($data2);
+                UserNode::create($data3);
+                //获取当前设置的汇率
+                $sate = db('bonus_ext_set')->where(['id' => 1])->value('money_change');
+                //创建用户钱包账户
+                $account['user_id'] = $new_user_id;
+                $account['rate'] = $sate;
+                UserCurrencyAccount::create($account);
+
+                return ['code' => 1, 'msg' => '注册成功', 'url' => url('index')];
+            } else {
+                return ['code' => 0, 'msg' => '注册失败'];
+            }
+
+        } else {
+            $province   = db('Region')->where ( array('pid'=>1) )->select();
+            $user_level = db('user_level')->order('sort')->select();
+            $bank = db('Bank')->order('id ASC')->select();
+            $user_num = createVipNum();
+            $this->assign('province',json_encode($province,true));
+            $this->assign('user_level', json_encode($user_level, true)); //会员级别
+            $this->assign('bank', json_encode($bank, true)); //银行列表
+            $this->assign('usernum', $user_num); //会员编号
+
+            return $this->fetch();
+        }
+
+    }
+
 
 }

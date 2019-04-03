@@ -1,4 +1,4 @@
-{include file="common2/head"/}
+{include file="common/head"/}
 <div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>未激活用户列表</legend>
@@ -20,7 +20,7 @@
 
         </div>
         <button class="layui-btn" id="search" data-type="reload">搜索</button>
-        <a href="{:url('notActivate')}" class="layui-btn">显示全部</a>
+        <a href="{:url('noActiceList')}" class="layui-btn">显示全部</a>
 
     </div>
     <table class="layui-table" id="list" lay-filter="list"></table>
@@ -29,9 +29,11 @@
 
 </script>
 <script type="text/html" id="action">
+    <a href="{:url('userActice')}?id={{d.id}}" class="layui-btn layui-btn-xs">激活</a>
     <a href="#" class="layui-btn layui-bg-orange layui-btn-xs" lay-event="del">删除</a>
+    <a href="{:url('userDetail')}?id={{d.id}}" class="layui-btn layui-bg-blue layui-btn-xs">详情</a>
 </script>
-{include file="common2/foot"/}
+{include file="common/foot"/}
 <script>
     layui.use(['table','form','laydate'], function() {
         var table = layui.table,form = layui.form, $ = layui.jquery, laydate = layui.laydate;
@@ -39,7 +41,7 @@
         var tableIn = table.render({
             id: 'user',
             elem: '#list',
-            url: '{:url("notActivate")}',
+            url: '{:url("noActiceList")}',
             method: 'post',
             toolbar: '#topBtn',
             page: true,

@@ -27,6 +27,7 @@ class Index extends Common{
         if(!$authRule){
             //2019-3-20添加区分前后台权限
             $authRule = db('user_auth_rule')->where(['menustatus'=>1])->order('sort')->select();
+
             cache('userAuthRule', $authRule, 3600);
         }
         //声明数组
@@ -38,8 +39,11 @@ class Index extends Common{
                 $menus[] = $val;
             }
         }
+        $baodan_center = session('user.baodan_center');
         foreach ($menus as $k=>$v){
             foreach ($authRule as $kk=>$vv){
+                if($vv['href'] == 'User/register' && $baodan_center == 0)
+                    continue;
                 if($v['id']==$vv['pid']){
                     $menus[$k]['children'][] = $vv;
                 }

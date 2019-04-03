@@ -5,6 +5,7 @@ use app\admin\model\UserNode;
 use app\admin\model\UserReferee;
 use app\admin\model\Users as UsersModel;
 use app\user\controller\User;
+use think\console\Input;
 use think\db\Where;
 use think\Validate;
 
@@ -148,6 +149,8 @@ class Users extends Common{
         db('oauth')->delete(['uid'=>input('id')]);
         return $result = ['code'=>1,'msg'=>'删除成功!'];
     }
+
+
     public function delall(){
         $map[] =array('id','IN',input('param.ids/a'));
         db('users')->where($map)->delete();
@@ -377,7 +380,7 @@ class Users extends Common{
             }else{
                 $data['is_report'] = 0;
             }
-
+            $data['enabled'] = 1;
             $data['create_time'] = date('Y-m-d',time()); //添加时间方便做折线图
             $new_user_id = UsersModel::create($data);
             if ($new_user_id) {
@@ -457,6 +460,97 @@ class Users extends Common{
 
 
     }
+
+    //未激活会员列表
+    public function noActiceList()
+    {
+        if(request()->isPost()){
+
+            $data   = input('post.');
+            $where  = $this->noActiveSearch($data);
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+            $where['status'] = 0;
+            $list=db('users')
+                ->where($where)
+                ->order('id desc')
+                ->paginate(array('list_rows'=>$pageSize,'page'=>$page))
+                ->toArray();
+            foreach ($list['data'] as $k=>$v){
+                $list['data'][$k]['reg_time'] = date('Y-m-d H:s',$v['reg_time']);
+                $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
+                $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
+                $list['data'][$k]['referee'] = $v['referee'] . '【' .$tuijian_user . '】';
+                $list['data'][$k]['contact_person'] = $v['contact_person'] . '【' .$jidianren_user . '】';
+            }
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+        }
+
+        return $this->fetch('noActiceList');
+    }
+
+    //搜索
+    public function noActiveSearch($data)
+    {
+        $where = new Where();
+        if(!empty($data['start_time']) && empty($data['end_time'])){
+            $start_time = strtotime($data['start_time']);
+            $where['reg_time'] = array('egt', $start_time);
+        }
+        if(!empty($data['end_time']) && empty($data['start_time'])){
+            $end_time = strtotime($data['end_time']);
+            $where['reg_time'] = array('elt',$end_time);
+        }
+        if(!empty($data['start_time']) && !empty($data['end_time'])){
+            $start_time = strtotime($data['start_time']);
+            $end_time = strtotime($data['end_time']);
+            $where['reg_time'] = array('between time', array($start_time, $end_time));
+        }
+        if(!empty($data['key'])){
+            $where['id|usernum|email|mobile|username'] = array('like', '%' . $data['key'] . '%');
+        }
+        return $where;
+    }
+
+
+    //会员激活
+    public function userActice()
+    {
+        $user_info = db('users')->where(['id'=>input('id')])->find();
+        if($user_info){
+            $user_name = $user_info['usernum'].'【'.$user_info['username'].'】';
+            $this->assign('user_name', $user_name);
+            $this->assign('id', input('id'));
+            //获取用户级别表
+            $user_level = db('user_level')->order('level_id')->select();
+
+            $this->assign('user_level', $user_level);
+        }
+        return $this->fetch('userActice');
+    }
+
+    public function sureActice()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['id'])){
+                return ['code' => 0, 'msg' => '请选择用户'];
+            }
+            if(empty($data['level'])){
+                return ['code' => 0, 'msg' => '请选择会员级别'];
+            }
+
+            $res = UsersModel::where(['id' => $data['id']])->update(['level' => $data['level'], 'status' => 1, 'active_time' => time()]);
+            if($res !== false){
+                return ['code' => 1, 'msg' => '激活成功', 'url' => url('admin/users/noActiceList')];
+            }else{
+                return ['code' => 0, 'msg' => '激活失败'];
+            }
+        }else{
+            return ['code' => 0, 'msg' => '请求出错'];
+        }
+    }
+
 
     //直推架构树
     public function usertree()

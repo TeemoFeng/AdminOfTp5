@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" class="night-style">
+<head>
+    <meta charset="UTF-8">
+    <title>交易大厅</title>
+    <link rel="stylesheet" href="/static/home/css/app.css">
+    <link rel="stylesheet" href="/static/home/css/style.css">
+    <link rel="stylesheet" href="/static/home/layui/css/layui.css">
+    <style>
+        .layui-form input {
+            background: #1c1e2d;
+            border: 1px solid #3a3b54;
+            color: #e6e6e6;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .layui-form-select dl {
+            background: #2e2f43
+        }
+    </style>
+</head>
+<body>
+<div style="width: 100%; margin: 0px auto; min-height: 500px;">
+    <div data-v-159697e6="" class="global-width">
+        <div data-v-159697e6="" class="hc-breadcrumb hc-bgColor1">
+            <div data-v-159697e6="" class="hc-btn otc-index-btn hc-btn-active">交易大厅</div>
+            <div data-v-159697e6="" class="hc-btn otc-index-btn">订单管理</div>
+        </div>
+        <div data-v-18c17d89="" data-v-159697e6="">
+            <div data-v-18c17d89="" class="trade-center-top hc-bgColor3" style="position: relative">
+                <div data-v-18c17d89="" style="overflow:hidden">
+                    <div data-v-18c17d89="" class="hc-color2" style="float:left;width: 50%;padding-left: 36px;box-sizing: border-box">我要买入</div>
+                    <div data-v-18c17d89="" class="hc-color1" style="float:left;width: 50%">我要卖出</div>
+                </div>
+                <div data-v-18c17d89="" class="trade-center-top-div1" style="width: 100%;border:none" id="clickColor">
+
+                    <div data-v-18c17d89="" class="trade-center-top-btn1 trade-center-top-active1">AMB</div>
+
+                    <div data-v-18c17d89="" style="margin-left: 400px" class="trade-center-top-btn2 ">AMB</div>
+                </div>
+                <div data-v-18c17d89="" class="trade-center-top-div3" style="position: absolute;top:0px;right: 0px;">
+                    <span data-v-18c17d89="">
+                        <div data-v-18c17d89="" class="hc-btn trade-center-searchBtn el-dropdown-link el-popover__reference" aria-describedby="el-popover-9319"  tabindex="0">筛选</div>
+                    </span>
+                </div>
+            </div>
+            <div data-v-18c17d89="" class="trade-center-table hc-bgColor1">
+                <div data-v-18c17d89="" class="el-table el-table--fit el-table--enable-row-hover el-table--enable-row-transition" style="min-height: 350px;">
+
+                    <div class="el-table__header-wrapper">
+                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
+                               style="width: 1200px;">
+                            <colgroup>
+                                <col name="el-table_1_column_1" width="30">
+                                <col name="el-table_1_column_2" width="160">
+                                <col name="el-table_1_column_3" width="170">
+                                <col name="el-table_1_column_4" width="168">
+                                <col name="el-table_1_column_5" width="168">
+                                <col name="el-table_1_column_6" width="168">
+                                <col name="el-table_1_column_7" width="168">
+                                <col name="el-table_1_column_8" width="168">
+                                <col name="gutter" width="0">
+                            </colgroup>
+                            <thead class="has-gutter">
+                            <tr class="">
+                                <th colspan="1" rowspan="1" class="el-table_1_column_1  is-center   is-leaf">
+                                    <div class="cell"></div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_1_column_2  is-left   is-leaf">
+                                    <div class="cell">用户昵称</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_1_column_3  is-center   is-leaf">
+                                    <div class="cell">信用</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_1_column_4  is-center   is-leaf">
+                                    <div class="cell">交易方式</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_1_column_5  is-center   is-leaf">
+                                    <div class="cell">价格</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_1_column_6  is-center   is-leaf">
+                                    <div class="cell">数量</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_1_column_7  is-center   is-leaf">
+                                    <div class="cell">单笔交易限额</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_1_column_8  is-center   is-leaf">
+                                    <div class="cell">操作</div>
+                                </th>
+                                <th class="gutter" style="width: 0px; display: none;"></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="el-table__body-wrapper is-scrolling-none">
+                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 1200px;">
+                            <colgroup>
+                                <col name="el-table_1_column_1" width="30">
+                                <col name="el-table_1_column_2" width="160">
+                                <col name="el-table_1_column_3" width="170">
+                                <col name="el-table_1_column_4" width="168">
+                                <col name="el-table_1_column_5" width="168">
+                                <col name="el-table_1_column_6" width="168">
+                                <col name="el-table_1_column_7" width="168">
+                                <col name="el-table_1_column_8" width="168">
+                            </colgroup>
+                            <tbody>
+                            <tr class="el-table__row">
+                                <td rowspan="1" colspan="1" class="el-table_1_column_1 is-center ">
+                                    <div class="cell"></div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_1_column_2 is-left ">
+                                    <div class="cell">
+                                        <div data-v-18c17d89="">
+                                            <img data-v-18c17d89="" src="/static/home/images/code.png"
+                                                 class="trade-center-table-img1">
+                                            <div data-v-18c17d89="" class="trade-center-table-div1">miaomiao</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_1_column_3 is-center ">
+                                    <div class="cell">
+                                        <div data-v-18c17d89="">交易 40 笔</div>
+                                        <div data-v-18c17d89="" class="hc-color6">好评度 100.00%</div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_1_column_4 is-center ">
+                                    <div class="cell">
+                                        <img data-v-18c17d89="" src="/static/home/images/Bank.png" class="trade-center-table-img2">
+                                        <img data-v-18c17d89="" src="/static/home/images/WeChat.png" class="trade-center-table-img2">
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_1_column_5 is-center ">
+                                    <div class="cell">
+                                        <div data-v-18c17d89="" class="hc-color2">1</div>
+                                        <div data-v-18c17d89="" class="hc-color6">CNY/GAVC</div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_1_column_6 is-center ">
+                                    <div class="cell">
+                                        31401 GAVC
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_1_column_7 is-center ">
+                                    <div class="cell">
+                                        200-40000 CNY
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_1_column_8 is-center ">
+                                    <div class="cell">
+                                        <button data-v-18c17d89="" type="button"
+                                                class="el-button trade-center-table-btn1 el-button--success"><!---->
+                                            <!----><span>买入</span></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="el-table__empty-block" style="width: 1140px;">
+                            <span class="el-table__empty-text">暂无数据</span>
+                        </div>
+                    </div>
+                    <!--数据加载-->
+                    <div class="el-loading-mask" style="display: none;">
+                        <div class="el-loading-spinner">
+                            <svg viewBox="25 25 50 50" class="circular">
+                                <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                            </svg><!----></div>
+                    </div>
+                    <div data-v-cb7b5f4a="" class="hc-pagination">
+                        <div data-v-cb7b5f4a="" class="el-pagination">
+                            <button type="button" disabled="disabled" class="btn-prev">
+                                <i class="el-icon el-icon-arrow-left"></i>
+                            </button>
+                            <ul class="el-pager">
+                                <li class="number active">1</li>
+                            </ul>
+                            <button type="button" disabled="disabled" class="btn-next">
+                                <i class="el-icon el-icon-arrow-right"></i>
+                            </button>
+                            <span class="el-pagination__jump">
+                            前往
+                            <div class="el-input el-pagination__editor is-in-pagination">
+                                <input type="number" autocomplete="off" min="1" max="1" class="el-input__inner">
+                            </div>
+                            页
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div role="tooltip" id="el-popover-5519" aria-hidden="false" class="el-popover el-popper" tabindex="0" style="display: none;position: absolute; top: 88px; left: 59%; transform-origin: right center; z-index: 2001;"
+         x-placement="left"><!---->
+        <div data-v-18c17d89="" class="trade-center-search">
+            <div data-v-18c17d89="" class="trade-center-search-warp">
+                <form action="" class="layui-form" lay-filter="example">
+                    <div data-v-18c17d89="">
+                        <div data-v-18c17d89="" class="hc-color3">限额</div>
+                        <div data-v-18c17d89="" class="trade-center-search-input el-input">
+                            <input type="number" autocomplete="off"  placeholder="请输入目标金额" class="el-input__inner">
+                        </div>
+                    </div>
+                    <div data-v-18c17d89="" class="trade-center-search-div">
+                        <div data-v-18c17d89="" class="hc-color3">法币币种</div>
+                        <select name="interest" lay-filter="aihao">
+                            <option value="">请选择法币币种</option>
+                            <option value="0">CNY</option>
+                            <option value="1">CNY</option>
+                        </select>
+                    </div>
+                    <div data-v-18c17d89="" class="trade-center-search-div">
+                        <div data-v-18c17d89="" class="hc-color3">支付设置</div>
+                        <select name="interest" lay-filter="aihao">
+                            <option value="">清除筛选</option>
+                            <option value="0">银行卡</option>
+                            <option value="1">支付宝</option>
+                            <option value="2">微信支付</option>
+                        </select>
+                    </div>
+                    <div data-v-18c17d89="" class="hc-btn hc-btn-active"
+                         style="height: 40px; line-height: 40px; margin-top: 20px;">确定筛选
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/home/js/jQuery-2.2.3.min.js"></script>
+<script src="/static/home/layui/layui.js"></script>
+<script>
+    /**
+     * 筛选弹窗
+     * .trade-center-searchBtn
+     * */
+    $(".trade-center-searchBtn").click(function () {
+        $('#el-popover-5519').fadeIn(300)
+    })
+    /**
+     * hc-btn-active
+     * 关闭弹窗
+     * */
+    $(".hc-btn-active").click(function () {
+        $('#el-popover-5519').hide()
+    })
+    /**
+     * 点击绑定class
+     * */
+    $(function(){
+
+        $("#clickColor div").click(function() {
+
+            $(this).siblings('div').removeClass('trade-center-top-active1');  // 删除其他兄弟元素的样式
+
+            $(this).addClass('trade-center-top-active1');                            // 添加当前元素的样式
+
+        });
+
+    });
+</script>
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+
+        //表单初始赋值
+        form.val('example', {
+
+        })
+
+
+    });
+</script>
+
+</body>
+</html>

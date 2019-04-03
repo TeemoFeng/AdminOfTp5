@@ -18,6 +18,9 @@ class UserTradeDepute extends Model
         self::TYPE2 => '卖单',
     ];
 
+    const DEPUTE1 = 1;
+    const DEPUTE2 = 2;
+
     const STATUS1 = 1;
     const STATUS2 = 2;
     const STATUS3 = 3;
