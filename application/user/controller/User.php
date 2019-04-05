@@ -44,7 +44,7 @@ class User extends Common{
                 $list['data'][$k]['active_time'] = date('Y-m-d H:s',$v['active_time']);
                 $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
                 $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
-                $baodan_user = UsersModel::where(['id' => $v['baodan_center']])->value('username');
+                $baodan_user = UsersModel::where(['usernum' => $v['baodan_user']])->value('username');
                 $list['data'][$k]['referee'] = $v['referee'] . '【' .$tuijian_user . '】';
                 $list['data'][$k]['contact_person'] = $v['contact_person'] . '【' .$jidianren_user . '】';
                 $list['data'][$k]['baodan_user'] = $v['baodan_user'] . '【' .$baodan_user . '】';
@@ -104,7 +104,7 @@ class User extends Common{
                 $list['data'][$k]['reg_time'] = date('Y-m-d H:s',$v['reg_time']);
                 $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
                 $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
-                $baodan_user = UsersModel::where(['id' => $v['baodan_center']])->value('username');
+                $baodan_user = UsersModel::where(['usernum' => $v['baodan_user']])->value('username');
                 $list['data'][$k]['referee'] = $v['referee'] . '【' .$tuijian_user . '】';
                 $list['data'][$k]['contact_person'] = $v['contact_person'] . '【' .$jidianren_user . '】';
                 $list['data'][$k]['baodan_user'] = $v['baodan_user'] . '【' .$baodan_user . '】';
@@ -158,7 +158,7 @@ class User extends Common{
             array_map(function ($v) use (&$list) {
                 $list[] = [
                     'id' => $v['id'],
-                    'name' => $v['referee'] . '(' . $v['username'] . ' 级别:' . $v['level_name']. ')',
+                    'name' => $v['usernum'] . '(' . $v['username'] . ' 级别:' . $v['level_name']. ')',
                     'isParent'  => $v['have_tree'],
                     'icon' => "/static/admin/images/user.png"
                 ];
@@ -330,38 +330,19 @@ class User extends Common{
             if($data['safeword'] != $data['confirmSafePwd']) return ['code' => 0, 'msg' => '两次输入的安全密码不一致'];
 
             $data['password'] = md5($data['password']);
-            //接入用户和推荐人关系
-            if ($data['referee'] == '0000') {
-                $data['pid'] = 0;
-                $data['referee'] = '0000';
-            } else {
-                //查询推荐人id
-                $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
-                $data['pid'] = $referrr_info['id'];
-                $data['referee'] = $referrr_info['usernum'];
+            //推荐人关系
+            $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
+            $data['pid'] = $referrr_info['id'];
+            $data['referee'] = $referrr_info['usernum'];
 
-            }
             //报单人
-            if($data['baodan_user'] == '0000'){
-                $data['npid'] = 0;
-                $data['baodan_user'] = '0000';
-            }else{
-                //查询接点人id
-                $node_info    = UsersModel::get(['usernum' => $data['baodan_user']]);
-                $data['npid'] = $node_info['id'];
-                $data['baodan_user'] = $node_info['usernum'];
-            }
-            //接点人
-            if($data['contact_person'] == '0000'){
-                $data['npid'] = 0;
-                $data['contact_person'] = '0000';
-            }else{
-                //查询接点人id
-                $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
-                $data['npid'] = $node_info['id'];
-                $data['contact_person'] = $node_info['usernum'];
-            }
+            $node_info    = UsersModel::get(['usernum' => $data['baodan_user']]);
+            $data['baodan_user'] = $node_info['usernum'];
 
+            //接点人
+            $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
+            $data['npid'] = $node_info['id'];
+            $data['contact_person'] = $node_info['usernum'];
             //是否报备银行
             if(!empty($data['bank_id']) && !empty($data['bank_user']) && !empty($data['bank_account']) &&!empty($data['bank_desc'])){
                 $data['is_report'] = 1; //报备银行
@@ -373,25 +354,25 @@ class User extends Common{
             $new_user_id = UsersModel::create($data);
             if ($new_user_id) {
                 //推荐人邀请成功用户，修改users表 have_tree 为1
-                UsersModel::where('id', $referrr_info['id'])->update(['have_tree' => 1]);
+                UsersModel::where(['id' => $referrr_info['id']])->update(['have_tree' => 1]);
                 $user_referee_model = new UserReferee();
                 $user_node_model = new UserNode();
-                if($data['pid'] == 0){
+                if($data['pid'] == 1){
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
-                    $data2['user_son_str'] = 0 . ',';
+                    $data2['user_son_str'] = 1 . ',';
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
-                    $data3['user_son_str'] = 0 . ',';
+                    $data3['user_son_str'] = 1 . ',';
                 }else{
                     $son_str = $user_referee_model->where(['user_id' => $referrr_info['id'] ])->value('user_son_str');
                     $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
-                    $data2['user_son_str'] = $son_str .','. $referrr_info["id"];
+                    $data2['user_son_str'] = $son_str . $referrr_info["id"] .',';
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
-                    $data3['user_son_str'] = $son_node_str .','. $node_info['id'];
+                    $data3['user_son_str'] = $son_node_str . $node_info['id'] .',';
                 }
                 UserReferee::create($data2);
                 UserNode::create($data3);

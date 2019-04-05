@@ -1,11 +1,14 @@
 <?php
 namespace app\admin\controller;
+use app\admin\model\BonusSet;
 use app\admin\model\UserCurrencyAccount;
 use app\admin\model\UserNode;
 use app\admin\model\UserReferee;
 use app\admin\model\Users as UsersModel;
 use app\user\controller\User;
+use app\user\model\UserRunningLog;
 use think\console\Input;
+use think\Db;
 use think\db\Where;
 use think\Validate;
 
@@ -34,7 +37,7 @@ class Users extends Common{
                 $list['data'][$k]['is_report'] = UsersModel::$yhstatus[$v['is_report']];
                 $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
                 $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
-                $baodan_user = UsersModel::where(['id' => $v['baodan_center']])->value('username');
+                $baodan_user = UsersModel::where(['usernum' => $v['baodan_user']])->value('username');
                 $list['data'][$k]['referee'] = $v['referee'] . '【' .$tuijian_user . '】';
                 $list['data'][$k]['contact_person'] = $v['contact_person'] . '【' .$jidianren_user . '】';
                 $list['data'][$k]['baodan_user'] = $v['baodan_user'] . '【' .$baodan_user . '】';
@@ -357,36 +360,18 @@ class Users extends Common{
 
             $data['password'] = md5($data['password']);
             //接入用户和推荐人关系
-            if ($data['referee'] == '0000') {
-                $data['pid'] = 0;
-                $data['referee'] = '0000';
-            } else {
-                //查询推荐人id
-               $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
-               $data['pid'] = $referrr_info['id'];
-               $data['referee'] = $referrr_info['usernum'];
+            $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
+            $data['pid'] = $referrr_info['id'];
+            $data['referee'] = $referrr_info['usernum'];
 
-            }
             //报单人
-            if($data['baodan_user'] == '0000'){
-                $data['npid'] = 0;
-                $data['baodan_user'] = '0000';
-            }else{
-                //查询接点人id
-                $node_info    = UsersModel::get(['usernum' => $data['baodan_user']]);
-                $data['npid'] = $node_info['id'];
-                $data['baodan_user'] = $node_info['usernum'];
-            }
+            $node_info    = UsersModel::get(['usernum' => $data['baodan_user']]);
+            $data['baodan_user'] = $node_info['usernum'];
+
             //接点人
-            if($data['contact_person'] == '0000'){
-                $data['npid'] = 0;
-                $data['contact_person'] = '0000';
-            }else{
-                //查询接点人id
-                $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
-                $data['npid'] = $node_info['id'];
-                $data['contact_person'] = $node_info['usernum'];
-            }
+            $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
+            $data['npid'] = $node_info['id'];
+            $data['contact_person'] = $node_info['usernum'];
 
             //是否报备银行
             if(!empty($data['bank_id']) && !empty($data['bank_user']) && !empty($data['bank_account']) &&!empty($data['bank_desc'])){
@@ -399,25 +384,25 @@ class Users extends Common{
             $new_user_id = UsersModel::create($data);
             if ($new_user_id) {
                 //推荐人邀请成功用户，修改users表 have_tree 为1
-                UsersModel::where('id', $referrr_info['id'])->update(['have_tree' => 1]);
+                UsersModel::where(['id' => $referrr_info['id']])->update(['have_tree' => 1]);
                 $user_referee_model = new UserReferee();
                 $user_node_model = new UserNode();
-                if($data['pid'] == 0){
+                if($data['pid'] == 1){
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
-                    $data2['user_son_str'] = 0 . ',';
+                    $data2['user_son_str'] = 1 . ',';
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
-                    $data3['user_son_str'] = 0 . ',';
+                    $data3['user_son_str'] = 1 . ',';
                 }else{
                     $son_str = $user_referee_model->where(['user_id' => $referrr_info['id'] ])->value('user_son_str');
                     $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
-                    $data2['user_son_str'] = $son_str .','. $referrr_info["id"];
+                    $data2['user_son_str'] = $son_str. $referrr_info["id"] .',';
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
-                    $data3['user_son_str'] = $son_node_str .','. $node_info['id'];
+                    $data3['user_son_str'] = $son_node_str . $node_info['id'] .',';
                 }
 
                 UserReferee::create($data2);
@@ -496,7 +481,7 @@ class Users extends Common{
                 $list['data'][$k]['reg_time'] = date('Y-m-d H:s',$v['reg_time']);
                 $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
                 $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
-                $baodan_user = UsersModel::where(['id' => $v['baodan_center']])->value('username');
+                $baodan_user = UsersModel::where(['usernum' => $v['baodan_user']])->value('username');
                 $list['data'][$k]['referee'] = $v['referee'] . '【' .$tuijian_user . '】';
                 $list['data'][$k]['contact_person'] = $v['contact_person'] . '【' .$jidianren_user . '】';
                 $list['data'][$k]['baodan_user'] = $v['baodan_user'] . '【' .$baodan_user . '】';
@@ -557,11 +542,56 @@ class Users extends Common{
             if(empty($data['level'])){
                 return ['code' => 0, 'msg' => '请选择会员级别'];
             }
+            //根据会员级别做直推奖励
+            $save['level'] = $data['level'];
+            $save['status'] = 1;
+            $save['active_time'] = time();
+            if($data['level'] == 1){
+                $bonus_ratio = BonusSet::where(['level_id' => 1])->find();
 
-            $res = UsersModel::where(['id' => $data['id']])->update(['level' => $data['level'], 'status' => 1, 'active_time' => time()]);
+            }elseif ($data['level'] == 2){
+                $bonus_ratio = BonusSet::where(['level_id' => 2])->find();
+            }elseif ($data['level'] == 3){
+                $bonus_ratio = BonusSet::where(['level_id' => 3])->find();
+            }elseif ($data['levle'] == 4){
+                $bonus_ratio = BonusSet::where(['level_id' => 4])->find();
+            }elseif ($data['level'] == 5){
+                $bonus_ratio = BonusSet::where(['level_id' => 5])->find();
+                $save['baodan_center'] = 1; //投资额到1万直接设置为报单中心
+            }
+            $ratio = bcdiv($bonus_ratio['bonus_ratio'],100,4);
+            $reward = bcmul($bonus_ratio['declaration'], $ratio); //奖励
+            //查找用户的推荐人id
+            $referee = UsersModel::where(['id' => $data['id']])->value('referee');
+            $referee_id = UsersModel::where(['usernum' => $referee])->value('id');
+            //查询推荐人钱包信息
+            $referee_account = UserCurrencyAccount::where(['user_id' => $referee_id])->find();
+            $cash_currency_num = bcadd($referee_account['cash_currency_num'],$reward,4);
+            Db::startTrans();
+            $res = UsersModel::where(['id' => $data['id']])->update($save);
             if($res !== false){
-                return ['code' => 1, 'msg' => '激活成功', 'url' => url('admin/users/noActiceList')];
+               $res = UserCurrencyAccount::where(['user_id' => $referee_id])->update(['cash_currency_num' => $cash_currency_num]);
+               if($res !== false){
+                   Db::commit();
+                   //记录收益日志
+                   UserRunningLog::create([
+                       'user_id'  =>  $referee_id,
+                       'about_id' =>  $data['id'],
+                       'running_type'  => UserRunningLog::TYPE19,
+                       'account_type'  => 1,
+                       'change_num'    => $reward,
+                       'balance'       =>  $cash_currency_num,
+                       'create_time'   => time()
+                   ]);
+
+                   return ['code' => 1, 'msg' => '激活成功', 'url' => url('admin/users/noActiceList')];
+               }else{
+                   Db::rollback();
+                   return ['code' => 0, 'msg' => '激活失败'];
+               }
+
             }else{
+                Db::rollback();
                 return ['code' => 0, 'msg' => '激活失败'];
             }
         }else{
@@ -602,7 +632,7 @@ class Users extends Common{
             array_map(function ($v) use (&$list) {
                 $list[] = [
                     'id' => $v['id'],
-                    'name' => $v['referee'] . '(' . $v['username'] . ' 级别:' . $v['level_name']. ')',
+                    'name' => $v['usernum'] . '(' . $v['username'] . ' 级别:' . $v['level_name']. ')',
                     'isParent'  => $v['have_tree'],
                     'icon' => "/static/admin/images/user.png"
                 ];

@@ -2,16 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: Uroaming
- * Date: 2019/3/26
- * Time: 14:26
+ * Date: 2019/4/5
+ * Time: 20:44
  */
-namespace app\user\controller;
+namespace app\admin\controller;
 use app\user\model\UserMessage;
-use think\console\Input;
 use think\Db;
-use think\db\Where;
 
-class Message extends Common
+class Messages extends Common
 {
     //发布消息
     public function publish()
@@ -21,10 +19,12 @@ class Message extends Common
             if(empty($data['title']) || empty($data['content'])){
                 return ['code' => 1, 'msg' => '标题或内容不能为空'];
             }
-            $user_id = session('user.id');
+            if(empty($data['user_id'])){
+                return ['code' => 1, 'msg' => '请选择会员'];
+            }
             $save = [
-                'from_id' => $user_id,
-                'to_id'   => 0,
+                'from_id' => 0,
+                'to_id'   => $data['user_id'],
                 'title'   => $data['title'],
                 'content' => htmlspecialchars($data['content']),
                 'status'  => 1,
@@ -45,18 +45,14 @@ class Message extends Common
 
         if(request()->isPost()){
             $data = input('post.');
-            $user_id = session('user.id');
-            if(empty($user_id)){
-                return ['code' => 0, 'msg' => '用户不能为空'];
-            }
 
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             if($data['type'] == 1){ //发件箱
-                $where['from_id'] = $user_id;
+                $where['from_id'] = 0;
 
             }elseif($data['type'] == 2){
-                $where['to_id'] = $user_id;
+                $where['to_id'] = 0;
             }
 
             $list = db('user_message')
@@ -74,11 +70,13 @@ class Message extends Common
                     $list['data'][$k]['read_str'] = '<span>已读</span>';
                 }
                 if($v['type'] == 1){
-                    $list['data'][$k]['from_user'] = $this->userInfo['username'];
-                    $list['data'][$k]['to_user'] = '管理员';
-                }else{
                     $list['data'][$k]['from_user'] = '管理员';
-                    $list['data'][$k]['to_user'] = $this->userInfo['username'];
+                    $user_name = Db::name('users')->where(['id' => $v['to_id']])->value('username');
+                    $list['data'][$k]['to_user'] = $user_name;
+                }else{
+                    $user_name = Db::name('users')->where(['id' => $v['from_id']])->value('username');
+                    $list['data'][$k]['from_user'] = $user_name;
+                    $list['data'][$k]['to_user'] = '管理员';
                 }
 
             }
@@ -98,19 +96,20 @@ class Message extends Common
     public function lookUp()
     {
         $id = input('get.id');
-
         $mes_info = db('user_message')->where(['id' => $id])->find(); //查询信息表id
-        if($mes_info['to_id'] == 0){
-            //发件箱
-            $user_name = Db::name('users')->where(['id' => $mes_info['from_id']])->value('username');
-            $mes_info['username'] = $user_name;
 
+        if($mes_info['from_id'] == 0){
+            //发件箱
+            $mes_info['username'] = '管理员';
         }else{
             //收件箱
-            $mes_info['username'] = '管理员';
+            $user_name = Db::name('users')->where(['id' => $mes_info['from_id']])->value('username');
+            $mes_info['username'] = $user_name;
             Db::name('user_message')->where(['id' => $id])->update(['is_read' => 1]);
 
         }
+        
+
         $mes_list = db('user_message_reply')
             ->where(['message_id' => $id])
             ->order('create_time ASC')
@@ -122,7 +121,13 @@ class Message extends Common
         }else{
             foreach ($mes_list as $k => $v){
                 if($v['to_id'] == 0){
-                    $mes_list[$k]['from_user'] = $this->userInfo['username'];
+                    $user_name = Db::name('users')->where(['id' => $v['from_id']])->value('username');
+                    if(empty($user_name)){
+                        $mes_list[$k]['from_user'] = '管理员';
+                    }else{
+                        $mes_list[$k]['from_user'] = $user_name;
+                    }
+
                 }else{
                     $mes_list[$k]['from_user'] = '管理员';
                 }
@@ -157,12 +162,13 @@ class Message extends Common
             if(empty($data['content']) || empty($data['id'])){
                 return ['code' => 0, 'msg' => '回复内容不能为空'];
             }
-
+            //查询发送信息的用户id
+            $user_id = Db::name('user_message')->where(['id' => $data['id']])->value('from_id');
             $add = [
                 'message_id' => $data['id'],
                 'content' => $data['content'],
-                'from_id' => $this->userInfo['id'],
-                'to_id' => 0,
+                'from_id' => 0,
+                'to_id' => $user_id,
                 'create_time'  => date('Y-m-d H:i:s'),
             ];
             $res =  Db::name('user_message_reply')->insert($add);
@@ -178,6 +184,5 @@ class Message extends Common
             return ['code' => 0, 'msg' => '非法请求'];
         }
     }
-
 
 }

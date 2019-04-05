@@ -21,12 +21,11 @@
             </div>
 
             <ul class="layui-nav admin-header-item" lay-filter="side-top-right">
+
                 <li class="layui-nav-item">
                     <a href="{:url('home/index/index')}">交易所</a>
                 </li>
-                <li class="layui-nav-item">
-                    <a href="{:url('set/index')}"><i class="iconfont icon-shezhi"></i>设置</a>
-                </li>
+
                 <li class="layui-nav-item">
                     <a class="name" href="javascript:;">主题</a>
                     <dl class="layui-nav-child">
@@ -35,6 +34,27 @@
                         <dd data-skin="2"><a href="javascript:;">蓝白</a></dd>
                     </dl>
                 </li>
+
+                <li class="layui-nav-item" lay-unselect="">
+                    <a href="javascript:;">
+                        <a href="#" layadmin-event="message" lay-text="消息中心">
+                            <i class="layui-icon layui-icon-notice"></i>
+
+                            <!-- 如果有新消息，则显示小圆点 -->
+                            {if $user_mes_count > 0}
+                            <span class="layui-badge-dot"></span>
+                            {/if}
+                        </a>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{:url('user/message/messageList')}?type=1" target="my_iframe">发件箱<span style="color: #FF5722;">{$user_mes_count}</span></a></dd>
+                        <hr/>
+                        <dd><a href="{:url('user/message/messageList')}?type=2" target="my_iframe">收件箱<span style="color: #FF5722;">{$user_mes_all_count}</span></a></dd>
+
+                    </dl>
+                </li>
+
+
                 <li class="layui-nav-item">
                     <a href="javascript:;" class="admin-header-user">
                         <img src="{:session('avatar')}" class="layui-nav-img" />
@@ -71,7 +91,7 @@
             </ul>
             <div class="layui-tab-content" style="min-height: 150px; padding: 0;">
                 <div class="layui-tab-item layui-show">
-                    <iframe src="{:url('main')}"></iframe>
+                    <iframe name="my_iframe" src="{:url('main')}"></iframe>
                 </div>
             </div>
         </div>

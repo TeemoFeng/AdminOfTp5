@@ -4,6 +4,7 @@ use app\admin\model\UserApplyConsumeCash;
 use app\admin\model\UserApplyShateCash;
 use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
+use app\user\model\UserMessage;
 use think\Db;
 use app\admin\model\Users;
 use think\facade\Env;
@@ -48,7 +49,13 @@ class Index extends Common
                 }
             }
         }
+
+        $user_mes_count = UserMessage::where(['from_id' => 0,'is_read' => 0])->count();
+        $user_mes_all_count= UserMessage::where(['to_id' => 0,'is_read' => 0])->count();
+
         $this->assign('menus',json_encode($menus,true));
+        $this->assign('user_mes_count',$user_mes_count);
+        $this->assign('user_mes_all_count',$user_mes_all_count);
         return $this->fetch();
     }
 //    public function main(){

@@ -1,1 +1,0 @@
-ALTER TABLE `clt_category` ADD COLUMN `is_show` tinyint(1) unsigned   NOT NULL DEFAULT 0 COMMENT ' «∑Ò‘§¿¿' after `lang` ;

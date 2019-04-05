@@ -1,6 +1,7 @@
 <?php
 namespace app\user\controller;
 use app\admin\model\UserCurrencyAccount;
+use app\user\model\UserMessage;
 use app\user\model\Users;
 use think\Input;
 use think\Session;
@@ -50,7 +51,12 @@ class Index extends Common{
             }
         }
 
+        //获取用户未读信息
+        $user_mes_count = UserMessage::where(['from_id' => $this->userInfo['id'],'is_read' => 0])->count();
+        $user_mes_all_count= UserMessage::where(['to_id' => $this->userInfo['id'],'is_read' => 0])->count();
         $this->assign('menus',json_encode($menus,true));
+        $this->assign('user_mes_count',$user_mes_count);
+        $this->assign('user_mes_all_count',$user_mes_all_count);
         return $this->fetch();
 
     }

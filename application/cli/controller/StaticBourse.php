@@ -24,16 +24,17 @@ class StaticBourse {
         $userCurrencyAccount = new UserCurrencyAccount();
         $cursor = $userCurrencyAccount->where('status',1)->cursor();
         foreach($cursor as $account){
+            $user_shate = bcadd($account['corpus'], $account['cash_input_num'],4);
             if($account['level_id'] == 1){
-                $shouyi = bcmul($account['corpus'],$static_set[0],4);
+                $shouyi = bcmul($user_shate,$static_set[0],4);
             }elseif ($account['level_id'] == 2){
-                $shouyi = bcmul($account['corpus'],$static_set[1],4);
+                $shouyi = bcmul($user_shate,$static_set[1],4);
             }elseif ($account['level_id'] == 3){
-                $shouyi = bcmul($account['corpus'],$static_set[2],4);
+                $shouyi = bcmul($user_shate,$static_set[2],4);
             }elseif ($account['level_id'] == 4){
-                $shouyi = bcmul($account['corpus'],$static_set[3],4);
+                $shouyi = bcmul($user_shate,$static_set[3],4);
             }elseif ($account['level_id'] == 5){
-                $shouyi = bcmul($account['corpus'],$static_set[4],4);
+                $shouyi = bcmul($user_shate,$static_set[4],4);
             }
 
             $cash_currency_num = $account['cash_currency_num'] + $shouyi;
@@ -57,12 +58,16 @@ class StaticBourse {
                 ]);
             }
 
-
         }
-
 
     }
 
+
+    //用户动态奖发放
+    public function dynamicBourse()
+    {
+
+    }
 
 }
 

@@ -1,0 +1,107 @@
+{include file="common/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+
+    <div class="layui-fluid">
+
+        <div class="layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-green">
+                    <i class="layui-icon layui-icon-speaker"> 消息详情</i>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="nob" style="text-align: left">
+                        <tbody>
+
+                        <tr>
+                            <td text-align: left"><span class="layui-text" style="">{$mes_info['title']}</span></td>
+                        </tr>
+                        <tr>
+                            <td text-align: left"><span class="layui-text">{$mes_info['content']}</span></td>
+                        </tr>
+                        <tr>
+                            <td text-align: left"><span class="layui-text"><i class="layui-icon layui-icon-log"></i>{$mes_info['create_time']}</span><span class="layui-text" style="padding-left: 10px;"><i class="layui-icon layui-icon-username"></i>{$mes_info['username']}</span></td>
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {foreach $mes_list as $k => $v}
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12" style="padding-top: 20px;">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-green"><i class="layui-icon layui-icon-list"> 回复信息</i></div>
+                <div class="layui-card-body">
+                    <table class="layui-table layuiadmin-page-table" lay-skin="nob" style="text-align: left">
+                        <tbody>
+
+                        <tr>
+                            <td text-align: left"><span class="layui-text">{$v['content']}</span></td>
+                        </tr>
+                        <tr>
+                            <td text-align: left"><span class="layui-text"><i class="layui-icon layui-icon-log"></i>{$v['create_time']}</span><span class="layui-text" style="padding-left: 10px;"><i class="layui-icon layui-icon-username"></i>{$v['from_user']}</span></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        {/foreach}
+
+        <div style="padding-top: 20px;">
+
+            <div class="layui-inline" >
+
+                <input class="layui-input" style = "width:500px;" name="content" id="key" placeholder="请输入回复内容">
+                <input type="hidden" name="id" id="message_id" value="{$mes_info['id']}">
+
+            </div>
+            <button class="layui-btn" id="reply">回复</button>
+            <a href="{:url('messageList')}" class="layui-btn layui-btn-primary">返回</a>
+        </div>
+
+
+    </div>
+
+</div>
+{include file="common/foot"/}
+<script type="text/javascript" src="/static/plugins/echarts.js"></script>
+
+<script>
+    layui.use(['element','layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        $('#reply').on('click', function() {
+            var content = $('#key').val();
+            var id = $('#message_id').val();
+            if(key.length < 0){
+                layer.msg('请输入回复内容', {time: 1000, icon: 2});
+                return false;
+            }
+            var loading = layer.load(2, {shade: [0.1, '#fff']});
+            $.post("{:url('reply')}", {content:content,id:id }, function (data) {
+                layer.close(loading);
+                if (data.code === 1) {
+                    layer.msg(data.msg, {time: 1000, icon: 1});
+                    location.reload();
+                } else {
+                    layer.msg(data.msg, {time: 1000, icon: 2});
+                }
+            });
+
+        });
+
+    });
+
+</script>
+
+
+
+</body>
+</html>

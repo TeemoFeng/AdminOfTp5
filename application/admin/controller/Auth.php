@@ -489,7 +489,7 @@ class Auth extends Common
         if (request()->isPost()) {
             $datas = input('post.');
             if(userAuthRule::update($datas)) {
-                cache('UserAuthRule', NULL);
+                cache('userAuthRule', NULL);
                 cache('userAuthRuleList', NULL);
                 return json(['code' => 1, 'msg' => '保存成功!', 'url' => url('userRule')]);
             } else {
