@@ -543,14 +543,15 @@ class User extends Common
     {
         //获取用户类型
         $user_info = session('user');
+
         $trade_type = UserTradeDeputeLog::$trade_type;
         $table = new UserTradeDeputeLog();
         //默认查询用户购买的订单
-        $order_list = $table->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->find();
+        $order_list = $table->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->select();
 
         foreach ($order_list as $k => $v){
             $order_list[$k]['trade_status_str'] = UserTradeDepute::$status[$v['trade_status']];
-            $order_list[$k]['trade_type_str'] = UserTradeDepute::$trade_type[$v['$trade_type']];
+            $order_list[$k]['trade_type_str'] = UserTradeDepute::$trade_type[$v['trade_type']];
             //获取交易对象
             $about_user = Users::where(['id' => $v['about_id']])->value('username');
             $order_list[$k]['about_user'] = $about_user;
@@ -565,7 +566,64 @@ class User extends Common
     //用户交易详情
     public function tradeDetail()
     {
+        $id = input('id');
+        $user_info = session('user');
+        $trade_count = Db::name('user_trade_depute')->where(['user_id' => $user_info['id'], 'status' => ['in', '2,3']])->count();
+        $order_info = Db::name('user_trade_depute_log')->where(['id' => $id])->find();  //订单详情
+        $order_info['trade_status_str'] = UserTradeDepute::$status[$order_info['trade_status']];
+        $order_info['create_time'] = date('Y-m-d H:i:s', $order_info['create_time']);
+        //获取卖家信息
+        $sell_info = Db::name('users')->where(['id' => $order_info['about_id']])->find();
+        $bank_name = Db::name('bank')->where(['id' => $sell_info['bank_id']])->value('bank_name');
+        $sell_info['bank_name'] = $bank_name;
+        $this->assign('order_info', $order_info);
+        $this->assign('user_info', $user_info);
+        $this->assign('trade_count', $trade_count);
+        $this->assign('sell_info', $sell_info);
+        return $this->fetch('orderDetail');
+    }
 
+    //买家确认付款
+    public function paySure()
+    {
+        if(request()->isPost()) {
+            $id = input('post.id');
+            $order_num = input('post.order_num');
+            //跟新订单状态
+            Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['status' => 2]); //已付款
+            return ['code' => 1, 'msg' => '成功'];
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+
+    }
+
+    //买家取消付款
+    public function cancelOrder(){
+        if(request()->isPost()) {
+            $id = input('post.id');
+            $order_num = input('post.order_num');
+
+            //跟新订单状态
+            Db::startTrans();
+            $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['status' => 4]); //取消
+            if($res !== false){
+                $depute_ids = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->column('trade_depute_id');
+                $res2 = Db::name('user_trade_depute')->where(['id' => ['in', $depute_ids]])->update(['lock' => 0]);
+                if($res2 != false){
+                    Db::commit();
+                    return ['code' => 1, 'msg' => '取消成功'];
+                }else{
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '取消失败'];
+                }
+            }
+            Db::rollback();
+            return ['code' => 0, 'msg' => '取消失败'];
+
+        }else{
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
     }
 
 

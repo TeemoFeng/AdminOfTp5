@@ -15,17 +15,15 @@ class UserTradeDeputeLog extends Model
     const STATUS2 = 2;
     const STATUS3 = 3;
     const STATUS4 = 4;
-    const STATUS5 = 5;
 
     const TYPE1 = 1;
     const TYPE2 = 2;
 
     public static $status = [
-        self::STATUS1 => '未成交',
-        self::STATUS2 => '部分成交',
-        self::STATUS3 => '完成成交',
-        self::STATUS4 => '撤单处理中',
-        self::STATUS5 => '已撤销',
+        self::STATUS1 => '待付款',
+        self::STATUS2 => '确定付款',
+        self::STATUS3 => '已完成',
+        self::STATUS4 => '取消',
     ];
 
     public static $status2 = [

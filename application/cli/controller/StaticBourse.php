@@ -272,14 +272,16 @@ class StaticBourse {
         $where['depute_status'] = 1; //正在委托
         $where['depute_type'] = 1; //买入
         $where['status'] = ['in', '1,2']; //未完成成交的
+        $where['lock'] = 0;
         $buy_list = UserTradeDepute::where($where)->select();
 
         //2.查询用户 卖币列表
-        $where = new Where();
-        $where['depute_status'] = 1; //正在委托
-        $where['depute_type'] = 2; //买入
-        $where['status'] = ['in', '1,2']; //未完成成交的
-        $sell_list = UserTradeDepute::where($where)->select();
+        $where2 = new Where();
+        $where2['depute_status'] = 1; //正在委托
+        $where2['depute_type'] = 2; //买入
+        $where2['status'] = ['in', '1,2']; //未完成成交的
+        $where2['lock'] = 0;
+        $sell_list = UserTradeDepute::where($where2)->select();
 
         //3.碰撞产生交易
         foreach ($buy_list as $k => $v){
@@ -307,11 +309,10 @@ class StaticBourse {
                        'create_time'     => time()
 
                    ];
-                    $order_num2 =  createOrderNum();
                     $add_sell = [
                         'user_id'    => $vv['user_id'],
                         'about_id'   => $v['user_id'],
-                        'order_num'  => $order_num2,
+                        'order_num'  => $order_num,
                         'trade_num'  => $v['num'], //买家购买量
                         'trade_currency'  => $v['depute_currency'],
                         'price'           => $v['price'],
@@ -326,6 +327,9 @@ class StaticBourse {
 
                     Db::name('user_trade_depute_log')->insert($add_buy);
                     Db::name('user_trade_depute_log')->insert($add_sell);
+                    //锁定托管记录
+                    Db::name('user_trade_depute')->where(['id' => $vv['id']])->update(['lock' => 1]);
+                    Db::name('user_trade_depute')->where(['id' => $v['id']])->update(['lock' => 1]);
 
 
                 }
