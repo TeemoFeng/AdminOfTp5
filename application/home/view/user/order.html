@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" class="night-style">
+<head>
+    <meta charset="UTF-8">
+    <title>广告管理</title>
+    <link rel="stylesheet" href="/static/home/css/app.css">
+    <link rel="stylesheet" href="/static/home/css/style.css">
+    <link rel="stylesheet" href="/static/home/layui/css/layui.css">
+    <style>
+        .layui-form input {
+            background: #1c1e2d;
+            border: 1px solid #3a3b54;
+            color: #e6e6e6;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .layui-form-select dl {
+            background: #2e2f43
+        }
+    </style>
+</head>
+<body>
+<div style="width: 100%; margin: 0px auto; min-height: 500px;">
+    <div data-v-159697e6="" class="global-width">
+        <div data-v-159697e6="" class="hc-breadcrumb hc-bgColor1">
+            <div data-v-159697e6="" class="hc-btn otc-index-btn hc-btn-active">订单管理</div>
+        </div>
+        <div data-v-48b6e8a5="" data-v-159697e6="" class="order">
+            <!--TODO 筛选-->
+            <div data-v-48b6e8a5="" class="order-condition hc-bgColor3">
+                <form action="" class="layui-form" lay-filter="example">
+                    <div data-v-48b6e8a5="" class="el-select order-option">
+                        <select name="interest" lay-filter="aihao">
+                            <option value="">订单类型</option>
+                            {foreach $trade_type as $k => $v}
+                            <option value="{$k}">{$v}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <!--<div data-v-48b6e8a5="" class="el-select order-option">-->
+                        <!--<select name="interest" lay-filter="aihao">-->
+                            <!--<option value="">交易币种</option>-->
+                            <!--<option value="0">AMB</option>-->
+                            <!--<option value="1">USDT</option>-->
+
+                        <!--</select>-->
+                    <!--</div>-->
+
+                    <div data-v-48b6e8a5="" class="el-select order-option">
+                        <select name="interest" lay-filter="aihao">
+                            <option value="">状态</option>
+                            {foreach $status as $k => $v}
+                            <option value="{$k}">{$v}</option>
+                            {/foreach}
+
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <!--TODO 筛选 end-->
+            <div data-v-48b6e8a5="">
+                <div data-v-48b6e8a5="" class="el-table el-table--fit el-table--enable-row-hover" align="center"
+                     style="width: 100%;">
+
+                    <div class="el-table__header-wrapper">
+                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
+                               style="width: 1200px;">
+                            <colgroup>
+                                <col name="el-table_26_column_215" width="20">
+                                <col name="el-table_26_column_216" width="180">
+                                <col name="el-table_26_column_217" width="80">
+                                <col name="el-table_26_column_218" width="122">
+                                <col name="el-table_26_column_219" width="160">
+                                <col name="el-table_26_column_220" width="135">
+                                <col name="el-table_26_column_221" width="121">
+                                <col name="el-table_26_column_222" width="121">
+                                <col name="el-table_26_column_223" width="121">
+                                <col name="el-table_26_column_224" width="140">
+                                <col name="gutter" width="0">
+                            </colgroup>
+                            <thead class="has-gutter">
+                            <tr class="">
+                                <th colspan="1" rowspan="1" class="el-table_26_column_215  is-center   is-leaf">
+                                    <div class="cell"></div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_216     is-leaf">
+                                    <div class="cell">编号</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_217     is-leaf">
+                                    <div class="cell">类型</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_218     is-leaf">
+                                    <div class="cell">数量</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_219     is-leaf">
+                                    <div class="cell">委托价格</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_220     is-leaf">
+                                    <div class="cell">手续费</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_221     is-leaf">
+                                    <div class="cell">交易对象</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_222     is-leaf">
+                                    <div class="cell">交易方式</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_223     is-leaf">
+                                    <div class="cell">状态</div>
+                                </th>
+                                <th colspan="1" rowspan="1" class="el-table_26_column_224     is-leaf">
+                                    <div class="cell">操作</div>
+                                </th>
+                                <th class="gutter" style="width: 0px; display: none;"></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="el-table__body-wrapper is-scrolling-none">
+                        <table cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 1200px;">
+                            <colgroup>
+                                <col name="el-table_26_column_215" width="20">
+                                <col name="el-table_26_column_216" width="180">
+                                <col name="el-table_26_column_217" width="80">
+                                <col name="el-table_26_column_218" width="122">
+                                <col name="el-table_26_column_219" width="160">
+                                <col name="el-table_26_column_220" width="135">
+                                <col name="el-table_26_column_221" width="121">
+                                <col name="el-table_26_column_222" width="121">
+                                <col name="el-table_26_column_223" width="121">
+                                <col name="el-table_26_column_224" width="140">
+                            </colgroup>
+                            <tbody>
+                            <!--数据加载-->
+                            {foreach $order_list as $k => $v}
+                            <tr class="el-table__row">
+                                <td rowspan="1" colspan="1" class="el-table_12_column_105 is-center ">
+                                    <div class="cell"></div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_106  ">
+                                    <div class="cell">
+                                        <div data-v-48b6e8a5="">{$v['order_num']}</div>
+                                        <div data-v-48b6e8a5="" class="order-color">{$v['create_time']}</div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_107  ">
+                                    <div class="cell"><span data-v-48b6e8a5=""
+                                                            style="color: rgb(50, 168, 105);">{$v['trade_type_str']}</span></div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_108  ">
+                                    <div class="cell">
+                                        <div data-v-48b6e8a5="">{$v['trade_num']} AMB</div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_109  ">
+                                    <div class="cell">
+                                        <div data-v-48b6e8a5="">{$v['price']}</div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_110  ">
+                                    <div class="cell">
+                                        <div data-v-48b6e8a5="">{$v['poundage']}</div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_111  ">
+                                    <div class="cell">
+                                        <div data-v-48b6e8a5="">{$v['about_user']}</div>
+                                    </div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_112  ">
+                                    <div class="cell"><img data-v-48b6e8a5=""
+                                                           src="https://hotcoin-hk-static.oss-cn-hongkong.aliyuncs.com/hotcoin/upload/bankIcon/Bank.png"
+                                                           width="20"></div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_113  ">
+                                    <div class="cell"><span data-v-48b6e8a5="" class="status-color">{$v['trade_type_str']}</span></div>
+                                </td>
+                                <td rowspan="1" colspan="1" class="el-table_12_column_114  ">
+                                    <div class="cell">
+                                        <div data-v-48b6e8a5="" class="hc-btn order-hc-button"><a href="{:url('home/user/tradeDetail')}?id={$v['id']}">查看详情</a></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                        {if empty($order_list)}
+                        <div class="el-table__empty-block" style="width: 1200px;"><span class="el-table__empty-text">暂无数据</span>
+                        </div>
+                        {/if}
+                    </div>
+                </div>
+                <div data-v-cb7b5f4a="" class="hc-pagination">
+                    <div data-v-cb7b5f4a="" class="el-pagination">
+                        <button type="button" disabled="disabled" class="btn-prev">
+                            <i class="el-icon el-icon-arrow-left"></i>
+                        </button>
+                        <ul class="el-pager">
+                            <li class="number active">1</li>
+                        </ul>
+                        <button type="button" disabled="disabled" class="btn-next">
+                            <i class="el-icon el-icon-arrow-right"></i>
+                        </button>
+                        <span class="el-pagination__jump">
+                            前往
+                            <div class="el-input el-pagination__editor is-in-pagination">
+                                <input type="number" autocomplete="off" min="1" max="1" class="el-input__inner">
+                            </div>
+                            页
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/home/layui/layui.js"></script>
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+
+
+        //表单初始赋值
+        form.val('example', {})
+
+
+    });
+</script>
+</body>
+</html>

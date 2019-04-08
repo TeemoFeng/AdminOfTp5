@@ -14,7 +14,9 @@ use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
 use app\home\model\UserTradeDepute;
 use app\home\model\UserTradeDeputeLog;
+use app\user\model\UserCurrencyList;
 use app\user\model\UserRunningLog;
+use app\user\model\Users;
 use think\Db;
 use think\db\Where;
 use think\Session;
@@ -256,15 +258,22 @@ class User extends Common
     public function currencyExchange()
     {
         $user_info = session('user');
+        //阿美币
+        $amei_infos = CurrencyList::where(['en_name' => 'AMB'])->find();
         //获取用户交易账户
         $user_account = UserCurrencyAccount::where(['user_id' => $user_info['id']])->find();
+        //获取用户阿美币
+        $user_amei = UserCurrencyList::where(['user_id' => $user_info['id'],'currency_id' => $amei_infos['id']])->find();
+        $user_account['ameibi_num'] = $user_amei['num'];
+        $user_account['ameibi_freeze_num'] = $user_amei['freeze_num'];
+        $user_account['ameibi_lock_num'] = $user_amei['lock_num'];
         //币种列表
         $currency_list = CurrencyList::where(['status' => 'open'])->select();
         $amb_price = 0;
 
         foreach ($currency_list as $k => $v){
             if($v['en_name'] == 'AMB'){
-                $trade = db('user_trade_depute_log')->where(['status' =>1,'trade_type' => 2])->order('price DESC')->find();
+                $trade = db('user_trade_depute_log')->where(['trade_status' =>2, 'trade_type' => 2])->order('price DESC')->find();
                 $currency_list[$k]['price_s'] = 0; //阿美币最新价格
                 $amb_price = $trade;
             }else{
@@ -278,27 +287,33 @@ class User extends Common
 
         }
 
-        //阿美币
-        $amei_info = $currency_list[0];
+        $amei_info = $currency_list[1]; //暂时设置
 
         //从委托表中取出卖价前7位
-        $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->select();
+        $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->limit(7)->select();
         foreach ($list_sell as $key => $val){
-            $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
-            $list_sell[$key]['account'] = $user_account['ameibi_num'];
+
+            $amei_account = UserCurrencyList::where(['user_id' => $val['user_id'],'currency_id' => $amei_infos['id']])->value('num');
+            if(empty($amei_account)){
+                $amei_account = 0;
+            }
+            $list_sell[$key]['account'] = $amei_account;
             $list_sell[$key]['num2'] = 7-$key;
 
         }
 
         //获取用户托管买币前7位
-        $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->select();
+        $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->limit(7)->select();
         foreach ($list_buy as $key => $val){
-            $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
-            $list_buy[$key]['account'] = $user_account['ameibi_num'];
+            $amei_account = UserCurrencyList::where(['user_id' => $val['user_id'],'currency_id' => $amei_infos['id']])->value('num');
+            if(empty($amei_account)){
+                $amei_account = 0;
+            }
+            $list_buy[$key]['account'] = $amei_account;
             $list_buy[$key]['num2'] = 7-$key;
         }
         //实时成交前30位
-        $trade_list = db('user_trade_depute_log')->where(['status' => 1])->limit(30)->order('create_time DESC')->select();
+        $trade_list = db('user_trade_depute_log')->where(['trade_status' => 2])->limit(30)->order('create_time DESC')->select();
         foreach ($trade_list as $k => $v){
             $trade_list[$k]['time'] = date('m-d H:i', $v['crate_time']);
             $trade_list[$k]['type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']] ;
@@ -320,21 +335,30 @@ class User extends Common
     public function getCurrencyExchange()
     {
         if(request()->isAjax()){
-            $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->select();
+            $amei_infos = CurrencyList::where(['en_name' => 'AMB'])->find();
+            $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->limit(7)->select();
             foreach ($list_sell as $key => $val){
-                $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
-                $list_sell[$key]['account'] = $user_account['ameibi_num'];
+
+                $amei_account = UserCurrencyList::where(['user_id' => $val['user_id'],'currency_id' => $amei_infos['id']])->value('num');
+                if(empty($amei_account)){
+                    $amei_account = 0;
+                }
+                $list_sell[$key]['account'] = $amei_account;
                 $list_sell[$key]['num2'] = 7-$key;
+
 
             }
             //获取用户托管买币前7位
-            $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->select();
+            $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->limit(7)->select();
             foreach ($list_buy as $key => $val){
-                $user_account = UserCurrencyAccount::where(['user_id' => $val['user_id']])->find();
-                $list_buy[$key]['account'] = $user_account['ameibi_num'];
+                $amei_account = UserCurrencyList::where(['user_id' => $val['user_id'],'currency_id' => $amei_infos['id']])->value('num');
+                if(empty($amei_account)){
+                    $amei_account = 0;
+                }
+                $list_buy[$key]['account'] = $amei_account;
                 $list_buy[$key]['num2'] = 7-$key;
             }
-            $trade_list = db('user_trade_depute_log')->where(['status' => 1])->limit(30)->order('create_time DESC')->select();
+            $trade_list = db('user_trade_depute_log')->where(['trade_status' => 2])->limit(30)->order('create_time DESC')->select();
             foreach ($trade_list as $k => $v){
                 $trade_list[$k]['time'] = date('H:i:s', $v['crate_time']);
                 $trade_list[$k]['type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']] ;
@@ -452,13 +476,18 @@ class User extends Common
             Db::startTrans();
             $res =  UserTradeDepute::create($save);
             if($res !== false){
-                $ameibi_num =  UserCurrencyAccount::where(['user_id' => $data['user_id']])->value('ameibi_num'); //获取交易钱包阿美币余额
-                $ameibi_num = bcsub($ameibi_num, $data['num'], 2); //用户阿美币钱包直接减数量
+
+                //阿美币
+                $amei_infos = CurrencyList::where(['en_name' => 'AMB'])->find();
+
+                //获取用户阿美币
+                $ameibi_num = UserCurrencyList::where(['user_id' => $data['user_id'],'currency_id' => $amei_infos['id']])->value('num');
+                $ameibi_num = bcsub($ameibi_num, $data['sell_num'], 2); //用户阿美币钱包直接减数量
                 $up_data = [
-                    'ameibi_num' => $ameibi_num,
+                    'num' => $ameibi_num,
                 ];
 
-                $res2 = UserCurrencyAccount::where(['user_id' => $data['user_id']])->update($up_data);
+                $res2 = UserCurrencyList::where(['user_id' => $data['user_id'],'currency_id' => $amei_infos['id']])->update($up_data);
                 if($res2 !== false){
                     Db::commit();
                     //卖出阿美币数量记录
@@ -508,13 +537,36 @@ class User extends Common
 
     }
 
-    //用户托管记录
-    public function otcTrade()
+
+    //获取用户交易订单
+    public function tradeOrder()
     {
-        return $this->fetch('trade');
+        //获取用户类型
+        $user_info = session('user');
+        $trade_type = UserTradeDeputeLog::$trade_type;
+        $table = new UserTradeDeputeLog();
+        //默认查询用户购买的订单
+        $order_list = $table->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->find();
+
+        foreach ($order_list as $k => $v){
+            $order_list[$k]['trade_status_str'] = UserTradeDepute::$status[$v['trade_status']];
+            $order_list[$k]['trade_type_str'] = UserTradeDepute::$trade_type[$v['$trade_type']];
+            //获取交易对象
+            $about_user = Users::where(['id' => $v['about_id']])->value('username');
+            $order_list[$k]['about_user'] = $about_user;
+        }
+
+        $this->assign('trade_type', $trade_type);
+        $this->assign('order_list', $order_list);
+        $this->assign('status', UserTradeDepute::$status);
+        return $this->fetch('order');
     }
 
+    //用户交易详情
+    public function tradeDetail()
+    {
 
+    }
 
 
 }

@@ -8,10 +8,12 @@
 namespace app\user\controller;
 
 use app\admin\model\ApplyCash;
+use app\admin\model\CurrencyList;
 use app\admin\model\UserCurrencyAccount;
 use app\user\model\UserApplyCash;
 use app\user\model\UserApplyConsumeCash;
 use app\user\model\UserApplyShateCash;
+use app\user\model\UserCurrencyList;
 use app\user\model\UserDynamicAmeiBonus;
 use app\user\model\UserRunningLog;
 use app\user\model\Users;
@@ -119,18 +121,73 @@ class Finance extends Common{
                 return ['code' => 0, 'msg' => '转换数量不能超过刷过沙特链余额'];
             }
 
-            $rate = UserCurrencyAccount::where(['user_id' => $user_id])->value('rate'); //转换费率
+            //默认现金币转换阿美币
+            $user_accpunt = UserCurrencyAccount::where(['user_id' => $user_id])->find();
+            $cash_num = bcsub($user_accpunt['cash_currency_num'], $data['change_num'],4); //减去转换的现金币
+            $ameibi_num = bcmul($data['change_num'], $user_accpunt['rate'], 4);
+            $save = [
+                'cash_currency_num' => $cash_num,
+            ];
+            $res = UserCurrencyAccount::where(['user_id' => $user_id])->update($save); //更新用户钱包
+            $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
+            //更新用户ameibi数量
+            $user_currency = UserCurrencyList::where(['user_id' => $user_id,'currency_id' => $currency_id])->find();
+            if(empty($user_currency)) {
+                $currency = [
+                    'user_id'       => $user_id,
+                    'currency_id'   => $currency_id,
+                    'num'           => $ameibi_num,
+                ];
+                UserCurrencyList::create($currency);
 
-            //记录币种转换日志
-//            UserRunningLog::create([
-//                'user_id'  =>  $user_id,
-//                'about_id' =>  $user_id,
-//                'running_type'  => UserRunningLog::TYPE34,
-//                'account_type'  => 1,
-//                'change_num'    => -$shoxufei,
-//                'balance'       => $cash_currency_num,
-//                'create_time'   => time()
-//            ]);
+            }else{
+                $num = bcadd($user_currency['num'], $ameibi_num, 4);
+                //添加用户币种列表
+                $currency = [
+                    'num' => $num,
+                ];
+                UserCurrencyList::where(['user_id' => $user_id,'currency_id' => $currency_id])->update($currency);
+
+            }
+
+            if($res !== false){
+                //现金币转阿美币记录
+                UserRunningLog::create([
+                    'user_id'  =>  $user_id,
+                    'about_id' =>  $user_id,
+                    'running_type'  => UserRunningLog::TYPE25,
+                    'account_type'  => 1,
+                    'change_num'    => -$data['change_num'],
+                    'balance'       => $cash_num,
+                    'create_time'   => time()
+                ]);
+
+                $currency = CurrencyList::where(['en_name' => 'AMB'])->find();
+
+                //添加币种流水记录
+                $add = [
+                    'user_id'       => $user_id,
+                    'about_id'      => $user_id,
+                    'running_type'  => UserRunningLog::TYPE25,
+                    'currency_to'   => $currency['id'],
+                    'change_num'    => $ameibi_num,
+                    'create_time'   => time(),
+                    'remark'        => '现金币转换阿美币,阿美币增加',
+                ];
+
+                Db::name('currency_running_log')->insert($add);
+                return ['code' => 1, 'msg' => '转换成功'];
+
+            }else{
+                return ['code' => 0, 'msg' => '装换失败请重试'];
+            }
+
+
+
+            //
+
+
+
 
 
         }
@@ -544,20 +601,21 @@ class Finance extends Common{
     public function makeSearch2($data)
     {
         $where = new Where();
-        if(!empty($data['status'])){
-            $where['a.status'] = $data['status'];
-        }
         if(!empty($data['start_time']) && empty($data['end_time'])){
-            $where['a.create_time'] = array('egt', $data['start_time']);
+            $start_time = $data['start_time'] . ' 23:59:59';
+            $where['a.create_time'] = array('egt', $start_time);
         }
         if(!empty($data['end_time']) && empty($data['start_time'])){
-            $where['a.create_time'] = array('elt',$data['end_time']);
+            $end_time = $data['end_time'] . ' 23:59:59';
+            $where['a.create_time'] = array('elt', $end_time);
         }
         if(!empty($data['start_time']) && !empty($data['end_time'])){
-            $where['a.create_time'] = array('between time', array($data['start_time'], $data['end_time']));
+            $start_time = $data['start_time'] . ' 00:00:00';
+            $end_time = $data['end_time'] . ' 23:59:59';
+            $where['a.create_time'] = array('between time', array($start_time, $end_time));
         }
         if(!empty($data['key'])){
-            $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
+            $where['u.id|u.usernum|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
         }
         return $where;
     }

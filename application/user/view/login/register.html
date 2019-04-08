@@ -97,7 +97,7 @@
 
                             <div data-v-c9fe8806="" class="login-div5 hc-color3">验证码</div>
                             <div data-v-c9fe8806="" style="width: 50%;">
-                                <input data-v-c9fe8806="" type="text" placeholder="验证码"  lay-verify="require|validateCode" name="input-name" class="login-input" style="padding-left: 20px">
+                                <input data-v-c9fe8806="" type="text" placeholder="验证码"  lay-verify="require|validateCode" name="code" class="login-input" style="padding-left: 20px">
                             </div>
                             <div data-v-c9fe8806="" class="hc-color4 login-div6"><span data-v-f7be4836="" class="numbtn">获取验证码</span></div>
                         </div>
@@ -204,11 +204,10 @@
     function phoneEmail(id) {
         var _id = id;
         var PReg = /^1[3|4|5|7|8]\d{9}$/;
-        var EReg = /^[a-z0-9._%-]+@([a-z0-9-]+\.)+[a-z]{2,4}$|^1[3|4|5|7|8]\d{9}$/;
-        if (PReg.test(_id) || EReg.test(_id)) {
+        if (PReg.test(_id)) {
             return "num"
         }
-        return "手机号码或邮箱格式不正确!"
+        return "手机号码格式不正确!"
     }
 
 
@@ -256,6 +255,18 @@
     var countdown = 60;
     $('.numbtn').on('click', function () {
         var obj = $(".numbtn");
+        var mobile = $('#regName').val();
+        var result = phoneEmail(mobile);
+        if (result != "num") {
+            layer.msg(result,{time:1000,icon:2});
+            return ;
+        }
+
+        $.post('{:url("mobileSms")}',{mobile:mobile},function(res){
+            if(res.code === 0){
+                layer.msg(res.msg,{time:1000,icon:2});
+            }
+        });
         settime(obj);
     })
     function settime(obj) { //发送验证码倒计时

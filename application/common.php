@@ -725,3 +725,155 @@ function createVipNum()
     $vip_num = $str.date('d').$num;
     return $vip_num;
 }
+
+
+
+function sendSmsForPass($mobile, $info){
+    $data['Account'] = config('sms_account');
+    $data['Pwd'] 	 = config('sms_password');
+    $data['Content'] = '您好：您的登录密码为:'.$info.' ,请勿泄漏';
+    $data['Mobile']	 = $mobile;
+    $data['SignId']	 = config('sms_sign');
+    $url="http://api.feige.ee/SmsService/Send";
+
+    $res=post($url,$data);
+    return $res;
+}
+
+
+function sendSms($mobile, $code){
+    $data['Account'] = config('sms_account');
+    $data['Pwd'] 	 = config('sms_password');
+    $data['Content'] = '您好：您申请的业务验证码为:'.$code.' ,请勿泄漏';
+    $data['Mobile']	 = $mobile;
+    $data['SignId']	 = config('sms_sign');
+    $url="http://api.feige.ee/SmsService/Send";
+
+    $res=post($url,$data);
+    return $res;
+}
+
+function post($url, $data, $proxy = null, $timeout = 20) {
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); //在HTTP请求中包含一个"User-Agent: "头的字符串。
+    curl_setopt($curl, CURLOPT_HEADER, 0); //启用时会将头文件的信息作为数据流输出。
+    curl_setopt($curl, CURLOPT_POST, true); //发送一个常规的Post请求
+    curl_setopt($curl,  CURLOPT_POSTFIELDS, $data);//Post提交的数据包
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); //启用时会将服务器服务器返回的"Location: "放在header中递归的返回给服务器，使用CURLOPT_MAXREDIRS可以限定递归返回的数量。
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //文件流形式
+    curl_setopt($curl, CURLOPT_TIMEOUT, $timeout); //设置cURL允许执行的最长秒数。
+    $content = curl_exec($curl);
+    curl_close($curl);
+    unset($curl);
+    return $content;
+}
+
+
+//加密函数
+function lock_url($txt,$key='cltphp')
+{
+    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";
+    $nh = rand(0,64);
+    $ch = $chars[$nh];
+    $mdKey = md5($key.$ch);
+    $mdKey = substr($mdKey,$nh%8, $nh%8+7);
+    $txt = base64_encode($txt);
+    $tmp = '';
+    $i=0;$j=0;$k = 0;
+    for ($i=0; $i<strlen($txt); $i++) {
+        $k = $k == strlen($mdKey) ? 0 : $k;
+        $j = ($nh+strpos($chars,$txt[$i])+ord($mdKey[$k++]))%64;
+        $tmp .= $chars[$j];
+    }
+    return urlencode($ch.$tmp);
+}
+//解密函数
+function unlock_url($txt,$key='cltphp')
+{
+    $txt = urldecode($txt);
+    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";
+    $ch = $txt[0];
+    $nh = strpos($chars,$ch);
+    $mdKey = md5($key.$ch);
+    $mdKey = substr($mdKey,$nh%8, $nh%8+7);
+    $txt = substr($txt,1);
+    $tmp = '';
+    $i=0;$j=0; $k = 0;
+    for ($i=0; $i<strlen($txt); $i++) {
+        $k = $k == strlen($mdKey) ? 0 : $k;
+        $j = strpos($chars,$txt[$i])-$nh - ord($mdKey[$k++]);
+        while ($j<0) $j+=64;
+        $tmp .= $chars[$j];
+    }
+    return base64_decode($tmp);
+}
+
+//验证身份证号
+function is_idcard( $id )
+{
+    $id = strtoupper($id);
+    $regx = "/(^\d{15}$)|(^\d{17}([0-9]|X)$)/";
+    $arr_split = array();
+    if(!preg_match($regx, $id))
+    {
+        return FALSE;
+    }
+    if(15==strlen($id)) //检查15位
+    {
+        $regx = "/^(\d{6})+(\d{2})+(\d{2})+(\d{2})+(\d{3})$/";
+
+        @preg_match($regx, $id, $arr_split);
+        //检查生日日期是否正确
+        $dtm_birth = "19".$arr_split[2] . '/' . $arr_split[3]. '/' .$arr_split[4];
+        if(!strtotime($dtm_birth))
+        {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+    else      //检查18位
+    {
+        $regx = "/^(\d{6})+(\d{4})+(\d{2})+(\d{2})+(\d{3})([0-9]|X)$/";
+        @preg_match($regx, $id, $arr_split);
+        $dtm_birth = $arr_split[2] . '/' . $arr_split[3]. '/' .$arr_split[4];
+        if(!strtotime($dtm_birth)) //检查生日日期是否正确
+        {
+            return FALSE;
+        }
+        else
+        {
+            //检验18位身份证的校验码是否正确。
+            //校验位按照ISO 7064:1983.MOD 11-2的规定生成，X可以认为是数字10。
+            $arr_int = array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+            $arr_ch = array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2');
+            $sign = 0;
+            for ( $i = 0; $i < 17; $i++ )
+            {
+                $b = (int) $id{$i};
+                $w = $arr_int[$i];
+                $sign += $b * $w;
+            }
+            $n = $sign % 11;
+            $val_num = $arr_ch[$n];
+            if ($val_num != substr($id,17, 1))
+            {
+                return FALSE;
+            } //phpfensi.com
+            else
+            {
+                return TRUE;
+            }
+        }
+    }
+
+//创建订单号
+function createOrderNum()
+{
+   $num1 =  rand(100000,999999);
+   $num2 =  rand(100000,999999);
+   return 'JF'.$num1.$num2;
+}
+
+}

@@ -330,6 +330,8 @@ class User extends Common{
             if($data['safeword'] != $data['confirmSafePwd']) return ['code' => 0, 'msg' => '两次输入的安全密码不一致'];
 
             $data['password'] = md5($data['password']);
+            $data['pwd'] = lock_url($data['password']); //加密 用户找回密码
+            $data['nickname'] = $data['username'];
             //推荐人关系
             $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
             $data['pid'] = $referrr_info['id'];
@@ -349,7 +351,6 @@ class User extends Common{
             }else{
                 $data['is_report'] = 0;
             }
-            $data['enabled'] = 1;
             $data['create_time'] = date('Y-m-d',time()); //添加时间方便做折线图
             $new_user_id = UsersModel::create($data);
             if ($new_user_id) {
@@ -361,18 +362,22 @@ class User extends Common{
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
                     $data2['user_son_str'] = 1 . ',';
+                    $data2['deep'] = count(explode(',', $data2['user_son_str']))-1;
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
                     $data3['user_son_str'] = 1 . ',';
+                    $data3['deep'] = count(explode(',', $data2['user_son_str']))-1;
                 }else{
                     $son_str = $user_referee_model->where(['user_id' => $referrr_info['id'] ])->value('user_son_str');
                     $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
-                    $data2['user_son_str'] = $son_str . $referrr_info["id"] .',';
+                    $data2['user_son_str'] = $son_str. $referrr_info["id"] .',';
+                    $data2['deep'] = count(explode(',', $data2['user_son_str']))-1;
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
                     $data3['user_son_str'] = $son_node_str . $node_info['id'] .',';
+                    $data3['deep'] = count(explode(',', $data2['user_son_str']))-1;
                 }
                 UserReferee::create($data2);
                 UserNode::create($data3);

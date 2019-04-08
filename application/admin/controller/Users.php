@@ -188,24 +188,58 @@ class Users extends Common{
     //设置报单中心
     public function setBaodan()
     {
+
+        $ids = input('param.ids');
         $map[] =array('id','IN',input('param.ids/a'));
         $data['baodan_center'] = 1;
         $res = db('users')->where($map)->update($data);
         if($res === false){
             return ['code' => 0, 'msg' => '设置失败，请重试'];
         }
+        $bonus_ratio = BonusSet::where(['level_id' => 5])->find();
+        $baodan_ratio = Db::name('bonus_ext_set')->where(['id' => 1])->value('baodan_ratio');
+        $baodan_ratio = bcdiv($baodan_ratio, 100, 2);
+        $jiangli = bcmul($bonus_ratio['declaration'],$baodan_ratio, 4); //保单f4奖励
+
+        foreach ($ids as $v){
+            //查询用户是否已经是保单中心
+            $baodan_center = Db::name('users')->where(['id' => $v])->value('baodan_center');
+            if($baodan_center == 1){
+                continue;
+            }
+
+            $user_account = UserCurrencyAccount::where(['user_id' => $v])->find();
+            $cash_num = bcadd($user_account['cash_currency_num'], $jiangli, 4); //现金币
+            $corpus = bcadd($user_account['corpus'], $bonus_ratio['declaration'], 4); //本金账户
+            UserCurrencyAccount::where(['user_id' => $v])->update(['cash_currency_num' => $cash_num, 'corpus' => $corpus]);
+            //记录用户f4奖励
+            UserRunningLog::create([
+                'user_id'  =>  $v,
+                'about_id' =>  $v,
+                'running_type'  => UserRunningLog::TYPE21,
+                'account_type'  => 1,
+                'change_num'    => $jiangli,
+                'balance'       => $cash_num,
+                'create_time'   => time(),
+                'remark'        => '报单中心奖励'
+            ]);
+        }
+
         return ['code' => 1, 'msg' => '设置报单中心成功', 'url' => url('index')];
     }
 
     //取消报单中心
     public function cancelBaodan()
     {
+        $ids = input('param.ids');
         $map[] =array('id','IN',input('param.ids/a'));
         $data['baodan_center'] = 0;
+
         $res = db('users')->where($map)->update($data);
         if($res === false){
             return ['code' => 0, 'msg' => '设置失败，请重试'];
         }
+
         return ['code' => 1, 'msg' => '取消报单中心成功', 'url' => url('index')];
     }
 
@@ -359,6 +393,8 @@ class Users extends Common{
             if($data['safeword'] != $data['confirmSafePwd']) return ['code' => 0, 'msg' => '两次输入的安全密码不一致'];
 
             $data['password'] = md5($data['password']);
+            $data['pwd'] = lock_url($data['password']);
+            $data['nickname'] = $data['username'];
             //接入用户和推荐人关系
             $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
             $data['pid'] = $referrr_info['id'];
@@ -379,7 +415,6 @@ class Users extends Common{
             }else{
                 $data['is_report'] = 0;
             }
-            $data['enabled'] = 1;
             $data['create_time'] = date('Y-m-d',time()); //添加时间方便做折线图
             $new_user_id = UsersModel::create($data);
             if ($new_user_id) {
@@ -391,18 +426,22 @@ class Users extends Common{
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
                     $data2['user_son_str'] = 1 . ',';
+                    $data2['deep'] = count(explode(',', $data2['user_son_str']))-1;
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
                     $data3['user_son_str'] = 1 . ',';
+                    $data3['deep'] = count(explode(',', $data2['user_son_str']))-1;
                 }else{
                     $son_str = $user_referee_model->where(['user_id' => $referrr_info['id'] ])->value('user_son_str');
                     $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
                     //接入用户和接点人关系
                     $data2['user_id'] = $new_user_id->id;
                     $data2['user_son_str'] = $son_str. $referrr_info["id"] .',';
+                    $data2['deep'] = count(explode(',', $data2['user_son_str']))-1;
                     //接入用户和推荐人的关系
                     $data3['user_id'] = $new_user_id->id;
                     $data3['user_son_str'] = $son_node_str . $node_info['id'] .',';
+                    $data3['deep'] = count(explode(',', $data2['user_son_str']))-1;
                 }
 
                 UserReferee::create($data2);
@@ -545,6 +584,7 @@ class Users extends Common{
             //根据会员级别做直推奖励
             $save['level'] = $data['level'];
             $save['status'] = 1;
+            $save['enabled'] = 1;
             $save['active_time'] = time();
             if($data['level'] == 1){
                 $bonus_ratio = BonusSet::where(['level_id' => 1])->find();
@@ -557,22 +597,69 @@ class Users extends Common{
                 $bonus_ratio = BonusSet::where(['level_id' => 4])->find();
             }elseif ($data['level'] == 5){
                 $bonus_ratio = BonusSet::where(['level_id' => 5])->find();
+                $baodan_ratio = Db::name('bonus_ext_set')->where(['id' => 1])->value('baodan_ratio');
+                $baodan_ratio = bcdiv($baodan_ratio, 100, 2);
+                $jiangli = bcmul($bonus_ratio['declaration'],$baodan_ratio, 4); //保单f4奖励
                 $save['baodan_center'] = 1; //投资额到1万直接设置为报单中心
             }
             $ratio = bcdiv($bonus_ratio['bonus_ratio'],100,4);
-            $reward = bcmul($bonus_ratio['declaration'], $ratio); //奖励
+            $reward = bcmul($bonus_ratio['declaration'], $ratio); //直推奖励
+
+            //如果推荐的是保单中心，保单中心奖励
+
             //查找用户的推荐人id
             $referee = UsersModel::where(['id' => $data['id']])->value('referee');
             $referee_id = UsersModel::where(['usernum' => $referee])->value('id');
             //查询推荐人钱包信息
             $referee_account = UserCurrencyAccount::where(['user_id' => $referee_id])->find();
             $cash_currency_num = bcadd($referee_account['cash_currency_num'],$reward,4);
+
             Db::startTrans();
+            //更新用户信息
             $res = UsersModel::where(['id' => $data['id']])->update($save);
             if($res !== false){
                $res = UserCurrencyAccount::where(['user_id' => $referee_id])->update(['cash_currency_num' => $cash_currency_num]);
                if($res !== false){
+                   //更新用户本金钱包
+                   if($data['level'] == 5){
+                       $res2 = UserCurrencyAccount::where(['user_id' => $data['id']])->update(['corpus' => $bonus_ratio['declaration'], 'cash_currency_num' => $jiangli]);
+                   }else{
+                       $res2 = UserCurrencyAccount::where(['user_id' => $data['id']])->update(['corpus' => $bonus_ratio['declaration']]);
+                   }
+
+                   if($res2 === false){
+                       Db::rollback();
+                       return ['code' => 0, '激活失败请重试'];
+                   }
+                   if($data['level'] == 5){
+                       //记录用户f4奖励
+                       UserRunningLog::create([
+                           'user_id'  =>  $data['id'],
+                           'about_id' =>  $data['id'],
+                           'running_type'  => UserRunningLog::TYPE21,
+                           'account_type'  => 1,
+                           'change_num'    => $jiangli,
+                           'balance'       => $jiangli,
+                           'create_time'   => time(),
+                           'remark'        => '报单中心奖励'
+                       ]);
+                   }
+
                    Db::commit();
+                   UserReferee::where(['user_id' => $data['id']])->update(['enabled' => 1]);
+                   UserNode::where(['user_id' => $data['id']])->update(['enabled' => 1]);
+
+                   //记录用户激活
+                   UserRunningLog::create([
+                       'user_id'  =>  $data['id'],
+                       'about_id' =>  $data['id'],
+                       'running_type'  => UserRunningLog::TYPE22,
+                       'account_type'  => 5,
+                       'change_num'    => $bonus_ratio['declaration'],
+                       'balance'       => $bonus_ratio['declaration'],
+                       'create_time'   => time()
+                   ]);
+
                    //记录收益日志
                    UserRunningLog::create([
                        'user_id'  =>  $referee_id,

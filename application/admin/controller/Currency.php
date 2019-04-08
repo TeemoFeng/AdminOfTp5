@@ -10,6 +10,7 @@ namespace app\admin\controller;
 
 use app\admin\model\CurrencyList;
 use app\user\model\UserCurrencyList;
+use app\user\model\UserRunningLog;
 use think\db\Where;
 use think\facade\Request;
 
@@ -110,7 +111,7 @@ class Currency extends Common{
                 ->toArray();
             foreach ($list['data'] as $k=>$v){
                 $list['data'][$k]['status'] = UserCurrencyList::$status[$v['status']];
-                $list['data'][$k]['username'] = $v['usernum'].$v['username'];
+                $list['data'][$k]['username'] = $v['usernum']. '【' .$v['username'] .'】';
             }
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
 
@@ -136,9 +137,55 @@ class Currency extends Common{
         return $where;
     }
 
-    //币种流水记录
+    //币种流水记录[币种转换记录]
     public function currencyRunLog()
     {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['currency_id'])){
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+            $where = $this->searchWhere2($data);
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+            $list = db('currency_running_log')
+                ->alias('a')
+                ->join(config('database.prefix').'users b','a.user_id = b.id','left')
+                ->join(config('database.prefix').'users c','a.about_id = c.id','left')
+                ->join(config('database.prefix').'currency_list d','a.currency_to = d.id','left')
+                ->field('a.*,b.usernum formnum,b.username formname,b.mobile,c.usernum aboutnum, c.username aboutname,d.en_name')
+                ->where($where)
+                ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                ->toArray();
+            foreach ($list['data'] as $k=>$v){
+                $list['data'][$k]['running_str'] = UserRunningLog::$running_type[$v['running_type']];
+                $list['data'][$k]['fromuser'] = $v['formnum']. '【' .$v['formname'] .'】';
+                $list['data'][$k]['aboutuser'] = $v['aboutnum']. '【' .$v['aboutname'] .'】';
+                $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+
+            }
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+        }
+
+        //获取币种列表
+        $currency_list = db('currency_list')->select();
+        $this->assign('currency_list', $currency_list);
+        return $this->fetch('currencyRunLog');
         
+    }
+
+    public function searchWhere2($data)
+    {
+        $where = new Where();
+        if(!empty($data['currency_id'])){
+            $where['a.currency_to'] = $data['currency_id'];
+        }
+        if(!empty($data['key'])){
+            if(!empty($data['key'])){
+                $where['b.id|b.email|b.mobile|b.username'] = array('like', '%' . $data['key'] . '%');
+            }
+        }
+        return $where;
     }
 }

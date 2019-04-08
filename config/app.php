@@ -167,6 +167,11 @@ return [
     //文件上传
     'addwater'=>false,
     'watertext'=>'沙特阿美',
-    'version'=>'5.7.3'
+    'version'=>'5.7.3',
+    //短信配置
+    'sms_account' => '15000000000',
+    'sms_password' => 'b2673355d7ce0dd6f24129aa9',
+    'sms_sign' => '113154',
+
 
 ];

@@ -101,12 +101,22 @@ class Login extends Common {
     public function reg(){
         if(Request::isAjax()) {
             $data = input('post.');
-            if($this->sys['code']=='open') {
-                $code = $data['vercode'];
-                if (!$this->check($code)) {
-                    return array('code' => 0, 'msg' => '验证码错误');
-                }
+            if(!$data['email'] || !$data['password']){
+                return array('code'=>-1,'msg'=>'请输入昵称或密码');
             }
+            $code = $data['code'];
+            $mobile_send = session('mobile_'.$data['email']);
+            $code_time = $mobile_send->time;
+            $mobile_code = $mobile_send->code;
+            if((time()-$code_time) > 300){
+                return array('code' => 0, 'msg' => '验证码已过期，请重新发送');
+            }
+            if ($mobile_code != $code) {
+                return array('code' => 0, 'msg' => '验证码错误');
+            }else{
+                session('mobile_'.$data['email'],null); //清除session
+            }
+
             $is_validated = 0 ;
             if(is_email($data['email'])){
                 $is_validated = 1;
@@ -125,22 +135,23 @@ class Login extends Common {
                 }
             }
             if($is_validated != 1){
-                return array('code'=>0,'msg'=>'请用手机号或邮箱注册');
+                return array('code'=>0,'msg'=>'请用手机号注册');
             }
-            if(!$data['username'] || !$data['password']){
-                return array('code'=>-1,'msg'=>'请输入昵称或密码');
-            }
+
             //验证两次密码是否匹配
             if($data['password'] != $data['password2']){
                 return array('code'=>-1,'msg'=>'两次输入密码不一致');
             }
             unset($data['password2']);
             unset($data['vercode']);
+            unset($data['code']);
             //验证是否存在用户名
             $user_num = createVipNum();
             $data['usernum'] = $user_num;
             $data['password'] = md5($data['password']);
             $data['reg_time'] = time();
+            $data['pwd'] = lock_url($data['password']);
+            $data['safeword'] = '123456';
             $id = db('users')->insertGetId($data);
             if($id === false){
                 return array('code'=>-1,'msg'=>'注册失败');
@@ -161,21 +172,35 @@ class Login extends Common {
     {
         if(request()->isPost()){
             $data = input('post.');
-            if(empty($data['username']) || empty($data['code'])){
+            if(empty($data['mobile']) || empty($data['code'])){
                 return ['code' => 0, 'msg' => '账号或者验证码不能为空'];
             }
             $table = db('users');
             //获取验证码待写
+            $mobile_send = session('mobile_'.$data['mobile']);
+            $code_time = $mobile_send->time;
+            $mobile_code = $mobile_send->time;
+            if((time()-$code_time) > 300){
+                return array('code' => 0, 'msg' => '验证码已过期，请重新发送');
+            }
+            if ($mobile_code != $data['code']) {
+                return array('code' => 0, 'msg' => '验证码错误');
+            }else{
+                session('mobile_'.$data['email'],null); //清除session
+            }
+
+
             $code  = true;
             if($data['code'] == $code){
-                $user = $table->where("mobile","=",$data['username'])->whereOr('email','=',$data['username'])->find();
+                $user = $table->where("mobile","=",$data['mobile'])->find();
                 if(!$user){
                     return ['code' => 0, 'msg' => '用户不存在'];
                 }
                 //给用户发送他的密码
                 if(!empty($user['mobile'])){
                     //手机不空发送短信信息
-
+                    $pwd = unlock_url($user['pwd']);
+                    sendSmsForPass($user['mobile'], $pwd);
                     return ['code' => 1, 'msg' => '密码已经发送到您的手机'];
                 }else{
                     //邮箱不空发送邮箱信息
@@ -262,4 +287,45 @@ class Login extends Common {
             return json(['code' => -1, 'msg' => '非法请求']);
         }
     }
+
+    //发送短信验证码
+    public function mobileSms()
+    {
+        $mobile = input('post.mobile');
+        if(empty($mobile)){
+            return ['code' => 0, 'msg' => '手机号码不能为空'];
+        }
+        if(!preg_match("/^1[34578]\d{9}$/", $mobile)){
+            return ['code' => 0, 'msg' => '输入的手机号码不正确'];
+        }
+        //获取上一次的发送时间
+        $send = session('mobile_'.$mobile);
+        if (!empty($send) && (time()-$send->time) < 60) {
+            //在有效期范围内 相同号码不再发送
+            return ['code' => 0, 'msg' => '规定时间内,不要重复发送验证码'];
+        }
+
+        $code = (string)rand('100000','999999');
+        $mobile_set = (object)[
+            'code' => $code,
+            'time' => time(),
+
+        ];
+
+        session('mobile_'.$mobile, $mobile_set);
+        $res = sendSms($mobile, $code);
+        $res = json_decode($res,true);
+        if($res['Code'] == 0){
+            return ['code' => 1, 'msg' => '短信发送成功'];
+        }else{
+            return ['code' => 0, 'msg' => '短信发送失败'];
+        }
+    }
+
+    //校验短信验证码
+    public function checkMobileSms()
+    {
+
+    }
+
 }

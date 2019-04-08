@@ -25,7 +25,7 @@ class UserTradeDepute extends Model
     const STATUS2 = 2;
     const STATUS3 = 3;
     const STATUS4 = 4;
-    const STATUS5 = 4;
+    const STATUS5 = 5;
     public static $status = [
           self::STATUS1 => '未成交',
           self::STATUS2 => '部分成交',

@@ -29,6 +29,11 @@
 
 </script>
 
+<script type="text/html" id="action">
+    <a href="#" data-id="{{d.id}}" data-centent="{{d.remark}}" class="layui-btn layui-btn-xs" id="beizhu">查看备注</a>
+
+</script>
+
 {include file="common/foot"/}
 <script>
     layui.use(['table','form','laydate'], function() {
@@ -54,6 +59,7 @@
                 {field: 'create_time', title: '创建时间', width: 100},
                 {field: 'grant_time', title: '发放时间', width: 100},
                 {field: 'remark', title: '备注', width: 100},
+                {title:'操作', width: 100, align: 'center', toolbar: '#action'}
             ]],
             limit: 10 //每页默认显示的数量
         });
@@ -65,6 +71,19 @@
             var key = $('#key').val();
             tableIn.reload({page: {page: 1},where: {key:key,start_time: start_time,end_time:end_time}});
         });
+
+        //查看备注
+        $('body').on('click','#beizhu',function () {
+            var id = $(this).attr('data-id');
+            var content = $(this).attr('data-centent');
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['420px', '240px'], //宽高
+                content: '备注：'+content
+            });
+        });
+
         // 执行一个laydate实例
         laydate.render({
             elem: '#start_time' //指定元素

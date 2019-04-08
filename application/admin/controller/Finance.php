@@ -14,6 +14,7 @@ use app\admin\model\UserApplyConsumeCash;
 use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
 use app\user\model\UserApplyShateCash;
+use app\user\model\UserDynamicAmeiBonus;
 use app\user\model\UserRunningLog;
 use think\Db;
 use think\db\Where;
@@ -53,16 +54,20 @@ class Finance extends Common
     {
         $where = new Where();
         if(!empty($data['start_time']) && empty($data['end_time'])){
-            $where['a.create_time'] = array('egt', $data['start_time']);
+            $start_time = $data['start_time'] . ' 23:59:59';
+            $where['a.create_time'] = array('egt', $start_time);
         }
         if(!empty($data['end_time']) && empty($data['start_time'])){
-            $where['a.create_time'] = array('elt',$data['end_time']);
+            $end_time = $data['end_time'] . ' 23:59:59';
+            $where['a.create_time'] = array('elt', $end_time);
         }
         if(!empty($data['start_time']) && !empty($data['end_time'])){
-            $where['a.create_time'] = array('between time', array($data['start_time'], $data['end_time']));
+            $start_time = $data['start_time'] . ' 00:00:00';
+            $end_time = $data['end_time'] . ' 23:59:59';
+            $where['a.create_time'] = array('between time', array($start_time, $end_time));
         }
         if(!empty($data['key'])){
-            $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
+            $where['u.id|u.usernum|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
         }
         return $where;
     }
@@ -419,6 +424,7 @@ class Finance extends Common
             $where  = $this->makeSearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+
             if($data['type'] == 1){
                 //沙特链申请列表
                 $list = db('user_apply_shate_cash')

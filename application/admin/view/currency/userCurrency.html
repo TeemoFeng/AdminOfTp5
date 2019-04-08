@@ -12,21 +12,25 @@
                 {/foreach}
             </ul>
         </ul>
+
+        <div class="layui-inline layui-form" style="padding-top: 20px;">
+
+            <div class="layui-inline">
+                <input class="layui-input" name="key" id="key" placeholder="请输入关键字">
+
+            </div>
+            <button class="layui-btn" id="search"  value=""  data-type="reload">搜索</button>
+        </div>
+
+
         <div class="layui-tab-content" style="height: 100px;">
-            {foreach $currency_list as $k => $v }
-                {if condition="$k eq '0'"}
+            {foreach $currency_list as $key => $v }
+                {if condition="$key eq '0'"}
                 <div class="layui-tab-item layui-show">
                 {else /}
                 <div class="layui-tab-item">
                 {/if}
-                    <div class="demoTable layui-form">
-                        <div class="layui-inline">
-                            <input class="layui-input" name="key{$key}" id="key{$key}" placeholder="请输入关键字">
-
-                        </div>
-                        <button class="layui-btn" id="search{$v['id']}"  data-type="reload">搜索</button>
-                        <input type="hidden" id="currency_id{$key}" value="{$v['id']}">
-                    </div>
+                    <input type="hidden" id="currency_id{$key}" value="{$v['id']}">
                     <table class="layui-table" id="table{$key}" lay-filter="table{$key}"></table>
                 </div>
                 {/foreach}
@@ -50,10 +54,13 @@
 <script>
     layui.use(['table','form','laydate','element'], function() {
         var table = layui.table,form = layui.form, $ = layui.jquery, laydate = layui.laydate, element = layui.element;
-
+        var cur_id;
+        var type1;
         var show_table = function(_type){
             //获取对应表的币种id
             var currency_id = $("#currency_id"+_type).val();
+            type1 = _type;
+            cur_id = currency_id;
             table.render({
                 id: 'table'+_type,
                 elem: '#table'+_type,
@@ -79,53 +86,16 @@
 
 
         //搜索
-        $('#search1').on('click', function() {
-            var key = $('#key1').val();
-            var start_time = $('#start_time1').val();
-            var end_time = $('#end_time1').val();
-            var running_type = $('#status1').val();
-            // if($.trim(key)==='') {
-            //     layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
-            //     return;
-            // }
-            table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1}})
+        $('#search').on('click', function() {
+            var key = $('#key').val();
+
+            if($.trim(key)==='') {
+                layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
+                return;
+            }
+            table.reload('table'+type1,{ page: {page: 1},where: {key: key,currency_id:cur_id}})
         });
 
-        //搜索2
-        $('#search2').on('click', function() {
-            var key = $('#key2').val();
-            var start_time = $('#start_time2').val();
-            var end_time = $('#end_time2').val();
-            var running_type = $('#status2').val();
-            table.reload('table2',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:2}})
-        });
-
-        //搜索3
-        $('#search3').on('click', function() {
-            var key = $('#key3').val();
-            var start_time = $('#start_time3').val();
-            var end_time = $('#end_time3').val();
-            var running_type = $('#status3').val();
-            table.reload('table3',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:3}})
-        });
-
-        //搜索4
-        $('#search4').on('click', function() {
-            var key = $('#key4').val();
-            var start_time = $('#start_time4').val();
-            var end_time = $('#end_time4').val();
-            var running_type = $('#status4').val();
-            table.reload('table4',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:4}})
-        });
-
-        //搜索5
-        $('#search5').on('click', function() {
-            var key = $('#key5').val();
-            var start_time = $('#start_time5').val();
-            var end_time = $('#end_time5').val();
-            var running_type = $('#status5').val();
-            table.reload('table5',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:5}})
-        });
 
         show_table(0);
 

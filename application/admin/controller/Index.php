@@ -98,8 +98,8 @@ class Index extends Common
 
         //数量显示数组
         $now_date = date('Y-m-d');
-        $today_add_user = $user_model->where(['create_time' => $now_date, 'status' => 1])->count(); //获取今天注册有效会员
-        $today_noval_user = $user_model->where(['create_time' => $now_date, 'status' => 0])->count(); //获取今天注册无效会员
+        $today_add_user = $user_model->where(['create_time' => $now_date, 'enabled' => 1])->count(); //获取今天注册有效会员
+        $today_noval_user = $user_model->where(['create_time' => $now_date, 'enabled' => 0])->count(); //获取今天注册无效会员
         $lock_user = $user_model->where(['is_lock' => 1])->count(); //获取今天冻结会员
         $touzi = db('user_currency_account')
             ->field('sum(corpus) corpus,sum(cash_input_num) cash_input_num')

@@ -108,7 +108,7 @@ class Messages extends Common
             Db::name('user_message')->where(['id' => $id])->update(['is_read' => 1]);
 
         }
-        
+
 
         $mes_list = db('user_message_reply')
             ->where(['message_id' => $id])
