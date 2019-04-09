@@ -727,7 +727,7 @@ function createVipNum()
 }
 
 
-
+//找回密码发送短信
 function sendSmsForPass($mobile, $info){
     $data['Account'] = config('sms_account');
     $data['Pwd'] 	 = config('sms_password');
@@ -740,11 +740,24 @@ function sendSmsForPass($mobile, $info){
     return $res;
 }
 
-
+//发送验证码
 function sendSms($mobile, $code){
     $data['Account'] = config('sms_account');
     $data['Pwd'] 	 = config('sms_password');
     $data['Content'] = '您好：您申请的业务验证码为:'.$code.' ,请勿泄漏';
+    $data['Mobile']	 = $mobile;
+    $data['SignId']	 = config('sms_sign');
+    $url="http://api.feige.ee/SmsService/Send";
+
+    $res=post($url,$data);
+    return $res;
+}
+
+//撮合成功发送信息
+function sendOrderSms($mobile,$content){
+    $data['Account'] = config('sms_account');
+    $data['Pwd'] 	 = config('sms_password');
+    $data['Content'] = $content;
     $data['Mobile']	 = $mobile;
     $data['SignId']	 = config('sms_sign');
     $url="http://api.feige.ee/SmsService/Send";
@@ -868,12 +881,17 @@ function is_idcard( $id )
         }
     }
 
-//创建订单号
-function createOrderNum()
-{
-   $num1 =  rand(100000,999999);
-   $num2 =  rand(100000,999999);
-   return 'JF'.$num1.$num2;
-}
+    //创建订单号
+    function createOrderNum()
+    {
+       $num1 =  rand(100000,999999);
+       $num2 =  rand(100000,999999);
+       return 'JF'.$num1.$num2;
+    }
+
+
+
+
+
 
 }

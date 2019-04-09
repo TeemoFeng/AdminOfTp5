@@ -318,7 +318,6 @@ class User extends Common
             $trade_list[$k]['time'] = date('m-d H:i', $v['crate_time']);
             $trade_list[$k]['type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']] ;
         }
-
         $this->assign('user_info', $user_info);
         $this->assign('amei_info', $amei_info);
         $this->assign('user_account', $user_account);
@@ -547,11 +546,11 @@ class User extends Common
         $trade_type = UserTradeDeputeLog::$trade_type;
         $table = new UserTradeDeputeLog();
         //默认查询用户购买的订单
-        $order_list = $table->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->select();
+        $order_list = $table->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->order('id DESC')->select();
 
         foreach ($order_list as $k => $v){
-            $order_list[$k]['trade_status_str'] = UserTradeDepute::$status[$v['trade_status']];
-            $order_list[$k]['trade_type_str'] = UserTradeDepute::$trade_type[$v['trade_type']];
+            $order_list[$k]['trade_status_str'] = UserTradeDeputeLog::$trade_status[$v['trade_status']];
+            $order_list[$k]['trade_type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']];
             //获取交易对象
             $about_user = Users::where(['id' => $v['about_id']])->value('username');
             $order_list[$k]['about_user'] = $about_user;
@@ -570,7 +569,7 @@ class User extends Common
         $user_info = session('user');
         $trade_count = Db::name('user_trade_depute')->where(['user_id' => $user_info['id'], 'status' => ['in', '2,3']])->count();
         $order_info = Db::name('user_trade_depute_log')->where(['id' => $id])->find();  //订单详情
-        $order_info['trade_status_str'] = UserTradeDepute::$status[$order_info['trade_status']];
+        $order_info['trade_status_str'] = UserTradeDeputeLog::$trade_status[$order_info['trade_status']];
         $order_info['create_time'] = date('Y-m-d H:i:s', $order_info['create_time']);
         //获取卖家信息
         $sell_info = Db::name('users')->where(['id' => $order_info['about_id']])->find();
@@ -641,6 +640,14 @@ class User extends Common
             return ['code' => 0, 'msg' => '非法请求'];
         }
     }
+
+    //卖家确认收款
+    public function sureOrder()
+    {
+
+    }
+
+
 
 
 }

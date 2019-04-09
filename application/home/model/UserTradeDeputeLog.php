@@ -17,4 +17,16 @@ class UserTradeDeputeLog extends Model
         self::TYPE1 => '买入',
         self::TYPE2 => '卖出',
     ];
+
+    const STATUS1 = 1;
+    const STATUS2 = 2;
+    const STATUS3 = 3;
+    const STATUS4 = 4;
+    public static $trade_status = [
+        self::STATUS1 => '待付款',
+        self::STATUS2 => '确认付款',
+        self::STATUS3 => '完全成交',
+        self::STATUS4 => '取消',
+
+    ];
 }

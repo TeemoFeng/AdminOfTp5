@@ -207,7 +207,7 @@ class StaticBourse {
         //添加ambei动态表
         UserDynamicAmeiBonus::create($data);
 
-
+        //添加用户货币列表冻结数量
         $freeze_num = UserCurrencyList::where(['user_id' => $uid,'currency_id' => $currency_id])->find();
         if(empty($freeze_num)) {
             $user_currency = [
@@ -257,12 +257,39 @@ class StaticBourse {
 
     }
 
-    //发送动态奖
+    //发放动态奖
     public function grantToUserCurrencyList()
     {
+        set_time_limit(0);
+        //获取阿美币的id
+        $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
+        $today = date('Y-m-d', time());
+        $user_count = db('user_dynamic_amei_bonus')->where(['grant_time' => $today,'status' => 1])->count();
+        $page_size = 500;
+        $page = ceil($user_count/$page_size);
+
+        for($i = 0, $i < $page; $i++;){
+
+            $grant_list = db('user_dynamic_amei_bonus')
+                ->where(['grant_time' => $today,'status' => 1])
+                ->limit($i*$page_size,500)
+                ->select();
+            foreach ($grant_list as $k => $v){
+                $user_amei_account =  UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();
+                $amei_num = bcsub($user_amei_account['freeze_num'], $v['ameibi_num'],4); //冻结数减去今天发放数量
+                $amei_all = bcadd($user_amei_account['num'], $v['ameibi_num'], 4); //用户可用数量
+                //更新用户币种列表
+                UserCurrencyList::where(['id' => $user_amei_account['id']])->update(['num' => $amei_all, 'freeze_num' => $amei_num]);
+                //更新动态表状态
+                UserDynamicAmeiBonus::where(['id' => $v['id']])->update(['status' => 2]); //更新为已发放
+
+            }
+
+        }
 
     }
 
+    //自动创建公司拨比表
 
     //自动撮合交易
     public function autoTrade()
@@ -335,7 +362,14 @@ class StaticBourse {
                     //锁定托管记录
                     Db::name('user_trade_depute')->where(['id' => $vv['id']])->update(['lock' => 1]);
                     Db::name('user_trade_depute')->where(['id' => $v['id']])->update(['lock' => 1]);
-                    //给买家和
+
+                    //给买家和卖家发短信通知
+                    $buy_mobile = Db::name('users')->where(['id' => $v['user_id']])->value('mobile');
+                    $sell_mobile = Db::name('users')->where(['id' => $vv['user_id']])->value('mobile');
+                    $content = '您委托购买的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’为卖家打款，我们会在第一时间为您释放货币';
+                    $content2 = '您委托卖出的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’等待买家付款之后，确认收款完成交易';
+                    sendOrderSms($buy_mobile, $content); //给买家发送细腻
+                    sendOrderSms($sell_mobile, $content2); //给买家发送细腻
 
 
                 }

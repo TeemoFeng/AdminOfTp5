@@ -253,6 +253,7 @@
 
                         走势图
                     </div>
+
                 </div>
             </div>
         </div>
@@ -292,7 +293,7 @@
                                      class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
                                         data-v-ed42075c="" class="hc-color1">卖{$v['num2']}</span></div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">{$v['price']}
+                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr" name="price">{$v['price']}
                                 </div>
                                 <div data-v-ed42075c=""
                                      class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">
@@ -313,7 +314,7 @@
                                      class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span
                                         data-v-ed42075c="" class="hc-color2">买{$v['num2']}</span></div>
                                 <div data-v-ed42075c=""
-                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">{$v['price']}
+                                     class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr" name="price">{$v['price']}
                                 </div>
                                 <div data-v-ed42075c=""
                                      class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">{$v['num']}
@@ -1056,7 +1057,7 @@
                     $.each(data.sell, function (i, v) {
                             html1 += '<div data-v-ed42075c="" class="latestPrice-table-div">';
                             html1 +='<div data-v-ed42075c="" class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span data-v-ed42075c="" class="hc-color1">卖 '+ v.num2 +'</span></div>';
-                            html1 += '<div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">'+ v.price +' </div>';
+                            html1 += '<div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr" name="price">'+ v.price +' </div>';
                            html1 += '<div data-v-ed42075c="" class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">'+ v.num +'</div>';
                             html1 += '<div data-v-ed42075c="" class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">'+ v.account +'</div>';
                             html1 += '<b data-v-ed42075c="" class="latestPrice-table-div-b1" style="width: 50%;"></b></div>';
@@ -1066,7 +1067,7 @@
                     $.each(data.buy,function(i, v){
                         html2 += '<div data-v-ed42075c="" class="latestPrice-table-div">';
                         html2 +='<div data-v-ed42075c="" class="latestPrice-table-td1 latestPrice-table-td latestPrice-tr"><span data-v-ed42075c="" class="hc-color2">买 '+ v.num2 +'</span></div>';
-                        html2 += '<div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr">'+ v.price +' </div>';
+                        html2 += '<div data-v-ed42075c="" class="latestPrice-table-td2 latestPrice-table-td latestPrice-tr" name="price">'+ v.price +' </div>';
                         html2 += '<div data-v-ed42075c="" class="latestPrice-table-td3 latestPrice-table-td latestPrice-tr">'+ v.num +'</div>';
                         html2 += '<div data-v-ed42075c="" class="latestPrice-table-td4 latestPrice-table-td latestPrice-tr">'+ v.account +'</div>';
                         html2 += '<b data-v-ed42075c="" class="latestPrice-table-div-b2" style="width: 50%;"></b></div>';
@@ -1131,6 +1132,15 @@
 
         });
 
+        //点击币种切换信息
+        $('body').on('click','.latestPrice-table-div',function() {
+           var coin_price = $(this).find("[name='price']").html();
+            coin_price = parseFloat(coin_price).toFixed(4);
+            $('#buy_amb').val(coin_price);
+            $('#input_sell').val(coin_price);
+
+
+        });
 
         //买入
         var user_trade_num = {$user_account['transaction_num']}; //用户可交易余额
