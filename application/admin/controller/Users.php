@@ -24,7 +24,8 @@ class Users extends Common{
             $list=db('users')->alias('u')
                 ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
                 ->join(config('database.prefix').'user_currency_account c','c.user_id = u.id','left')
-                ->field('u.*,ul.level_name,c.cash_currency_num,c.cash_input_num,c.corpus,c.activation_num,c.consume_num,c.transaction_num')
+                ->join(config('database.prefix').'bonus_set d','ul.level_id = d.level_id','left')
+                ->field('u.*,ul.level_name,c.cash_currency_num,c.cash_input_num,c.corpus,c.activation_num,c.consume_num,c.transaction_num,c.rate,d.declaration')
                 ->where($where)
                 ->order('u.id desc')
                 ->paginate(array('list_rows'=>$pageSize,'page'=>$page))
@@ -55,6 +56,7 @@ class Users extends Common{
     public function makeSearch($data)
     {
         $where = new Where();
+        $where['u.status'] = 1;
         if(!empty($data['status'])){
             if($data['status'] == 1){
                 $where['u.enabled'] = 0; //无效会员
@@ -70,16 +72,16 @@ class Users extends Common{
             }
         }
         if(!empty($data['start_time']) && empty($data['end_time'])){
-            $start_time = strtotime($data['start_time']);
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
             $where['u.reg_time'] = array('egt', $start_time);
         }
         if(!empty($data['end_time']) && empty($data['start_time'])){
-            $end_time = strtotime($data['end_time']);
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
             $where['u.reg_time'] = array('elt',$end_time);
         }
         if(!empty($data['start_time']) && !empty($data['end_time'])){
-            $start_time = strtotime($data['start_time']);
-            $end_time = strtotime($data['end_time']);
+            $start_time = strtotime($data['start_time']. ' 00:00:00');
+            $end_time = strtotime($data['end_time']. ' 23:59:59');
             $where['u.reg_time'] = array('between time', array($start_time, $end_time));
         }
         if(!empty($data['key'])){
@@ -302,8 +304,12 @@ class Users extends Common{
     /***********************************会员组***********************************/
     public function userGroup(){
         if(request()->isPost()){
-            $userLevel=db('user_level');
-            $list=$userLevel->order('sort')->select();
+            $list = db('user_level')
+                ->alias('a')
+                ->join(config('database.prefix').'bonus_set b','a.level_id = b.level_id','left')
+                ->order('a.sort')
+                ->select();
+
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list,'rel'=>1];
         }
         return $this->fetch();
@@ -324,15 +330,22 @@ class Users extends Common{
     }
     public function groupEdit(){
         if(request()->isPost()) {
-            $data = input('post.');
+            $data2 = $data = input('post.');
+            unset($data['declaration']);
             db('user_level')->update($data);
+            db('bonus_set')->where(['level_id' => $data2['level_id']])->update(['declaration' => $data2['declaration']]);
+
             $result['msg'] = '会员组修改成功!';
             $result['url'] = url('userGroup');
             $result['code'] = 1;
             return $result;
         }else{
-            $map['level_id'] = input('param.level_id');
-            $info = db('user_level')->where($map)->find();
+            $map['a.level_id'] = input('param.level_id');
+            $info = db('user_level')
+                ->alias('a')
+                ->where($map)
+                ->join(config('database.prefix').'bonus_set b','a.level_id = b.level_id','left')
+                ->find();
             $this->assign('title',lang('edit')."会员组");
             $this->assign('info',json_encode($info,true));
             return $this->fetch('groupForm');
@@ -729,7 +742,7 @@ class Users extends Common{
 
         }
 
-        return $this->fetch('UserTree');
+        return $this->fetch('userTree');
     }
 
     //会员概况图示

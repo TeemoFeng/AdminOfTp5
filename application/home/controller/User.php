@@ -603,13 +603,29 @@ class User extends Common
         if(request()->isPost()) {
             $id = input('post.id');
             $order_num = input('post.order_num');
+            $user_id = session('user.id');
+            //记录用户当天取消次数
+            $cancel_log = Db::name('user_cancel_order_log')->where(['user_id' => $user_id, 'time' => date('Y-m-d', time())])->find();
+            if(empty($cancel_log)){
+                $data = [
+                    'user_id' => $user_id,
+                    'num'     => 1,
+                    'time'    => date('Y-m-d', time())
+                ];
+                Db::name('user_cancel_order_log')->insert($data);
+            }else{
+                Db::table('user_cancel_order_log')
+                    ->where('id', $cancel_log['id'])
+                    ->setInc('num');
+            }
 
             //跟新订单状态
             Db::startTrans();
             $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['status' => 4]); //取消
             if($res !== false){
                 $depute_ids = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->column('trade_depute_id');
-                $res2 = Db::name('user_trade_depute')->where(['id' => ['in', $depute_ids]])->update(['lock' => 0]);
+                $res2 = Db::name('user_trade_depute')->where(['id' => ['in', $depute_ids]])->update(['lock' => 0]); //取消锁定
+
                 if($res2 != false){
                     Db::commit();
                     return ['code' => 1, 'msg' => '取消成功'];

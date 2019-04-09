@@ -4,8 +4,8 @@
         <legend>会员组{:lang('list')}</legend>
     </fieldset>
     <blockquote class="layui-elem-quote">
-        <a href="{:url('groupAdd')}" class="layui-btn layui-btn-sm">
-            {:lang('add')}会员组
+        <a href="#">
+            会员组
         </a>
     </blockquote>
     <table class="layui-table" id="list" lay-filter="list"></table>
@@ -19,7 +19,7 @@
 </script>
 <script type="text/html" id="action">
     <a href="{:url('groupEdit')}?level_id={{d.level_id}}" class="layui-btn layui-btn-xs">{:lang('edit')}</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">{:lang('del')}</a>
+    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">{:lang('del')}</a>-->
 </script>
 <script>
     layui.use('table', function() {
@@ -32,7 +32,7 @@
             cols: [[
                 {field: 'level_id', title: '{:lang("id")}', width: 80, fixed: true, sort: true},
                 {field: 'level_name', title: '名称', width: 120},
-                {field: 'bomlimit', title: '满足积分条件', width: 150,templet:'#bom'},
+                {field: 'declaration', title: '报单额', width: 150},
                 {field: 'sort',align: 'center',title: '{:lang("order")}', width: 120,templet:'#sort',sort: true},
                 {width: 160, align: 'center', toolbar: '#action'}
             ]]

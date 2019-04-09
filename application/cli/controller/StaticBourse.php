@@ -278,13 +278,18 @@ class StaticBourse {
         //2.查询用户 卖币列表
         $where2 = new Where();
         $where2['depute_status'] = 1; //正在委托
-        $where2['depute_type'] = 2; //买入
+        $where2['depute_type'] = 2; //卖出
         $where2['status'] = ['in', '1,2']; //未完成成交的
         $where2['lock'] = 0;
         $sell_list = UserTradeDepute::where($where2)->select();
 
         //3.碰撞产生交易
         foreach ($buy_list as $k => $v){
+            //买家当天
+            $cancel_num = Db::name('user_cancel_order_log')->where(['user_id' => $v['id'], 'time' => date('Y-m-d', time())])->value('num');
+            if($cancel_num >= 3){
+                continue;
+            }
             foreach ($sell_list as $kk => $vv){
                 //如果买入价格高于卖价且卖家数量大于等于买家要购买的数量
                 $sell_count = bcsub($vv['num'], $vv['have_trade'], 4);
@@ -330,6 +335,7 @@ class StaticBourse {
                     //锁定托管记录
                     Db::name('user_trade_depute')->where(['id' => $vv['id']])->update(['lock' => 1]);
                     Db::name('user_trade_depute')->where(['id' => $v['id']])->update(['lock' => 1]);
+                    //给买家和
 
 
                 }
