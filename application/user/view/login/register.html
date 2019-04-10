@@ -7,6 +7,9 @@
     <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
     <link rel="stylesheet" href="/static/home/css/style.css">
     <link rel="stylesheet" href="/static/home/layui/css/layui.css">
+	<style type="text/css">
+		.hc-color4 button{color: #8488f5;background: transparent;border: none;}
+	</style>
 </head>
 <body>
 <div style="width: 100%; margin: 0px auto; min-height: 500px;">
@@ -99,7 +102,7 @@
                             <div data-v-c9fe8806="" style="width: 50%;">
                                 <input data-v-c9fe8806="" type="text" placeholder="验证码"  lay-verify="require|validateCode" name="code" class="login-input" style="padding-left: 20px">
                             </div>
-                            <div data-v-c9fe8806="" class="hc-color4 login-div6"><span data-v-f7be4836="" class="numbtn">获取验证码</span></div>
+                            <div data-v-c9fe8806="" class="hc-color4 login-div6"><button type="button" data-v-f7be4836="" class="numbtn">获取验证码</button></div>
                         </div>
                         <div data-v-30b93510="">
                             <div data-v-30b93510="" class="login-div6 hc-color3">
@@ -269,7 +272,9 @@
         });
         settime(obj);
     })
+	
     function settime(obj) { //发送验证码倒计时
+		
         if (countdown == 0) {
             obj.attr('disabled', false);
             //obj.removeattr("disabled");
@@ -277,6 +282,7 @@
             countdown = 60;
             return;
         } else {
+			
             obj.attr('disabled', true);
             obj.html("重新发送(" + countdown + ")");
             countdown--;

@@ -7,6 +7,11 @@
     <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
     <link rel="stylesheet" href="/static/home/css/style.css">
     <link rel="stylesheet" href="/static/home/layui/css/layui.css">
+	<style type="text/css">
+		.captcha{float: right;width: 135px;margin-top: -15px;margin-right: 0;}
+		.captcha img{width: 100%;}
+		.login-logbtn[data-v-c9fe8806]{margin-right: 0;}
+	</style>
 </head>
 <body>
 <div>
@@ -57,7 +62,7 @@
                                 <img src="{:url('verify')}" alt="captcha" onclick="this.src='{:url("verify")}?'+'id='+Math.random()"/>
                             </div>
 							
-                            <div data-v-c9fe8806="">
+                            <div data-v-c9fe8806="" style="width: 100%;">
                                 <div data-v-c9fe8806="" class=" hc-color3" style="display: inline-block; margin-top: 70px;">
                                     <input data-v-c9fe8806="" type="checkbox"> 记住账户名
                                 </div>
