@@ -33,14 +33,11 @@ class User extends Common
 
     public function userHome()
     {
-        //用户信息
-        $user_info = session('user');
         //交易记录
 
         //上架记录
 
         //
-        $this->assign('user_info', $user_info);
         return $this->fetch('userHome');
     }
 
@@ -155,7 +152,6 @@ class User extends Common
         //获取用户最近10次提现记录
         $user_cash_list = UserApplyTradeCash::where(['user_id' => $user_info['id']])->limit(10)->select();
         $status = ApplyCash::$status;
-        $this->assign('user_info', $user_info);
         $this->assign('cash_method', $cash_method);
         $this->assign('bank_list', $bank);
         $this->assign('bonus_set', $bonus_set);

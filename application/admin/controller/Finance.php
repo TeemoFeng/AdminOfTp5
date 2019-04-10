@@ -164,7 +164,7 @@ class Finance extends Common
                 ->alias('a')
                 ->join(config('database.prefix').'users u','a.user_id = u.id','left')
                 ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
-                ->field('a.*,u.username,ab.username about_user')
+                ->field('a.*,u.username,u. usernum,ab.username about_user,ab.usernum aboutnum')
                 ->where($where)
                 ->order('id DESC')
                 ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
@@ -174,6 +174,8 @@ class Finance extends Common
             foreach ($list['data'] as $k=>$v){
                 $list['data'][$k]['create_time'] = date('Y-m-d',$v['create_time']);
                 $list['data'][$k]['running_type'] = $running_type[$v['running_type']];
+                $list['data'][$k]['username'] = $v['usernum'] . '【' . $v['username'] . '】';
+                $list['data'][$k]['about_user'] = $v['aboutnum'] . '【' . $v['about_user'] . '】';
 
             }
 
