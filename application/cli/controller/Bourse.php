@@ -15,10 +15,11 @@ use app\user\model\UserCurrencyList;
 use app\user\model\UserDynamicAmeiBonus;
 use app\user\model\UserExceotGrant;
 use app\user\model\UserRunningLog;
+use think\Controller;
 use think\Db;
 use think\db\Where;
 
-class StaticBourse {
+class Bourse extends Controller {
 
     //用户每日静态收益发放
     public function userStaticBourse()
@@ -32,16 +33,27 @@ class StaticBourse {
         $userCurrencyAccount = new UserCurrencyAccount();
         $cursor = $userCurrencyAccount->where('status',1)->cursor();
         foreach($cursor as $account){
+            if($account['user_id'] == 1){
+                continue;
+            }
+            //查询用户级别
+            $level_id = Db::name('users')->where(['id' => $account['user_id']])->value('level');
+            //如果用户没有级别直接略过
+            if($level_id == 0){
+                continue;
+            }
             $user_shate = bcadd($account['corpus'], $account['cash_input_num'],4);
-            if($account['level_id'] == 1){
+
+
+            if($level_id == 1){
                 $shouyi = bcmul($user_shate,$static_set[0],4);
-            }elseif ($account['level_id'] == 2){
+            }elseif ($level_id == 2){
                 $shouyi = bcmul($user_shate,$static_set[1],4);
-            }elseif ($account['level_id'] == 3){
+            }elseif ($level_id == 3){
                 $shouyi = bcmul($user_shate,$static_set[2],4);
-            }elseif ($account['level_id'] == 4){
+            }elseif ($level_id == 4){
                 $shouyi = bcmul($user_shate,$static_set[3],4);
-            }elseif ($account['level_id'] == 5){
+            }elseif ($level_id == 5){
                 $shouyi = bcmul($user_shate,$static_set[4],4);
             }
 
@@ -77,66 +89,67 @@ class StaticBourse {
         //获取用户拿取设置
         $user_level = Db::name('user_level')->column('bonus_level','level_id');
         $promotion_award = Db::name('user_level')->column('promotion_award','level_id');
-
         $rule = [
             '1' => [
-                '1' => $promotion_award[0],
-                '2' => $promotion_award[0],
-                '3' => $promotion_award[0],
-                '4' => $promotion_award[0],
-                '5' => $promotion_award[0],
-            ],
-            '2' => [
-                '1' => $promotion_award[0],
+                '1' => $promotion_award[1],
                 '2' => $promotion_award[1],
                 '3' => $promotion_award[1],
                 '4' => $promotion_award[1],
                 '5' => $promotion_award[1],
             ],
-            '3' => [
-                '1' => $promotion_award[0],
-                '2' => $promotion_award[1],
+            '2' => [
+                '1' => $promotion_award[1],
+                '2' => $promotion_award[2],
                 '3' => $promotion_award[2],
                 '4' => $promotion_award[2],
                 '5' => $promotion_award[2],
             ],
-            '4' => [
-                '1' => $promotion_award[0],
-                '2' => $promotion_award[1],
-                '3' => $promotion_award[2],
+            '3' => [
+                '1' => $promotion_award[1],
+                '2' => $promotion_award[2],
+                '3' => $promotion_award[3],
                 '4' => $promotion_award[3],
                 '5' => $promotion_award[3],
             ],
-            '5' => [
-                '1' => $promotion_award[0],
-                '2' => $promotion_award[1],
-                '3' => $promotion_award[2],
-                '4' => $promotion_award[3],
+            '4' => [
+                '1' => $promotion_award[1],
+                '2' => $promotion_award[2],
+                '3' => $promotion_award[3],
+                '4' => $promotion_award[4],
                 '5' => $promotion_award[4],
+            ],
+            '5' => [
+                '1' => $promotion_award[1],
+                '2' => $promotion_award[2],
+                '3' => $promotion_award[3],
+                '4' => $promotion_award[4],
+                '5' => $promotion_award[5],
             ],
         ];
 
         //阿美币实时价格
         $amei_price = db('user_trade_depute')->order('create_time DESC')->find();
         $price = $amei_price['price'];
-
-        $user_count = db('user_referee')->where(['enabled' => 1])->count();
+        $price =2; //测试用
+        $user_count = db('user_node')->where(['enabled' => 1])->count();
         $page_size = 500;
         $page = ceil($user_count/$page_size);
-
-        for($i = 0, $i < $page; $i++;){
-
-            $user_list = db('user_referee')
+        //获取阿美币的id
+        $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
+        for($i = 0; $i < $page; $i++){
+            $user_list = db('user_node')
                 ->alias('a')
                 ->join(config('database.prefix').'users b','a.user_id = b.id','left')
+                ->field('a.*,b.level')
                 ->where(['a.enabled' => 1])
                 ->limit($i*$page_size,500)
                 ->select();
+
             foreach ($user_list as $k => $v){
                 if($v['level'] > 0){
                     //获取用户的汇率
                     $rate = UserCurrencyAccount::where(['user_id' => $v['user_id']])->value('rate');
-                    $this->getBouseCount($v['user_id'], $user_level[$v['level']], $rule, $rate, $price); //用户id,用户拿取层数
+                    $this->getBouseCount($v['user_id'], $v['level'], $user_level[$v['level']], $rule, $rate, $price, $currency_id); //用户id,用户拿取层数
 
                 }
 
@@ -146,22 +159,21 @@ class StaticBourse {
     }
 
     //获取用户推荐人数
-    public function getBouseCount($uid, $level, &$rule, $rate, $price)
+    public function getBouseCount($uid, $user_level, $level, &$rule, $rate, $price, $currency_id)
     {
 
-        $deep = db('user_referee')->where(['user_id' => $uid])->value('deep'); //当前用户层数
-        //获取阿美币的id
-        $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
+        $deep = db('user_node')->where(['user_id' => $uid])->value('deep'); //当前用户层数
+
         $where = new Where();
         $where['enabled'] = 1;
         $where['deep'] = ['<=', $deep+$level]; //查询层数
         $where[] = ['exp',Db::raw("FIND_IN_SET($uid,user_son_str)")];
-        $son_list = db('user_referee')->where($where)->select();
+        $son_list = db('user_node')->where($where)->select();
         if(!empty($son_list)) {
             $jiangli_all = 0;
             foreach ($son_list as $k => $v){
-                $son_level = Users::where(['id' => $v['user_id'], 'enabled' => 1])->value('level');
-                $jiangli_one = $rule[$level][$son_level];
+                $son_level = Db::name('users')->where(['id' => $v['user_id'], 'enabled' => 1])->value('level');
+                $jiangli_one = $rule[$user_level][$son_level];
 //                $jiangli_all += $rule[$level][$son_level];
 
                 //加入动态转换表
@@ -179,8 +191,8 @@ class StaticBourse {
     //添加到动态转换表
     public function sendBouse($uid, $sonid, $jiangli, $rate, $price, $currency_id)
     {
-        $user_name = Users::where(['id' => $uid])->value('usernum');
-        $from_user = Users::where(['id' => $sonid])->value('usernum');
+        $user_name = Db::name('users')->where(['id' => $uid])->value('usernum');
+        $from_user = Db::name('users')->where(['id' => $sonid])->value('usernum');
         $year = date("Y");
         $month = date("m");
         $day = date("d");
@@ -188,9 +200,11 @@ class StaticBourse {
         $end_time = $today_time+(10*86400);
         //奖励数量
         $jiangli_num = bcmul($jiangli,0.5, 4);
+
         //应发阿美币数量
         $val = bcmul($jiangli_num, $rate, 4);
         $num = bcdiv($val, $price, 4);
+
         $data = [
             'user_id' => $uid,
             'dynamic_bonus' => $jiangli_num,
