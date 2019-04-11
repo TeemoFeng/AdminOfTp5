@@ -890,7 +890,29 @@ function is_idcard( $id )
     }
 
 
+    function curl($url,$postdata=[]) {
+        $ch = curl_init();
+        $UserAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36';
+        curl_setopt($ch,CURLOPT_URL, $url);
+        if ($this->req_method == 'POST') {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postdata));
+        }
 
+        curl_setopt($ch, CURLOPT_USERAGENT, $UserAgent);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch,CURLOPT_HEADER,0);
+        curl_setopt($ch, CURLOPT_TIMEOUT,60);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt ($ch, CURLOPT_HTTPHEADER, [
+            "Content-Type: application/json",
+        ]);
+        $output = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        curl_close($ch);
+        return $output;
+    }
 
 
 

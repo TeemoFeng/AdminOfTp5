@@ -236,9 +236,15 @@
                     <input data-v-05792414="" type="hidden" id="symbol" value="8">
                     <div data-v-05792414="" id="tv_chart_container" style="height: 490px;">
 
-                        <iframe height="480" width="650" src="https://ssltvc.forexprostools.com/?pair_ID=1064513&height=480&width=650&interval=300&plotStyle=heiken_ashi&domain_ID=6&lang_ID=6&timezone_ID=24"></iframe>
+                        <!--<iframe name="iframe1" id="iframe1" height="100%" width="100%" src="https://ssltvc.forexprostools.com/?pair_ID=1064513&height=1100&width=650&interval=300&plotStyle=heiken_ashi&domain_ID=6&lang_ID=6&timezone_ID=24"></iframe>-->
 
-                    </div>
+                    <!--</div>-->
+                        <div id="tvc_container_5345d40a61f49d7aa0960cbce95197f9" class="tvChartContainer" width="970" height="800">
+                            <div id="tvc_overlay_5345d40a61f49d7aa0960cbce95197f9">
+                                <div id="tvc_fullscreen_button_5345d40a61f49d7aa0960cbce95197f9"></div>
+                                <iframe id="tvc_frame_5345d40a61f49d7aa0960cbce95197f9" seamless="seamless" src="//tvc4.forexpros.com/init.php?family_prefix=tvc4&amp;carrier=9a71d508a6913c5b6859f111c545776c&amp;time=1554997892&amp;domain_ID=6&amp;lang_ID=6&amp;timezone_ID=28&amp;pair_ID=945629&amp;interval=900&amp;refresh=6&amp;session=24x7&amp;client=&amp;user=guest&amp;width=970&amp;height=800&amp;init_page=live-charts&amp;m_pids=&amp;watchlist=945629,997650,1057893,1116376,1058255,1119415,1010883,1072990,1073899,1057982,1029177,1036964,1057969,1094157,1031042,1058116,1031712,1121731,1057946,1055844,1062771,32,1118146&amp;site=https://cn.investing.com" width="970" height="800" style="width: 100%; height: 480px; display: inline;"></iframe>
+                            </div>
+                        </div>
 
                 </div>
             </div>
@@ -968,6 +974,8 @@
         });
 
 
+
+
         $(function () {
 
             $("#clickColor div").click(function () {
@@ -1064,6 +1072,8 @@
         var price = 0;
         //点击币种切换信息
         $('body').on('click','.get_price',function() {
+            var test = $("#iframe1").contents().find("iframe[id^=tradingview]").find(".symbol-edit").val();
+            console.log(test);
             price = $(this).find("[name='coin_price']").html();
             var name = $(this).find("[name='coin_name']").html();
             var high = $(this).find("[name='high']").val();
@@ -1077,6 +1087,9 @@
             $('#last').html(last);
             $('#low').html(low);
             $('#val').html(val);
+
+
+
 
         });
 
