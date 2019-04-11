@@ -495,22 +495,22 @@ class Users extends Common{
         if(empty($search) || empty($type)){
             return ['code' => 0, 'msg' => '请求不合法'];
         }
-        if($type == 1){
-            //推荐人
-            $where['usernum'] = $search;
-        }elseif($type == 2){
-            //接点人
-            $where['usernum'] = $search;
-        }elseif($type == 3){
-            $where['usernum'] = $search;
-        }
-
+        //推荐人/接点人/报单中心
+        $where['usernum'] = $search;
         $user_info = UsersModel::get($where);
+
         if(empty($user_info)){
             return ['code' => 0, 'msg' => '此用户不存在'];
-        }else{
-            return ['code' => 1, 'name' => $user_info['username']];
         }
+        if($user_info['status'] == 0){
+            return ['code' => 0, 'msg' => '此用户未激活'];
+        }
+        if($type == 3 && $user_info['baodan_center'] == 0){
+            return ['code' => 0, 'msg' => '此用户不是报单中心'];
+        }
+
+        return ['code' => 1, 'name' => $user_info['username']];
+
 
 
     }
@@ -630,43 +630,25 @@ class Users extends Common{
             $baodan_ratio = Db::name('bonus_ext_set')->where(['id' => 1])->value('baodan_ratio');
             $baodan_ratio = bcdiv($baodan_ratio, 100, 2);
             $jiangli = bcmul($bonus_ratio['declaration'],$baodan_ratio, 4); //保单奖励
-
             $baodan_account = UserCurrencyAccount::where(['user_id' => $baodan_user['id']])->find();
+            if(empty($baodan_account)){
+                return ['code' =>0, '报单中心用户钱包不存在'];
+            }
             $cash_currency_num2 = bcadd($baodan_account['cash_currency_num'],$jiangli,4);
-            //查询推荐人钱包信息
-            $referee_account = UserCurrencyAccount::where(['user_id' => $referee['id']])->find();
-            $cash_currency_num = bcadd($referee_account['cash_currency_num'],$reward,4);
-
             Db::startTrans();
             //更新用户信息
             $res = UsersModel::where(['id' => $data['id']])->update($save);
-            if($res !== false){
-                //如果报单中心和推荐人是同一个人
-                if($baodan_user['id'] == $referee['id']){
-                    $cash_currency_num = bcadd($cash_currency_num2, $cash_currency_num,4);
-                    $res = UserCurrencyAccount::where(['user_id' => $referee['id']])->update(['cash_currency_num' => $cash_currency_num]);
-                    if($res === false){
-                        Db::rollback();
-                        return ['code' => 0, '激活失败请重试'];
-                    }
+            if($res === false){
+                Db::rollback();
+                return ['code' => 0, '激活失败请重试'];
+            }
+            $baodan_res = UserCurrencyAccount::where(['user_id' => $baodan_user['id']])->update(['cash_currency_num' => $cash_currency_num2]);
+            if($baodan_res === false){
+                Db::rollback();
+                return ['code' => 0, '激活失败请重试'];
+            }
 
-                }else{
-                    $res = UserCurrencyAccount::where(['user_id' => $referee['id']])->update(['cash_currency_num' => $cash_currency_num]);
-                    $baodan_res = UserCurrencyAccount::where(['user_id' => $baodan_user['id']])->update(['cash_currency_num' => $cash_currency_num2]);
-                    if($res === false || $baodan_res === false){
-                        Db::rollback();
-                        return ['code' => 0, '激活失败请重试'];
-                    }
-
-                }
-
-               //更新用户本金钱包
-               $res2 = UserCurrencyAccount::where(['user_id' => $data['id']])->update(['corpus' => $bonus_ratio['declaration']]);
-
-               if($res2 === false){
-                   Db::rollback();
-                   return ['code' => 0, '激活失败请重试'];
-               }
+            if($baodan_user['id'] != 1){
                 //记录用户报单奖励
                 UserRunningLog::create([
                     'user_id'  =>  $baodan_user['id'],
@@ -678,6 +660,23 @@ class Users extends Common{
                     'create_time'   => time(),
                     'remark'        => '报单中心奖励'
                 ]);
+            }
+
+            //查询推荐人钱包信息
+            $referee_account = UserCurrencyAccount::where(['user_id' => $referee['id']])->find();
+            if(empty($referee_account)){
+                Db::rollback();
+                return ['code' =>0, '推荐人钱包不存在'];
+            }
+            $cash_currency_num = bcadd($referee_account['cash_currency_num'],$reward,4);
+            $res2 = UserCurrencyAccount::where(['user_id' => $referee['id']])->update(['cash_currency_num' => $cash_currency_num]);
+
+            if($res2 === false){
+                Db::rollback();
+                return ['code' => 0, '激活失败请重试'];
+            }
+
+            if($referee['id'] != 1){
                 //记录收益日志
                 UserRunningLog::create([
                     'user_id'  =>  $referee['id'],
@@ -688,32 +687,34 @@ class Users extends Common{
                     'balance'       =>  $cash_currency_num,
                     'create_time'   => time()
                 ]);
-
-
-               Db::commit();
-               UserReferee::where(['user_id' => $data['id']])->update(['enabled' => 1]);
-               UserNode::where(['user_id' => $data['id']])->update(['enabled' => 1]);
-
-               //记录用户激活
-               UserRunningLog::create([
-                   'user_id'  =>  $data['id'],
-                   'about_id' =>  $data['id'],
-                   'running_type'  => UserRunningLog::TYPE22,
-                   'account_type'  => 5,
-                   'change_num'    => $bonus_ratio['declaration'],
-                   'balance'       => $bonus_ratio['declaration'],
-                   'create_time'   => time()
-               ]);
-
-
-
-               return ['code' => 1, 'msg' => '激活成功', 'url' => url('admin/users/noActiceList')];
-
-
-            }else{
-                Db::rollback();
-                return ['code' => 0, 'msg' => '激活失败'];
             }
+
+
+           //更新用户本金钱包
+           $res3 = UserCurrencyAccount::where(['user_id' => $data['id']])->update(['corpus' => $bonus_ratio['declaration']]);
+
+           if($res3 === false){
+               Db::rollback();
+               return ['code' => 0, '激活失败请重试'];
+           }
+
+           Db::commit();
+           UserReferee::where(['user_id' => $data['id']])->update(['enabled' => 1]);
+           UserNode::where(['user_id' => $data['id']])->update(['enabled' => 1]);
+
+           //记录用户激活
+           UserRunningLog::create([
+               'user_id'  =>  $data['id'],
+               'about_id' =>  $data['id'],
+               'running_type'  => UserRunningLog::TYPE22,
+               'account_type'  => 5,
+               'change_num'    => $bonus_ratio['declaration'],
+               'balance'       => $bonus_ratio['declaration'],
+               'create_time'   => time()
+           ]);
+
+           return ['code' => 1, 'msg' => '激活成功', 'url' => url('admin/users/noActiceList')];
+
         }else{
             return ['code' => 0, 'msg' => '请求出错'];
         }
