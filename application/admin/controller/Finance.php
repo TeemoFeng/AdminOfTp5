@@ -38,6 +38,7 @@ class Finance extends Common
                 ->join(config('database.prefix').'users u','a.user_id = u.id','left')
                 ->field('a.*,u.usernum,u.username')
                 ->where($where)
+                ->order('a.id DESC')
                 ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                 ->toArray();
             foreach ($list['data'] as $k=>$v){
@@ -165,6 +166,7 @@ class Finance extends Common
                 ->join(config('database.prefix').'users u','a.user_id = u.id','left')
                 ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
                 ->field('a.*,u.username,u. usernum,ab.username about_user,ab.usernum aboutnum')
+                ->order('a.id DESC')
                 ->where($where)
                 ->order('id DESC')
                 ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))

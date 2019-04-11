@@ -616,41 +616,37 @@ class Users extends Common{
             }
 
 
-            //发送保单中心奖励
-
             //查找用户的推荐人/报单中心信息
             $user_info = UsersModel::where(['id' => $data['id']])->find();
             $referee = UsersModel::where(['usernum' => $user_info['referee']])->find();
-            //直推奖励
-            $bonus_ratio2 = BonusSet::where(['level_id' => $referee['level']])->find();
-            $ratio = bcdiv($bonus_ratio2['bonus_ratio'],100,4);
-            $reward = bcmul($bonus_ratio['declaration'], $ratio,4);
-            //报单中心奖励
             $baodan_user = UsersModel::where(['usernum' => $user_info['baodan_user']])->find(); //保单中心信息
-            $baodan_ratio = Db::name('bonus_ext_set')->where(['id' => 1])->value('baodan_ratio');
-            $baodan_ratio = bcdiv($baodan_ratio, 100, 2);
-            $jiangli = bcmul($bonus_ratio['declaration'],$baodan_ratio, 4); //保单奖励
-            $baodan_account = UserCurrencyAccount::where(['user_id' => $baodan_user['id']])->find();
-            if(empty($baodan_account)){
-                return ['code' =>0, '报单中心用户钱包不存在'];
-            }
-            $cash_currency_num2 = bcadd($baodan_account['cash_currency_num'],$jiangli,4);
+
             Db::startTrans();
             //更新用户信息
             $res = UsersModel::where(['id' => $data['id']])->update($save);
             if($res === false){
                 Db::rollback();
-                return ['code' => 0, '激活失败请重试'];
+                return ['code' => 0, 'msg' => '激活失败请重试'];
             }
-            $baodan_res = UserCurrencyAccount::where(['user_id' => $baodan_user['id']])->update(['cash_currency_num' => $cash_currency_num2]);
-            if($baodan_res === false){
-                Db::rollback();
-                return ['code' => 0, '激活失败请重试'];
-            }
-
             if($baodan_user['id'] != 1){
+                //报单中心奖励
+                $baodan_ratio = Db::name('bonus_ext_set')->where(['id' => 1])->value('baodan_ratio');
+                $baodan_ratio = bcdiv($baodan_ratio, 100, 2);
+                $jiangli = bcmul($bonus_ratio['declaration'],$baodan_ratio, 4); //保单奖励
+                $baodan_account = UserCurrencyAccount::where(['user_id' => $baodan_user['id']])->find();
+                if(empty($baodan_account)){
+                    Db::rollback();
+                    return ['code' =>0, 'msg' => '报单中心用户钱包不存在'];
+                }
+                $cash_currency_num2 = bcadd($baodan_account['cash_currency_num'],$jiangli,4);
+
+                $baodan_res = UserCurrencyAccount::where(['user_id' => $baodan_user['id']])->update(['cash_currency_num' => $cash_currency_num2]);
+                if($baodan_res === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '激活失败请重试'];
+                }
                 //记录用户报单奖励
-                UserRunningLog::create([
+                $log = UserRunningLog::create([
                     'user_id'  =>  $baodan_user['id'],
                     'about_id' =>  $data['id'],
                     'running_type'  => UserRunningLog::TYPE21,
@@ -660,25 +656,34 @@ class Users extends Common{
                     'create_time'   => time(),
                     'remark'        => '报单中心奖励'
                 ]);
-            }
-
-            //查询推荐人钱包信息
-            $referee_account = UserCurrencyAccount::where(['user_id' => $referee['id']])->find();
-            if(empty($referee_account)){
-                Db::rollback();
-                return ['code' =>0, '推荐人钱包不存在'];
-            }
-            $cash_currency_num = bcadd($referee_account['cash_currency_num'],$reward,4);
-            $res2 = UserCurrencyAccount::where(['user_id' => $referee['id']])->update(['cash_currency_num' => $cash_currency_num]);
-
-            if($res2 === false){
-                Db::rollback();
-                return ['code' => 0, '激活失败请重试'];
+                if($log === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '激活失败请重试'];
+                }
             }
 
             if($referee['id'] != 1){
+                //直推奖励
+                $bonus_ratio2 = BonusSet::where(['level_id' => $referee['level']])->find();
+                $ratio = bcdiv($bonus_ratio2['bonus_ratio'],100,4);
+                $reward = bcmul($bonus_ratio['declaration'], $ratio,4);
+
+                //查询推荐人钱包信息
+                $referee_account = UserCurrencyAccount::where(['user_id' => $referee['id']])->find();
+                if(empty($referee_account)){
+                    Db::rollback();
+                    return ['code' =>0, 'msg' => '推荐人钱包不存在'];
+                }
+                $cash_currency_num = bcadd($referee_account['cash_currency_num'],$reward,4);
+                $res2 = UserCurrencyAccount::where(['user_id' => $referee['id']])->update(['cash_currency_num' => $cash_currency_num]);
+
+                if($res2 === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '激活失败请重试'];
+                }
+
                 //记录收益日志
-                UserRunningLog::create([
+                $log2 = UserRunningLog::create([
                     'user_id'  =>  $referee['id'],
                     'about_id' =>  $data['id'],
                     'running_type'  => UserRunningLog::TYPE19,
@@ -687,15 +692,18 @@ class Users extends Common{
                     'balance'       =>  $cash_currency_num,
                     'create_time'   => time()
                 ]);
+                if($log2 === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '激活失败请重试'];
+                }
             }
-
 
            //更新用户本金钱包
            $res3 = UserCurrencyAccount::where(['user_id' => $data['id']])->update(['corpus' => $bonus_ratio['declaration']]);
 
            if($res3 === false){
                Db::rollback();
-               return ['code' => 0, '激活失败请重试'];
+               return ['code' => 0, 'msg' => '激活失败请重试'];
            }
 
            Db::commit();

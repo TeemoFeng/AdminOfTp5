@@ -150,7 +150,7 @@ class User extends Common{
             $user_info = db('users')
                 ->alias('u')
                 ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-                ->field('u.id,u.referee,u.username,u.pid,u.have_tree,ul.level_name')
+                ->field('u.id,u.referee,u.username,u.usernum,u.pid,u.have_tree,ul.level_name')
                 ->where($where)
                 ->order('u.id asc')
                 ->select();
