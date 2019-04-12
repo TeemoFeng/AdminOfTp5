@@ -17,6 +17,7 @@ use app\home\model\UserTradeDeputeLog;
 use app\user\model\UserCurrencyList;
 use app\user\model\UserRunningLog;
 use app\user\model\Users;
+use think\console\Input;
 use think\Db;
 use think\db\Where;
 use think\Session;
@@ -616,7 +617,7 @@ class User extends Common
 
             //跟新订单状态
             Db::startTrans();
-            $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['status' => 4]); //取消
+            $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['trade_status' => 4]); //取消
             if($res !== false){
                 $depute_ids = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->column('trade_depute_id');
                 $res2 = Db::name('user_trade_depute')->where(['id' => ['in', $depute_ids]])->update(['lock' => 0]); //取消锁定
@@ -640,6 +641,33 @@ class User extends Common
     //卖家确认收款
     public function sureOrder()
     {
+        //获取订单id
+        $id = input('post.id');
+        if(empty($id)){
+            return ['code' => 0, 'msg' => '未获取到订单'];
+        }
+
+        //查找订单号
+        $order_info = Db::name('user_trade_depute_log')->where(['id' => $id])->find();           Db::startTrans();
+        $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_info['order_num']])->update(['trade_status' => 3]); //确认收款，完成成交
+        if($res === false){
+            Db::rollback();
+            return ['code' => 0, 'msg' => '操作失败请重试'];
+        }
+        //修改托管状态
+        $depute_ids = Db::name('user_trade_depute_log')->where(['order_num' => $order_info['order_num']])->select();
+        foreach($depute_ids as $v){
+            //如果是购买人
+            if($v['trade_type'] == 1){
+                
+            }
+            $res2 = Db::name('user_trade_depute')->where(['id' => $v])->update(['depute_status' => 2]); //
+
+        }
+
+
+
+
 
     }
 
