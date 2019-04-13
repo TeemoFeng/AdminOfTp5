@@ -226,10 +226,10 @@
                         </span>
                             <ul data-v-5056b940="" class="el-dropdown-menu el-popper" id="dropdown-menu-5309"
                                 style="display: none; min-width: 150px;">
-                                <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
-                                    <i data-v-5056b940="" class="fa fa-user-plus header-icon"></i>
-                                    <a href="{:url('home/user/ic')}"> 我的邀请码</a>
-                                </li>
+                                <!--<li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">-->
+                                    <!--<i data-v-5056b940="" class="fa fa-user-plus header-icon"></i>-->
+                                    <!--<a href="{:url('home/user/ic')}"> 我的邀请码</a>-->
+                                <!--</li>-->
                                 <li data-v-5056b940="" tabindex="-1" class="el-dropdown-menu__item">
                                     <i data-v-5056b940="" class="fa fa-street-view header-icon"></i>
                                     <a href="{:url('user/index/index')}">商户中心</a>
@@ -374,7 +374,8 @@
                                         <div data-v-4e91b44b=""></div>
                                     </div>
                                     <div class="el-table__header-wrapper">
-                                        <iframe src="https://cn.widgets.investing.com/top-cryptocurrencies?theme=darkTheme" width="100%" height="100%" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
+                                        <!--<iframe id="currency" src="https://cn.widgets.investing.com/top-cryptocurrencies?theme=darkTheme" width="100%" height="100%" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" style="background-color: #26283C;"></iframe>-->
+                                        {include file="common/currency"/}
 
                                     </div>
                                     <div class="el-table__column-resize-proxy" style="display: none;"></div>
@@ -1243,6 +1244,9 @@
     $(".Personal").mouseleave(function () {
         $("#dropdown-menu-5309").hide()
     })
+
+
+
 </script>
 </body>
 </html>

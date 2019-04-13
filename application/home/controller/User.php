@@ -528,10 +528,29 @@ class User extends Common
         $user_info = session('user');
 
         $trade_type = UserTradeDeputeLog::$trade_type;
-        $table = new UserTradeDeputeLog();
         //默认查询用户购买的订单
-        $order_list = $table->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->order('id DESC')->select();
+        if(request()->isPost()){
+            $search = input('param.');
+        }
 
+        if(!empty($search['trade_type'])){
+            if($search['trade_type'] == 1){
+                $where['user_id'] = $user_info['id'];
+
+            }
+            if($search['trade_type'] == 2){
+                $where['about_id'] = $user_info['id'];
+
+            }
+        }
+        if(!empty($search['trade_status'])){
+            $where['trade_status'] = $search['trade_status'];
+        }
+
+
+
+        $order_list = Db::name('user_trade_depute_log')->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->order('id DESC')->paginate(10,true);
+        $page = $order_list->render();
         foreach ($order_list as $k => $v){
             $order_list[$k]['trade_status_str'] = UserTradeDeputeLog::$trade_status[$v['trade_status']];
             $order_list[$k]['trade_type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']];
@@ -542,6 +561,7 @@ class User extends Common
 
         $this->assign('trade_type', $trade_type);
         $this->assign('order_list', $order_list);
+        $this->assign('page', $page);
         $this->assign('status', UserTradeDepute::$status);
         return $this->fetch('order');
     }
@@ -629,7 +649,7 @@ class User extends Common
     public function sureOrder()
     {
         //获取订单id
-        $id = input('post.id');
+        $id = input('id');
         if(empty($id)){
             return ['code' => 0, 'msg' => '未获取到订单'];
         }
@@ -651,6 +671,7 @@ class User extends Common
                 $res2 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 2, 'depute_time' => time(), 'status' => 3, 'have_trade' => $v['trade_num']]);
                 if($res2 === false){
                     Db::rollback();
+                    return ['code' => 0, 'msg' => '操作失败请重试'];
                 }
 
                 //更新买家货币数量
@@ -697,6 +718,9 @@ class User extends Common
                     $res3 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 2, 'depute_time' => time(), 'status' => 3, 'have_trade' => $v['trade_num']]); //
                 }
 
+                if($res3 === false){
+                    return ['code' => 0, 'msg' => '操作失败请重试'];
+                }
 
                 //卖家记录
                 $user_currecny = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();

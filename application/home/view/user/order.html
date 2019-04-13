@@ -11,7 +11,39 @@
         .layui-form-select dl {
             background: #2e2f43
         }
+
+        .pagination {
+            width: auto;
+            height: auto;
+            color: #333;
+            font-size: 15px;
+            float: right;
+            display: block;
+            margin-top: 30px;
+        }
+
+        .pagination:hover {
+            cursor: pointer;
+        }
+        .pagination li {
+            width: auto;
+            height: auto;
+            float: left;
+            padding: 2px 6px 2px 6px;
+            border: 1px solid #333333;
+            display: block;
+            margin-right: 10px;
+            text-align: center;
+            border-radius: 15%;
+        }
+        .pagination li.active {
+            background: #5a98de;
+            color: #fff;
+            border: 1px solid #5a98de;
+        }
     </style>
+
+
 
 <div style="width: 100%; margin: 0px auto; min-height: 500px;">
     <div data-v-159697e6="" class="global-width">
@@ -23,7 +55,7 @@
             <div data-v-48b6e8a5="" class="order-condition hc-bgColor3">
                 <form action="" class="layui-form" lay-filter="example">
                     <div data-v-48b6e8a5="" class="el-select order-option">
-                        <select name="interest" lay-filter="aihao">
+                        <select name="trade_type" lay-filter="trade_type">
                             <option value="">订单类型</option>
                             {foreach $trade_type as $k => $v}
                             <option value="{$k}">{$v}</option>
@@ -40,7 +72,7 @@
                     <!--</div>-->
 
                     <div data-v-48b6e8a5="" class="el-select order-option">
-                        <select name="interest" lay-filter="aihao">
+                        <select name="trade_status" lay-filter="trade_type">
                             <option value="">状态</option>
                             {foreach $status as $k => $v}
                             <option value="{$k}">{$v}</option>
@@ -171,6 +203,13 @@
                                     <div class="cell">
                                         <div data-v-48b6e8a5="" class="hc-btn order-hc-button" ><a style="color: #666;" href="{:url('home/user/tradeDetail')}?id={$v['id']}">查看详情</a></div>
                                     </div>
+                                    {if $v['trade_type'] == 2 && $v['trade_status'] == 2}
+                                    <div class="cell">
+                                        <div data-v-48b6e8a5="" class="hc-btn order-hc-button" ><a style="color: #666;" href="{:url('home/user/sureOrder')}?id={$v['id']}">确认收款</a></div>
+                                    </div>
+
+                                    {/if}
+
                                 </td>
                             </tr>
                             {/foreach}
@@ -182,24 +221,27 @@
                         {/if}
                     </div>
                 </div>
+
                 <div data-v-cb7b5f4a="" class="hc-pagination">
+                    {$page|raw}
+
                     <div data-v-cb7b5f4a="" class="el-pagination">
-                        <button type="button" disabled="disabled" class="btn-prev">
-                            <i class="el-icon el-icon-arrow-left"></i>
-                        </button>
-                        <ul class="el-pager">
-                            <li class="number active">1</li>
-                        </ul>
-                        <button type="button" disabled="disabled" class="btn-next">
-                            <i class="el-icon el-icon-arrow-right"></i>
-                        </button>
-                        <span class="el-pagination__jump">
-                            前往
-                            <div class="el-input el-pagination__editor is-in-pagination">
-                                <input type="number" autocomplete="off" min="1" max="1" class="el-input__inner">
-                            </div>
-                            页
-                        </span>
+                        <!--<button type="button"  class="btn-prev">-->
+                            <!--<i class="el-icon el-icon-arrow-left"></i>-->
+                        <!--</button>-->
+                        <!--<ul class="el-pager">-->
+                            <!--<li class="number active">1</li>-->
+                        <!--</ul>-->
+                        <!--<button type="button" disabled="disabled" class="btn-next">-->
+                            <!--<i class="el-icon el-icon-arrow-right"></i>-->
+                        <!--</button>-->
+                        <!--<span class="el-pagination__jump">-->
+                            <!--前往-->
+                            <!--<div class="el-input el-pagination__editor is-in-pagination">-->
+                                <!--<input type="number" autocomplete="off" min="1" max="1" class="el-input__inner">-->
+                            <!--</div>-->
+                            <!--页-->
+                        <!--</span>-->
                     </div>
                 </div>
             </div>
