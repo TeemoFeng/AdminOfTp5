@@ -29,6 +29,9 @@ class User extends Common
     public function initialize()
     {
         parent::initialize();
+        if(session('user')){
+            $this->assign('user_info', session('user'));
+        }
         $this->uid=session('user.id');
     }
 
@@ -159,6 +162,7 @@ class User extends Common
         $this->assign('trade_account', $trade_account);
         $this->assign('user_cash_list', $user_cash_list);
         $this->assign('status', $status);
+        $this->assign('user_info', $user_info);
         return $this->fetch('withdrawCash');
     }
 
@@ -169,30 +173,24 @@ class User extends Common
         $type = UserTradeDepute::$trade_type;
         $status = UserTradeDepute::$status;
         $user_id = session('user.id');
-        $map['depute_status'] = 2;
-        $map['user_id'] = $user_id;
+
         //交易币种现在只支持阿美币
         //交易记录
-        if(request()->isPost()){
+        $data   = request()->param();
+        $where  = $this->makeSearch($data, 2);
+        $where['depute_status'] = 2;
+        $where['user_id'] = $user_id;
+        //根绝用户id获取推荐的人员信息
+        $list = Db::name('user_trade_depute')
+            ->where($where)
+            ->paginate(10,false,['query' => request()->param()]);
+        $page = $list->render();
 
-            $data   = input('post.');
-            $where  = $this->makeSearch($data, 2);
-
-            $where['user_id'] = $user_id;
-            //根绝用户id获取推荐的人员信息
-            $list = Db::name('user_trade_depute')
-                ->where($where)
-                ->select();
-            $this->assign('type', $type);
-            $this->assign('status', $status);
-            $this->assign('list', $list);
-            $this->assign('search', $data);
-            return $this->fetch('historical');
-        }
-        $list = Db::name('user_trade_depute')->where($map)->select();
+        $this->assign('search', $data);
         $this->assign('type', $type);
         $this->assign('status', $status);
         $this->assign('list', $list);
+        $this->assign('page', $page);
         return $this->fetch('historical');
 
     }
@@ -225,30 +223,26 @@ class User extends Common
         $type = UserTradeDepute::$trade_type;
         $status = UserTradeDepute::$status;
         $user_id = session('user.id');
-        $map['depute_status'] = 1;
-        $map['user_id'] = $user_id;
+
         //交易币种现在只支持阿美币
         //交易记录
-        if(request()->isPost()){
-
-            $data   = input('post.');
-            $where  = $this->makeSearch($data,1);
-            $where['user_id'] = $user_id;
-            //根绝用户id获取推荐的人员信息
-            $list = Db::name('user_trade_depute')
-                ->where($where)
-                ->select();
-            $this->assign('type', $type);
-            $this->assign('status', $status);
-            $this->assign('list', $list);
-            $this->assign('search', $data);
-            return $this->fetch('entrustment');
-        }
-        $list = Db::name('user_trade_depute')->where($map)->select();
+        $data   = request()->param();
+        $where  = $this->makeSearch($data,1);
+        $where['depute_status'] = 1;
+        $where['user_id'] = $user_id;
+        //根绝用户id获取推荐的人员信息
+        $list = Db::name('user_trade_depute')
+            ->where($where)
+            ->paginate(10,false,['query' => request()->param()]);
+        $page = $list->render();
         $this->assign('type', $type);
         $this->assign('status', $status);
         $this->assign('list', $list);
+        $this->assign('search', $data);
+        $this->assign('page', $page);
         return $this->fetch('entrustment');
+
+
     }
 
     //交易大厅
@@ -259,11 +253,16 @@ class User extends Common
         $amei_infos = CurrencyList::where(['en_name' => 'AMB'])->find();
         //获取用户交易账户
         $user_account = UserCurrencyAccount::where(['user_id' => $user_info['id']])->find();
+        if(empty($user_account)){
+            $user_account['transaction_num'] = 0;
+        }
         //获取用户阿美币
         $user_amei = UserCurrencyList::where(['user_id' => $user_info['id'],'currency_id' => $amei_infos['id']])->find();
-        $user_account['ameibi_num'] = $user_amei['num'];
-        $user_account['ameibi_freeze_num'] = $user_amei['freeze_num'];
-        $user_account['ameibi_lock_num'] = $user_amei['lock_num'];
+        $user_account['ameibi_num'] = $user_amei['num'] ?: 0;
+        $user_account['ameibi_freeze_num'] = $user_amei['freeze_num'] ?: 0;
+        $user_account['ameibi_lock_num'] = $user_amei['lock_num'] ?: 0;
+
+
         //币种列表
         $currency_list = CurrencyList::where(['status' => 'open'])->select();
         $amb_price = 0;
@@ -315,7 +314,16 @@ class User extends Common
             $trade_list[$k]['time'] = date('m-d H:i', $v['crate_time']);
             $trade_list[$k]['type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']] ;
         }
+
+        //当前委托 获取用户委托的前10条
+        $this->deputeList();
+        //历史委托 获取用户委托的前10条
+        $this->deputeListHis();
+        $type = UserTradeDepute::$trade_type;
+        $status = UserTradeDepute::$status;
         $this->assign('user_info', $user_info);
+        $this->assign('type', $type);
+        $this->assign('status', $status);
         $this->assign('amei_info', $amei_info);
         $this->assign('user_account', $user_account);
         $this->assign('currency_list', $currency_list);
@@ -323,7 +331,136 @@ class User extends Common
         $this->assign('list_buy', $list_buy);   //挂单购买列表
         $this->assign('amb_price', $amb_price); //阿美币现在价格
         $this->assign('trade_list', $trade_list); //实时成交列表
+
         return $this->fetch('currencyExchange');
+    }
+
+    //交易所获取用户委托列表
+    public function deputeList()
+    {
+        //当前委托 获取用户委托的前10条
+        $user_info = session('user');
+        $where['depute_status'] = 1;
+        $where['user_id'] = $user_info['id'];
+        //根绝用户id获取推荐的人员信息
+        $list = Db::name('user_trade_depute')
+            ->where($where)
+            ->order('id DESC')
+            ->limit(10)
+            ->select();
+        $this->assign('depute_list', $list);
+
+    }
+    //交易所获取用户委托列表
+    public function deputeListHis()
+    {
+        //当前委托 获取用户委托的前10条
+        $user_info = session('user');
+        $where['depute_status'] = 2;
+        $where['user_id'] = $user_info['id'];
+        //根绝用户id获取推荐的人员信息
+        $list2 = Db::name('user_trade_depute')
+            ->where($where)
+            ->order('id DESC')
+            ->limit(10)
+            ->select();
+        $this->assign('depute_list_his', $list2);
+    }
+
+
+    //撤销托管
+    public function cancelDepute()
+    {
+        $id = input('post.id');
+        if(empty($id) || empty($this->uid)){
+            return ['code' => 0, 'msg' => '非法请求'];
+        }
+
+        //用户撤销委托
+        $depute_info = UserTradeDepute::where(['user_id' => $id])->find();
+        if(empty($depute_info)){
+            return ['code' => 0, 'msg' => '未找到委托记录'];
+        }
+        if($depute_info['status'] == 3){
+            return ['code' => 0, 'msg' => '该订单已完成，不需要撤单'];
+        }
+        if($depute_info['status'] == 4){
+            return ['code' => 0, 'msg' => '该订单已撤单'];
+        }
+        if($depute_info['lock'] == 1){
+            return ['code' => 0, 'msg' => '该订单已匹配成功，暂不可撤销'];
+        }
+
+        //买单
+        if($depute_info['depute_type'] == UserTradeDepute::DEPUTE1){
+            //查询用户交易钱包
+            $user_account = UserCurrencyAccount::where(['user_id' => $depute_info['user_id']])->find();
+            $jiaoyi_num = bcadd($user_account['transaction_num'], $depute_info['real_sum'], 2);
+            //更新用户交易钱包
+            $res = UserCurrencyAccount::where(['user_id' => $depute_info['user_id']])->update(['transaction_num' => $jiaoyi_num]);
+            if($res === false){
+                return ['code' => 0, 'msg' => '撤单失败请重试'];
+            }
+
+            UserRunningLog::create([
+                'user_id'  =>  $depute_info['user_id'],
+                'about_id' =>  $depute_info['about_id'],
+                'running_type'  => UserRunningLog::TYPE31, //撤销挂单
+                'account_type'  => Currency::TRADE,
+                'change_num'    => $depute_info['real_sum'],
+                'balance'       => $jiaoyi_num,
+                'create_time'   => time(),
+                'remark'        => '撤销委托返还'
+            ]);
+
+            UserRunningLog::create([
+                'user_id'  =>  $depute_info['user_id'],
+                'about_id' =>  $depute_info['about_id'],
+                'running_type'  => UserRunningLog::TYPE32, //撤销挂单手续费
+                'account_type'  => Currency::TRADE,
+                'change_num'    => $depute_info['poundage'],
+                'create_time'   => time(),
+                'remark'        => '撤销委托扣除手续费'
+            ]);
+
+
+        }else{
+            $amei_infos = CurrencyList::where(['en_name' => 'AMB'])->find();
+            //查询用户币种钱包
+            $currency_account = Db::name('user_currency_list')->where(['user_id' => $depute_info['user_id'], 'currency_id' =>$amei_infos['id']])->find();
+            if($depute_info['status'] == 1){
+                $cancel_num = $depute_info['num'];
+            }
+            if($depute_info['status'] == 2){
+                $cancel_num = bcsub($depute_info['num'], $depute_info['have_trade']);
+            }
+
+
+
+            $currency_num = bcadd($currency_account['num'], $cancel_num, 4);
+            $res = UserCurrencyList::where(['user_id' => $depute_info['user_id'],'currency_id' =>$amei_infos['id']])->update(['num' => $currency_num]);
+            if($res === false){
+                return ['code' => 0, 'msg' => '撤单失败请重试'];
+            }
+
+
+            UserRunningLog::create([
+                'user_id'  =>  $depute_info['user_id'],
+                'about_id' =>  $depute_info['about_id'],
+                'running_type'  => UserRunningLog::TYPE32, //撤销挂单手续费
+                'account_type'  => Currency::TRADE,
+                'change_num'    => $depute_info['poundage'],
+                'create_time'   => time(),
+                'remark'        => '撤销委托扣除手续费'
+            ]);
+
+
+        }
+        return ['code' => 1, 'msg' => '撤销成功'];
+
+
+
+
     }
 
 
@@ -521,18 +658,15 @@ class User extends Common
     }
 
 
-    //获取用户交易订单
-    public function tradeOrder()
+    //订单列表
+    public function order()
     {
         //获取用户类型
         $user_info = session('user');
-
         $trade_type = UserTradeDeputeLog::$trade_type;
         //默认查询用户购买的订单
-        if(request()->isPost()){
-            $search = input('param.');
-        }
-
+        $search   = request()->param();
+        $where['users_id'] = $user_info['id']; //默认查询卖单
         if(!empty($search['trade_type'])){
             if($search['trade_type'] == 1){
                 $where['user_id'] = $user_info['id'];
@@ -547,9 +681,8 @@ class User extends Common
             $where['trade_status'] = $search['trade_status'];
         }
 
-
-
-        $order_list = Db::name('user_trade_depute_log')->where(['user_id' => $user_info['id']])->whereOr(['about_id' => $user_info['id']])->order('id DESC')->paginate(10,true);
+        $order_list = Db::name('user_trade_depute_log')->where($where)->order('id DESC')->paginate(10,false,['query' => request()->param()]);
+//        $order_list = Db::name('user_trade_depute')->order('id DESC')->paginate(10,false,['query' => request()->param()]);
         $page = $order_list->render();
         foreach ($order_list as $k => $v){
             $order_list[$k]['trade_status_str'] = UserTradeDeputeLog::$trade_status[$v['trade_status']];
@@ -562,7 +695,9 @@ class User extends Common
         $this->assign('trade_type', $trade_type);
         $this->assign('order_list', $order_list);
         $this->assign('page', $page);
-        $this->assign('status', UserTradeDepute::$status);
+        $this->assign('search', $search);
+        $this->assign('trade_status', UserTradeDepute::$status);
+        $this->assign('user_info', $user_info);
         return $this->fetch('order');
     }
 

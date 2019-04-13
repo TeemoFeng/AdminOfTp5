@@ -341,8 +341,9 @@ class Bourse extends Controller {
                    $poundage = bcmul($all_num, 0.0001,4);
                    $sum = bcsub($all_num, $poundage, 4);
                    $add_buy = [
-                       'user_id'    => $v['user_id'],
-                       'about_id'   => $vv['user_id'],
+                       'users_id'   => $v['user_id'], //卖家用户id 方便订单查询记录
+                       'user_id'    => $v['user_id'], //买方
+                       'about_id'   => $vv['user_id'], //关联卖方id
                        'order_num'  => $order_num,
                        'trade_num'  => $v['num'], //买家购买量
                        'trade_currency' => $v['depute_currency'],
@@ -356,8 +357,9 @@ class Bourse extends Controller {
 
                    ];
                     $add_sell = [
-                        'user_id'    => $vv['user_id'],
-                        'about_id'   => $v['user_id'],
+                        'users_id'   => $vv['user_id'], //卖家用户id 方便订单查询记录
+                        'user_id'    => $vv['user_id'], //卖方
+                        'about_id'   => $v['user_id'],  //关联买方id
                         'order_num'  => $order_num,
                         'trade_num'  => $v['num'], //买家购买量
                         'trade_currency'  => $v['depute_currency'],

@@ -53,12 +53,12 @@
         <div data-v-48b6e8a5="" data-v-159697e6="" class="order">
             <!--TODO 筛选-->
             <div data-v-48b6e8a5="" class="order-condition hc-bgColor3">
-                <form action="" class="layui-form" lay-filter="example">
+                <form action="" class="layui-form" lay-filter="example" action="order" method="post">
                     <div data-v-48b6e8a5="" class="el-select order-option">
                         <select name="trade_type" lay-filter="trade_type">
                             <option value="">订单类型</option>
                             {foreach $trade_type as $k => $v}
-                            <option value="{$k}">{$v}</option>
+                            <option value="{$k}" {if condition="$k eq $search['trade_type']")}selected {/if}>{$v}</option>
                             {/foreach}
                         </select>
                     </div>
@@ -74,12 +74,14 @@
                     <div data-v-48b6e8a5="" class="el-select order-option">
                         <select name="trade_status" lay-filter="trade_type">
                             <option value="">状态</option>
-                            {foreach $status as $k => $v}
-                            <option value="{$k}">{$v}</option>
+                            {foreach $trade_status as $k => $v}
+                            <option value="{$k}" {if condition="$k eq $search['trade_status']")}selected {/if}>{$v}</option>
                             {/foreach}
 
                         </select>
                     </div>
+
+                    <button data-v-4700ee89="" class="order-top-div1 order-btn el-button--warning hc-cursor" lay-submit="" lay-filter="submit">搜索</button>
                 </form>
             </div>
             <!--TODO 筛选 end-->
@@ -221,6 +223,7 @@
                         {/if}
                     </div>
                 </div>
+
 
                 <div data-v-cb7b5f4a="" class="hc-pagination">
                     {$page|raw}

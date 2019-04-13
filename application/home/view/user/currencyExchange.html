@@ -236,15 +236,15 @@
                     <input data-v-05792414="" type="hidden" id="symbol" value="8">
                     <div data-v-05792414="" id="tv_chart_container" style="height: 490px;">
 
-                        <!--<iframe name="iframe1" id="iframe1" height="100%" width="100%" src="https://ssltvc.forexprostools.com/?pair_ID=1064513&height=1100&width=650&interval=300&plotStyle=heiken_ashi&domain_ID=6&lang_ID=6&timezone_ID=24"></iframe>-->
+                        <iframe name="iframe1" id="iframe1" height="100%" width="100%" style="width: 100%; height: 480px;" src="https://ssltvc.forexprostools.com/?pair_ID=1064513&height=1100&width=1700&interval=300&plotStyle=heiken_ashi&domain_ID=6&lang_ID=6&timezone_ID=24"></iframe>
 
-                    <!--</div>-->
-                        <div id="tvc_container_5345d40a61f49d7aa0960cbce95197f9" class="tvChartContainer" width="970" height="800">
-                            <div id="tvc_overlay_5345d40a61f49d7aa0960cbce95197f9">
-                                <div id="tvc_fullscreen_button_5345d40a61f49d7aa0960cbce95197f9"></div>
-                                <iframe id="tvc_frame_5345d40a61f49d7aa0960cbce95197f9" seamless="seamless" src="//tvc4.forexpros.com/init.php?family_prefix=tvc4&amp;carrier=9a71d508a6913c5b6859f111c545776c&amp;time=1554997892&amp;domain_ID=6&amp;lang_ID=6&amp;timezone_ID=28&amp;pair_ID=945629&amp;interval=900&amp;refresh=6&amp;session=24x7&amp;client=&amp;user=guest&amp;width=970&amp;height=800&amp;init_page=live-charts&amp;m_pids=&amp;watchlist=945629,997650,1057893,1116376,1058255,1119415,1010883,1072990,1073899,1057982,1029177,1036964,1057969,1094157,1031042,1058116,1031712,1121731,1057946,1055844,1062771,32,1118146&amp;site=https://cn.investing.com" width="970" height="800" style="width: 100%; height: 480px; display: inline;"></iframe>
-                            </div>
-                        </div>
+                    </div>
+                        <!--<div id="tvc_container_5345d40a61f49d7aa0960cbce95197f9" class="tvChartContainer" width="970" height="800">-->
+                            <!--<div id="tvc_overlay_5345d40a61f49d7aa0960cbce95197f9">-->
+                                <!--<div id="tvc_fullscreen_button_5345d40a61f49d7aa0960cbce95197f9"></div>-->
+                                <!--<iframe id="tvc_frame_5345d40a61f49d7aa0960cbce95197f9" seamless="seamless" src="//tvc4.forexpros.com/init.php?family_prefix=tvc4&amp;carrier=9a71d508a6913c5b6859f111c545776c&amp;time=1554997892&amp;domain_ID=6&amp;lang_ID=6&amp;timezone_ID=28&amp;pair_ID=945629&amp;interval=900&amp;refresh=6&amp;session=24x14&amp;client=&amp;user=guest&amp;width=970&amp;height=800&amp;init_page=live-charts&amp;m_pids=&amp;watchlist=945629,997650,1057893,1116376,1058255,1119415,1010883,1072990,1073899,1057982,1029177,1036964,1057969,1094157,1031042,1058116,1031712,1121731,1057946,1055844,1062771,32,1118146&amp;site=https://cn.investing.com" width="970" height="800" style="width: 100%; height: 480px; display: inline;"></iframe>-->
+                            <!--</div>-->
+                        <!--</div>-->
 
                 </div>
             </div>
@@ -349,6 +349,7 @@
                                      class="el-tab-pane">
                                     <div data-v-658fd8cc="" class="exchange-div1">
                                         <div data-v-658fd8cc="" class="exchange-div2">
+                                            <input type="hidden" value="{$user_account['transaction_num']}" id="transaction_num">
                                             <!-- TODO 登录显示-->
                                             {if condition="!empty($user_info)"}
                                             <div data-v-658fd8cc="" style="float: left; font-size: 12px">
@@ -585,6 +586,7 @@
         <div data-v-be8e37c0="" class="ce-main">
             <div data-v-be8e37c0="" class="ce-main3 hc-bgColor1">
                 <div data-v-4d795ea8="" data-v-be8e37c0="" class="entrust-warp">
+                    {if !empty($user_info)}
                     <div data-v-4d795ea8="" class="el-tabs el-tabs--card el-tabs--top">
                         <div class="el-tabs__header is-top">
                             <div class="el-tabs__nav-wrap is-top">
@@ -623,7 +625,7 @@
                                                 <col name="gutter" width="0">
                                             </colgroup>
                                             <thead class="has-gutter">
-                                            <tr class="">
+                                            <tr class="" style="text-align: center;">
                                                 <th colspan="1" rowspan="1"
                                                     class="el-table_33_column_197  is-center   is-leaf">
                                                     <div class="cell">时间</div>
@@ -638,15 +640,15 @@
                                                 </th>
                                                 <th colspan="1" rowspan="1"
                                                     class="el-table_33_column_200  is-center   is-leaf">
-                                                    <div class="cell">价格(GAVC)</div>
+                                                    <div class="cell">价格(AMB)</div>
                                                 </th>
                                                 <th colspan="1" rowspan="1"
                                                     class="el-table_33_column_201  is-center   is-leaf">
-                                                    <div class="cell">数量(BTC)</div>
+                                                    <div class="cell">数量</div>
                                                 </th>
                                                 <th colspan="1" rowspan="1"
                                                     class="el-table_33_column_202  is-center   is-leaf">
-                                                    <div class="cell">交易额(GAVC)</div>
+                                                    <div class="cell">委托总额</div>
                                                 </th>
                                                 <th colspan="1" rowspan="1"
                                                     class="el-table_33_column_203  is-center   is-leaf">
@@ -654,7 +656,7 @@
                                                 </th>
                                                 <th colspan="1" rowspan="1"
                                                     class="el-table_33_column_204  is-center   is-leaf">
-                                                    <div class="cell">未成交</div>
+                                                    <div class="cell">状态</div>
                                                 </th>
                                                 <th colspan="1" rowspan="1"
                                                     class="el-table_33_column_205  is-center   is-leaf">
@@ -665,7 +667,8 @@
                                             </thead>
                                         </table>
                                     </div>
-                                    <div class="el-table__body-wrapper is-scrolling-none" style="height: 205px;">
+                                    <div class="el-table__body-wrapper is-scrolling-none" style="height: 500px; overflow-y:scroll;">
+                                        {if !empty($depute_list) }
                                         <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
                                                style="width: 1893px;">
                                             <colgroup>
@@ -680,50 +683,64 @@
                                                 <col name="el-table_33_column_205" width="217">
                                             </colgroup>
                                             <tbody>
-                                            <tr class="el-table__row">
+                                            {foreach $depute_list as $k => $v}
+                                            <tr class="el-table__row" style="text-align: center;">
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_197  is-center">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['create_time']|date='Y-m-d H:i:s'}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_198 is-center ">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">AMEI/AMEI</div>
                                                 </td>
-                                                <td rowspan="1" colspan="1" class="el-table_33_column_199 is-center ">
-                                                    <div class="cell">0</div>
+                                                {if($v['depute_type'] == 1)}
+                                                <td rowspan="1" colspan="1" class="el-table_4_column_19 is-center ">
+                                                    <div class="cell"><span style="color: #32a869;">{$type[$v['depute_type']]}</span></div>
                                                 </td>
+                                                {else /}
+                                                <td rowspan="1" colspan="1" class="el-table_4_column_19 is-center ">
+                                                    <div class="cell"><span style="color: #b34747;">{$type[$v['depute_type']]}</span></div>
+                                                </td>
+                                                {/if}
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_200 is-center ">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['price']}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_201  is-center">
                                                     <div class="cell">
-                                                        0
+                                                        {$v['num']}
                                                     </div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_202  is-center">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['sum']}</div>
                                                 </td>
+
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_203 is-center ">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['have_trade']}</div>
                                                 </td>
-                                                <td rowspan="1" colspan="1" class="el-table_33_column_204  is-center">
-                                                    <div class="cell">0</div>
+
+                                                <td rowspan="1" colspan="1" class="el-table_33_column_203 is-center ">
+                                                    <div class="cell">{$status[$v['status']]}</div>
                                                 </td>
+
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_205  is-center">
-                                                    <div class="cell">0</div>
+                                                    {if ($v['status'] == 1 || $v['status'] == 2) }
+                                                    <div class="cell cancelDepute" data-id="{$v['id']}"> 撤单</div>
+                                                    {/if}
                                                 </td>
 
                                             </tr>
 
-
+                                            {/foreach}
                                             </tbody>
                                         </table>
+                                        {else /}
                                         <div class="el-table__empty-block" style="width: 1893px;">
                                             <span class="el-table__empty-text">暂无数据</span>
                                         </div>
+                                        {/if}
                                     </div>
 
                                     <div class="el-table__column-resize-proxy" style="display: none;"></div>
                                 </div>
-                                <div data-v-4d795ea8="" class="entrust-btn hc-color4 hc-cursor">查看更多</div>
+                                <div data-v-4d795ea8="" class="entrust-btn hc-color4 hc-cursor"><a style="color: #8488f5;" href="{:url('home/user/entrustment')}">查看更多</a></div>
                             </div>
                             <div data-v-4d795ea8="" role="tabpanel" aria-hidden="true" id="tab2"
                                  aria-labelledby="tab-two" class="el-tab-pane tab-content" style="display: none;">
@@ -789,10 +806,12 @@
                                                 </th>
                                                 <th class="gutter" style="width: 0px; display: none;"></th>
                                             </tr>
+
                                             </thead>
                                         </table>
                                     </div>
                                     <div class="el-table__body-wrapper is-scrolling-none" style="height: 205px;">
+                                        {if !empty($depute_list_his)}
                                         <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
                                                style="width: 1893px;">
                                             <colgroup>
@@ -806,128 +825,142 @@
                                                 <col name="el-table_4_column_24" width="249">
                                             </colgroup>
                                             <tbody>
+                                            {foreach $depute_list_his as $k => $v}
                                             <tr class="el-table__row">
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_17  is-center">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['create_time']|date='Y-m-d H:i:s'}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_18 is-center ">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">AMEI/AMEI</div>
                                                 </td>
+                                                {if($v['depute_type'] == 1)}
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_19 is-center ">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell"><span style="color: #32a869;">{$type[$v['depute_type']]}</span></div>
                                                 </td>
+                                                {else /}
+                                                <td rowspan="1" colspan="1" class="el-table_4_column_19 is-center ">
+                                                    <div class="cell"><span style="color: #b34747;">{$type[$v['depute_type']]}</span></div>
+                                                </td>
+                                                {/if}
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_20 is-center ">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['price']}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_21  is-center">
                                                     <div class="cell">
-                                                        0
+                                                        {$v['num']}
                                                     </div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_22  is-center">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['sum']}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_23 is-center ">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$v['have_trade']}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_24  is-center">
-                                                    <div class="cell">0</div>
+                                                    <div class="cell">{$status[$v['status']]}</div>
                                                 </td>
 
                                             </tr>
+                                            {/foreach}
                                             </tbody>
                                         </table>
+                                        {else /}
                                         <div class="el-table__empty-block" style="width: 1893px;"><span
-                                                class="el-table__empty-text">暂无数据</span></div><!----></div><!---->
+                                                class="el-table__empty-text">暂无数据</span>
+                                        </div><!---->
+                                        {/if}
+                                    </div><!---->
                                     <!----><!----><!---->
                                     <div class="el-table__column-resize-proxy" style="display: none;"></div>
                                 </div>
-                                <div data-v-4d795ea8="" class="entrust-btn hc-color4 hc-cursor">查看更多</div>
+                                <div data-v-4d795ea8="" class="entrust-btn hc-color4 hc-cursor"><a style="color: #8488f5;" href="{:url('home/user/historical')}">查看更多</a></div>
                             </div>
                         </div>
                     </div>
                     <!--todo 登录状态显示-->
-                    <div data-v-4d795ea8="" class="entrust-czan">
-                        <span data-v-4d795ea8="" class="hc-cursor">买入</span>
-                        <span data-v-4d795ea8="" class="hc-cursor">卖出</span>
-                        <span data-v-4d795ea8="" class="hc-cursor ">全部</span>
-                    </div>
+                    <!--<div data-v-4d795ea8="" class="entrust-czan">-->
+                        <!--<span data-v-4d795ea8="" class="hc-cursor">买入</span>-->
+                        <!--<span data-v-4d795ea8="" class="hc-cursor">卖出</span>-->
+                        <!--<span data-v-4d795ea8="" class="hc-cursor ">全部</span>-->
+                    <!--</div>-->
+                    {else /}
                     <div data-v-4d795ea8="" class="entrust-title"><span data-v-4d795ea8="" class="hc-color4 hc-cursor">登录</span>
                         或 <span data-v-4d795ea8="" class="hc-color4 hc-cursor">注册</span> 开始交易
                     </div>
+                    {/if}
                     <!--todo 登录状态显示 end-->
                 </div>
 
             </div>
         </div>
         <!--TODO 当前委托 标签页 end-->
-        <div data-v-be8e37c0="" class="ce-main" style="margin-bottom: 10px;">
-            <!--todo 币种资料-->
-            <div data-v-be8e37c0="" class="ce-main4-left hc-bgColor1">
-                <div data-v-4e196a72="" data-v-be8e37c0="">
-                    <div data-v-4e196a72="" class="describe-top hc-bgColor3">
-                        <div data-v-4e196a72="" class="describe-top-div1">
-                            <span data-v-4e196a72="">币种资料</span>
-                            <span data-v-4e196a72="" class="describe-top-div2 hc-color4 hc-cursor">了解更多</span></div>
-                    </div>
-                    <div data-v-4e196a72="" class="describe-bot">
-                        <div data-v-4e196a72="" class="describe-bot-div1">
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" style="float: left;">BTC 比特币</div>
-                                <div data-v-4e196a72="" class="describe-btn hc-btn">咨讯介绍</div>
-                            </div>
-                            <div data-v-4e196a72="" class="describe-bot-div6"><p data-v-4e196a72="">
-                                是目前使用最为广泛的一种数字货币，它诞生于2009年1月3日，是一种点对点（P2P）传输的数字加密货币，总量2100万枚。比特币网络每10分钟释放出一定数量币，预计在2140年达到极限。比特币被投资者称为“数字黄金”。比特币依据特定算法，通过大量的计算产生，不依靠特定货币机构发行，其使用整个P2P网络中众多节点构成的分布式数据库来确认并记录所有的交易行为，并使用密码学设计确保货币流通各个环节安全性，可确保无法通过大量制造比特币来人为操控币值。基于密码学的设计可以使比特币只能被真实拥有者转移、支付及兑现。同样确保了货币所有权与流通交易的匿名性。</p>
-                            </div>
-                        </div>
-                        <div data-v-4e196a72="" class="describe-bot-div1">
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">发行时间</div>
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">2008/11/1</div>
-                            </div>
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">发行价格</div>
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">--</div>
-                            </div>
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">流通总量</div>
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">1673.82万</div>
-                            </div>
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">发行总量</div>
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">2100万</div>
-                            </div>
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">区块查询</div>
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5"><a
-                                        data-v-4e196a72="" target="_blank" class="hc-color5"
-                                        href="https://blockchain.info/">https://blockchain.info/</a></div>
-                            </div>
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">官网地址</div>
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5"><a
-                                        data-v-4e196a72="" target="_blank" class="hc-color5"
-                                        href="https://bitcoin.org/en/">https://bitcoin.org/en/</a></div>
-                            </div>
-                            <div data-v-4e196a72="" class="describe-bot-div2">
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">白皮书</div>
-                                <div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5"><a
-                                        data-v-4e196a72="" target="_blank" class="hc-color5" href=""></a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--todo 币种资料 end-->
-            <!--todo 深度图-->
-            <div data-v-be8e37c0="" class="ce-main4-right hc-bgColor1">
-                <div data-v-0473f4e1="" data-v-be8e37c0="">
-                    <div data-v-0473f4e1="" class="depthMap-top hc-bgColor3">
-                        <div data-v-0473f4e1="" class="depthMap-top-div1"><span data-v-0473f4e1="">深度图</span></div>
-                    </div>
+        <!--<div data-v-be8e37c0="" class="ce-main" style="margin-bottom: 10px;">-->
+            <!--&lt;!&ndash;todo 币种资料&ndash;&gt;-->
+            <!--<div data-v-be8e37c0="" class="ce-main4-left hc-bgColor1">-->
+                <!--<div data-v-4e196a72="" data-v-be8e37c0="">-->
+                    <!--<div data-v-4e196a72="" class="describe-top hc-bgColor3">-->
+                        <!--<div data-v-4e196a72="" class="describe-top-div1">-->
+                            <!--<span data-v-4e196a72="">币种资料</span>-->
+                            <!--<span data-v-4e196a72="" class="describe-top-div2 hc-color4 hc-cursor">了解更多</span></div>-->
+                    <!--</div>-->
+                    <!--<div data-v-4e196a72="" class="describe-bot">-->
+                        <!--<div data-v-4e196a72="" class="describe-bot-div1">-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" style="float: left;">BTC 比特币</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-btn hc-btn">咨讯介绍</div>-->
+                            <!--</div>-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div6"><p data-v-4e196a72="">-->
+                                <!--是目前使用最为广泛的一种数字货币，它诞生于2009年1月3日，是一种点对点（P2P）传输的数字加密货币，总量2100万枚。比特币网络每10分钟释放出一定数量币，预计在2140年达到极限。比特币被投资者称为“数字黄金”。比特币依据特定算法，通过大量的计算产生，不依靠特定货币机构发行，其使用整个P2P网络中众多节点构成的分布式数据库来确认并记录所有的交易行为，并使用密码学设计确保货币流通各个环节安全性，可确保无法通过大量制造比特币来人为操控币值。基于密码学的设计可以使比特币只能被真实拥有者转移、支付及兑现。同样确保了货币所有权与流通交易的匿名性。</p>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div data-v-4e196a72="" class="describe-bot-div1">-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">发行时间</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">2008/11/1</div>-->
+                            <!--</div>-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">发行价格</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">&#45;&#45;</div>-->
+                            <!--</div>-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">流通总量</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">1673.82万</div>-->
+                            <!--</div>-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">发行总量</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5">2100万</div>-->
+                            <!--</div>-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">区块查询</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5"><a-->
+                                        <!--data-v-4e196a72="" target="_blank" class="hc-color5"-->
+                                        <!--href="https://blockchain.info/">https://blockchain.info/</a></div>-->
+                            <!--</div>-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">官网地址</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5"><a-->
+                                        <!--data-v-4e196a72="" target="_blank" class="hc-color5"-->
+                                        <!--href="https://bitcoin.org/en/">https://bitcoin.org/en/</a></div>-->
+                            <!--</div>-->
+                            <!--<div data-v-4e196a72="" class="describe-bot-div2">-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div4 hc-color">白皮书</div>-->
+                                <!--<div data-v-4e196a72="" class="describe-bot-div3 describe-bot-div5"><a-->
+                                        <!--data-v-4e196a72="" target="_blank" class="hc-color5" href=""></a></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--&lt;!&ndash;todo 币种资料 end&ndash;&gt;-->
+            <!--&lt;!&ndash;todo 深度图&ndash;&gt;-->
+            <!--<div data-v-be8e37c0="" class="ce-main4-right hc-bgColor1">-->
+                <!--<div data-v-0473f4e1="" data-v-be8e37c0="">-->
+                    <!--<div data-v-0473f4e1="" class="depthMap-top hc-bgColor3">-->
+                        <!--<div data-v-0473f4e1="" class="depthMap-top-div1"><span data-v-0473f4e1="">深度图</span></div>-->
+                    <!--</div>-->
 
-                </div>
-            </div>
+                <!--</div>-->
+            <!--</div>-->
             <!--todo 深度图 end-->
         </div>
     </div>
@@ -1194,6 +1227,7 @@
                 $('#poundage2').val('');
                 $('#all_num2').val('');
             }
+
             if(!regPos.test(val)){
                 //如果输入的格式不对，清空
                 $(this).val('');
@@ -1294,7 +1328,22 @@
 
         }
 
+        //撤销委托
+        $('body').on('click','.cancelDepute',function() {
 
+            var id = $(this).attr('data-id');
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+            $.post("{:url('cancelDepute')}", {'id' : id}, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
 
 
 
