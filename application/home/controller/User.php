@@ -384,9 +384,11 @@ class User extends Common
         if(empty($id) || empty($this->uid)){
             return ['code' => 0, 'msg' => '非法请求'];
         }
+        $user_info = session('user');
 
         //用户撤销委托
-        $depute_info = UserTradeDepute::where(['user_id' => $id])->find();
+        $depute_info = UserTradeDepute::where(['id' => $id])->find();
+
         if(empty($depute_info)){
             return ['code' => 0, 'msg' => '未找到委托记录'];
         }
@@ -406,14 +408,22 @@ class User extends Common
             $user_account = UserCurrencyAccount::where(['user_id' => $depute_info['user_id']])->find();
             $jiaoyi_num = bcadd($user_account['transaction_num'], $depute_info['sum'], 2);
             //更新用户交易钱包
+            DB::startTrans();
             $res = UserCurrencyAccount::where(['user_id' => $depute_info['user_id']])->update(['transaction_num' => $jiaoyi_num]);
             if($res === false){
+                Db::rollback();
                 return ['code' => 0, 'msg' => '撤单失败请重试'];
             }
 
+            //更新用户委托状态
+            $res2= UserTradeDepute::where(['id' => $id])->update(['status' =>UserTradeDepute::STATUS5, 'depute_status' => 2]);
+            if($res2 === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '撤单失败请重试'];
+            }
             UserRunningLog::create([
                 'user_id'  =>  $depute_info['user_id'],
-                'about_id' =>  $depute_info['about_id'],
+                'about_id' =>  $depute_info['user_id'],
                 'running_type'  => UserRunningLog::TYPE31, //撤销挂单
                 'account_type'  => Currency::TRADE,
                 'change_num'    => $depute_info['sum'],
@@ -421,12 +431,14 @@ class User extends Common
                 'create_time'   => time(),
                 'remark'        => '撤销委托返还交易钱包'
             ]);
-
+            Db::commit();
 
         }else{
             $amei_infos = CurrencyList::where(['en_name' => 'AMB'])->find();
             //查询用户币种钱包
+
             $currency_account = Db::name('user_currency_list')->where(['user_id' => $depute_info['user_id'], 'currency_id' =>$amei_infos['id']])->find();
+
             if($depute_info['status'] == 1){
                 $cancel_num = $depute_info['num'];
             }
@@ -434,18 +446,23 @@ class User extends Common
                 $cancel_num = bcsub($depute_info['num'], $depute_info['have_trade']);
             }
 
-
-
             $currency_num = bcadd($currency_account['num'], $cancel_num, 4);
+            DB::startTrans();
             $res = UserCurrencyList::where(['user_id' => $depute_info['user_id'],'currency_id' =>$amei_infos['id']])->update(['num' => $currency_num]);
             if($res === false){
+                Db::rollback();
                 return ['code' => 0, 'msg' => '撤单失败请重试'];
             }
-
-
+            //更新用户委托状态
+            $res2= UserTradeDepute::where(['id' => $id])->update(['status' =>UserTradeDepute::STATUS5, 'depute_status' => 2]);
+            if($res2 === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '撤单失败请重试'];
+            }
+            Db::commit();
             UserRunningLog::create([
                 'user_id'  =>  $depute_info['user_id'],
-                'about_id' =>  $depute_info['about_id'],
+                'about_id' =>  $depute_info['user_id'],
                 'running_type'  => UserRunningLog::TYPE31, //撤销挂单
                 'account_type'  => Currency::TRADE,
                 'change_num'    => $cancel_num,
