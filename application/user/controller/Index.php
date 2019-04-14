@@ -45,6 +45,12 @@ class Index extends Common{
             foreach ($authRule as $kk=>$vv){
                 if($vv['href'] == '/user/user/register.html' && $baodan_center == 0)
                     continue;
+                if($vv['href'] == '/user/user/notactivate.html' && $baodan_center == 0)
+                    continue;
+                if($vv['href'] == '/user/finance/applyactive.html' && $baodan_center == 0)
+                    continue;
+                if($vv['href'] == '/user/finance/applyactivelist.html' && $baodan_center == 0)
+                    continue;
                 if($v['id']==$vv['pid']){
                     $menus[$k]['children'][] = $vv;
                 }

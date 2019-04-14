@@ -12,6 +12,11 @@ class Set extends Common
     public function initialize()
     {
         parent::initialize();
+        if(!empty(session('user'))){
+            $this->assign('user', session('user'));
+        }
+        $system = Db::name('system')->find();
+        $this->assign('system', $system);
         $this->uid = session('user.id');
     }
 

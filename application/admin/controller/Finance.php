@@ -13,6 +13,7 @@ use app\admin\model\CurrencyRecharge;
 use app\admin\model\UserApplyConsumeCash;
 use app\admin\model\UserApplyTradeCash;
 use app\admin\model\UserCurrencyAccount;
+use app\user\model\UserApplyActive;
 use app\user\model\UserApplyShateCash;
 use app\user\model\UserDynamicAmeiBonus;
 use app\user\model\UserRunningLog;
@@ -245,6 +246,10 @@ class Finance extends Common
                 return ['code' => 0, 'msg' => '缺少必填项'];
             }
 
+            if($data['amount'] <= 0){
+                return ['code' => 0, 'msg' => '输入金额不正确'];
+            }
+
 
             //用户钱包
             $user_currency_account = db('user_currency_account')->where(['user_id' => $data['user_id']])->find();
@@ -341,6 +346,9 @@ class Finance extends Common
             if(empty($data['currency_id']) || empty($data['user_id']) || empty($data['amount'])){
                 return ['code' => 0, 'msg' => '缺少必填项'];
             }
+            if($data['amount'] <= 0){
+                return ['code' => 0, 'msg' => '输入金额不正确'];
+            }
             //用户钱包
             $user_currency_account = db('user_currency_account')->where(['user_id' => $data['user_id']])->find();
             if(empty($user_currency_account)){
@@ -417,77 +425,134 @@ class Finance extends Common
         }
 
     }
-    
+
+
     //申请充值列表
     public function applicationRecharge()
     {
         $status = ApplyRecharge::$status;
         //获取用户申请充值列表
         if(request()->isPost()){
+
             $data   =input('post.');
-            $where  = $this->makeSearch($data);
+            $where  = $this->applySearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
 
-            if($data['type'] == 1){
-                //沙特链申请列表
-                $list = db('user_apply_shate_cash')
-                    ->alias('a')
-                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username')
-                    ->where($where)
-                    ->order('id DESC')
-                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
-                    ->toArray();
-                foreach ($list['data'] as $k=>$v){
-                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
-                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
-                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
-                }
-                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
-
+            //申请列表
+            $list = db('user_apply_active')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->field('a.*,u.usernum,u.username')
+                ->where($where)
+                ->order('a.id DESC')
+                ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                ->toArray();
+            foreach ($list['data'] as $k=>$v){
+                $list['data'][$k]['status'] = UserApplyActive::$status[$v['status']];
+                $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
             }
-
-            if($data['type'] == 2){
-                //消费钱包申请列表
-                $list = db('user_apply_consume_cash')
-                    ->alias('a')
-                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username')
-                    ->where($where)
-                    ->order('id DESC')
-                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
-                    ->toArray();
-                foreach ($list['data'] as $k=>$v){
-                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
-                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
-                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
-                }
-                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
-            }
-
-            if($data['type'] == 3){
-                //交易账号申请列表
-                $list = db('user_apply_trade_cash')
-                    ->alias('a')
-                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username')
-                    ->where($where)
-                    ->order('id DESC')
-                    ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
-                    ->toArray();
-                foreach ($list['data'] as $k=>$v){
-                    $list['data'][$k]['status'] = UserApplyShateCash::$status[$v['status']];
-                    $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
-                    $list['data'][$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
-                }
-                return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
-            }
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
 
         }
 
         $this->assign('status', $status);
         return $this->fetch('applyRechargeList');
+    }
+
+    //拒绝充值激活钱包申请
+    public function declineActive()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['id'])){
+                return ['code' => 0, 'msg' => '操作失败'];
+            }
+            $save = [
+                'reason' => $data['reason'],
+                'status' => 3
+            ];
+            $res = UserApplyActive::where(['id' => $data['id']])->update($save);
+            if($res === false){
+                return ['code' => 0, 'msg' => '操作失败请重试'];
+            }
+            return ['code' => 1, 'msg' => '操作成功'];
+        }else{
+            return ['code' => 0, 'msg' => '操作失败'];
+        }
+    }
+
+    //充值批准
+    public function sureActive()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['id'])){
+                return ['code' => 0, 'msg' => '操作失败'];
+            }
+            $save = [
+                'status' => 2
+            ];
+            $active_info =  Db::name('user_apply_active')->where(['id' => $data['id']])->find();
+            Db::startTrans();
+            $res = Db::name('user_apply_active')->where(['id' => $data['id']])->update($save);
+            if($res === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '操作失败请重试'];
+            }
+            //更新用户激活钱包
+            $user_active_account = UserCurrencyAccount::where(['user_id' => $active_info['user_id']])->find();
+            $active_num = bcadd($user_active_account['activation_num'], $active_info['amount'],4);
+
+            $res2 = UserCurrencyAccount::where(['user_id' => $active_info['user_id']])->update(['activation_num' => $active_num]);
+            if($res2 === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '操作失败请重试'];
+            }
+            Db::commit();
+            UserRunningLog::create([
+                'user_id'  =>  $active_info['user_id'],
+                'about_id' =>  $active_info['user_id'],
+                'running_type'  => UserRunningLog::TYPE1,
+                'account_type'  => 2,
+                'change_num'    => $active_info['amount'],
+                'balance'       => $active_num,
+                'create_time'   => time(),
+                'remark'        => '激活钱包充值'
+            ]);
+
+
+            return ['code' => 1, 'msg' => '操作成功'];
+        }else{
+            return ['code' => 0, 'msg' => '操作失败'];
+        }
+    }
+
+
+    public function applySearch($data)
+    {
+        $where = new Where();
+
+        if(!empty($data['status'])){
+            $where['a.status'] = $data['status'];
+        }
+        if(!empty($data['start_time']) && empty($data['end_time'])){
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
+            $where['a.create_time'] = array('egt', $start_time);
+        }
+        if(!empty($data['end_time']) && empty($data['start_time'])){
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
+            $where['a.create_time'] = array('elt',$end_time);
+        }
+        if(!empty($data['start_time']) && !empty($data['end_time'])){
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
+            $where['a.create_time'] = array('between time', array($start_time, $end_time));
+        }
+        if(!empty($data['key'])){
+            $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
+        }
+        return $where;
     }
 
     //搜索
@@ -499,16 +564,16 @@ class Finance extends Common
             $where['a.status'] = $data['status'];
         }
         if(!empty($data['start_time']) && empty($data['end_time'])){
-            $start_time = strtotime($data['start_time']);
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
             $where['a.create_time'] = array('egt', $start_time);
         }
         if(!empty($data['end_time']) && empty($data['start_time'])){
-            $end_time = strtotime($data['end_time']);
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
             $where['a.create_time'] = array('elt',$end_time);
         }
         if(!empty($data['start_time']) && !empty($data['end_time'])){
-            $start_time = strtotime($data['start_time']);
-            $end_time = strtotime($data['end_time']);
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
             $where['a.create_time'] = array('between time', array($start_time, $end_time));
         }
         if(!empty($data['key'])){
@@ -524,11 +589,6 @@ class Finance extends Common
 
     }
 
-    //申请充值单个删除
-    public function applyDel()
-    {
-
-    }
 
     //申请充值批量删除
     public function applyReachrgeDelall()

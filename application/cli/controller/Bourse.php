@@ -303,7 +303,51 @@ class Bourse extends Controller {
 
     }
 
-    //自动创建公司拨比表
+    //每日公司拨比
+    public function companyDayRunning()
+    {
+
+        $beginYesterday = mktime(0,0,0,date('m'),date('d')-1,date('Y'));
+        $endYesterday = mktime(0,0,0,date('m'),date('d'),date('Y'))-1;
+        //查询昨天报单总额
+        $where = new Where();
+        $where['running_type'] = 22;
+        $where['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+        $all_sum = Db::name('user_running_log')->where($where)->sum('change_num'); //总收入
+        //计算昨天发送静态奖励
+        $where2['running_type'] = 18;
+        $where2['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+        $all_jing = Db::name('user_running_log')->where($where)->sum('change_num'); //总静态收益
+        //计算昨天发送动态奖励
+        $where3['running_type'] = 20;
+        $where3['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+        $all_dong = Db::name('user_running_log')->where($where)->sum('change_num'); //总动态收益
+        $all_dong = bcmul($all_dong,2,4);
+        //计算昨天直推奖励
+        $where3['running_type'] = 19;
+        $where3['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+        $all_zhi = Db::name('user_running_log')->where($where)->sum('change_num'); //总直推收益
+
+        //计算昨天报单奖励
+        $where3['running_type'] = 21;
+        $where3['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+        $all_bao = Db::name('user_running_log')->where($where)->sum('change_num'); //总报单收益
+
+        $expenses = bcadd($all_jing, $all_dong, 4);
+        $expenses = bcadd($expenses, $all_zhi, 4);
+        $expenses = bcadd($expenses, $all_bao, 4);
+
+        $data = [
+            'income'    => $all_sum,
+            'expenses'  => $expenses,
+            'time'      => date('Y-m-d',$endYesterday)
+        ];
+        Db::name('company_day_running')->insert($data);
+
+    }
+
+
+
 
     //自动撮合交易
     public function autoTrade()

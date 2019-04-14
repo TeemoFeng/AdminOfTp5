@@ -32,6 +32,8 @@ class User extends Common
         if(session('user')){
             $this->assign('user_info', session('user'));
         }
+        $system = Db::name('system')->find();
+        $this->assign('system', $system);
         $this->uid=session('user.id');
     }
 

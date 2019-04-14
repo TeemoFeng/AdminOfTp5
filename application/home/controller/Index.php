@@ -14,15 +14,19 @@ class Index extends Common{
                 ->find();
             $this->assign('user_info',$this->userInfo);
         }
-
+        $system = Db::name('system')->find();
+        $this->assign('system', $system);
     }
 
     public function index()
     {
         //首页各项待加
-
+        //获取广告列表
+        $guanggao_list = Db::name('ad')->select();
         $user = session('user');
         $this->assign('user', $user);
+        $this->assign('guanggao_list', $guanggao_list);
+
         return $this->fetch('index');
     }
 

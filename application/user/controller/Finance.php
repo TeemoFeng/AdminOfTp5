@@ -10,6 +10,7 @@ namespace app\user\controller;
 use app\admin\model\ApplyCash;
 use app\admin\model\CurrencyList;
 use app\admin\model\UserCurrencyAccount;
+use app\user\model\UserApplyActive;
 use app\user\model\UserApplyCash;
 use app\user\model\UserApplyConsumeCash;
 use app\user\model\UserApplyShateCash;
@@ -76,6 +77,7 @@ class Finance extends Common{
         return $this->fetch('runningAccount');
     }
 
+
     public function makeSearch($data)
     {
         $where = new Where();
@@ -88,16 +90,16 @@ class Finance extends Common{
             $where['a.running_type'] = $data['running_type']; //流水类型
         }
         if(!empty($data['start_time']) && empty($data['end_time'])){
-            $start_time = strtotime($data['start_time']);
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
             $where['a.create_time'] = array('egt', $start_time);
         }
         if(!empty($data['end_time']) && empty($data['start_time'])){
-            $end_time = strtotime($data['end_time']);
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
             $where['a.create_time'] = array('elt',$end_time);
         }
         if(!empty($data['start_time']) && !empty($data['end_time'])){
-            $start_time = strtotime($data['start_time']);
-            $end_time = strtotime($data['end_time']);
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
             $where['a.create_time'] = array('between time', array($start_time, $end_time));
         }
         if(!empty($data['key'])){
@@ -296,6 +298,9 @@ class Finance extends Common{
             $data = input('post.');
             if(empty($data['user_id']) || empty($data['cash_type']))
                 return ['code' => 0, 'msg' => '非法请求'];
+            if(empty($data['bank_account']) || empty($data['alipay_account'])){
+                return ['code' => 0, 'msg' => '请先报备支付宝或银行卡信息才可提现'];
+            }
             if($data['cash_type'] == 1){
                 //1 沙特提交
                 if(empty($data['extract_num'])){
@@ -506,7 +511,7 @@ class Finance extends Common{
     //本金转换
     public function corpusConvert()
     {
-        $user_id = session('user_id');
+        $user_id = session('user.id');
         $principal_recall = db('bonus_ext_set')->where(['id' => 1])->field('principal_recall')->find();
 
         if(request()->isPost()){
@@ -682,5 +687,108 @@ class Finance extends Common{
         }
         return $where;
     }
+
+    //申请充值激活钱包列表
+    public function applyActiveList()
+    {
+        $status = UserApplyActive::$status;
+        $user_id = session('user.id');
+        if(request()->isPost()){
+            $data   =input('post.');
+            $where  = $this->applySearch($data);
+            $where['a.user_id'] = $user_id;
+
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+
+            //申请列表
+            $list = db('user_apply_active')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->field('a.*,u.usernum,u.username')
+                ->where($where)
+                ->order('a.id DESC')
+                ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                ->toArray();
+            foreach ($list['data'] as $k=>$v){
+                $list['data'][$k]['status'] = UserApplyActive::$status[$v['status']];
+                $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+            }
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+        }
+        $this->assign('status',$status);
+        return $this->fetch('applyActiveList');
+    }
+
+    public function applySearch($data)
+    {
+        $where = new Where();
+
+        if(!empty($data['status'])){
+            $where['a.status'] = $data['status'];
+        }
+        if(!empty($data['start_time']) && empty($data['end_time'])){
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
+            $where['a.create_time'] = array('egt', $start_time);
+        }
+        if(!empty($data['end_time']) && empty($data['start_time'])){
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
+            $where['a.create_time'] = array('elt',$end_time);
+        }
+        if(!empty($data['start_time']) && !empty($data['end_time'])){
+            $start_time = strtotime($data['start_time'] . ' 00:00:00');
+            $end_time = strtotime($data['end_time'] . ' 23:59:59');
+            $where['a.create_time'] = array('between time', array($start_time, $end_time));
+        }
+
+        return $where;
+    }
+
+
+    //查看拒绝原因
+    public function refusalReason()
+    {
+
+    }
+
+    //申请充值激活钱包
+    public function applyActive()
+    {
+        if(request()->isPost()){
+
+            $data = input('post.');
+
+            if(empty($data['amount'])){
+                return ['code' => 0, 'msg' => '请输入充值金额'];
+            }
+            if($data['amount'] <= 0){
+                return ['code' => 0, 'msg' => '输入金额不正确'];
+            }
+
+            $user_id = session('user.id');
+            $data = [
+                'user_id'   => $user_id,
+                'amount'    => $data['amount'],
+                'remark'    => $data['remark'],
+                'status'    => 1,
+                'create_time'   => time(),
+
+            ];
+            $res = Db::name('user_apply_active')->insert($data);
+            if($res){
+
+                return ['code' => 1, 'msg' => '申请成功'];
+            }else{
+                return ['code' => 0, 'msg' => '申请失败请重试'];
+            }
+
+
+        }
+
+       return $this->fetch('applyActive');
+
+    }
+
 
 }

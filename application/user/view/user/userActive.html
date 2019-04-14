@@ -1,0 +1,66 @@
+{include file="common2/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>激活</legend>
+    </fieldset>
+
+
+    <form class="layui-form " lay-filter="form">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">会员级别</label>
+            <div class="layui-input-4">
+                <select name="level" lay-verify="required" id="status2" lay-search>
+                    <option value="">请选择会员</option>
+                    {foreach $user_level as $k => $v}
+                    <option value="{$v['level_id']}">{$v['level_name']}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户</label>
+            <div class="layui-input-4">
+                <input type="text" name="usernames" class="layui-input" value="{$user_name}" disabled>
+            </div>
+
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id"   value="{$id}">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">提交</button>
+                <a href="{:url('notActivate')}" class="layui-btn layui-btn-primary">返回</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{include file="common2/foot"/}
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, layer = layui.layer,$= layui.jquery;
+        //提交表单
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+
+            $.post('{:url("sureActive")}', data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        })
+
+
+
+    });
+</script>

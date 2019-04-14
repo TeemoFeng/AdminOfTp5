@@ -43,21 +43,19 @@
 </script>
 
 <script type="text/html" id="action">
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-xs">详情</a>
-    <a href="{:url('currencyRecharge')}?id={{d.id}}" class="layui-btn layui-btn-xs">货币充值</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+    {{#  if(d.status == '未审核'){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" data-id="{{d.id}}" id="sureActive">批准</a>
+
+    <a href="#" class="layui-btn layui-btn-primary layui-btn-xs" data-id="{{d.id}}" id="decline">拒绝</a>
+
+    {{#  } }}
 
 </script>
 
-<script type="text/html" id="email">
-    {{d.email}}
-    {{# if(d.email && d.email_validated=='0'){ }}
-    (未验证)
-    {{# } }}
-</script>
 
 <script type="text/html" id="topBtn">
-    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="delAll">批量删除</button>
+    <!--<button type="button" class="layui-btn layui-btn-danger layui-btn-sm" id="delAll">批量删除</button>-->
     <!--<a href="{:url('register')}" class="layui-btn layui-btn-normal layui-btn-sm">会员注册</a>-->
 </script>
 
@@ -85,29 +83,15 @@
                 {checkbox:true,fixed: true},
                 {field: 'id', title: 'id', width: 50, fixed: true},
                 {field: 'username', title: '用户', width: 200, fixed: true},
-                {field: 'apply_method', title: '充值方式', width: 100},
-                {field: 'apply_num', title: '充值数量', width: 100},
-                {field: 'amount', title: '充值金额(人民币)', width: 100},
+                {field: 'usernum', title: '用户编号', width: 200, fixed: true},
+                {field: 'amount', title: '充值金额($)', width: 100},
                 {field: 'create_time', title: '申请时间', width: 150},
-                {field: 'status_str', title: '状态', width: 150},
+                {field: 'status', title: '状态', width: 150},
                 {title:'操作', width: 300, align: 'center', toolbar: '#action'}
             ]],
             limit: 10 //每页默认显示的数量
         });
-        form.on('switch(is_lock)', function(obj){
-            loading =layer.load(2, {shade: [0.1,'#fff']});
-            var id = this.value;
-            var is_lock = obj.elem.checked===true?0:1;
-            $.post('{:url("usersState")}',{'id':id,'is_lock':is_lock},function (res) {
-                layer.close(loading);
-                if (res.status==1) {
-                    tableIn.reload();
-                }else{
-                    layer.msg(res.msg,{time:1000,icon:2});
-                    return false;
-                }
-            })
-        });
+
         //搜索
         $('#search').on('click', function() {
             var key = $('#key').val();
@@ -126,7 +110,7 @@
             if (obj.event === 'del') {
                 layer.confirm('您确定要删除吗？', function(index){
                     var loading = layer.load(1, {shade: [0.1, '#fff']});
-                    $.post("{:url('applyDel')}",{id:data.id},function(res){
+                    $.post("{:url('')}",{id:data.id},function(res){
                         layer.close(loading);
                         if(res.code===1){
                             layer.msg(res.msg,{time:1000,icon:1});
@@ -148,11 +132,52 @@
                     ids.push(o.id);
                 });
                 var loading = layer.load(2, {shade: [0.1, '#fff']});
-                $.post("{:url('applyReachrgeDelall')}", {ids: ids}, function (data) {
+                $.post("{:url('')}", {ids: ids}, function (data) {
                     layer.close(loading);
                     if (data.code === 1) {
                         layer.msg(data.msg, {time: 1000, icon: 1});
                         tableIn.reload();
+                    } else {
+                        layer.msg(data.msg, {time: 1000, icon: 2});
+                    }
+                });
+            });
+        })
+
+        //拒绝
+        $('body').on('click','#decline',function() {
+            var id = $(this).attr('data-id');
+            layer.prompt({
+                formType: 2,
+                title: '请输入拒绝原因',
+                area: ['300px', '200px'] //自定义文本域宽高
+            }, function(value, index, elem){
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('declineActive')}",{id:id,reason:value},function(res){
+                    layer.close(loading);
+                    if(res.code===1){
+                        layer.msg(data.msg, {time: 1000, icon: 1});
+                    }else{
+                        layer.msg('操作失败！',{time:1000,icon:2});
+                    }
+                });
+                layer.close(index);
+                location.reload();
+
+            });
+        });
+
+        //批准
+        $('body').on('click','#sureActive',function() {
+            var id = $(this).attr('data-id');
+            layer.confirm('确认此操作吗？', {icon: 3}, function(index) {
+                layer.close(index);
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('sureActive')}", {id: id}, function (data) {
+                    layer.close(loading);
+                    if (data.code === 1) {
+                        layer.msg(data.msg, {time: 1000, icon: 1});
+                        location.reload();
                     } else {
                         layer.msg(data.msg, {time: 1000, icon: 2});
                     }

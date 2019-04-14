@@ -1,0 +1,67 @@
+{include file="common2/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>充值激活钱包</legend>
+    </fieldset>
+
+
+    <form class="layui-form " lay-filter="form">
+
+        <fieldset class="layui-elem-field layui-field-title">
+            <div class="layui-field-box">
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">金额</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="amount" lay-verify="required" placeholder="请填写金额" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="remark" placeholder="" class="layui-input">
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="type" value="1">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">申请</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{include file="common2/foot"/}
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, layer = layui.layer,$= layui.jquery;
+
+
+        //提交表单
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+
+            $.post('{:url("applyActive")}', data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        })
+
+
+
+    });
+</script>
