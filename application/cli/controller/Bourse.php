@@ -324,7 +324,7 @@ class Bourse extends Controller {
         $where2['lock'] = 0;
         $sell_list = UserTradeDepute::where($where2)->select();
 
-        //3.碰撞产生交易
+        //3.产生交易
         foreach ($buy_list as $k => $v){
             //买家当天
             $cancel_num = Db::name('user_cancel_order_log')->where(['user_id' => $v['id'], 'time' => date('Y-m-d', time())])->value('num');
@@ -384,8 +384,8 @@ class Bourse extends Controller {
                     $sell_mobile = Db::name('users')->where(['id' => $vv['user_id']])->value('mobile');
                     $content = '您委托购买的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’为卖家打款，我们会在第一时间为您释放货币';
                     $content2 = '您委托卖出的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’等待买家付款之后，确认收款完成交易';
-                    sendOrderSms($buy_mobile, $content); //给买家发送细腻
-                    sendOrderSms($sell_mobile, $content2); //给买家发送细腻
+                    sendOrderSms($buy_mobile, $content); //给买家发送信息
+                    sendOrderSms($sell_mobile, $content2); //给买家发送信息
 
 
                 }

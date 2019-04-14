@@ -202,9 +202,11 @@
                                     <div class="cell"><span data-v-48b6e8a5="" class="status-color">{$v['trade_status_str']}</span></div>
                                 </td>
                                 <td rowspan="1" colspan="1" class="el-table_12_column_114  ">
+                                    {if $v['trade_type'] == 1}
                                     <div class="cell">
                                         <div data-v-48b6e8a5="" class="hc-btn order-hc-button" ><a style="color: #666;" href="{:url('home/user/tradeDetail')}?id={$v['id']}">查看详情</a></div>
                                     </div>
+                                    {/if}
                                     {if $v['trade_type'] == 2 && $v['trade_status'] == 2}
                                     <div class="cell">
                                         <div data-v-48b6e8a5="" class="hc-btn order-hc-button" ><a style="color: #666;" href="{:url('home/user/sureOrder')}?id={$v['id']}">确认收款</a></div>

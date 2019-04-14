@@ -110,30 +110,19 @@
                                         </td>
                                         <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
                                             <div class="cell">
+                                                {if $v['h_l_f'] == 2}
                                                 <div data-v-42598332="" class="hc-color2">
-                                                    +0.15%
+                                                    {$v['ratio']}
                                                 </div>
+                                                {else /}
+                                                <div data-v-42598332="" class="hc-color1">
+                                                    {$v['ratio']}
+                                                </div>
+                                                {/if}
                                             </div>
                                         </td>
                                     </tr>
                                     {/foreach}
-                                    <tr class="el-table__row default-row">
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_190 is-left ">
-                                            <div class="cell"><span data-v-42598332=""><i data-v-42598332=""
-                                                                                          class="fa fa-star-o hc-color hc-cursor "></i></span>
-                                                <span data-v-42598332="">BGGM</span></div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_191 is-left ">
-                                            <div class="cell">0.003199</div>
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_31_column_192 is-left ">
-                                            <div class="cell">
-                                                <div data-v-42598332="" class="hc-color1">
-                                                    -0.03%
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
 <!----></tbody>
                                 </table><!----><!----></div><!----><!----><!----><!---->
                             <div class="el-table__column-resize-proxy" style="display: none;"></div>
@@ -224,9 +213,9 @@
                                     data-v-05792414="" class="hc-color" style="font-size: 12px;">本评级由 Tokeninsight.com 提供</p></div></div> </div><span
                                     data-v-05792414="" class="el-popover__reference" aria-describedby="el-popover-5015"
                                     tabindex="0">A 级</span></span></div>
-                            <span data-v-05792414="" class="line-top-span line-top-span1">27226.65</span> <span
+                            <span data-v-05792414="" class="line-top-span line-top-span1">{$amei_info['last']}</span> <span
                                     data-v-05792414="" class="line-top-span"><span data-v-05792414="">
-                                ≈<span>27226.65</span> CNY
+                                ≈<span>{$amei_info['last']}</span> CNY
         </span></span> <span data-v-05792414="" class="line-top-span"><span data-v-05792414=""
                                                                             class="hc-color2" id="ratio">{$amei_info['ratio']}</span></span> <span
                                     data-v-05792414="" class="line-top-span">高 <span id="high">{$amei_info['high']}</span></span> <span data-v-05792414=""
@@ -689,7 +678,7 @@
                                                     <div class="cell">{$v['create_time']|date='Y-m-d H:i:s'}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_33_column_198 is-center ">
-                                                    <div class="cell">AMEI/AMEI</div>
+                                                    <div class="cell">AMB/JF</div>
                                                 </td>
                                                 {if($v['depute_type'] == 1)}
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_19 is-center ">
@@ -831,7 +820,7 @@
                                                     <div class="cell">{$v['create_time']|date='Y-m-d H:i:s'}</div>
                                                 </td>
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_18 is-center ">
-                                                    <div class="cell">AMEI/AMEI</div>
+                                                    <div class="cell">AMB/JF</div>
                                                 </td>
                                                 {if($v['depute_type'] == 1)}
                                                 <td rowspan="1" colspan="1" class="el-table_4_column_19 is-center ">
@@ -1188,16 +1177,18 @@
                 all_price = parseFloat(all_price).toFixed(4);
                 var ratio2 = FloatDiv(ratio,100); //手续费
                 var ratio3 = FloatSub(1, ratio2);
-                var real_num = FloatMul(all_price,ratio3);
+                // var real_num = FloatMul(all_price,ratio3);
 
                 //手续费
                 poundage = FloatMul(all_price,ratio2);
+                var real_num = FloatAdd(all_price,poundage);
+
                 //计算交易额
                 real_num = parseFloat(real_num).toFixed(4);
                 poundage = parseFloat(poundage).toFixed(4);
                 $('#all_num').val(all_price);
-                $('#trade_num').val(real_num);
-                $('#trade_num_span').html(real_num);
+                $('#trade_num').val(real_num);//真实交易额 金额加手续费
+                $('#trade_num_span').html(all_price);
                 $('#poundage').val(poundage);
                 $('#poundage_span').html(poundage);
             }else{
@@ -1255,16 +1246,18 @@
                 all_price2 = parseFloat(all_price2).toFixed(4);
                 var ratio2 = FloatDiv(ratio,100); //手续费
                 var ratio3 = FloatSub(1, ratio2);
-                var real_num2 = FloatMul(all_price2,ratio3);
+                // var real_num2 = FloatMul(all_price2,ratio3);
 
                 //手续费
                 poundage2 = FloatMul(all_price2,ratio2);
+                //总金额加手续费
+                real_num2 = FloatAdd(all_price2,poundage2);
                 //计算交易额
                 real_num2 = parseFloat(real_num2).toFixed(4);
                 poundage2 = parseFloat(poundage2).toFixed(4);
                 $('#all_num2').val(all_price2);
                 $('#trade_num2').val(real_num2);
-                $('#trade_num_span2').html(real_num2);
+                $('#trade_num_span2').html(all_price2);
                 $('#poundage2').val(poundage2);
                 $('#poundage_span2').html(poundage2);
             }else{
