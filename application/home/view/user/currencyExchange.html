@@ -313,7 +313,7 @@
                                 </svg><!----></div>
                         </div>
                     </div>
-                    <div data-v-ed42075c="" class="latestPrice-gd hc-color4">更多</div>
+                    <!--<div data-v-ed42075c="" class="latestPrice-gd hc-color4">更多</div>-->
                 </div>
             </div>
             <div data-v-be8e37c0="" class="ce-main2-center">
@@ -575,7 +575,6 @@
         <div data-v-be8e37c0="" class="ce-main">
             <div data-v-be8e37c0="" class="ce-main3 hc-bgColor1">
                 <div data-v-4d795ea8="" data-v-be8e37c0="" class="entrust-warp">
-                    {if !empty($user_info)}
                     <div data-v-4d795ea8="" class="el-tabs el-tabs--card el-tabs--top">
                         <div class="el-tabs__header is-top">
                             <div class="el-tabs__nav-wrap is-top">
@@ -657,6 +656,7 @@
                                         </table>
                                     </div>
                                     <div class="el-table__body-wrapper is-scrolling-none" style=" overflow-y:scroll;">
+
                                         {if !empty($depute_list) }
                                         <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
                                                style="width: 1893px;">
@@ -725,11 +725,14 @@
                                             <span class="el-table__empty-text">暂无数据</span>
                                         </div>
                                         {/if}
+
                                     </div>
 
                                     <div class="el-table__column-resize-proxy" style="display: none;"></div>
                                 </div>
+                                {if !empty($depute_list) && count($depute_list) > 10}
                                 <div data-v-4d795ea8="" class="entrust-btn hc-color4 hc-cursor"><a style="color: #8488f5;" href="{:url('home/user/entrustment')}">查看更多</a></div>
+                                {/if}
                             </div>
                             <div data-v-4d795ea8="" role="tabpanel" aria-hidden="true" id="tab2"
                                  aria-labelledby="tab-two" class="el-tab-pane tab-content" style="display: none;">
@@ -862,7 +865,9 @@
                                     <!----><!----><!---->
                                     <div class="el-table__column-resize-proxy" style="display: none;"></div>
                                 </div>
+                                {if !empty($depute_list_his) && count($depute_list_his) > 10}
                                 <div data-v-4d795ea8="" class="entrust-btn hc-color4 hc-cursor"><a style="color: #8488f5;" href="{:url('home/user/historical')}">查看更多</a></div>
+                                {/if}
                             </div>
                         </div>
                     </div>
@@ -872,11 +877,9 @@
                         <!--<span data-v-4d795ea8="" class="hc-cursor">卖出</span>-->
                         <!--<span data-v-4d795ea8="" class="hc-cursor ">全部</span>-->
                     <!--</div>-->
-                    {else /}
-                    <div data-v-4d795ea8="" class="entrust-title"><span data-v-4d795ea8="" class="hc-color4 hc-cursor">登录</span>
-                        或 <span data-v-4d795ea8="" class="hc-color4 hc-cursor">注册</span> 开始交易
-                    </div>
-                    {/if}
+                    <!--<div data-v-4d795ea8="" class="entrust-title"><span data-v-4d795ea8="" class="hc-color4 hc-cursor">登录</span>-->
+                        <!--或 <span data-v-4d795ea8="" class="hc-color4 hc-cursor">注册</span> 开始交易-->
+                    <!--</div>-->
                     <!--todo 登录状态显示 end-->
                 </div>
 

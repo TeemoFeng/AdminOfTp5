@@ -126,7 +126,7 @@ class User extends Common{
 
 
     //直推架构树
-    public function userTree()
+    public function usertree()
     {
         if (request()->isPost()) {
             $where = [];

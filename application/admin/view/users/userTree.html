@@ -42,7 +42,7 @@
     var setting = {
         async: {
             enable: true,
-            url:"{:url('userTree')}",
+            url:"{:url('usertree')}",
             autoParam:["id", "name=n", "level=lv"],
             otherParam:{"otherParam":"zTreeAsyncTest"},
             dataFilter: filter,
@@ -179,7 +179,7 @@
             return;
         }
 
-        $.post("{:url('userTree')}",{'key' : key},function (data) {
+        $.post("{:url('usertree')}",{'key' : key},function (data) {
             $.fn.zTree.init($("#treeDemo"), setting,data);
         });
         $('#key').val('');
