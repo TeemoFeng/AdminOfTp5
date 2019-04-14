@@ -23,8 +23,8 @@
                         <!--TODO  已登录 end-->
                         <!-- todo 未登录-->
                         <div data-v-42598332="" class="list-div1-div1">
-                            <span data-v-42598332="" class="hc-color4 hc-cursor"><a href="{:url('user/login/index')}">登录</a></span> 或
-                            <span data-v-42598332="" class="hc-color4 hc-cursor"><a href="{:url('user/login/reg')}">注册</a></span> 开始交易
+                            <span data-v-42598332="" class="hc-color4 hc-cursor"><a href="{:url('user/login/index')}" class='hc-color4'>登录</a></span> 或
+                            <span data-v-42598332="" class="hc-color4 hc-cursor"><a href="{:url('user/login/reg')}" class='hc-color4'>注册</a></span> 开始交易
                         </div>
                         <!-- todo 未登录 end-->
                         {/if}
@@ -597,7 +597,7 @@
                             <div data-v-4d795ea8="" role="tabpanel" id="tab1" aria-labelledby="tab-first"
                                  class="el-tab-pane tab-content">
                                 <div data-v-4d795ea8="" class="el-table el-table--fit el-table--enable-row-hover"
-                                     style="height: 238px;">
+                                     style="height: 238px;overflow:auto">
                                     <div class="el-table__header-wrapper">
                                         <table cellspacing="0" cellpadding="0" border="0" class="el-table__header"
                                                style="width: 1893px;">
@@ -656,7 +656,7 @@
                                             </thead>
                                         </table>
                                     </div>
-                                    <div class="el-table__body-wrapper is-scrolling-none" style="height: 500px; overflow-y:scroll;">
+                                    <div class="el-table__body-wrapper is-scrolling-none" style=" overflow-y:scroll;">
                                         {if !empty($depute_list) }
                                         <table cellspacing="0" cellpadding="0" border="0" class="el-table__body"
                                                style="width: 1893px;">

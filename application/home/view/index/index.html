@@ -61,6 +61,14 @@
             width: 244px;
             height: 122px;
         }
+      .respTbl,.siteWrapper{height:auto!important; background: #1c1e2d!important;}
+    
+      .respTbl ARTICLE DIV {
+          border-top: none!important;
+      }
+     .respTbl SECTION{border: none!important;}
+      .redBg{background-color: transparent!important;}
+   
     </style>
 
 </head>
@@ -69,7 +77,7 @@
     <div data-v-5056b940="">
         <div data-v-5056b940="" class="header-message">
             <div data-v-5056b940="" class="header-message-warp">
-                <div data-v-5056b940="" class="header-message-content">
+                <!--div data-v-5056b940="" class="header-message-content">
                     <i data-v-5056b940="" class="fa fa-volume-up"></i>
                     <div data-v-5056b940="" class="header-marquee">
                         <div data-v-5056b940="" id="swiper" class="swiper-container swiper-container-vertical">
@@ -112,7 +120,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div-->
                     <ul data-v-5056b940="" class="header-ul3">
                         <li data-v-5056b940=""><span data-v-5056b940="">费率标准</span></li>
                         <li data-v-5056b940="">帮助中心</li>
@@ -311,22 +319,7 @@
                 </div>
             </div>
             <div data-v-4e91b44b="">
-                <div data-v-4e91b44b="" class="home-main-warp">
-                    <div data-v-4e91b44b="" class="home-main-soso">
-                        <div data-v-4e91b44b="" class="el-input el-input--suffix">
-                            <form action="">
-                                <input type="text" autocomplete="off" placeholder="搜索币种" class="el-input__inner">
-                                <span class="el-input__suffix">
-                                <button class="el-input__suffix-inner"
-                                        style="    margin-top: 2px;  background: #232436; border: none;  height: 21px;">
-                                    <i data-v-4e91b44b="" class="el-input__icon el-icon-search"
-                                       style="    line-height: 30px;"></i>
-                                </button>
-                            </span>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+               
                 <div data-v-4e91b44b="" class="home-main">
                     <div data-v-4e91b44b="" class="el-tabs el-tabs--card el-tabs--top">
                         <div class="el-tabs__header is-top">
@@ -337,18 +330,7 @@
                                             tabindex="0" class="el-tabs__item is-top">
                                             <a href="#" name="#tab1">GAVC 交易区</a>
                                         </li>
-                                        <li id="tab-2" aria-controls="pane-2" role="tab" tabindex="-1"
-                                            class="el-tabs__item is-top">
-                                            <a href="#" name="#tab2">BTC 交易区</a>
-                                        </li>
-                                        <li id="tab-3" aria-controls="pane-3" role="tab" tabindex="-1"
-                                            class="el-tabs__item is-top">
-                                            <a href="#" name="#tab3">ETH 交易区</a>
-                                        </li>
-                                        <li id="tab-4" aria-controls="pane-4" role="tab" tabindex="-1"
-                                            class="el-tabs__item is-top">
-                                            <a href="#" name="#tab4">USDT 交易区</a>
-                                        </li>
+                                       
                                        
                                     </ul>
                                 </div>
@@ -371,7 +353,9 @@
                                         <div data-v-4e91b44b=""></div>
                                     </div>
                                     <div class="el-table__header-wrapper">
-                                        <!--<iframe id="currency" src="https://cn.widgets.investing.com/top-cryptocurrencies?theme=darkTheme" width="100%" height="100%" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" style="background-color: #26283C;"></iframe>-->
+                                        <!--iframe id="currency" src="https://cn.widgets.investing.com/top-cryptocurrencies?theme=darkTheme" width="100%" height="100%" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0" style="background-color: #26283C;">
+                                         .darkTheme HEADER .mainHeader{display:none!important;}
+                                      </iframe-->
                                         {include file="common/currency"/}
 
                                     </div>
