@@ -291,7 +291,7 @@ class Finance extends Common
                 //添加充值记录
                $res2 =  UserRunningLog::create([
                     'user_id'  =>  $data['user_id'],
-                    'about_id' =>  -session('aid'),
+                    'about_id' =>  $data['user_id'],
                     'running_type'  => UserRunningLog::TYPE1,
                     'account_type'  => $data['currency_id'],
                     'change_num'    => $data['amount'],
@@ -388,7 +388,7 @@ class Finance extends Common
                     //添加扣除记录
                     $res2 =  UserRunningLog::create([
                         'user_id'  =>  $data['user_id'],
-                        'about_id' =>  -session('aid'),
+                        'about_id' =>  $data['user_id'],
                         'running_type'  => UserRunningLog::TYPE2,
                         'account_type'  => $data['currency_id'],
                         'change_num'    => -$data['amount'],
@@ -818,7 +818,7 @@ class Finance extends Common
                 if(empty($key))
                     throw new Exception('请输入搜索条件');
                 $list=db('users')
-                    ->where('id|email|mobile|username','like',"%".$key."%")
+                    ->where('id|usernum|email|mobile|username','like',"%".$key."%")
                     ->order('id desc')
                     ->select();
                 if(empty($list))

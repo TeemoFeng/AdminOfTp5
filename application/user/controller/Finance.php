@@ -38,8 +38,9 @@ class Finance extends Common{
             if(empty($data['account_type']) || empty($user_id)){
                 return ['code' => 0, 'msg' => '账户类型或用户不能为空'];
             }
-            $data['user_id'] = $user_id;
             $where  = $this->makeSearch($data);
+            $where['a.user_id'] = $user_id;
+
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             $list = db('user_running_log')
@@ -129,7 +130,14 @@ class Finance extends Common{
             $save = [
                 'cash_currency_num' => $cash_num,
             ];
+            DB::startTrans();
             $res = UserCurrencyAccount::where(['user_id' => $user_id])->update($save); //更新用户钱包
+            if($res === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '转换失败请重试'];
+            }
+
+
             $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
             //更新用户ameibi数量
             $user_currency = UserCurrencyList::where(['user_id' => $user_id,'currency_id' => $currency_id])->find();
@@ -139,17 +147,24 @@ class Finance extends Common{
                     'currency_id'   => $currency_id,
                     'num'           => $ameibi_num,
                 ];
-                UserCurrencyList::create($currency);
-
+               $res2 = UserCurrencyList::create($currency);
+                if(!$res2){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '转换失败请重试'];
+                }
             }else{
                 $num = bcadd($user_currency['num'], $ameibi_num, 4);
                 //添加用户币种列表
                 $currency = [
                     'num' => $num,
                 ];
-                UserCurrencyList::where(['user_id' => $user_id,'currency_id' => $currency_id])->update($currency);
-
+               $res3 = UserCurrencyList::where(['user_id' => $user_id,'currency_id' => $currency_id])->update($currency);
+                if($res3 === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '转换失败请重试'];
+                }
             }
+            Db::commit();
 
             if($res !== false){
                 //现金币转阿美币记录
@@ -182,13 +197,6 @@ class Finance extends Common{
             }else{
                 return ['code' => 0, 'msg' => '装换失败请重试'];
             }
-
-
-
-            //
-
-
-
 
 
         }
@@ -625,8 +633,54 @@ class Finance extends Common{
     //阿美币记录列表
     public function aMeibiLogList()
     {
+        if(request()->isPost()){
+            $data = input('post.');
+            if(empty($data['currency_id'])){
+                return ['code' => 0, 'msg' => '非法请求'];
+            }
+            $where = $this->searchWhere2($data);
+            $user_info = session('user');
+            $where['a.user_id'] = $user_info['id'];
+            $page   = $data['page'] ? $data['page'] : 1;
+            $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
+            $list = db('currency_running_log')
+                ->alias('a')
+                ->join(config('database.prefix').'users b','a.user_id = b.id','left')
+                ->join(config('database.prefix').'users c','a.about_id = c.id','left')
+                ->join(config('database.prefix').'currency_list d','a.currency_to = d.id','left')
+                ->field('a.*,b.usernum formnum,b.username formname,b.mobile,c.usernum aboutnum, c.username aboutname,d.en_name')
+                ->where($where)
+                ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
+                ->toArray();
+            foreach ($list['data'] as $k=>$v){
+                $list['data'][$k]['running_str'] = UserRunningLog::$running_type[$v['running_type']];
+                $list['data'][$k]['fromuser'] = $v['formnum']. '【' .$v['formname'] .'】';
+                $list['data'][$k]['aboutuser'] = $v['aboutnum']. '【' .$v['aboutname'] .'】';
+                $list['data'][$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+
+            }
+            return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
+
+        }
+
+        //获取币种列表
+        $currency_list = db('currency_list')->select();
+        $this->assign('currency_list', $currency_list);
         return $this->fetch('aMeibiLogList');
     }
 
+    public function searchWhere2($data)
+    {
+        $where = new Where();
+        if(!empty($data['currency_id'])){
+            $where['a.currency_to'] = $data['currency_id'];
+        }
+        if(!empty($data['key'])){
+            if(!empty($data['key'])){
+                $where['b.id|b.email|b.mobile|b.username'] = array('like', '%' . $data['key'] . '%');
+            }
+        }
+        return $where;
+    }
 
 }

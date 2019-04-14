@@ -326,17 +326,30 @@ class Bourse extends Controller {
 
         //3.产生交易
         foreach ($buy_list as $k => $v){
+            //查询该委托上个循环是否已经锁定
+            $lock = UserTradeDepute::where(['id' => $v['id']])->value('lock');
+            if($lock == 1){
+                continue;
+            }
             //买家当天
             $cancel_num = Db::name('user_cancel_order_log')->where(['user_id' => $v['id'], 'time' => date('Y-m-d', time())])->value('num');
             if($cancel_num >= 3){
                 continue;
             }
             foreach ($sell_list as $kk => $vv){
+                if($v['user_id'] == $vv['user_id']){
+                    continue; //如果匹配的是自己 略过
+                }
+                //查询该委托上个循环是否已经锁定
+                $lock = UserTradeDepute::where(['id' => $vv['id']])->value('lock');
+                if($lock == 1){
+                    continue;
+                }
                 //如果买入价格高于卖价且卖家数量大于等于买家要购买的数量
                 $sell_count = bcsub($vv['num'], $vv['have_trade'], 4);
                 if(bccomp($v['price'], $vv['price']) >=0 && bccomp($sell_count, $v['num'] >=0)){
                     //创建交易订单
-                   $order_num =  createOrderNum();
+                   $order_num =  $this->createOrderNum();
                    $all_num = bcmul($v['num'], $v['price'],4);
                    $poundage = bcmul($all_num, 0.0001,4);
                    $sum = bcsub($all_num, $poundage, 4);
@@ -393,6 +406,13 @@ class Bourse extends Controller {
         }
 
 
+    }
+
+    public function createOrderNum()
+    {
+       $num1 =  rand(100000,999999);
+       $num2 =  rand(100000,999999);
+       return 'JF'.$num1.$num2;
     }
 
 

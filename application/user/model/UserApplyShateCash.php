@@ -17,6 +17,7 @@ class UserApplyShateCash extends Model
     //用户提现方式
     public static $cash_method = [
         1 => '银行卡提现',
+        2 => '支付宝提现',
     ];
 
     public static $status = [

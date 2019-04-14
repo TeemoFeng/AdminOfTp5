@@ -475,9 +475,6 @@ class User extends Common
         }
         return ['code' => 1, 'msg' => '撤销成功'];
 
-
-
-
     }
 
 
