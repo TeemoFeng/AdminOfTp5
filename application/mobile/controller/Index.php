@@ -8,4 +8,11 @@ class Index extends Common{
     public function index(){
         return view();
     }
+
+    public function login()
+    {
+        return $this->fetch('login');
+    }
+
+
 }

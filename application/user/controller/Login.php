@@ -19,12 +19,22 @@ class Login extends Common {
         if(request()->isPost()) {
             $username = input('username');
             $password = input('password');
-            if($this->sys['code']=='open'){
-                $code = input('vercode');
-                if(!$this->check($code)){
-                    return array('code' => 0, 'msg' => '验证码错误');
+
+            $login_method = isMobile();
+            if($login_method === true){
+                $login_method = 'APP';
+                $url = url('mobile/index/index');
+            }else{
+                if($this->sys['code']=='open'){
+                    $code = input('vercode');
+                    if(!$this->check($code)){
+                        return array('code' => 0, 'msg' => '验证码错误');
+                    }
                 }
+                $login_method = 'WEB';
+                $url = url('home/index/index');
             }
+
             if(!$username || !$password){
                 return array('code'=>0,'msg'=>'请填写账号或密码');
             }
@@ -32,13 +42,15 @@ class Login extends Common {
             $userLogin = new UserLoginLog();
             $user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
             $user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];
+
+
             if(!$user){
                 return array('code'=>0,'msg'=>'账号不存在!');
             }elseif(md5($password) != $user['password']){
 
                 $userLogin->save([
                     'user_id'       => $user['id'],
-                    'login_method'  => 'WEB',
+                    'login_method'  => $login_method,
                     'status'        => 0,
                     'ip'            => $user_IP,
                     'create_time'   => date('Y-m-d H:i:s',time()),
@@ -55,14 +67,14 @@ class Login extends Common {
                 //记录用户登录日志
                 $userLogin->save([
                     'user_id'       =>  $user['id'],
-                    'login_method'  =>  'WEB',
+                    'login_method'  =>  $login_method,
                     'status'        => 1,
                     'ip'            => $user_IP,
                     'create_time'   => date('Y-m-d H:i:s',time()),
                 ]);
 
                 session('user',$sessionUser);
-                return array('code'=>1,'msg'=>'登录成功','url' => url('home/index/index'));
+                return array('code'=>1,'msg'=>'登录成功','url' => $url);
             }
         }elseif(request()->isGet() && !empty(input('get.mobile'))){
             $mobile = input('get.mobile');

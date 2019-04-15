@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>忘记密码</title>
+
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <h1 class="mui-title mui-text-bai">忘记密码</h1>
+</header>
+<div class="mui-content">
+    <div class="mui-login-header"></div>
+    <div class="mui-login-logo"><img src="images/tu2.png" width="80" /></div>
+    <div class="mui-login-form">
+        <form action="javascript:;" >
+            <div class="mui-input-row">
+                <i class="mui-icon mui-icon-person-filled"></i>
+                <input type="text" name='username' class="mui-input-clear" placeholder="请输入用户昵称"  >
+
+            </div>
+
+
+            <div class="mui-input-row">
+                <i class="mui-icon mui-icon-locked"></i>
+                <input type="password" name='password' class="mui-input-password" placeholder="请输入新密码" >
+
+            </div>
+            <div class="mui-input-row">
+                <i class="mui-icon mui-icon-locked"></i>
+                <input type="password" name='rpassword' class="mui-input-password" placeholder="请确认新密码" >
+
+            </div>
+
+            <div class="mui-login-btn" style="margin-top: 30px;">
+                <button type="button" class="mui-btns"  id="login">提交</button>
+
+            </div>
+            <div class="mui-clearfix mui-text-center mui-login-password">
+                <a href="login.html" ><span class="mui-icon mui-icon-arrowthinright"></span>去登陆</a>
+
+            </div>
+
+
+        </form>
+        <div id="div"></div>
+        <div id="popover" class="mui-popover" style="height: 250px;">
+            <div class="mui-popover-arrow"></div>
+            <div>
+                <h3 class="mui-text-center">安全设置</h3>
+                <p> 手机号<span id="phone">(152****2222)</span></p>
+                <div class="mui-input-row mui-yanzheng">
+                    <input type="text" name='yanzheng'  placeholder="请输入验证码" >
+                    <button class="yanzheng" type="button" id="send_code">获取验证吗</button>
+                </div>
+                <div class="" style="padding: 0 10px;margin-top: 25px;">
+                    <button class="mui-btns">确定</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/mui.min.js"></script>
+<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    mui.init();
+    var code = '';
+    var phone =''
+    var send_code = document.getElementById('send_code')
+    var onoff = true;
+    send_code.addEventListener('tap',function(){
+
+        //false就不能发送
+        if(!onoff){
+            return;
+        }
+        onoff = false;
+        //点击玩按钮干什么?
+        //发验证码?
+        // 1-给谁发? 手机号码
+        phone = $('phone').text();
+        // 2-验证码是什么? cast 可以生成一个随机码
+        code =get_code(4);
+
+        mui.alert(code);
+        // 3-发送 在这里我来使用一个定时器来模拟一下发送的时间, 大家可以使用第三方的短信平台，比如阿里大于，我们在学员专区内的功能模块开发里有2节视频，大家可以看
+        var num = 60;
+        var timer = setInterval(function(){
+            num--;
+            if(num == 0){
+                send_code.innerHTML = '发送验证码';
+                //定时器停了
+                clearInterval(timer);
+                onoff = true;
+            }else{
+                send_code.innerHTML = num + 'S';
+            }
+
+        },1000); // 1000 毫秒==1秒
+
+
+    });
+    $('#login')[0].addEventListener('tap',function(){
+        var data=$('form').serializeArray()
+        console.log(data)
+        if(data[0].value==''){mui.toast('用户昵称不能为空');return false;}
+
+        if(data[1].value==''){mui.toast('密码不能为空');return false;}
+        if(data[2].value!==data[1].value){mui.toast('两次密码不一致');return false;}
+
+        mui("#popover").popover('toggle', document.getElementById("div"));
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>登录</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <h1 class="mui-title mui-text-bai">登录</h1>
+</header>
+<div class="mui-content">
+    <div class="mui-login-header"></div>
+    <div class="mui-login-logo"><img src="/static/mobilenew/images/tu2.png" width="80" /></div>
+    <div class="mui-login-form">
+        <form action="javascript:;" >
+            <div class="mui-input-row">
+                <i class="mui-icon mui-icon-person-filled"></i>
+                <input type="text" name='username' class="mui-input-clear" placeholder="请输入手机号"  >
+
+            </div>
+            <div class="mui-input-row">
+                <i class="mui-icon mui-icon-locked"></i>
+                <input type="password" name='password' class="mui-input-password" placeholder="请输入密码" >
+
+            </div>
+
+            <div class="mui-login-btn" style="margin-top: 30px;">
+                <button type="button" class="mui-btns"  id="login">登录</button>
+
+            </div>
+            <div class="mui-clearfix mui-text-center mui-login-password">
+                <a href="{:url('user/index/forget')}" ><span class="mui-icon mui-icon-arrowthinright"></span>忘记密码</a>
+            </div>
+
+            <div class="mui-login-zhuce mui-text-center">
+                还没有账号？
+                <a href="{:url('mobile/index/reg')}" id="reg">注册</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/mui.min.js"></script>
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    mui.init();
+    $('#login')[0].addEventListener('tap',function(){
+        var data=$('form').serializeArray();
+
+        if(data[0].value==''){mui.toast('账号不能为空');return false;}
+        if(data[1].value==''){mui.toast('密码不能为空');return false;}
+        $.post("{:url('user/login/index')}",{'username' : data[0].value, 'password' : data[1].value},function(res){
+            if(res.code > 0){
+                mui.toast('登陆成功');
+                setTimeout(function(){
+                    location.href = res.url;
+                },2000)
+            }else{
+                mui.toast(res.msg);return false;
+            }
+
+        });
+
+    })
+</script>
+</body>
+</html>
