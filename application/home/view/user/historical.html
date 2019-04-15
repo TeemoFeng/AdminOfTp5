@@ -10,6 +10,35 @@
         .layui-form-select dl {
             background: #2e2f43;
         }
+        .pagination {
+            width: auto;
+            height: auto;
+            color: #333;
+            font-size: 15px;
+            float: right;
+            display: block;
+            margin-top: 30px;
+        }
+
+        .pagination:hover {
+            cursor: pointer;
+        }
+        .pagination li {
+            width: auto;
+            height: auto;
+            float: left;
+            padding: 2px 6px 2px 6px;
+            border: 1px solid #333333;
+            display: block;
+            margin-right: 10px;
+            text-align: center;
+            border-radius: 15%;
+        }
+        .pagination li.active {
+            background: #5a98de;
+            color: #fff;
+            border: 1px solid #5a98de;
+        }
     </style>
 
 <div style="width: 100%; margin: 0px auto; min-height: 500px;">
@@ -181,7 +210,28 @@
 
                         </tbody>
                     </table>
+                    <div data-v-cb7b5f4a="" class="hc-pagination">
+                        {$page|raw}
 
+                        <div data-v-cb7b5f4a="" class="el-pagination">
+                            <!--<button type="button"  class="btn-prev">-->
+                            <!--<i class="el-icon el-icon-arrow-left"></i>-->
+                            <!--</button>-->
+                            <!--<ul class="el-pager">-->
+                            <!--<li class="number active">1</li>-->
+                            <!--</ul>-->
+                            <!--<button type="button" disabled="disabled" class="btn-next">-->
+                            <!--<i class="el-icon el-icon-arrow-right"></i>-->
+                            <!--</button>-->
+                            <!--<span class="el-pagination__jump">-->
+                            <!--前往-->
+                            <!--<div class="el-input el-pagination__editor is-in-pagination">-->
+                            <!--<input type="number" autocomplete="off" min="1" max="1" class="el-input__inner">-->
+                            <!--</div>-->
+                            <!--页-->
+                            <!--</span>-->
+                        </div>
+                    </div>
                 </div>
                 <div class="el-table__column-resize-proxy" style="display: none;"></div>
             </div>
