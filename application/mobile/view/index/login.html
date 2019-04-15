@@ -54,7 +54,7 @@
 
         if(data[0].value==''){mui.toast('账号不能为空');return false;}
         if(data[1].value==''){mui.toast('密码不能为空');return false;}
-        $.post("{:url('user/login/index')}",{'username' : data[0].value, 'password' : data[1].value},function(res){
+        $.post("{:url('mobile/login/index')}",{'username' : data[0].value, 'password' : data[1].value},function(res){
             if(res.code > 0){
                 mui.toast('登陆成功');
                 setTimeout(function(){

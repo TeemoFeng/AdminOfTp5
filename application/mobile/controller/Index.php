@@ -9,10 +9,18 @@ class Index extends Common{
         return view();
     }
 
+    //登录
     public function login()
     {
         return $this->fetch('login');
     }
+
+    //注册
+    public function reg()
+    {
+        return $this->fetch('register');
+    }
+
 
 
 }

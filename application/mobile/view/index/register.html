@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <title>注册</title>
 
-    <link href="css/mui.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="css/index.css"/>f
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>f
 </head>
 <body>
 <header class="mui-bar mui-bar-nav">
@@ -14,22 +14,22 @@
 </header>
 <div class="mui-content">
     <div class="mui-login-header"></div>
-    <div class="mui-login-logo"><img src="images/tu2.png" width="80" /></div>
+    <div class="mui-login-logo"><img src="/static/mobilenew/images/tu2.png" width="80" /></div>
     <div class="mui-login-form">
         <form action="javascript:;" >
             <div class="mui-input-row">
                 <i class="mui-icon mui-icon-person-filled"></i>
-                <input type="text" name='username' class="mui-input-clear" placeholder="请设置用户昵称"  >
+                <input type="text" name='nickname' class="mui-input-clear" placeholder="请设置用户昵称"  >
 
             </div>
             <div class="mui-input-row">
                 <i class="mui-icon mui-icon-phone"></i>
-                <input type="text" name='phone' class="mui-input-clear" placeholder="请输入手机号" >
+                <input type="text" name='mobile' class="mui-input-clear" placeholder="请输入手机号" >
 
             </div>
             <div class="mui-input-row mui-yanzheng">
                 <i class="mui-icon mui-icon-locked"></i>
-                <input type="text" name='yanzheng'  placeholder="请输入验证码" >
+                <input type="text" name='code'  placeholder="请输入验证码" >
                 <button class="yanzheng" type="button" id="send_code">获取验证吗</button>
             </div>
             <div class="mui-input-row">
@@ -39,12 +39,12 @@
             </div>
             <div class="mui-input-row">
                 <i class="mui-icon mui-icon-locked"></i>
-                <input type="password" name='rpassword' class="mui-input-password" placeholder="请确认密码" >
+                <input type="password" name='password2' class="mui-input-password" placeholder="请确认密码" >
 
             </div>
             <div class="mui-input-row">
                 <i class="mui-icon mui-icon-personadd"></i>
-                <input type="text" name='password' class="mui-input-clear" placeholder="请输入邀请码" >
+                <input type="text" name='referee' class="mui-input-clear" placeholder="请输入邀请码" >
 
             </div>
             <div class="mui-login-btn" style="margin-top: 30px;">
@@ -59,9 +59,9 @@
         </form>
     </div>
 </div>
-<script src="js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/mui.min.js"></script>
-<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/mui.min.js"></script>
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
     mui.init();
     var code = '';
@@ -122,6 +122,19 @@
         if(data[4].value!==data[3].value){mui.toast('两次密码不一致');return false;}
         if(data[5].value==''){mui.toast('邀请码不能为空');return false;}
         if(data[1].value!==phone){mui.toast('此号码和发验证码的不一致');return false;}
+        $.post("{:url('user/login/index')}",{'username' : data[0].value, 'password' : data[1].value},function(res){
+            if(res.code > 0){
+                mui.toast('登陆成功');
+                setTimeout(function(){
+                    location.href = res.url;
+                },2000)
+            }else{
+                mui.toast(res.msg);return false;
+            }
+
+        });
+
+
         mui.toast('登陆成功')
     })
 </script>
