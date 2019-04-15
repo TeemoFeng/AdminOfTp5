@@ -190,17 +190,30 @@
                                                 <div data-v-51760b78="" class="tips-one">
                                                     <div data-v-51760b78="" class="two-body">
                                                         <div data-v-51760b78="" style="height: 200px;">
+                                                            {if $order_info['trade_status'] == 1}
                                                             <button data-v-51760b78="" id="sign_btn" type="button"
                                                                     class="el-button btn hc-b1tn hc-btn-active el-button--default"
                                                                     style="margin-top: 40px;"><span><span
                                                                     data-v-51760b78=""
                                                                     class="two-body-bank">标记付款已完成</span></span></button>
 
+
+
                                                             <button data-v-51760b78="" id="cancel_btn" type="button"
                                                                     class="el-button btn hc-btn el-button--default"
                                                                     style="margin-top: 20px;"><span><span
                                                                     data-v-51760b78="" class="two-body-bank">取消交易</span></span>
                                                             </button>
+                                                            {else /}
+
+                                                            <button data-v-51760b78=""  type="button"
+                                                                    class="el-button btn hc-b1tn hc-btn-active el-button--default"
+                                                                    style="margin-top: 40px;"><span><span
+                                                                    data-v-51760b78=""
+                                                                    class="two-body-bank">{$order_info['trade_status_str']}</span></span></button>
+
+
+                                                            {/if}
                                                         </div>
                                                         <div data-v-51760b78="" class="two-notice"
                                                              style="padding: 20px;"><span data-v-51760b78=""
@@ -384,7 +397,7 @@
     });
     // 确定付款
     $("#confirm_fk_btn").click(function () {
-        $("#sign_dialog__wrapper").hide()
+        $("#sign_dialog__wrapper").hide();
         $("#change_hide").hide();
         $("#sign_change").show();
         var order_id = $("#order_id").val();
@@ -392,6 +405,9 @@
         $.post("{:url('paySure')}",{'order_id' : order_id, 'order_num' : order_num},function(res){
             if(res.code == 0){
                 layer.msg(res.msg,{time:1000,icon:2});
+            }else{
+                location.reload();
+
             }
         });
 

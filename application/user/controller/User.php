@@ -500,6 +500,11 @@ class User extends Common{
 //            $data['city']   = isset( $city[1]) ? $city[1] : '';
 //            $district       = explode(':',$data['district']);
 //            $data['district'] = isset( $district[1]) ? $district[1] : '';
+            if(!empty($data['bank_id'])){
+                $data['bank_id']       = explode(':',$data['bank_id'])[1];
+            }else{
+                $data['bank_id'] = 0;
+            }
             if (empty($data['mobile'])) return ['code' => 0, 'msg' => '手机号不能为空'];
             $check_user = UsersModel::where(['mobile' => $data['mobile']])->find();
             if ($check_user) {

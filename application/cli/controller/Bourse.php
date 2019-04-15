@@ -370,11 +370,12 @@ class Bourse extends Controller {
 
         //3.产生交易
         foreach ($buy_list as $k => $v){
-            //查询该委托上个循环是否已经锁定
+            //查询该委托是否已经锁定
             $lock = UserTradeDepute::where(['id' => $v['id']])->value('lock');
             if($lock == 1){
                 continue;
             }
+
             //买家当天
             $cancel_num = Db::name('user_cancel_order_log')->where(['user_id' => $v['id'], 'time' => date('Y-m-d', time())])->value('num');
             if($cancel_num >= 3){
@@ -395,8 +396,8 @@ class Bourse extends Controller {
                     //创建交易订单
                    $order_num =  $this->createOrderNum();
                    $all_num = bcmul($v['num'], $v['price'],4);
-                   $poundage = bcmul($all_num, 0.0001,4);
-                   $sum = bcsub($all_num, $poundage, 4);
+//                   $poundage = bcmul($all_num, 0.0001,4);
+//                   $sum = bcsub($all_num, $poundage, 4);
                    $add_buy = [
                        'users_id'   => $v['user_id'], //卖家用户id 方便订单查询记录
                        'user_id'    => $v['user_id'], //买方
@@ -406,7 +407,7 @@ class Bourse extends Controller {
                        'trade_currency' => $v['depute_currency'],
                        'price'          => $v['price'],
                        'poundage'        => 0,
-                       'sum'             => $sum,
+                       'sum'             => $all_num,
                        'trade_depute_id' => $v['id'],
                        'trade_type'      => 1, //买入
                        'trade_status'    => 1, //未完成
@@ -421,20 +422,26 @@ class Bourse extends Controller {
                         'trade_num'  => $v['num'], //买家购买量
                         'trade_currency'  => $v['depute_currency'],
                         'price'           => $v['price'],
-                        'poundage'        => $poundage,
-                        'sum'             => $sum,
+                        'poundage'        => 0,
+                        'sum'             => $all_num,
                         'trade_depute_id' => $vv['id'],
                         'trade_type'      => 2, //卖出
                         'trade_status'    => 1, //未完成
                         'create_time'     => time()
 
                     ];
-
-                    Db::name('user_trade_depute_log')->insert($add_buy);
-                    Db::name('user_trade_depute_log')->insert($add_sell);
+                    Db::startTrans();
+                    $res  = Db::name('user_trade_depute_log')->insert($add_buy);
+                    $res2 = Db::name('user_trade_depute_log')->insert($add_sell);
                     //锁定托管记录
-                    Db::name('user_trade_depute')->where(['id' => $vv['id']])->update(['lock' => 1]);
-                    Db::name('user_trade_depute')->where(['id' => $v['id']])->update(['lock' => 1]);
+                    $res3 = Db::name('user_trade_depute')->where(['id' => $vv['id']])->update(['lock' => 1]);
+                    $res4 = Db::name('user_trade_depute')->where(['id' => $v['id']])->update(['lock' => 1]);
+                    if($res === 0 || $res2 === 0 || $res3 === false || $res4 === false){
+                        Db::rollback();
+                        continue;
+                    }
+
+                    Db::commit();
 
                     //给买家和卖家发短信通知
                     $buy_mobile = Db::name('users')->where(['id' => $v['user_id']])->value('mobile');

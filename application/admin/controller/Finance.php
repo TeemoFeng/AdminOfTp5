@@ -105,8 +105,14 @@ class Finance extends Common
                     ->toArray();
                 foreach ($list['data'] as $k=>$v){
                     $list['data'][$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
-                    $ratio = bcdiv($v['expenses'],$v['income'], 4);
-                    $list['data'][$k]['ratio'] = ($ratio*100).'%';
+                    if($v['expenses'] == 0){
+                        $list['data'][$k]['ratio'] = '0%';
+                    }else{
+                        $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                        $list['data'][$k]['ratio'] = ($ratio*100).'%';
+                    }
+
+
                 }
                 return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
 
@@ -118,8 +124,13 @@ class Finance extends Common
                     ->toArray();
                 foreach ($list['data'] as $k=>$v){
                     $list['data'][$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
-                    $ratio = bcdiv($v['expenses'],$v['income'], 4);
-                    $list['data'][$k]['ratio'] = ($ratio*100).'%';
+                    if($v['expenses'] == 0){
+                        $list['data'][$k]['ratio'] = '0%';
+                    }else{
+                        $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                        $list['data'][$k]['ratio'] = ($ratio*100).'%';
+                    }
+
                     $list['data'][$k]['time'] = date('Y-m-d',time());
                 }
                 return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];

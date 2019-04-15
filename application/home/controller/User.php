@@ -282,10 +282,10 @@ class User extends Common
         }
 
         //获取阿美币
-        $amei_info['last'] = $new_price ? $new_price : $amei_info['price']; //最新价
-        $amei_info['high'] = $high ? $high : $amei_info['price']; //最高价
-        $amei_info['low'] = $low ? $low : $amei_info['price'];//最低价
-        $amei_info['vol'] = $vol ? $low : 0;//24成交量
+        $amei_info['last'] = $new_price ? (string)$new_price : $amei_info['price']; //最新价
+        $amei_info['high'] = $high ? (string)$high : $amei_info['price']; //最高价
+        $amei_info['low'] = $low ? (string)$low : $amei_info['price'];//最低价
+        $amei_info['vol'] = $vol ? (string)$low : 0;//24成交量
         $h_l = bcsub($amei_info['price'], $new_price,4);
         $h_l_s = bcdiv($h_l, $amei_info['price']);
         if($h_l_s < 0){
@@ -724,16 +724,17 @@ class User extends Common
             $where['trade_status'] = $search['trade_status'];
         }
 
-        $order_list = Db::name('user_trade_depute_log')->where($where)->order('id DESC')->paginate(10,false,['query' => request()->param()]);
+        $order_list = Db::name('user_trade_depute_log')->where($where)->order('id DESC')->paginate(10,false,['query' => request()->param()])->each(function ($v, $k){
+            $v['trade_status_str'] = UserTradeDeputeLog::$trade_status[$v['trade_status']];
+            $v['trade_type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']];
+            //获取交易对象
+            $about_user = Db::name('users')->where(['id' => $v['about_id']])->value('mobile');
+            $v['about_user'] = $about_user;
+            return $v;
+        });
 //        $order_list = Db::name('user_trade_depute')->order('id DESC')->paginate(10,false,['query' => request()->param()]);
         $page = $order_list->render();
-        foreach ($order_list as $k => $v){
-            $order_list[$k]['trade_status_str'] = UserTradeDeputeLog::$trade_status[$v['trade_status']];
-            $order_list[$k]['trade_type_str'] = UserTradeDeputeLog::$trade_type[$v['trade_type']];
-            //获取交易对象
-            $about_user = Users::where(['id' => $v['about_id']])->value('mobile');
-            $order_list[$k]['about_user'] = $about_user;
-        }
+
 
         $this->assign('trade_type', $trade_type);
         $this->assign('order_list', $order_list);
@@ -771,7 +772,7 @@ class User extends Common
             $id = input('post.id');
             $order_num = input('post.order_num');
             //跟新订单状态
-            Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['status' => 2]); //已付款
+            Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['trade_status' => 2]); //已付款
             return ['code' => 1, 'msg' => '成功'];
         }else{
             return ['code' => 0, 'msg' => '非法请求'];
@@ -826,96 +827,115 @@ class User extends Common
     //卖家确认收款
     public function sureOrder()
     {
-        //获取订单id
-        $id = input('id');
-        if(empty($id)){
-            return ['code' => 0, 'msg' => '未获取到订单'];
-        }
+        if(request()->isPost()){
+            //获取订单id
+            $id = input('post.id');
+            if(empty($id)){
+                return ['code' => 0, 'msg' => '未获取到订单'];
+            }
 
-        //查找订单号
-        $order_info = Db::name('user_trade_depute_log')->where(['id' => $id])->find();
-        Db::startTrans();
-        $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_info['order_num']])->update(['trade_status' => 3]); //确认收款，完成成交
-        if($res === false){
-            Db::rollback();
+            //查找订单号
+            $order_info = Db::name('user_trade_depute_log')->where(['id' => $id])->find();
+            Db::startTrans();
+            $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_info['order_num']])->update(['trade_status' => 3]); //确认收款，完成成交
+            if($res === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '操作失败请重试'];
+            }
+            $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
+
+            //修改托管状态
+            $depute_ids = Db::name('user_trade_depute_log')->where(['order_num' => $order_info['order_num']])->select();
+
+            foreach($depute_ids as $v){
+                //如果是购买人
+                if($v['trade_type'] == 1){
+                    $res2 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 2, 'depute_time' => time(), 'status' => 3, 'have_trade' => $v['trade_num']]);
+                    if($res2 === false){
+                        Db::rollback();
+                        return ['code' => 0, 'msg' => '操作失败请重试'];
+                    }
+
+                    //更新买家货币数量
+                    $user_currecny = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();
+                    if(empty($user_currecny)) {
+                        $user_currency = [
+                            'user_id'       => $v['user_id'],
+                            'currency_id'   => $currency_id,
+                            'num'           => $v['trade_num'],
+                        ];
+                        $amei_num = $v['trade_num'];
+                        UserCurrencyList::create($user_currency);
+
+                    }else{
+                        $amei_num = bcadd($user_currecny['num'], $v['trade_num'], 4);
+                        //添加用户币种列表
+                        $user_currency = [
+                            'num'    => $amei_num,
+                        ];
+                        $res3 = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->update($user_currency);
+                        if($res3 === false){
+                            Db::rollback();
+                            return ['code' => 0, 'msg' => '操作失败请重试'];
+                        }
+                    }
+
+                    $res4= UserRunningLog::create([
+                        'user_id'  =>  $v['user_id'],
+                        'about_id' =>  $v['about_id'],
+                        'running_type'  => UserRunningLog::TYPE28, //交易增加
+                        'account_type'  => Currency::TRADE,
+                        'change_num'    => $v['trade_num'],
+                        'balance'       => $amei_num,
+                        'create_time'   => time(),
+                    ]);
+
+                    if($res4 == 0){
+                        Db::rollback();
+                        return ['code' => 0, 'msg' => '操作失败请重试'];
+                    }
+
+                }
+                //如果是卖家
+                if($v['trade_type'] == 2){
+                    //查看挂单数量
+                    $sell_num = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->find();
+                    //部分成交
+                    if(bccomp($sell_num['num'], $v['trade_num']) > 0){
+                        $res5 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 1,'depute_time' => time(), 'status' => 2, 'have_trade' => $v['trade_num']]); //
+                    }else{
+                        $res5 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 2, 'depute_time' => time(), 'status' => 3, 'have_trade' => $v['trade_num']]); //
+                    }
+
+                    if($res5 === false){
+                        Db::rollback();
+                        return ['code' => 0, 'msg' => '操作失败请重试'];
+                    }
+
+                    //卖家记录
+                    $user_currecny = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();
+                    $res6 = UserRunningLog::create([
+                        'user_id'  =>  $v['user_id'],
+                        'about_id' =>  $v['about_id'],
+                        'running_type'  => UserRunningLog::TYPE29,
+                        'account_type'  => Currency::TRADE,
+                        'change_num'    => -$v['trade_num'],
+                        'balance'       => $user_currecny['num'],
+                        'create_time'   => time(),
+                    ]);
+                    if($res6 == 0){
+                        Db::rollback();
+                        return ['code' => 0, 'msg' => '操作失败请重试'];
+                    }
+
+                }
+
+            }
+            Db::commit();
+            return ['code' => 1, 'msg' => '操作成功'];
+        }else{
             return ['code' => 0, 'msg' => '操作失败请重试'];
         }
-        $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
-        //修改托管状态
-        $depute_ids = Db::name('user_trade_depute_log')->where(['order_num' => $order_info['order_num']])->select();
-        foreach($depute_ids as $v){
-            //如果是购买人
-            if($v['trade_type'] == 1){
-                $res2 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 2, 'depute_time' => time(), 'status' => 3, 'have_trade' => $v['trade_num']]);
-                if($res2 === false){
-                    Db::rollback();
-                    return ['code' => 0, 'msg' => '操作失败请重试'];
-                }
-
-                //更新买家货币数量
-                $user_currecny = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();
-                if(empty($user_currecny)) {
-                    $user_currency = [
-                        'user_id'       => $v['user_id'],
-                        'currency_id'   => $currency_id,
-                        'num'           => $v['trade_num'],
-                    ];
-                    $amei_num = $v['trade_num'];
-                    UserCurrencyList::create($user_currency);
-
-                }else{
-                    $amei_num = bcadd($user_currecny['num'], $v['trade_num'], 4);
-                    //添加用户币种列表
-                    $user_currency = [
-                        'num'    => $amei_num,
-                    ];
-                    UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->update($user_currency);
-
-                }
-
-                UserRunningLog::create([
-                    'user_id'  =>  $v['user_id'],
-                    'about_id' =>  $v['about_id'],
-                    'running_type'  => UserRunningLog::TYPE28, //交易增加
-                    'account_type'  => Currency::TRADE,
-                    'change_num'    => $v['trade_num'],
-                    'balance'       => $amei_num,
-                    'create_time'   => time(),
-                ]);
-
-            }
-            //如果是卖家
-            if($v['trade_type'] == 2){
-                //查看挂单数量
-                $sell_num = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->find();
-
-                //部分成交
-                if(bccomp($sell_num['num'], $v['trade_num']) > 0){
-                    $res3 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 1,'depute_time' => time(), 'status' => 2, 'have_trade' => $v['trade_num']]); //
-                }else{
-                    $res3 = Db::name('user_trade_depute')->where(['id' => $v['trade_depute_id']])->update(['depute_status' => 2, 'depute_time' => time(), 'status' => 3, 'have_trade' => $v['trade_num']]); //
-                }
-
-                if($res3 === false){
-                    return ['code' => 0, 'msg' => '操作失败请重试'];
-                }
-
-                //卖家记录
-                $user_currecny = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();
-                UserRunningLog::create([
-                    'user_id'  =>  $v['user_id'],
-                    'about_id' =>  $v['about_id'],
-                    'running_type'  => UserRunningLog::TYPE29,
-                    'account_type'  => Currency::TRADE,
-                    'change_num'    => -$v['trade_num'],
-                    'balance'       => $user_currecny['num'],
-                    'create_time'   => time(),
-                ]);
-            }
-
-        }
-
-
 
 
 

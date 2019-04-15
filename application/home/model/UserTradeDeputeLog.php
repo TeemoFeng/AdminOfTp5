@@ -24,8 +24,8 @@ class UserTradeDeputeLog extends Model
     const STATUS4 = 4;
     public static $trade_status = [
         self::STATUS1 => '待付款',
-        self::STATUS2 => '确认付款',
-        self::STATUS3 => '完全成交',
+        self::STATUS2 => '已付款',
+        self::STATUS3 => '已成交',
         self::STATUS4 => '取消',
 
     ];

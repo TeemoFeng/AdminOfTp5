@@ -118,10 +118,10 @@
                                 <div class="cell">时间</div>
                             </th>
                             <th colspan="1" rowspan="1" class="el-table_12_column_97  is-center   is-leaf">
-                                <div class="cell">交易类型</div>
+                                <div class="cell">交易方式</div>
                             </th>
                             <th colspan="1" rowspan="1" class="el-table_12_column_98  is-center   is-leaf">
-                                <div class="cell">交易对</div>
+                                <div class="cell">交易类型</div>
                             </th>
                             <th colspan="1" rowspan="1" class="el-table_12_column_99  is-center   is-leaf">
                                 <div class="cell">价格</div>
@@ -175,9 +175,14 @@
                                                        width="20"></div>
                             </td>
                             <td rowspan="1" colspan="1" class="el-table_12_column_98 is-center ">
-                                <div class="cell">
-                                    <div data-v-48b6e8a5="">AMB/AMB</div>
-                                </div>
+                                {if $v['trade_type'] == 1}
+                                <div class="cell"><span data-v-48b6e8a5=""
+                                                        style="color: rgb(50, 168, 105);">{$type[$v['depute_type']]}</span></div>
+                                {else /}
+                                <div class="cell"><span data-v-48b6e8a5=""
+                                                        style="color: red;">{$type[$v['depute_type']]}</span></div>
+                                {/if}
+
                             </td>
                             <td rowspan="1" colspan="1" class="el-table_12_column_99  is-center">
                                 <div class="cell">
