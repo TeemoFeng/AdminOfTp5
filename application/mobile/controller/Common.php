@@ -10,6 +10,12 @@ class Common extends Controller
         if(!isMobile()){
             $this->redirect('home/index/index');
         }
+        if(!session('user.id')){
+            $this->redirect('mobile/index/login');
+        }
+        $this->assign('user_info', session('user'));
+
+
         $sys = cache('System');
         $this->assign('sys',$sys);
 

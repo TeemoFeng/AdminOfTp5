@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <title>忘记密码</title>
 
-    <link href="css/mui.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
 
 </head>
 <body>
@@ -15,13 +15,24 @@
 </header>
 <div class="mui-content">
     <div class="mui-login-header"></div>
-    <div class="mui-login-logo"><img src="images/tu2.png" width="80" /></div>
+    <div class="mui-login-logo"><img src="/static/mobilenew/images/tu2.png" width="80" /></div>
     <div class="mui-login-form">
         <form action="javascript:;" >
-            <div class="mui-input-row">
-                <i class="mui-icon mui-icon-person-filled"></i>
-                <input type="text" name='username' class="mui-input-clear" placeholder="请输入用户昵称"  >
+            <!--<div class="mui-input-row">-->
+                <!--<i class="mui-icon mui-icon-person-filled"></i>-->
+                <!--<input type="text" name='username' class="mui-input-clear" placeholder="请输入用户昵称"  >-->
 
+            <!--</div>-->
+
+            <div class="mui-input-row">
+                <i class="mui-icon mui-icon-phone"></i>
+                <input type="text" name='mobile' class="mui-input-clear" placeholder="请输入手机号" >
+
+            </div>
+            <div class="mui-input-row mui-yanzheng">
+                <i class="mui-icon mui-icon-locked"></i>
+                <input type="text" name='code'  placeholder="请输入验证码" >
+                <button class="yanzheng" type="button" id="send_code">获取验证吗</button>
             </div>
 
 
@@ -41,33 +52,33 @@
 
             </div>
             <div class="mui-clearfix mui-text-center mui-login-password">
-                <a href="login.html" ><span class="mui-icon mui-icon-arrowthinright"></span>去登陆</a>
+                <a href="{:url('mobile/index/login')}" ><span class="mui-icon mui-icon-arrowthinright"></span>去登陆</a>
 
             </div>
 
 
         </form>
-        <div id="div"></div>
-        <div id="popover" class="mui-popover" style="height: 250px;">
-            <div class="mui-popover-arrow"></div>
-            <div>
-                <h3 class="mui-text-center">安全设置</h3>
-                <p> 手机号<span id="phone">(152****2222)</span></p>
-                <div class="mui-input-row mui-yanzheng">
-                    <input type="text" name='yanzheng'  placeholder="请输入验证码" >
-                    <button class="yanzheng" type="button" id="send_code">获取验证吗</button>
-                </div>
-                <div class="" style="padding: 0 10px;margin-top: 25px;">
-                    <button class="mui-btns">确定</button>
-                </div>
-            </div>
-        </div>
+        <!--<div id="div"></div>-->
+        <!--<div id="popover" class="mui-popover" style="height: 250px;">-->
+            <!--<div class="mui-popover-arrow"></div>-->
+            <!--<div>-->
+                <!--<h3 class="mui-text-center">安全设置</h3>-->
+                <!--<p> 手机号<span id="phone">(152****2222)</span></p>-->
+                <!--<div class="mui-input-row mui-yanzheng">-->
+                    <!--<input type="text" name='yanzheng'  placeholder="请输入验证码" >-->
+                    <!--<button class="yanzheng" type="button" id="send_code">获取验证吗</button>-->
+                <!--</div>-->
+                <!--<div class="" style="padding: 0 10px;margin-top: 25px;">-->
+                    <!--<button class="mui-btns" id="post">确定</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
 
     </div>
 </div>
-<script src="js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/mui.min.js"></script>
-<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/mui.min.js"></script>
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
     mui.init();
     var code = '';
@@ -86,6 +97,16 @@
         // 1-给谁发? 手机号码
         phone = $('phone').text();
         // 2-验证码是什么? cast 可以生成一个随机码
+
+        //发送验证码先关闭
+        // $.post('{:url("user/login/mobileSms")}',{'mobile':phone},function(res){
+        //     if(res.code === 0){
+        //         mui.toast(res.msg);
+        //         onoff = true;
+        //         return;
+        //     }
+        // });
+
         code =get_code(4);
 
         mui.alert(code);
@@ -107,15 +128,28 @@
 
     });
     $('#login')[0].addEventListener('tap',function(){
-        var data=$('form').serializeArray()
-        console.log(data)
-        if(data[0].value==''){mui.toast('用户昵称不能为空');return false;}
+        var data=$('form').serializeArray();
+        if(data[0].value==''){mui.toast('手机号码不能为空');return false;}
+        if(data[1].value==''){mui.toast('验证码不能为空');}
+        if(data[2].value==''){mui.toast('密码不能为空');return false;}
+        if(data[3].value!==data[1].value){mui.toast('两次密码不一致');return false;}
 
-        if(data[1].value==''){mui.toast('密码不能为空');return false;}
-        if(data[2].value!==data[1].value){mui.toast('两次密码不一致');return false;}
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+        $.post("{:url('mobile/index/forget')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(reg.msg);
+                setTimeout(function(){
+                    location.href = "{:url('mobile/index/login')}";
+                },2000)
 
-        mui("#popover").popover('toggle', document.getElementById("div"));
-    })
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+    });
 </script>
 </body>
 </html>

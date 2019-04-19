@@ -1,0 +1,12 @@
+{
+	"login.html": {
+		"refer": [
+			"register.html"
+		]
+	},
+	"register.html": {
+		"refer": [
+			"login.html"
+		]
+	}
+}

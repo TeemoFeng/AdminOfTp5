@@ -114,7 +114,7 @@ class Login extends Common {
         if(Request::isAjax()) {
             $data = input('post.');
             if(!$data['email'] || !$data['password']){
-                return array('code'=>-1,'msg'=>'请输入昵称或密码');
+                return array('code'=>-1,'msg'=>'请输入手机号或密码');
             }
             $code = $data['code'];
             $mobile_send = session('mobile_'.$data['email']);
@@ -185,13 +185,13 @@ class Login extends Common {
         if(request()->isPost()){
             $data = input('post.');
             if(empty($data['mobile']) || empty($data['code'])){
-                return ['code' => 0, 'msg' => '账号或者验证码不能为空'];
+                return ['code' => 0, 'msg' => '手机号或者验证码不能为空'];
             }
             $table = db('users');
             //获取验证码待写
             $mobile_send = session('mobile_'.$data['mobile']);
             $code_time = $mobile_send->time;
-            $mobile_code = $mobile_send->time;
+            $mobile_code = $mobile_send->code;
             if((time()-$code_time) > 300){
                 return array('code' => 0, 'msg' => '验证码已过期，请重新发送');
             }
@@ -201,28 +201,22 @@ class Login extends Common {
                 session('mobile_'.$data['email'],null); //清除session
             }
 
-
-            $code  = true;
-            if($data['code'] == $code){
-                $user = $table->where("mobile","=",$data['mobile'])->find();
-                if(!$user){
-                    return ['code' => 0, 'msg' => '用户不存在'];
-                }
-                //给用户发送他的密码
-                if(!empty($user['mobile'])){
-                    //手机不空发送短信信息
-                    $pwd = unlock_url($user['pwd']);
-                    sendSmsForPass($user['mobile'], $pwd);
-                    return ['code' => 1, 'msg' => '密码已经发送到您的手机'];
-                }else{
-                    //邮箱不空发送邮箱信息
-
-                    return ['code' => 1, 'msg' => '密码已经发送到您的邮箱'];
-                }
-
-            }else{
-                return ['code' => 0, 'msg' => '验证码错误'];
+            $user = $table->where("mobile","=",$data['mobile'])->find();
+            if(!$user){
+                return ['code' => 0, 'msg' => '用户不存在'];
             }
+            //给用户发送他的密码
+            if(!empty($user['mobile'])){
+                //手机不空发送短信信息
+                $pwd = unlock_url($user['pwd']);
+                sendSmsForPass($user['mobile'], $pwd);
+                return ['code' => 1, 'msg' => '密码已经发送到您的手机'];
+            }else{
+                //邮箱不空发送邮箱信息
+                return ['code' => 0, 'msg' => '用户不存在'];
+            }
+
+
         }else{
             return ['code' => 0, 'msg' =>'非法请求'];
         }
@@ -328,7 +322,7 @@ class Login extends Common {
         $res = sendSms($mobile, $code);
         $res = json_decode($res,true);
         if($res['Code'] == 0){
-            return ['code' => 1, 'msg' => '短信发送成功'];
+            return ['code' => 1, 'mobile_code' => $code, 'msg' => '短信发送成功'];
         }else{
             return ['code' => 0, 'msg' => '短信发送失败'];
         }

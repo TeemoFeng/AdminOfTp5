@@ -1,0 +1,149 @@
+{include file="common/header"/}
+<body style="background: #ebedf9;">
+<div class="mui-content mui-scroll-wrapper bg-fff mui-bottom-60" id="pullrefresh">
+    <div class="mui-scroll">
+
+        <div class="mui-table-view mui-table-view-chevron " style="margin-bottom: 00px;" >
+            <div class="mui-content">
+                <header class="mui-bar mui-bar-nav" style="background: transparent;height: 57px;">
+                    <h1 class="mui-title mui-text-bai" style="line-height: 57px;">账户</h1>
+                </header>
+                <div class="mui-login-header"></div>
+                <div class="mui-user">
+                    <div class="mui-user-header">
+                        <div class="flex">
+                            <div class="flex-item mui-text-center mui-top-20">
+                                <span>UID</span>
+                                <p>{$user_info['usernum']}</p>
+                            </div>
+                            <div class="flex-item mui-text-center">
+                                <img src="/static/mobilenew/images/user.jpg" alt="" width="80" height="80" style="border-radius: 100%;" />
+                            </div>
+                            <div class="flex-item mui-text-center mui-top-20">
+                                <!--<img src="/static/mobilenew/images/tu4.png" alt="" width="20" height="18" />-->
+                                <span>交易账号余额</span>
+                                <p>{$account_info['transaction_num']}</p>
+                            </div>
+
+                        </div>
+                        <div class="mui-text-center">
+                            <p class="zi-333 mui-top-10">{$user_info['mobile']}</p>
+                        </div>
+                    </div>
+                    <div class="mui-user-list">
+                        <ul class="mui-list-inline mui-clearfix">
+
+                            <li class="mui-text-center">
+                                <a href="setting.html">
+                                    <img src="/static/mobilenew/images/tu6.png" alt="" width="25" height="25" />
+                                    <p>支付设置</p>
+                                </a>
+                            </li>
+
+                            <!--<li class="mui-text-center">-->
+                                <!--<a href="yaoqing.html">-->
+                                    <!--<img src="/static/mobilenew/images/tu8.png" alt="" width="25" height="25" />-->
+                                    <!--<p>邀请返佣</p>-->
+                                <!--</a>-->
+                            <!--</li>-->
+                            <li class="mui-text-center">
+                                <a href="safe_center.html">
+                                    <img src="/static/mobilenew/images/tu9.png" alt="" width="25" height="25" />
+                                    <p>安全中心</p>
+                                </a>
+                            </li>
+                            <!--<li class="mui-text-center">
+                                <a href="kefu.html">
+                                    <img src="/static/mobilenew/images/tu10.png" alt="" width="25" height="25" />
+                                    <p>客服中心</p>
+                                </a>
+                            </li>-->
+                            <li class="mui-text-center">
+                                <a href="feilv.html">
+                                    <img src="/static/mobilenew/images/tu11.png" alt="" width="25" height="25" />
+                                    <p>费率标准</p>
+                                </a>
+                            </li>
+                            <li class="mui-text-center">
+                                <a href="bizhong.html">
+                                    <img src="/static/mobilenew/images/tu12.png" alt="" width="25" height="25" />
+                                    <p>币种资料</p>
+                                </a>
+                            </li>
+                            <li class="mui-text-center">
+                                <a href="gonggao.html">
+                                    <img src="/static/mobilenew/images/tu13.png" alt="" width="25" height="25" />
+                                    <p>热币公告</p>
+                                </a>
+                            </li>
+                            <li class="mui-text-center">
+                                <a href="help.html">
+                                    <img src="/static/mobilenew/images/tu14.png" alt="" width="25" height="25" />
+                                    <p>帮助中心</p>
+                                </a>
+                            </li>
+                            <li class="mui-text-center">
+                                <a href="denglu.html">
+                                    <img src="/static/mobilenew/images/tu15.png" alt="" width="25" height="25" />
+                                    <p>登录记录</p>
+                                </a>
+                            </li>
+                            <!--<li class="mui-text-center">
+                                <a href="more0.html">
+                                    <img src="images/tu16.png" alt="" width="25" height="25" />
+                                    <p>更多设置</p>
+                                </a>
+                            </li>-->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<nav class="mui-bar mui-bar-bottom " >
+    <a class="mui-tab-item mui-active" href="index.html">
+        <span class="mui-icon fa fa-line-chart"></span>
+        <span class="mui-tab-label">行情</span>
+    </a>
+    <a class="mui-tab-item" href="{:url('mobile/trade/index')}">
+        <span class="mui-icon fa fa-bitcoin" ></span>
+        <span class="mui-tab-label">交易</span>
+    </a>
+    <a class="mui-tab-item" href="c2c.html">
+        <span class="mui-icon fa fa-registered" ></span>
+        <span class="mui-tab-label">C2C</span>
+    </a>
+    <a class="mui-tab-item" href="wallet.html">
+        <span class="mui-icon fa fa-archive" ></span>
+        <span class="mui-tab-label">钱包</span>
+    </a>
+    <a class="mui-tab-item" href="user.html">
+        <span class="mui-icon fa fa-user" ></span>
+        <span class="mui-tab-label">账户</span>
+    </a>
+</nav>
+{include file="common/footer"/}
+<script type="text/javascript" charset="utf-8">
+
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+
+
+</script>

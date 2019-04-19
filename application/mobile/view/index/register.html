@@ -24,7 +24,7 @@
             </div>
             <div class="mui-input-row">
                 <i class="mui-icon mui-icon-phone"></i>
-                <input type="text" name='mobile' class="mui-input-clear" placeholder="请输入手机号" >
+                <input type="text" name='email' class="mui-input-clear" placeholder="请输入手机号" >
 
             </div>
             <div class="mui-input-row mui-yanzheng">
@@ -52,7 +52,7 @@
 
             </div>
             <div class="mui-clearfix mui-text-center mui-login-password">
-                <a href="login.html" ><span class="mui-icon mui-icon-arrowthinright"></span>去登陆</a>
+                <a href="{:url('mobile/index/login')}" ><span class="mui-icon mui-icon-arrowthinright"></span>去登陆</a>
             </div>
 
 
@@ -89,7 +89,14 @@
             onoff = true;
             return;
         }
-
+        //发送验证码先关闭
+        // $.post('{:url("user/login/mobileSms")}',{'mobile':phone},function(res){
+        //     if(res.code === 0){
+        //         mui.toast(res.msg);
+        //         onoff = true;
+        //         return;
+        //     }
+        // });
 
         // 2-验证码是什么? cast 可以生成一个随机码
         code =get_code(4);
@@ -113,7 +120,7 @@
 
     });
     $('#login')[0].addEventListener('tap',function(){
-        var data=$('form').serializeArray()
+        var data=$('form').serializeArray();
         console.log(data)
         if(data[0].value==''){mui.toast('用户昵称不能为空');return false;}
         if(data[1].value==''){mui.toast('手机号不能为空');return false;}
@@ -122,20 +129,23 @@
         if(data[4].value!==data[3].value){mui.toast('两次密码不一致');return false;}
         if(data[5].value==''){mui.toast('邀请码不能为空');return false;}
         if(data[1].value!==phone){mui.toast('此号码和发验证码的不一致');return false;}
-        $.post("{:url('user/login/index')}",{'username' : data[0].value, 'password' : data[1].value},function(res){
+
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+        $.post("{:url('user/login/reg')}",values,function(res){
             if(res.code > 0){
-                mui.toast('登陆成功');
+                mui.toast(reg.msg);
                 setTimeout(function(){
-                    location.href = res.url;
+                    location.href = "{:url('mobile/index/login')}";
                 },2000)
+
             }else{
                 mui.toast(res.msg);return false;
             }
-
         });
 
-
-        mui.toast('登陆成功')
     })
 </script>
 </body>

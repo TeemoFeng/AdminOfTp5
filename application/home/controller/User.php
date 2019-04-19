@@ -298,6 +298,7 @@ class User extends Common
 
         //从委托表中取出卖价前7位
         $list_sell = db('user_trade_depute')->where(['depute_type' => 2,'depute_status' => 1])->order('price DESC')->limit(7)->select();
+        $count1 = count($list_sell);
         foreach ($list_sell as $key => $val){
 
             $amei_account = UserCurrencyList::where(['user_id' => $val['user_id'],'currency_id' => $amei_infos['id']])->value('num');
@@ -305,19 +306,20 @@ class User extends Common
                 $amei_account = 0;
             }
             $list_sell[$key]['account'] = $amei_account;
-            $list_sell[$key]['num2'] = 7-$key;
+            $list_sell[$key]['num2'] = $count1-$key;
 
         }
 
         //获取用户托管买币前7位
         $list_buy = db('user_trade_depute')->where(['depute_type' => 1, 'depute_status' => 1])->order('price DESC')->limit(7)->select();
+        $count2 = count($list_buy);
         foreach ($list_buy as $key => $val){
             $amei_account = UserCurrencyList::where(['user_id' => $val['user_id'],'currency_id' => $amei_infos['id']])->value('num');
             if(empty($amei_account)){
                 $amei_account = 0;
             }
             $list_buy[$key]['account'] = $amei_account;
-            $list_buy[$key]['num2'] = 7-$key;
+            $list_buy[$key]['num2'] = $count2-$key;
         }
         //实时成交前30位
         $trade_list = db('user_trade_depute_log')->where(['trade_status' => 2])->limit(30)->order('create_time DESC')->select();
