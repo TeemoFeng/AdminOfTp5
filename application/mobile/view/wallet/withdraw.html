@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <title>提币</title>
-
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/font-awesome.min.css"/>
     <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
     <link href="/static/mobilenew/css/mui.picker.css" rel="stylesheet" />
     <link href="/static/mobilenew/css/mui.poppicker.css" rel="stylesheet" />
@@ -24,33 +24,64 @@
 
         <div class="mui-table-view mui-table-view-chevron">
             <div class="mui-bd-bank">
-                <p>开户姓名必须与真实姓名一致，手续费是{}%，单笔最高可提{},单笔给{}%消费钱包 <span>币种的手续费将会不定期调整</span></p>
+                <p>开户姓名必须与真实姓名一致，手续费是{$bonus_set['outer_disc_trans_ratio']}%，单笔最高可提10000,单笔给{$bonus_set['outer_disc_trans_to_waller']}%消费钱包 <span>币种的手续费将会不定期调整</span></p>
                 <form class="mui-input-group">
-                    <ul class="mui-table-view">
-                        <li class="mui-table-view-cell" style="border-bottom: 1px solid #eee;margin: 0 15px;">
-                            <a href="dizhi.html" class="mui-navigate-right" style="padding-left: 0;color: #666;">请选择接收地址</a>
-                        </li>
-
-                    </ul>
 
                     <div class="mui-input-row">
-                        <label>可转BTC</label>
-                        <input type="text" name='dizhi'  value="0.0000" readonly />
+                        <label>可提现余额</label>
+                        <input type="text" name='trade_account'  value="{$trade_account}" readonly />
                     </div>
                     <div class="mui-input-row">
-                        <label>网络手续费</label>
-                        <input type="text" name='kaihu' value="0.0000" readonly />
+                        <label>手机号</label>
+                        <input type="text" name='mobile'  value="{$user_info['mobile']}" readonly />
                     </div>
                     <div class="mui-input-row">
-                        <label>提现数量</label>
-                        <input type="text" name='banknum' class="mui-input-clear" placeholder="请输入提现数量">
+                        <label>支付宝账号</label>
+                        <input type="text" name='alipay_account'  value="{$user_info['alipay_account']}" readonly />
+                    </div>
+                    <div class="mui-input-row">
+                        <label>收款账号</label>
+                        <input type="text" name='bank_account' value="{$user_info['bank_account']}" readonly />
+                    </div>
+                    <div class="mui-input-row">
+                        <label>开户姓名</label>
+                        <input type="text" name='bank_user'  value="{$user_info['bank_user']}" readonly >
                     </div>
 
                     <div class="mui-input-row">
-                        <label>资金密码</label>
-                        <input type="password" name='password' class="mui-input-password" placeholder="请输入资金密码">
+                        <label>开户行地址</label>
+                        <input type="text" name='bank_desc' value="{$user_info['bank_desc']}" readonly>
                     </div>
 
+                    <div class="mui-input-row">
+                        <label>所属银行</label>
+                        <input type="text" name='bank_name'  value="{$bank_name}" readonly>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>提现金额</label>
+                        <input type="text" name='cash_sum' id="cash_sum"  placeholder="请输入提现金额">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>到账金额</label>
+                        <input type="text" name="real_sum" id="real_sum" readonly>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>提现方式</label>
+                        <select name="cash_method">
+                            <option value="0">请选择提现方式</option>
+                            {foreach $cash_method as $k => $v}
+                            <option value="{$k}">{$v}</option>
+                            {/foreach}
+                        </select>
+
+                    </div>
+                    <div class="mui-input-row">
+                        <label>备注</label>
+                        <input type="text" name="remark" >
+                    </div>
+                    <input type="hidden" id="poundage" name="poundage">
+                    <input type="hidden" id="geiyouka" name="geiyouka">
                 </form>
             </div>
             <div class="mui-button-row">
@@ -85,15 +116,138 @@
         }, 1500);
     }
 
+    var user_account = {$trade_account};
+    var trans_to_waller_ratio = {$bonus_set['outer_disc_trans_to_waller']};
+    var trans_ratio =  {$bonus_set['outer_disc_trans_ratio']};
+    $("#cash_sum").bind('input propertychange',function(){
+        var val = $(this).val();
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        if(parseFloat(val)>parseFloat(user_account)){
+            $(this).val('');
+            mui.toast('提取金额大于余额，请重新选择'); return false;
+        }
+        if(parseFloat(val) == 0){
+            $(this).val('');
+            mui.toast('提取金额要需大于0'); return false;
+        }
+        if(parseFloat(val)>parseFloat(100000.00)){
+            $(this).val('');
+            mui.toast('提取金额不能大于100000'); return false;
+        }
 
+        if(regPos.test(val)){
+            //计算到账金额
+            var ratio = FloatAdd(trans_to_waller_ratio,trans_ratio);
+            var ratio2 = FloatDiv(ratio,100);
+            var ratio3 = FloatSub(1, ratio2);
+            var real_num = FloatMul(val,ratio3);
+            real_num = parseFloat(real_num).toFixed(2); //到账金额
+            var geiyouka_ratio = FloatDiv(trans_to_waller_ratio,100);
+            var shouxu_ratio = FloatDiv(trans_ratio,100);
+            var geiyouka = FloatMul(val,geiyouka_ratio); //给油卡费用
+            var poundage = FloatMul(val,shouxu_ratio); //交易手续费
+
+            $('#geiyouka').val(geiyouka);
+            $('#poundage').val(poundage);
+            $('#real_sum').val(real_num);
+
+        }else{
+            //如果输入的格式不对，清空
+            $(this).val('');
+            $('#geiyouka').val('');
+            $('#poundage').val('');
+            $('#real_sum').val('');
+        }
+    });
+
+    //除法
+    function FloatDiv(arg1,arg2){
+        var t1=0,t2=0,r1,r2;
+        try{t1=arg1.toString().split(".")[1].length}catch(e){}
+        try{t2=arg2.toString().split(".")[1].length}catch(e){}
+        with(Math){
+            r1=Number(arg1.toString().replace(".",""));
+            r2=Number(arg2.toString().replace(".",""));
+            return (r1/r2)*pow(10,t2-t1);
+        }
+    }
+
+    //减法
+    function FloatSub(arg1,arg2){
+        var r1,r2,m,n;
+        try{r1=arg1.toString().split(".")[1].length}catch(e){r1=0}
+        try{r2=arg2.toString().split(".")[1].length}catch(e){r2=0}
+        m=Math.pow(10,Math.max(r1,r2));
+        //动态控制精度长度
+        n=(r1=r2)?r1:r2;
+        return ((arg1*m-arg2*m)/m).toFixed(n);
+    }
+
+
+    //浮点数加法运算
+    function FloatAdd(arg1,arg2){
+        var r1,r2,m;
+        try{r1=arg1.toString().split(".")[1].length}catch(e){r1=0}
+        try{r2=arg2.toString().split(".")[1].length}catch(e){r2=0}
+        m=Math.pow(10,Math.max(r1,r2));
+        return (arg1*m+arg2*m)/m;
+    }
+
+
+    //浮点数乘法运算
+    function FloatMul(arg1,arg2) {
+        var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+        try {
+            m += s1.split(".")[1].length
+        } catch (e) {
+        }
+        try {
+            m += s2.split(".")[1].length
+        } catch (e) {
+        }
+        return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+
+    }
 
     $('#submite')[0].addEventListener('tap',function(){
-        var form = $('form').serializeArray()
+        var data = $('form').serializeArray();
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+        console.log(values);
+        if(values.trade_account <= 0){
+            mui.toast('可提现余额不足'); return false;
+        }
+        if(values.cash_method == ''){
+            mui.toast('请选择提现方式'); return false;
+        }
+        if(values.cash_method == 1){
+            if(values.bank_account == '' || values.bank_name == '' || values.bank_user == ''){
+                mui.toast('银行卡信息不完善'); return false;
+            }
+        }
+        if(values.cash_method == 2){
+            if(values.alipay_account == ''){
+                mui.toast('支付宝账号不能为空'); return false;
+            }
+        }
+        if(values.cash_sum <= 0 || values.cash_sum == ''){
+            mui.toast('请输入提现金额'); return false;
+        }
 
-        if(form[2].value==''){mui.toast('提现数量不能为空'); return false;}
-        if(form[3].value==''){mui.toast('资金密码不能为空') ;return false;}
+        $.post("{:url('home/user/withdrawCash')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },2000)
 
-        console.log(form)
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
     })
 </script>
 </body>

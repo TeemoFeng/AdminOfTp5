@@ -1,0 +1,205 @@
+{include file="common/header"/}
+<body >
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">会员注册</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-futou">
+
+            <div class="mui-futou-header">
+                <p class="zi-zong">
+                    基本信息
+                </p>
+
+            </div>
+
+            <div  class="mui-control-content mui-active ">
+                <form action="javascript:;" method="post" class="bg-zong">
+                    <div class="mui-input-row">
+                        <label>会员编号</label>
+                        <input  type="text" name="usernum"  value="{$usernum}"  >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>会员姓名/昵称</label>
+                        <input  type="text" name="username"  placeholder="请填写会员姓名(*必填)"  >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>身份证号</label>
+                        <input  type="text" name="identity"  placeholder="请填写身份证号"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>手机号</label>
+                        <input  type="text" name="mobile"  placeholder="请填写会员手机号(*必填)"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>邮箱</label>
+                        <input  type="text" name="email"  placeholder="请填写邮箱"  >
+                    </div>
+
+
+
+
+                </form>
+
+            </div>
+            <div class="mui-futou-header">
+                <p class="zi-zong">
+                    关系信息
+                </p>
+
+            </div>
+            <div  class="mui-control-content mui-active ">
+                <form action="javascript:;" method="post" class="bg-zong">
+                    <div class="mui-input-row">
+                        <label>推荐人编号</label>
+                        <input  type="text" name="referee"  value="{$user_info['usernum']}"  >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>接点人编号</label>
+                        <input  type="text" name="contact_person"  placeholder="请填写接点人编号"  >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>报单中心(必填)</label>
+                        <input  type="text" name="baodan_user"  value="{$user_info['usernum']}"   >
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="mui-futou-header">
+                <p class="zi-zong">
+                    银行账号信息
+                </p>
+
+            </div>
+            <div  class="mui-control-content mui-active ">
+                <form action="javascript:;" method="post" class="bg-zong">
+                    <div class="mui-input-row">
+                        <label>支付宝账户</label>
+                        <input  type="text" name="alipay_account"  placeholder="请填写支付宝账号"  >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>银行</label>
+                        <select name="bank_id" >
+                            <option value ="0">请选择</option>
+                            {foreach $bank as $key => $val}
+                            <option value="{$val['id']}" >{$val['bank_name']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>开户人</label>
+                        <input  type="text" name="bank_user"  placeholder="请填写身份证号"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>银行卡账号</label>
+                        <input  type="text" name="bank_account"  placeholder="请填写银行卡号"  >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>开户行</label>
+                        <input  type="text" name="bank_desc"  placeholder="请填写开户行地址"   >
+                    </div>
+
+
+
+                </form>
+
+            </div>
+            <div class="mui-futou-header">
+                <p class="zi-zong">
+                    安全信息
+                </p>
+
+            </div>
+            <div  class="mui-control-content mui-active ">
+                <form action="javascript:;" method="post" class="bg-zong">
+                    <div class="mui-input-row">
+                        <label>登录密码</label>
+                        <input  type="password" name="password"  value="123456"  >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>确认登录密码</label>
+                        <input  type="password" name="confirmPwd"  value="123456"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>安全密码</label>
+                        <input  type="password" name="safeword"  value="123456"    >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>确认安全密码</label>
+                        <input  type="password" name="confirmSafePwd"  value="123456"    >
+                    </div>
+                    <div class="flex">
+                        <div class="flex-item mui-text-center">
+                            <button class="mui-btns " type="button" id="submit" style="margin-top: 30px;">提交</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer"/}
+
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+    $('#submit')[0].addEventListener('tap',function(){
+
+        var data =$('form').serializeArray()
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+
+        if(values.usernum ==''){mui.toast('会员编号不能为空');return false;}
+        if(values.username == ''){mui.toast('会员名称不能为空');return false;}
+        if(values.mobile == 0){mui.toast('手机号不能为空');return false;}
+
+        if(values.referee == 0){mui.toast('请填写推荐人编号');return false;}
+        if(values.contact_person == 0){mui.toast('请填写接点人编号');return false;}
+        if(values.baodan_user == 0){mui.toast('请填写报单中心编号');return false;}
+
+        $.post("{:url('user/user/register')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },2000)
+
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
+    })
+
+</script>
+</body>
+</html>

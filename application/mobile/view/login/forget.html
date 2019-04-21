@@ -140,7 +140,7 @@
         }
         $.post("{:url('mobile/login/forget')}",values,function(res){
             if(res.code > 0){
-                mui.toast(reg.msg);
+                mui.toast(res.msg);
                 setTimeout(function(){
                     location.href = "{:url('mobile/login/index')}";
                 },2000)

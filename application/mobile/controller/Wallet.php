@@ -42,9 +42,10 @@ class Wallet extends Common {
         $cash_method = ApplyRecharge::$cash_method; //提现方式
         $bonus_set = db('bonus_ext_set')->where('id',1)->find(); //提现设置
         $trade_account = UserCurrencyAccount::where(['user_id' => $this->uid])->value('transaction_num');  //用户交易账户余额
-
+        $bank_name = Db::name('bank')->where(['id' => $user_info['bank_id']])->value('bank_name');
         $this->assign('cash_method', $cash_method);
         $this->assign('bank_list', $bank);
+        $this->assign('bank_name', $bank_name);
         $this->assign('bonus_set', $bonus_set);
         $this->assign('trade_account', $trade_account);
         $this->assign('user_info', $user_info);

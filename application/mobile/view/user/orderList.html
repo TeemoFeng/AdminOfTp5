@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>提现管理</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+    <style type="text/css">
+        .mui-segmented-control.mui-scroll-wrapper{height: -webkit-fill-available;}
+    </style>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">提现管理</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div id="slider" class="mui-slider mui-fullscreen">
+        <div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+            <div class="mui-scroll">
+                <table border="" cellspacing="" cellpadding="" style="min-width: 700px;" id="orderList" >
+                    <tr>
+                        <th>单号</th>
+                        <th>币种</th>
+                        <th>类型</th>
+                        <th>数量</th>
+                        <th>价格</th>
+                        <th>总额</th>
+                        <th>时间</th>
+                        <th>状态</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{include file="common/footer"/}
+
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style: 'circle',
+                callback: pulldownRefresh
+            },
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+
+    });
+
+    function pullupRefresh() {
+
+        setTimeout(function() {
+
+            loadlist()
+
+        }, 1500);
+    }
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload();
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+    var page=1;
+    var kg = true;
+    (function() {
+        loadlist();
+
+    })();
+
+    function loadlist() {
+        $.ajax({
+            url:"{:url('orderList')}",
+            data:{page:page},
+            type:'post',
+            success:function (data) {
+                mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+                if(data.data.length!==0){
+                    page = parseInt(page)+1;
+                    $.each(data.data, function (index, value) {
+                        var str = '<tr>'+
+                            '	<td class="mui-text-center">'+value.order_num+'</td>'+
+                            '	<td class="mui-text-center">'+value.currency_name+'</td>';
+                        if(value.trade_type == 1){
+                            str += '	<td class="mui-text-center" style="color: green;">'+value.trade_type_str+'</td>';
+                        }else{
+                            str += '	<td class="mui-text-center" style="color: red;">'+value.trade_type_str+'</td>';
+                        }
+
+                        str += '	<td class="mui-text-center mui-red">'+value.trade_num+'</td>'+
+                        '	<td class="mui-text-center">'+value.price+'</td>'+
+                        '	<td class="mui-text-center">'+value.sum+'</td>'+
+                        '	<td class="mui-text-center">'+value.create_time+'</td>'+
+                        '	<td class="mui-text-center">'+value.trade_status_str+'</td>'+
+                        '</tr>';
+
+                        $('#orderList').append(
+                            str
+                            )
+                    })
+                }
+
+            }
+        })
+    }
+
+</script>

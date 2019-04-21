@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>提现管理</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">提现管理</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-futou">
+            <div class="flex bg-zong">
+                <div class="flex-item mui-text-center mui-active">
+                    充值记录
+                </div>
+                <div class="flex-item mui-text-center">
+                    提现记录
+                </div>
+            </div>
+
+
+            <div  class="mui-control-content mui-active" style="margin: 10px 0;">
+                <table border="" cellspacing="" cellpadding="" >
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js"></script>
+<script src="/static/mobilenew/js/mui.js"></script>
+
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            },
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+    var index=0
+    var xuan=$('.mui-futou >.flex .flex-item')
+    for(var i = 0 ; i< xuan.length ; i++){
+        xuan[i].addEventListener('tap',function(){
+            $(this).addClass('mui-active').siblings().removeClass('mui-active')
+            index = $(this).index()
+            $('.mui-control-content table').html('')
+            loadlist(index)
+        })
+    }
+    function pullupRefresh() {
+
+        setTimeout(function() {
+
+            loadlist(index)
+
+        }, 1500);
+    }
+
+    var page=1;
+    var page2=1;
+    var kg = true;
+    loadlist(index);
+    function loadlist(index) {
+        console.log(index)
+        if(index==0){
+            if(page == 1){
+                $('.mui-control-content table').append('<tr>'+
+                    '<th>时间</th>'+
+                    '<th>金额</th>'+
+                    '<th>支付方式</th>'+
+                    '<th>状态</th>'+
+                    '</tr>')
+            }
+            $.ajax({
+                url:"{:url('rechargeAndcash')}",
+                data:{page:page,type:1},
+                type:'post',
+                success:function (data) {
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+                    if(data.data.length!==0){
+                        page = parseInt(page)+1;
+                        $.each(data.data, function (index, value) {
+                            $('.mui-control-content table').append('<tr>'+
+                                '	<td class="mui-text-center">'+value.create_time+'</td>'+
+                                '	<td class="mui-text-center">'+value.amount+'</td>'+
+                                '	<td class="mui-text-center">'+value.pay_method+'</td>'+
+                                '	<td class="mui-text-center mui-red">'+value.status+'</td>'+
+                                '</tr>')
+                        })
+                    }
+
+                }
+            })
+        }else{
+            if(page2 == 1){
+                $('.mui-control-content table').append('<tr>'+
+                    '<th>时间</th>'+
+                    '<th>金额</th>'+
+                    '<th>手续费</th>'+
+                    '<th>实时到账</th>'+
+                    '<th>状态</th>'+
+                    '</tr>')
+            }
+            $.ajax({
+                url:"{:url('rechargeAndcash')}",
+                data:{page:page2,type:2},
+                type:'post',
+                success:function (data) {
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+                    if(data.data.length!==0){
+                        page2 = parseInt(page2)+1;
+                        $.each(data.data, function (index, value) {
+                            $('.mui-control-content table').append('<tr>'+
+                                '	<td class="mui-text-center">'+value.create_time+'</td>'+
+                                '	<td class="mui-text-center">'+value.cash_sum+'</td>'+
+                                '	<td class="mui-text-center">'+value.poundage+'</td>'+
+                                '	<td class="mui-text-center">'+value.real_sum+'</td>'+
+                                '	<td class="mui-text-center mui-red">'+value.status+'</td>'+
+                                '</tr>')
+
+                        })
+                    }
+
+                }
+            })
+        }
+
+    }
+</script>
+</body>
+</html>

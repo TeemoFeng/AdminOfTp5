@@ -621,8 +621,8 @@ class User extends Common
                 'depute_type'       => $data['depute_type'],
                 'status'            => 1,
                 'price'             => $data['price'],
-                'depute_currency'   => 1, //卖出币种默认为阿美币
-                'trade_currency'    => 1, //卖出币种默认为阿美币
+                'depute_currency'   => $amei_infos['id'], //卖出币种默认为阿美币
+                'trade_currency'    => $amei_infos['id'], //卖出币种默认为阿美币
                 'num'               => $data['sell_num'], //卖出数量
                 'sum'               => $data['sum'],
                 'poundage'          => $data['poundage'],
@@ -736,7 +736,6 @@ class User extends Common
         });
 //        $order_list = Db::name('user_trade_depute')->order('id DESC')->paginate(10,false,['query' => request()->param()]);
         $page = $order_list->render();
-
 
         $this->assign('trade_type', $trade_type);
         $this->assign('order_list', $order_list);

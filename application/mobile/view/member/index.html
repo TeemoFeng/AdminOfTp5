@@ -1,0 +1,60 @@
+{include file="common/header"/}
+<body style="background: #f2f3f8;">
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">会员管理</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-usercenter">
+
+            <div class="mui-usercenter-c">
+                <ul class="mui-table-view bg-zong">
+                    <li class="mui-table-view-cell">
+                        <a href="{:url('register')}" class="mui-navigate-right zi-zong"><img src="" alt=""> 新用户注册</a>
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <a href="原点复投.html" class="mui-navigate-right zi-zong"><img src="" alt=""> 原点复投</a>
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <a href="撤回复投.html" class="mui-navigate-right zi-zong"><img src="" alt="">撤回复投</a>
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <a href="直推.html" class="mui-navigate-right zi-zong"><img src="" alt=""> 直推架构树</a>
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <a href="激活.html" class="mui-navigate-right zi-zong"><img src="" alt="" > 未激活列表</a>
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <a href="会员列表.html" class="mui-navigate-right zi-zong"><img src="" alt="" > 会员列表</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer"/}
+
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+</script>
+
