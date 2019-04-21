@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>提币</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link href="/static/mobilenew/css/mui.picker.css" rel="stylesheet" />
+    <link href="/static/mobilenew/css/mui.poppicker.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+    <style type="text/css">
+        .mui-navigate-right:after, .mui-push-right:after{right: 0;}
+    </style>
+</head>
+<body style="background: #f2f3f8;">
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">交易账户申请提现</h1>
+</header>
+
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh" >
+    <div class="mui-scroll">
+
+        <div class="mui-table-view mui-table-view-chevron">
+            <div class="mui-bd-bank">
+                <p>开户姓名必须与真实姓名一致，手续费是{}%，单笔最高可提{},单笔给{}%消费钱包 <span>币种的手续费将会不定期调整</span></p>
+                <form class="mui-input-group">
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell" style="border-bottom: 1px solid #eee;margin: 0 15px;">
+                            <a href="dizhi.html" class="mui-navigate-right" style="padding-left: 0;color: #666;">请选择接收地址</a>
+                        </li>
+
+                    </ul>
+
+                    <div class="mui-input-row">
+                        <label>可转BTC</label>
+                        <input type="text" name='dizhi'  value="0.0000" readonly />
+                    </div>
+                    <div class="mui-input-row">
+                        <label>网络手续费</label>
+                        <input type="text" name='kaihu' value="0.0000" readonly />
+                    </div>
+                    <div class="mui-input-row">
+                        <label>提现数量</label>
+                        <input type="text" name='banknum' class="mui-input-clear" placeholder="请输入提现数量">
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>资金密码</label>
+                        <input type="password" name='password' class="mui-input-password" placeholder="请输入资金密码">
+                    </div>
+
+                </form>
+            </div>
+            <div class="mui-button-row">
+                <button type="button" id="submite" class="mui-btns mui-btn-primary" style="margin: 40px auto 0;display: block;width: 95%;">确认</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/mui.min.js"></script>
+<script src="/static/mobilenew/js/mui.picker.js"></script>
+<script src="/static/mobilenew/js/mui.poppicker.js"></script>
+
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+
+    $('#submite')[0].addEventListener('tap',function(){
+        var form = $('form').serializeArray()
+
+        if(form[2].value==''){mui.toast('提现数量不能为空'); return false;}
+        if(form[3].value==''){mui.toast('资金密码不能为空') ;return false;}
+
+        console.log(form)
+    })
+</script>
+</body>
+</html>

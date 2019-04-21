@@ -1,0 +1,71 @@
+{include file="common/header"/}
+<body style="background: #f2f3f8;">
+
+<div class="mui-wallet-header">
+    <div class="flex">
+        <!--<div class="flex-item mui-text-right">-->
+            <!--<a href="">我的资产</a>-->
+        <!--</div>-->
+    </div>
+    <div class="font-24 mui-text-bai mui-text-center" >交易账户 <span>总资产折合人民币(CNY)</span></div>
+    <div class="mui-text-bai mui-text-center mui-wallet-e">￥ <span class="font-24">{$user_account['transaction_num']}</span></div>
+</div>
+<div class="mui-wallet-center">
+    <ul class="mui-list-unstyled">
+        <li>
+            <div class="flex">
+                <div class='mui-wallet-center-l'>
+                    <img src="{$amei_info['logo']}" width="30" height="30" />
+                    AMB
+                </div>
+                <div class="mui-wallet-center-r">
+                    <p class="mui-text-gray">余额:{$user_account['transaction_num']}</p>
+                    <p class="mui-text-gray">冻结:0.00</p>
+                </div>
+            </div>
+            <div class="flex chongzhi" style="margin-top: 10px;">
+                <div class="flex-item mui-text-center">
+                    <a href="chong-wallet.html" class="mui-text-green" style="font-size: 13px;">充币</a>
+                </div>
+                <div class="flex-item mui-text-center">
+                    <a href="{:url('mobile/wallet/withdraw')}" style='color:#F05356'>提币</a>
+                </div>
+                <div class="flex-item mui-text-center">
+                    <a href="" class="mui-text-gray">账单</a>
+                </div>
+            </div>
+        </li>
+
+    </ul>
+</div>
+{include file="common/nav"/}
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/mui.min.js"></script>
+<script src="/static/mobilenew/js/mui.picker.js"></script>
+<script src="/static/mobilenew/js/mui.poppicker.js"></script>
+<script src="/static/mobilenew/js/city.data.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+
+</script>
+</body>
+</html>
