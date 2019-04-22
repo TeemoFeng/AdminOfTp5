@@ -1,0 +1,97 @@
+{include file="common/header"/}
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">撤回复投</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-futou">
+
+            <div  class="mui-control-content mui-active ">
+                <div class="mui-futou-header">
+                    <p class="zi-zong">
+                        备注:撤回复投单笔手续费{$origin_num}%
+                    </p>
+
+                </div>
+                <form action="javascript:;" method="post" class="bg-zong form">
+                    <div class="mui-input-row">
+                        <label>已复投(余额)</label>
+                        <input  type="text" name="cash_input_num"  value="{$cash_input_num}" readonly >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>撤回(可用)</label>
+                        <input  type="text" name="can_reset_num" id="can_reset_num" value="{$can_reset_num}"  readonly>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>撤回复投数量</label>
+                        <input  type="text" name="recall_num"  placeholder="请输入撤回复投数量"   >
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-item mui-text-center">
+                            <button class="mui-btns " type="button" id="submit" style="margin-top: 30px;">提交</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer"/}
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+    $('#submit')[0].addEventListener('tap',function(){
+        var data =$('.form').serializeArray();
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+        if(values.recall_num.length < 1){mui.toast('撤回复投数量不能为空');return false;}
+
+        var can_reset_num = $('#can_reset_num').val();
+        if(Number(values.recall_num) > Number(can_reset_num)){
+            mui.toast('撤回复投数量不能大于可用数量');
+            return false;
+        }
+
+        $.post("{:url('user/user/withdraw')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },2000)
+
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
+
+
+    });
+
+</script>

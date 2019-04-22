@@ -128,9 +128,11 @@ class Bourse extends Controller {
         ];
 
         //阿美币实时价格
-        $amei_price = db('user_trade_depute')->order('create_time DESC')->find();
-        $price = $amei_price['price'];
-        $price =2; //测试用
+        $amei_price = db('user_trade_depute_log')->where(['trade_status' => 3])->order('create_time DESC')->value('price');
+        if(empty($amei_price)){
+            $amei_price = Db::name('currency_list')->where(['en_name' => 'AMB'])->value('price');
+        }
+        $price = $amei_price;
         $user_count = db('user_node')->where(['enabled' => 1])->count();
         $page_size = 500;
         $page = ceil($user_count/$page_size);
@@ -212,7 +214,7 @@ class Bourse extends Controller {
             'ameibi_price' => $price,
             'ameibi_num' => $num,
             'status' => 1,
-            'create_time' => date('Y-m-d H:i:is',time()),
+            'create_time' => date('Y-m-d H:i:s',time()),
             'grant_time' => date('Y-m-d', $end_time),
             'remark'     => '用户【'.$user_name. '】动态转换阿美币因【' . $from_user .'】'
 

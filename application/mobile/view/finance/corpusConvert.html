@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>本金转换</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">本金转换</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-futou">
+
+            <div  class="mui-control-content mui-active ">
+                <div class="mui-futou-header">
+                    <p class="zi-zong">
+                        备注:本金账户撤资转换现金币，需扣除{$principal_recall}%的手续费
+                    </p>
+
+                </div>
+                <form action="javascript:;" method="post" class="bg-zong">
+                    <div class="mui-input-row">
+                        <label>沙特链余额</label>
+                        <input  type="text" name="cash_currency_num"  value="{$user_purse['cash_currency_num']}" readonly >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>本金账户余额</label>
+                        <input  type="text" name="corpus" id="corpus" value="{$user_purse['corpus']}" readonly>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>转换关系</label>
+                        <select name="change_currency">
+                            <option value="">请选择</option>
+                            {foreach $change_currency as $key => $val}
+                            <option value="{$key}">{$val}</option>
+                            {/foreach}
+
+                        </select>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>转换金额</label>
+                        <input  type="text" name="change_num"  placeholder="请输入转换金额"   >
+                    </div>
+                    <div class="flex">
+                        <div class="flex-item mui-text-center">
+                            <button class="mui-btns " type="button" id="submit" style="margin-top: 30px;">提交</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer"/}
+
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+    $('#submit')[0].addEventListener('tap',function(){
+        var data =$('form').serializeArray();
+
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+        if(values.change_num.length < 1){mui.toast('转换金额不能为空');return false;}
+
+        var corpus = $('#corpus').val();
+        if(Number(values.change_num) > Number(corpus)){
+            mui.toast('转换数量不能大于沙特链余额');
+            return false;
+        }
+
+        $.post("{:url('user/finance/corpusConvert')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },2000)
+
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
+
+
+    });
+
+</script>
+</body>
+</html>

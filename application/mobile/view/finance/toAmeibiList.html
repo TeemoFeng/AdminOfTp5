@@ -1,0 +1,136 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title>阿美币奖励列表</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet">
+    <link href="/static/mobilenew/css/swiper-3.4.2.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/icons-extra.css" />
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/swiper-3.4.2.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/mobilenew/css/index.css">
+    <style type="text/css">
+        .mui-pull-bottom-pocket{bottom: 0px;}
+    </style>
+</head>
+
+<body style="background: #f2f3f8;">
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">动态奖转阿美币列表</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper " id="pullrefresh">
+    <div class="mui-scroll">
+
+        <div class="mui-table-view mui-table-view-chevron mui-chezi "  >
+
+            <div class="mui-control-content mui-team mui-active" id="userList">
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/mui.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/swiper-3.4.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style: 'circle',
+                callback: pulldownRefresh
+            },
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+
+    });
+
+    function pullupRefresh() {
+
+        setTimeout(function() {
+
+            loadlist()
+
+        }, 1500);
+    }
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload();
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+    var page=1;
+    var kg = true;
+    (function() {
+        loadlist();
+
+    })();
+
+    function loadlist() {
+        $.ajax({
+            url:"{:url('user/finance/toAmeibiList')}",
+            data:{page:page},
+            type:'post',
+            success:function (data) {
+                mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+                if(data.data.length!==0){
+                    page = parseInt(page)+1;
+                    $.each(data.data, function (index, value) {
+
+                        var str = '<div class="bg-zong ">'+
+                            '<div class="flex">'+
+                            '<div class="flex-item mui-ellipsis">会员编号:'+value.usernum+'</div>'+
+                            '<div class="flex-item mui-ellipsis ">用户名:'+value.username+'</div>'+
+                            '</div>'+
+                            '<div class="flex">'+
+                            '<div class="flex-item mui-ellipsis">动态奖金$:'+value.dynamic_bonus+'</div>'+
+                            '<div class="flex-item mui-ellipsis ">1$=￥汇率:'+value.rate+'</div>'+
+                            '</div>'+
+                            '<div class="flex">'+
+                            '<div class="flex-item mui-ellipsis">阿美币价格￥:'+value.ameibi_price+'</div>'+
+                            '<div class="flex-item mui-ellipsis ">应发阿美币数量:'+value.ameibi_num+'</div></div>'+
+
+                            '<div class="flex">'+
+                            '<div class=" mui-ellipsis" style="min-width: 50%;">状态:'+value.status+'</div>'+
+                            '<div class="mui-ellipsis">创建时间:'+value.create_time+'</div>'+
+                            '</div>'+
+                            '<div class="flex">'+
+                            '<div class=" mui-ellipsis" style="min-width: 50%;">发放时间:'+value.grant_time+'</div>'+
+                            '<div class=" mui-ellipsis" style="min-width: 50%;">备注:'+value.remark+'</div>'+
+
+                            '</div>'+
+                            '</div>';
+
+
+                        $('#userList').append(
+                            str
+                        )
+                    })
+                }
+
+            }
+        })
+    }
+
+
+</script>
+
+</body>
+
+</html>

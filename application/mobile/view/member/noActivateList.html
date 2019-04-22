@@ -1,0 +1,172 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title>未激活列表</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet">
+    <link href="/static/mobilenew/css/swiper-3.4.2.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/icons-extra.css" />
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/swiper-3.4.2.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/mobilenew/css/index.css">
+    <style type="text/css">
+        .mui-pull-bottom-pocket{bottom: 0px;}
+    </style>
+</head>
+
+<body style="background: #f2f3f8;">
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">未激活列表</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper " id="pullrefresh">
+    <div class="mui-scroll">
+
+        <div class="mui-table-view mui-table-view-chevron mui-chezi "  >
+
+            <div class="mui-control-content mui-team mui-active" id="noActivate">
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/mui.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script src="/static/mobilenew/js/index.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/mobilenew/js/swiper-3.4.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style: 'circle',
+                callback: pulldownRefresh
+            },
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+
+    });
+
+    function pullupRefresh() {
+
+        setTimeout(function() {
+
+            loadlist()
+
+        }, 1500);
+    }
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload();
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+    var page=1;
+    var kg = true;
+    (function() {
+        loadlist();
+
+    })();
+
+    function loadlist() {
+        $.ajax({
+            url:"{:url('user/user/notActivate')}",
+            data:{page:page},
+            type:'post',
+            success:function (data) {
+                mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+                if(data.data.length!==0){
+                    page = parseInt(page)+1;
+                    $.each(data.data, function (index, value) {
+
+                        var str = '<div class="bg-zong ">'+
+                            '<div class="flex">'+
+                            '<div class="flex-item mui-ellipsis">会员编号:'+value.usernum+'</div>'+
+                            '<div class="flex-item mui-ellipsis ">用户名:'+value.username+'</div>'+
+                            '</div>'+
+                            '<div class="flex">'+
+                            '<div class="flex-item mui-ellipsis">手机号:'+value.mobile+'</div>'+
+                            '<div class="flex-item mui-ellipsis ">推荐人编号:'+value.referee+'</div>'+
+                            '</div>'+
+                            '<div class="flex">'+
+                            '<div class="flex-item mui-ellipsis">接点人编号:'+value.contact_person+'</div>'+
+                            '<div class="flex-item mui-ellipsis ">所属报单中心:'+value.baodan_user+'</div></div>'+
+
+                            '<div class="flex">'+
+                            '<div class="flex-item mui-ellipsis" style="min-width: 50%;">注册时间:'+value.create_time+'</div>'+
+                            '<div class="anniu">'+
+                            '<a href="JavaScript:;" class="del" iid="'+value.id+'">删除</a><a href="{:url(\'userActive\')}?id='+value.id+'" class="jihuo" iid="'+value.id+'" >激活</a>'+
+                            '</div>'+
+                            '</div>';
+
+
+
+                        $('#noActivate').append(
+                            str
+                        )
+                    })
+                }
+                var del =$('.del');
+                for(var i=0;i<del.length;i++){
+                    del[i].addEventListener('tap',function(){
+                        var id=$(this).attr('iid');
+                        mui.confirm('确定删除该会员？',function(e){
+                            if(e.index==1){
+
+                                $.post("{:url('user/user/usersDel')}",{id:id},function(res){
+                                    if(res.code > 0){
+                                        mui.toast(res.msg);
+                                        setTimeout(function(){
+                                            window.location.reload();
+                                        },2000)
+
+                                    }else{
+                                        mui.toast('删除失败请重试!');return false;
+                                    }
+                                });
+
+                            }
+
+                        })
+                    })
+                }
+
+
+            }
+        })
+    }
+
+
+    // var jihuo =$('.jihuo');
+    // for(var s=0;s<jihuo.length;s++){
+    //     jihuo[s].addEventListener('tap',function(){
+    //         var id=$(this).attr('iid')
+    //         mui.confirm('确定激活该会员？',function(e){
+    //             if(e.index==1){
+    //                 mui.toast('激活成功'+id)
+    //             }
+    //
+    //         })
+    //     })
+    // }
+
+</script>
+
+</body>
+
+</html>

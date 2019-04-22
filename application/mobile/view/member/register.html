@@ -177,14 +177,12 @@
         for (var item in data) {
             values[data[item].name] = data[item].value;
         }
-
         if(values.usernum ==''){mui.toast('会员编号不能为空');return false;}
         if(values.username == ''){mui.toast('会员名称不能为空');return false;}
-        if(values.mobile == 0){mui.toast('手机号不能为空');return false;}
-
-        if(values.referee == 0){mui.toast('请填写推荐人编号');return false;}
-        if(values.contact_person == 0){mui.toast('请填写接点人编号');return false;}
-        if(values.baodan_user == 0){mui.toast('请填写报单中心编号');return false;}
+        if(values.mobile == ''){mui.toast('手机号不能为空');return false;}
+        if(values.referee == ''){mui.toast('请填写推荐人编号');return false;}
+        if(values.contact_person == ''){mui.toast('请填写接点人编号');return false;}
+        if(values.baodan_user == ''){mui.toast('请填写报单中心编号');return false;}
 
         $.post("{:url('user/user/register')}",values,function(res){
             if(res.code > 0){

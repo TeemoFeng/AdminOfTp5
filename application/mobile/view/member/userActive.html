@@ -1,0 +1,88 @@
+{include file="common/header"/}
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">会员激活</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-futou">
+
+            <div  class="mui-control-content mui-active ">
+
+                <form action="javascript:;" method="post" class="bg-zong form">
+                    <div class="mui-input-row">
+                        <label>级别</label>
+                        <select name="level" id="status2">
+                            <option value="0">请选择会员级别</option>
+                            {foreach $user_level as $k => $v}
+                            <option value="{$v['level_id']}">{$v['level_name']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>用户</label>
+                        <input  type="text" name="usernames" id="can_use_num" value="{$user_name}"  readonly>
+                    </div>
+
+                    <input type="hidden" name="id"   value="{$id}">
+                    <div class="flex">
+                        <div class="flex-item mui-text-center">
+                            <button class="mui-btns " type="button" id="submit" style="margin-top: 30px;">提交</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer"/}
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+    $('#submit')[0].addEventListener('tap',function(){
+        var data =$('.form').serializeArray();
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+
+        $.post("{:url('user/user/sureActive')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    location.href = "{:url('mobile/member/noActivateList')}";
+                },2000)
+
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
+
+
+    });
+
+</script>

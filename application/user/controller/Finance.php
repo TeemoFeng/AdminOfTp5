@@ -128,7 +128,13 @@ class Finance extends Common{
             //默认现金币转换阿美币
             $user_accpunt = UserCurrencyAccount::where(['user_id' => $user_id])->find();
             $cash_num = bcsub($user_accpunt['cash_currency_num'], $data['change_num'],4); //减去转换的现金币
-            $ameibi_num = bcmul($data['change_num'], $user_accpunt['rate'], 4);
+            $ameibi_sum = bcmul($data['change_num'], $user_accpunt['rate'], 4); //转换总价
+            //获取阿美币价格
+            $price = Db::name('user_trade_depute_log')->where(['trade_status' => 3])->order('id DESC')->value('price');
+            if(empty($price)){
+                $price = Db::name('currency_list')->where(['en_name' => 'AMB'])->value('price');
+            }
+            $ameibi_num = bcdiv($ameibi_sum, $price, 4);
             $save = [
                 'cash_currency_num' => $cash_num,
             ];
@@ -519,6 +525,10 @@ class Finance extends Common{
             if(empty($data['change_num'])){
                 return ['code' => 0, 'msg' => '转换数量不能为空'];
             }
+            if(empty($data['change_currency'])){
+                return ['code' => 0, 'msg' => '请选择转换关系'];
+            }
+
             //查询用户消费钱包数量
             $user_account = db('user_currency_account')->where(['user_id' => $user_id])->find();
             if(bccomp($data['change_num'],$user_account['corpus'],4) == 1){

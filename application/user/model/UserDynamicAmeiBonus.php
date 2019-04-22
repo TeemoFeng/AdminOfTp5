@@ -16,7 +16,7 @@ class UserDynamicAmeiBonus extends Model
     const STATUS3 = 3;
 
     public static $status = [
-        self::STATUS1 => '冻结',
+        self::STATUS1 => '未发放',
         self::STATUS2 => '已发放',
         self::STATUS3 => '未发放',
     ];

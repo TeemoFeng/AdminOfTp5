@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>提现管理</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">提现管理</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-futou">
+            <div class="flex bg-zong">
+                <div class="flex-item mui-text-center mui-active">
+                    沙特链
+                </div>
+                <div class="flex-item mui-text-center">
+                    消费钱包
+                </div>
+            </div>
+
+
+            <div  class="mui-control-content mui-active ">
+                <div class="mui-futou-header">
+                    <p class="zi-zong">
+                        备注:提现手续费{$principal_recall['extract_deduction_ratio']}%,最少{$principal_recall['extract_num']}枚可提现,10的整数倍可提,兑换比例1美金={$rate}人民币
+                    </p>
+
+                </div>
+                <form action="javascript:;" method="post" class="bg-zong form">
+                    <div class="mui-input-row">
+                        <label>余额(枚$)</label>
+                        <input  type="text" name="cash_currency_num"  value="{$user_info['cash_currency_num']}" id="cash_currency_num" readonly >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>可提人民币</label>
+                        <input  type="text" name="cny_num" id="cny_num" value="{$cny_num}"  readonly>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>提取数量(枚)</label>
+                        <input  type="text" name="extract_num"  placeholder="请输入提现数量"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>手机号(必填)</label>
+                        <input  type="text" name="mobile" value="{$user_info['mobile']}"  readonly >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>支付宝账户(必填)</label>
+                        <input  type="text" name="alipay_account" value="{$user_info['alipay_account']}" readonly  >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>银行账户(必填)</label>
+                        <input  type="text" name="bank_account"  value="{$user_info['bank_account']}" readonly >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>银行(必填)</label>
+                        <select name="bank_id" disabled="disabled" >
+                            <option value ="0">请选择</option>
+                            {foreach $bank_list as $key => $val}
+                            <option value="{$val['id']}" {if condition="$user_info['bank_id'] eq $val['id']"}selected{/if} >{$val['bank_name']}</option>
+                            {/foreach}
+
+                        </select>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>开户行地址(必填)</label>
+                        <input  type="text" name="bank_desc"  value="{$user_info['bank_desc']}"  >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>开户名(必填)</label>
+                        <input  type="text" name="kaiming"  placeholder="请输入开户名"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>提现方式</label>
+                        <select name="cash_method" >
+                            <option value="">请选择</option>
+                            {foreach $cash_method as $key => $val}
+                            <option value="{$key}" >{$val}</option>
+                            {/foreach}
+
+                        </select>
+                    </div>
+                    <input type="hidden" name="user_id" value="{$user_info['id']}" >
+                    <input type="hidden" name="cash_type" value="1" >
+                    <div class="flex">
+                        <div class="flex-item mui-text-center">
+                            <button class="mui-btns " type="button" id="submit" style="margin-top: 30px;">提交</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+            <div  class="mui-control-content  ">
+                <div class="mui-futou-header">
+                    <p class="zi-zong">
+                        备注:最少{$principal_recall['waller_excract_ratio']}可提现,{$principal_recall['waller_excract_multiple']}的整数倍可提
+                    </p>
+
+                </div>
+                <form action="javascript:;" method="post" class="bg-zong form1">
+                    <div class="mui-input-row">
+                        <label>余额(枚$)</label>
+                        <input  type="text" name="consume_num"  value="{$user_info['consume_num']}" readonly >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>提取数量(枚)</label>
+                        <input  type="text" name="extract_num2"  placeholder="请输入提现数量"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>手机号(必填)</label>
+                        <input  type="text" name="mobile"  value="{$user_info['mobile']}"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>支付宝账户(必填)</label>
+                        <input  type="text" name="alipay_account"  value="{$user_info['alipay_account']}">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>银行账户(必填)</label>
+                        <input  type="text" name="bank_account"  value="{$user_info['bank_account']}"  >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>银行(必填)</label>
+                        <select name="bank_id" disabled="disabled" >
+                            <option value ="0">请选择</option>
+                            {foreach $bank_list as $key => $val}
+                            <option value="{$val['id']}" {if condition="$user_info['bank_id'] eq $val['id']"}selected{/if} >{$val['bank_name']}</option>
+                            {/foreach}
+
+                        </select>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>开户行地址(必填)</label>
+                        <input  type="text" name="bank_desc"  value="{$user_info['bank_desc']}" >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>开户名(必填)</label>
+                        <input  type="text" name="bank_user"  value="{$user_info['bank_user']}"   >
+                    </div>
+                    <div class="mui-input-row">
+                        <label>提现方式</label>
+                        <select name="cash_method" >
+                            <option value="">请选择</option>
+                            {foreach $cash_method as $key => $val}
+                            <option value="{$key}" >{$val}</option>
+                            {/foreach}
+
+                        </select>
+                    </div>
+                    <input type="hidden" name="user_id" value="{$user_info['id']}" >
+                    <input type="hidden" name="cash_type" value="2" >
+                    <div class="flex">
+                        <div class="flex-item mui-text-center">
+                            <button class="mui-btns " type="button" id="submite" style="margin-top: 30px;">提交</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer"/}
+
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+    var ext_num = {$principal_recall['extract_num']};
+    var xiaofei_num = {$principal_recall['waller_excract_ratio']}; //消费钱包多少可提
+
+
+    $('#submit')[0].addEventListener('tap',function(){
+
+        var data =$('.form').serializeArray();
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+        if(values.extract_num.length < 1){mui.toast('提取数量不能为空');return false;}
+
+        if(Number(values.extract_num) < Number(ext_num)){
+            mui.toast('提取数量不能低于'+ext_num+'个');
+            return false;
+        }
+        var cash_currency_num = $('#cash_currency_num').val();
+        if(Number(values.extract_num) > Number(cash_currency_num)){
+            mui.toast('提取数量不能大于余额');
+            return false;
+        }
+
+        $.post("{:url('user/finance/applyCash')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },2000)
+
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
+
+    });
+
+    $('#submite')[0].addEventListener('tap',function(){
+
+        var form1 =$('.form1').serializeArray()
+        var values = {};
+        for (var item in form1) {
+            values[form1[item].name] = form1[item].value;
+        }
+        if(values.extract_num2.length < 1){mui.toast('提取数量不能为空');return false;}
+
+        if(Number(values.extract_num2) < Number(xiaofei_num)){
+            mui.toast('提取数量不能低于'+xiaofei_num+'个');
+            return false;
+        }
+        var consume_num = $('#consume_num').val();
+        if(Number(values.extract_num2) > Number(consume_num)){
+            mui.toast('提取数量不能大于余额');
+            return false;
+        }
+
+        $.post("{:url('user/finance/applyCash')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },2000)
+
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
+
+    })
+    var xuan=$('.mui-futou >.flex .flex-item')
+    for(var i = 0 ; i< xuan.length ; i++){
+        xuan[i].addEventListener('tap',function(){
+            $(this).addClass('mui-active').siblings().removeClass('mui-active')
+            var index = $(this).index()
+            $($('.mui-control-content')[index]).addClass('mui-active').siblings().removeClass('mui-active')
+        })
+    }
+</script>

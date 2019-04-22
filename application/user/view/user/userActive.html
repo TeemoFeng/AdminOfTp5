@@ -12,7 +12,7 @@
             <label class="layui-form-label">会员级别</label>
             <div class="layui-input-4">
                 <select name="level" lay-verify="required" id="status2" lay-search>
-                    <option value="">请选择会员</option>
+                    <option value="">请选择会员级别</option>
                     {foreach $user_level as $k => $v}
                     <option value="{$v['level_id']}">{$v['level_name']}</option>
                     {/foreach}

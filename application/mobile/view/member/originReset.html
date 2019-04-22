@@ -1,0 +1,100 @@
+{include file="common/header"/}
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">原点复投</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron mui-zhuanchu mui-futou">
+
+            <div  class="mui-control-content mui-active ">
+                <div class="mui-futou-header">
+                    <p class="zi-zong">
+                        备注:复投最少{$origin_num}枚可投
+                    </p>
+
+                </div>
+                <form action="javascript:;" method="post" class="bg-zong form">
+                    <div class="mui-input-row">
+                        <label>现金币(余额)</label>
+                        <input  type="text" name="cash_currency_num"  value="{$cash_currency_num}" readonly >
+                    </div>
+
+                    <div class="mui-input-row">
+                        <label>现金币(可用)</label>
+                        <input  type="text" name="can_use_num" id="can_use_num" value="{$can_use_num}"  readonly>
+                    </div>
+                    <div class="mui-input-row">
+                        <label>复投数量</label>
+                        <input  type="text" name="cash_input_num"  placeholder="请输入复投数量"   >
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-item mui-text-center">
+                            <button class="mui-btns " type="button" id="submit" style="margin-top: 30px;">提交</button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer"/}
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style:'circle',
+                callback: pulldownRefresh
+            }
+        }
+    });
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload()
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+    var origin_num = {$origin_num};
+
+    $('#submit')[0].addEventListener('tap',function(){
+        var data =$('.form').serializeArray();
+        var values = {};
+        for (var item in data) {
+            values[data[item].name] = data[item].value;
+        }
+        if(values.cash_input_num.length < 1){mui.toast('复投数量不能为空');return false;}
+        if(Number(values.cash_input_num) < origin_num){mui.toast('复投数量不能小于'+origin_num);return false;}
+        if(Number(values.cash_input_num) < origin_num){mui.toast('复投数量不能小于'+origin_num);return false;}
+        var can_use_num = $('#can_use_num').val();
+        if(Number(values.cash_input_num) > Number(can_use_num)){
+            mui.toast('复投数量不能大于可用数量');
+            return false;
+        }
+
+        $.post("{:url('user/user/originReset')}",values,function(res){
+            if(res.code > 0){
+                mui.toast(res.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },2000)
+
+            }else{
+                mui.toast(res.msg);return false;
+            }
+        });
+
+
+
+    });
+
+</script>
