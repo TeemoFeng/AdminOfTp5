@@ -1,15 +1,53 @@
 {include file="common/header"/}
 <body >
+	<style type="text/css">
+	.mui-jiaoyi_b-center .mui-input-row{border: 1px solid #eee;}
+	.mui-jiaoyi_b-center .mui-input-row label{width: 36%;    padding: 14px 2px;}
+	.mui-bottom{margin-bottom: 50px;}
+	.mui-jiaoyi_b-center .mui-input-row label~input{width: 64%;}
+	 .mui-input-group:before,.mui-input-group:after,.mui-input-group .mui-input-row:after{background: transparent;}
+	.mui-jiaoyi_b>.price{
+		padding-top: 10px;
+		background: -webkit-linear-gradient(left, #fa4943 , #f67c4d);
+    background: -o-linear-gradient(left, #fa4943 , #f67c4d);
+    background: -moz-linear-gradient(left, #fa4943 , #f67c4d);
+    background: linear-gradient(left, #fa4943 , #f67c4d);
+	}
+	.mui-jiaoyi_b>.price p{color:#fff}
+	.mui-jiaoyi_b>.price span{color:#229a22;display: block;}
+	</style>
 <header class="mui-bar mui-bar-nav " style="height: 40px;">
     <i class=" mui-pull-left mui-text-bai" href="javascript:;"></i>
     <h1 class="mui-title mui-text-bai">交易</h1>
 </header>
 
-<div class="mui-content mui-scroll-wrapper bg-fff material" id="pullrefresh" style="padding-top: 40px;">
+<div class="mui-content mui-scroll-wrapper bg-fff material mui-bottom" id="pullrefresh" style="padding-top: 40px;">
     <div class="mui-scroll">
 
         <div class="mui-table-view mui-table-view-chevron mui-top" >
             <div class=" mui-text-center mui-jiaoyi_b">
+				<div class="flex price">
+					<div class="flex-item">
+						<p class="mui-ellipsis">最新价</p>
+						<span class="mui-ellipsis">1.759</span>
+					</div>
+					<div class="flex-item">
+						<p class="mui-ellipsis">最高价</p>
+						<span class="mui-ellipsis">1.759</span>
+					</div>
+					<div class="flex-item">
+						<p class="mui-ellipsis">最低价</p>
+						<span class="mui-ellipsis">1.759</span>
+					</div>
+					<div class="flex-item">
+						<p class="mui-ellipsis">24h成交量</p>
+						<span class="mui-ellipsis">1.759</span>
+					</div>
+					<div class="flex-item">
+						<p class="mui-ellipsis">24h成交额</p>
+						<span class="mui-ellipsis">1.759</span>
+					</div>
+				</div>
                 <div id="segmentedControl" class="mui-segmented-control mui-jiaoyi_b-header">
                     <a class="mui-control-item mui-active" href="#item1">
                         买入
@@ -57,8 +95,9 @@
                                 </table>
 
                             </div>
-                            <form class="" id="buy_form">
+                            
                                 <div class="flex-item" style="margin-right: 5px;">
+									<form class="" id="buy_form">
                                     <div class="mui-input-group">
                                         <div class="mui-futou-header">
                                             <p class="zi-zong">
@@ -86,7 +125,7 @@
                                         <div class="mui-input-row">
                                             <label>交易密码</label>
                                             <input type="password" name="softword" value="" />
-                                            <i class="fa">AMB</i>
+                                            
                                         </div>
                                     </div>
                                     <p style="margin-top: 3px;">手续费: <span class="mui-text-green" id="poundage_span">0</span> <span class="mui-text-green">（扣除0.1%JF）</span></p>
@@ -109,8 +148,9 @@
                                         <div>交易账户冻结: <span class="mui-pull-right">0.0000</span></div>
                                         <div>可卖AMB: <span class="mui-pull-right">{$user_account['ameibi_num']}</span></div>
                                     </div>
+									 </form>
                                 </div>
-                            </form>
+                           
                         </div>
                     </div>
 
@@ -145,54 +185,56 @@
 
                             </div>
 
-                            <form class="" id="sell_form">
+                           
                                 <div class="flex-item" style="margin-right: 5px;">
-                                    <div class="mui-input-group">
-                                        <div class="mui-input-row">
-                                            <label>卖出价</label>
-                                            <input type="number"  name="price" value="" id="input_sell"/>
-                                            <i class="fa">JF</i>
-                                        </div>
-                                        <!--<span class="mui-text-green">￥</span>-->
-                                    </div>
-                                    <p style="margin-top: 3px;">最大可卖  <span class="mui-text-green" id="input_tishi2"></span></p>
-                                    <div class="mui-input-group">
-                                        <div class="mui-input-row">
-                                            <label>卖出数量</label>
-                                            <input type="text" name="sell_num" value="" id="sell_num"/>
-                                            <i class="fa">AMB</i>
-                                        </div>
-                                    </div>
+									 <form class="" id="sell_form">
+										<div class="mui-input-group">
+											<div class="mui-input-row">
+												<label>卖出价</label>
+												<input type="number"  name="price" value="" id="input_sell"/>
+												<i class="fa">JF</i>
+											</div>
+											<!--<span class="mui-text-green">￥</span>-->
+										</div>
+										<p style="margin-top: 3px;">最大可卖  <span class="mui-text-green" id="input_tishi2"></span></p>
+										<div class="mui-input-group">
+											<div class="mui-input-row">
+												<label>卖出数量</label>
+												<input type="text" name="sell_num" value="" id="sell_num"/>
+												<i class="fa">AMB</i>
+											</div>
+										</div>
 
-                                    <div class="mui-input-group">
-                                        <div class="mui-input-row">
-                                            <label>交易密码</label>
-                                            <input type="password" name="softword" value="" />
-                                            <i class="fa">AMB</i>
-                                        </div>
-                                    </div>
-                                    <p style="margin-top: 3px;">手续费: <span class="mui-text-green" id="poundage_span2">0</span> <span class="mui-text-green">（扣除0.1%JF）</span></p>
+										<div class="mui-input-group">
+											<div class="mui-input-row">
+												<label>交易密码</label>
+												<input type="password" name="softword" value="" />
+												
+											</div>
+										</div>
+										<p style="margin-top: 3px;">手续费: <span class="mui-text-green" id="poundage_span2">0</span> <span class="mui-text-green">（扣除0.1%JF）</span></p>
 
-                                    <div class="mui-input-group">
-                                        <div class="mui-input-row">
-                                            <label>交易额</label>
-                                            <input type="text" name="trade_num_span" disabled value="" id="trade_num_span2"/>
-                                            <i class="fa">JF</i>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="trade_num" id="trade_num2">
-                                    <input type="hidden" name="sum" id="all_num2">
-                                    <input type="hidden" name="poundage" id="poundage2">
-                                    <input type="hidden" name="depute_type" value="2">
-                                    <input type="hidden" name="user_id" value="{$user_info['id']}">
-                                    <button class="mui-btns mui-bg-red" type="button" id="sell_button" style="width: 95%;margin: 15px auto;">卖出</button>
-                                    <div class="mui-text-green mui-text-left" style="padding: 0 8px;">
-                                        <div>交易账户余额: <span class="mui-pull-right">{$user_account['transaction_num']}</span></div>
-                                        <div>交易账户冻结: <span class="mui-pull-right">0.0000</span></div>
-                                        <div>可卖AMB: <span class="mui-pull-right">{$user_account['ameibi_num']}</span></div>
-                                    </div>
+										<div class="mui-input-group">
+											<div class="mui-input-row">
+												<label>交易额</label>
+												<input type="text" name="trade_num_span" disabled value="" id="trade_num_span2"/>
+												<i class="fa">JF</i>
+											</div>
+										</div>
+										<input type="hidden" name="trade_num" id="trade_num2">
+										<input type="hidden" name="sum" id="all_num2">
+										<input type="hidden" name="poundage" id="poundage2">
+										<input type="hidden" name="depute_type" value="2">
+										<input type="hidden" name="user_id" value="{$user_info['id']}">
+										<button class="mui-btns mui-bg-red" type="button" id="sell_button" style="width: 95%;margin: 15px auto;">卖出</button>
+										<div class="mui-text-green mui-text-left" style="padding: 0 8px;">
+											<div>交易账户余额: <span class="mui-pull-right">{$user_account['transaction_num']}</span></div>
+											<div>交易账户冻结: <span class="mui-pull-right">0.0000</span></div>
+											<div>可卖AMB: <span class="mui-pull-right">{$user_account['ameibi_num']}</span></div>
+										</div>
+									 </form>
                                 </div>
-                            </form>
+                           
                         </div>
                     </div>
                     <div id="item3" class="mui-control-content">

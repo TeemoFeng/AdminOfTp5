@@ -70,7 +70,26 @@
         xuan[i].addEventListener('tap',function(){
             $(this).addClass('mui-active').siblings().removeClass('mui-active')
             index = $(this).index()
-            $('.mui-control-content table').html('')
+			 $('.mui-control-content table').html('')
+			if(index==0){
+				
+				 $('.mui-control-content table').append('<tr>'+
+				    '<th>时间</th>'+
+				    '<th>金额</th>'+
+				    '<th>支付方式</th>'+
+				    '<th>状态</th>'+
+				    '</tr>')
+			}else{
+				
+				 $('.mui-control-content table').append('<tr>'+
+				    '<th>时间</th>'+
+				    '<th>金额</th>'+
+				    '<th>手续费</th>'+
+				    '<th>实时到账</th>'+
+				    '<th>状态</th>'+
+				    '</tr>')
+			}
+          
             loadlist(index)
         })
     }
@@ -82,28 +101,28 @@
 
         }, 1500);
     }
-
+	$('.mui-control-content table').append('<tr>'+
+	   '<th>时间</th>'+
+	   '<th>金额</th>'+
+	   '<th>支付方式</th>'+
+	   '<th>状态</th>'+
+	   '</tr>')
     var page=1;
     var page2=1;
     var kg = true;
+	
     loadlist(index);
     function loadlist(index) {
-        console.log(index)
+       
         if(index==0){
-            if(page == 1){
-                $('.mui-control-content table').append('<tr>'+
-                    '<th>时间</th>'+
-                    '<th>金额</th>'+
-                    '<th>支付方式</th>'+
-                    '<th>状态</th>'+
-                    '</tr>')
-            }
+           
             $.ajax({
                 url:"{:url('rechargeAndcash')}",
                 data:{page:page,type:1},
                 type:'post',
                 success:function (data) {
-                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+					 console.log(data.data.length)
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length!==0);
                     if(data.data.length!==0){
                         page = parseInt(page)+1;
                         $.each(data.data, function (index, value) {
@@ -119,21 +138,13 @@
                 }
             })
         }else{
-            if(page2 == 1){
-                $('.mui-control-content table').append('<tr>'+
-                    '<th>时间</th>'+
-                    '<th>金额</th>'+
-                    '<th>手续费</th>'+
-                    '<th>实时到账</th>'+
-                    '<th>状态</th>'+
-                    '</tr>')
-            }
+           
             $.ajax({
                 url:"{:url('rechargeAndcash')}",
                 data:{page:page2,type:2},
                 type:'post',
                 success:function (data) {
-                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length!==0);
                     if(data.data.length!==0){
                         page2 = parseInt(page2)+1;
                         $.each(data.data, function (index, value) {

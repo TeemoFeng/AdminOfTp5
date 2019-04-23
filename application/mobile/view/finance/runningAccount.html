@@ -27,11 +27,11 @@
         <div class="mui-table-view mui-table-view-chevron mui-chezi "  >
             <div class="swiper-container mui-fenlei">
                 <div class="swiper-wrapper mui-text-center">
-                    <div class="swiper-slide swiper-slide-actives"><a href="">沙特链</a></div>
-                    <div class="swiper-slide"><a href="">激活钱包</a></div>
-                    <div class="swiper-slide">消费钱包</div>
-                    <div class="swiper-slide">交易账号</div>
-                    <div class="swiper-slide">本金账户</div>
+                    <div class="swiper-slide swiper-slide-actives" iid='0'><a href="javascript:;">沙特链</a></div>
+                    <div class="swiper-slide" iid='1'><a href="javascript:;">激活钱包</a></div>
+                    <div class="swiper-slide" iid='2'><a href="javascript:;">消费钱包</a></div>
+                    <div class="swiper-slide" iid='3'><a href="javascript:;">交易账号</a></div>
+                    <div class="swiper-slide" iid='4'><a href="javascript:;">本金账户</a></div>
 
                 </div>
             </div>
@@ -93,10 +93,21 @@
             down: {
                 style:'circle',
                 callback: pulldownRefresh
+            },
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
             }
         }
     });
+  function pullupRefresh() {
 
+        setTimeout(function() {
+
+            loadlist(index)
+
+        }, 1500);
+    }
     function pulldownRefresh() {
         setTimeout(function() {
 
@@ -110,8 +121,52 @@
         paginationClickable: true,
         spaceBetween: 30
     });
+	var index=0
+	var swiper=$('.swiper-slide')
+	for(var i=0;i<swiper.length;i++){
+		swiper[i].addEventListener('tap',function(){
+			
+			$(this).addClass('swiper-slide-actives').siblings().removeClass('swiper-slide-actives')
+			index=$(this).index()
+			$('.mui-team').html('')
+			loadlist(index)
+		})
+	}
+	loadlist(index)
+ function loadlist(index) {   
+		$.ajax({
+			url:"{:url('rechargeAndcash')}",
+			data:{page:page,type:1,id:index},
+			type:'post',
+			success:function (data) {
+				 console.log(data.data.length)
+				mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length!==0);
+				if(data.data.length!==0){
+					page = parseInt(page)+1;
+					$.each(data.data, function (index, value) {
+						$('.mui-team').append('<div class="bg-zong">'+
+				'<div class="flex">'+
+					'<div class="flex-item mui-ellipsis">用户:用户</div>'+
+				   ' <div class="flex-item mui-ellipsis ">相关用户:公司</div>'+
+				'</div>'+
+				'<div class="flex">'+
+				   ' <div class="flex-item mui-ellipsis">流水类型:直推奖</div>'+
+				  '  <div class="flex-item mui-ellipsis ">变更数量:-10.0000</div>'+
+			   ' </div>'+
+			   ' <div class="flex">'+
+				   ' <div class="flex-item mui-ellipsis">余额:574.0000</div>'+
+				   ' <div class="flex-item mui-ellipsis ">备注:提现</div>'+
+			   ' </div>'+
+			   ' <div class="flex">'+
+				  '  <div class="flex-item mui-ellipsis">流水时间:2019-20-15 20：15：33</div>'+
+			   ' </div>'+
+		   ' </div>')
+					})
+				}
 
-
+			}
+		})
+    }
 </script>
 
 </body>
