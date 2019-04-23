@@ -121,4 +121,12 @@ class Finance extends Common
         return $this->fetch('corpusConvert');
     }
 
+    //阿美币记录列表
+    public function aMeibiLogList()
+    {
+
+        return $this->fetch('aMeibiLogList');
+    }
+
+
 }

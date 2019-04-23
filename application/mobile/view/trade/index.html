@@ -60,6 +60,12 @@
                             <form class="" id="buy_form">
                                 <div class="flex-item" style="margin-right: 5px;">
                                     <div class="mui-input-group">
+                                        <div class="mui-futou-header">
+                                            <p class="zi-zong">
+                                                <a href="{:url('kxian')}">K线图</a>
+                                            </p>
+
+                                        </div>
                                         <div class="mui-input-row">
                                             <label>买入价格</label>
                                             <input type="number"  name="price" value="" id="buy_amb"/>
@@ -257,7 +263,25 @@
     </div>
 </div>
 
-{include file="common/nav"/}
+<nav class="mui-bar mui-bar-bottom " >
+    <a class="mui-tab-item " href="{:url('mobile/index/index')}">
+        <span class="mui-icon fa fa-line-chart"></span>
+        <span class="mui-tab-label">行情</span>
+    </a>
+    <a class="mui-tab-item mui-active" href="{:url('mobile/trade/index')}">
+        <span class="mui-icon fa fa-bitcoin" ></span>
+        <span class="mui-tab-label">交易大厅</span>
+    </a>
+
+    <a class="mui-tab-item" href="{:url('mobile/wallet/index')}">
+        <span class="mui-icon fa fa-archive" ></span>
+        <span class="mui-tab-label">我的资产</span>
+    </a>
+    <a class="mui-tab-item" href="{:url('mobile/user/index')}">
+        <span class="mui-icon fa fa-user" ></span>
+        <span class="mui-tab-label">个人中心</span>
+    </a>
+</nav>
 {include file="common/footer"/}
 <script src="/static/mobilenew/js/mui.pullToRefresh.js"></script>
 <script src="/static/mobilenew/js/mui.pullToRefresh.material.js"></script>

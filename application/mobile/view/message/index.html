@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>留言列表</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+    <style type="text/css">
+
+        .mui-input-row{margin-bottom: 15px;}
+        .mui-input-group:before,.mui-input-group:after{background: transparent;}
+        .btn-anniu{margin-bottom: 15px;padding-top: 15px;margin-left: 15px;}
+        .btn-anniu a, button.mui-btn {background: #f67c4d;border: none;}
+        ul li{border-bottom: 1px solid #d9d9d9;}
+        ul{padding-bottom: 20px;}
+        .mui-table-view-chevron .mui-table-view-cell{padding-right: 10px;}
+        .mui-table-view-cell p{color: #666;}
+    </style>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">收件箱</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+        <div class="mui-table-view mui-table-view-chevron ">
+            <div class="zhanghuxx mui-text-center " >
+                <form action="">
+                    <div class="mui-input-group">
+                        <div class="btn-anniu mui-text-left">
+                            <a href="{:url('index')}" class="mui-btn mui-btn-primary">收件箱</a>
+                            <a href="{:url('outbox')}" class="mui-btn mui-btn-primary">发件箱</a>
+                            <a href="{:url('publish')}" class="mui-btn mui-btn-primary">写留言</a>
+                        </div>
+                        <ul class="mui-table-view mui-text-left" id="messageList">
+
+
+                        </ul>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{include file="common/footer"/}
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style: 'circle',
+                callback: pulldownRefresh
+            },
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+
+    });
+
+    function pullupRefresh() {
+
+        setTimeout(function() {
+
+            loadlist()
+
+        }, 1500);
+    }
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload();
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+
+    var page=1;
+    var kg = true;
+    (function() {
+        loadlist();
+
+    })();
+
+    function loadlist() {
+        $.ajax({
+            url:"{:url('user/message/messageList')}",
+            data:{page:page,type:2},
+            type:'post',
+            success:function (data) {
+                mui('#pullrefresh').pullRefresh().endPullupToRefresh(data.data.length==0);
+                if(data.data.length!==0){
+                    page = parseInt(page)+1;
+                    $.each(data.data, function (index, value) {
+
+                        var str = '<li class="mui-table-view-cell mui-media">'+
+                            '<a href="{:url(\'lookUp\')}?id='+value.id+'">'+
+                            '<img class="mui-media-object mui-pull-left" src="/static/mobilenew/images/tu15.png">'+
+                            '<div class="mui-media-body">'+value.title+' <p class="mui-ellipsis">'+value.content+'</p>'+
+                           '</div></a></li>';
+
+
+                        $('#messageList').append(
+                            str
+                        )
+                    })
+                }
+
+            }
+        })
+    }
+
+
+
+</script>
+</body>
+</html>

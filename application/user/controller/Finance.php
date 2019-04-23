@@ -650,9 +650,7 @@ class Finance extends Common{
     {
         if(request()->isPost()){
             $data = input('post.');
-            if(empty($data['currency_id'])){
-                return ['code' => 0, 'msg' => '非法请求'];
-            }
+
             $where = $this->searchWhere2($data);
             $user_info = session('user');
             $where['a.user_id'] = $user_info['id'];
@@ -689,6 +687,9 @@ class Finance extends Common{
         $where = new Where();
         if(!empty($data['currency_id'])){
             $where['a.currency_to'] = $data['currency_id'];
+        }else{
+            $currency_id = Db::name('currency_list')->where(['en_name' => 'AMB'])->value('id');
+            $where['a.currency_to'] = $currency_id;
         }
         if(!empty($data['key'])){
             if(!empty($data['key'])){

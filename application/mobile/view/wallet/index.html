@@ -38,7 +38,25 @@
 
     </ul>
 </div>
-{include file="common/nav"/}
+<nav class="mui-bar mui-bar-bottom " >
+    <a class="mui-tab-item " href="{:url('mobile/index/index')}">
+        <span class="mui-icon fa fa-line-chart"></span>
+        <span class="mui-tab-label">行情</span>
+    </a>
+    <a class="mui-tab-item" href="{:url('mobile/trade/index')}">
+        <span class="mui-icon fa fa-bitcoin" ></span>
+        <span class="mui-tab-label">交易大厅</span>
+    </a>
+
+    <a class="mui-tab-item mui-active" href="{:url('mobile/wallet/index')}">
+        <span class="mui-icon fa fa-archive" ></span>
+        <span class="mui-tab-label">我的资产</span>
+    </a>
+    <a class="mui-tab-item" href="{:url('mobile/user/index')}">
+        <span class="mui-icon fa fa-user" ></span>
+        <span class="mui-tab-label">个人中心</span>
+    </a>
+</nav>
 <script src="/static/mobilenew/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/mobilenew/js/mui.min.js"></script>
 <script src="/static/mobilenew/js/mui.picker.js"></script>

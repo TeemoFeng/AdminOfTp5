@@ -152,5 +152,10 @@ class Trade extends Common{
         $this->assign('depute_list_his', $list2);
     }
 
+    //k线图
+    public function kxian()
+    {
+        return $this->fetch('kxian');
+    }
 
 }
