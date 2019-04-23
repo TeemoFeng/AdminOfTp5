@@ -18,7 +18,7 @@
 	</style>
 <header class="mui-bar mui-bar-nav " style="height: 40px;">
     <i class=" mui-pull-left mui-text-bai" href="javascript:;"></i>
-    <h1 class="mui-title mui-text-bai">交易</h1>
+    <h1 class="mui-title mui-text-bai">AMB交易</h1>
 </header>
 
 <div class="mui-content mui-scroll-wrapper bg-fff material mui-bottom" id="pullrefresh" style="padding-top: 40px;">
@@ -29,24 +29,24 @@
 				<div class="flex price">
 					<div class="flex-item">
 						<p class="mui-ellipsis">最新价</p>
-						<span class="mui-ellipsis">1.759</span>
+						<span class="mui-ellipsis">{$amei_info['last']}</span>
 					</div>
 					<div class="flex-item">
 						<p class="mui-ellipsis">最高价</p>
-						<span class="mui-ellipsis">1.759</span>
+						<span class="mui-ellipsis">{$amei_info['high']}</span>
 					</div>
 					<div class="flex-item">
 						<p class="mui-ellipsis">最低价</p>
-						<span class="mui-ellipsis">1.759</span>
+						<span class="mui-ellipsis">{$amei_info['low']}</span>
 					</div>
 					<div class="flex-item">
 						<p class="mui-ellipsis">24h成交量</p>
-						<span class="mui-ellipsis">1.759</span>
+						<span class="mui-ellipsis">{$amei_info['vol']}</span>
 					</div>
-					<div class="flex-item">
-						<p class="mui-ellipsis">24h成交额</p>
-						<span class="mui-ellipsis">1.759</span>
-					</div>
+					<!--<div class="flex-item">-->
+						<!--<p class="mui-ellipsis">24h成交额</p>-->
+						<!--<span class="mui-ellipsis">1.759</span>-->
+					<!--</div>-->
 				</div>
                 <div id="segmentedControl" class="mui-segmented-control mui-jiaoyi_b-header">
                     <a class="mui-control-item mui-active" href="#item1">
