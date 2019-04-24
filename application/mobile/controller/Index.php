@@ -11,6 +11,10 @@ class Index extends Common{
     }
 
 
+    public function zoushitu()
+    {
+        return $this->fetch('zoushitu');
+    }
 
 
 

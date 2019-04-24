@@ -11,6 +11,10 @@ class Common extends Controller
             $this->redirect('home/index/index');
         }
 
+        if(empty(session('user'))){
+            $this->redirect('mobile/login/index');
+        }
+
         $this->assign('user_info', session('user'));
 
 

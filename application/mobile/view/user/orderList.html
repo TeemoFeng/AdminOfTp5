@@ -15,7 +15,7 @@
 <body>
 <header class="mui-bar mui-bar-nav">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
-    <h1 class="mui-title mui-text-bai">提现管理</h1>
+    <h1 class="mui-title mui-text-bai">订单管理</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper" id="pullrefresh">
     <div id="slider" class="mui-slider mui-fullscreen">
@@ -31,6 +31,7 @@
                         <th>总额</th>
                         <th>时间</th>
                         <th>状态</th>
+                        <th>操作</th>
                     </tr>
                 </table>
             </div>
@@ -104,13 +105,48 @@
                         '	<td class="mui-text-center">'+value.sum+'</td>'+
                         '	<td class="mui-text-center">'+value.create_time+'</td>'+
                         '	<td class="mui-text-center">'+value.trade_status_str+'</td>'+
-                        '</tr>';
+                        '	<td class="mui-text-center">';
+                        if(value.trade_type == 1){
+                          str += '<a href="{:url(\'orderDetail\')}?id='+value.id+'">查看详情</a>';
+                        }
+                        if(value.trade_type == 2 && value.trade_status == 2){
+                            str += '<a href="JavaScript:;" class="shoukuan" iid="'+value.id+'">确认收款</a>';
+                        }
+
+                       str += '</td></tr>';
 
                         $('#orderList').append(
                             str
                             )
                     })
                 }
+
+                var shoukuan =$('.shoukuan');
+                for(var i=0;i<shoukuan.length;i++){
+                    shoukuan[i].addEventListener('tap',function(){
+                        var id=$(this).attr('iid');
+                        mui.confirm('确定已收款？',function(e){
+                            if(e.index==1){
+
+                                $.post("{:url('home/user/sureOrder')}",{id:id},function(res){
+                                    if(res.code > 0){
+                                        mui.toast(res.msg);
+                                        setTimeout(function(){
+                                            window.location.reload();
+                                        },2000)
+
+                                    }else{
+                                        mui.toast(res.msg);return false;
+                                    }
+                                });
+
+                            }
+
+                        })
+                    })
+                }
+
+
 
             }
         })

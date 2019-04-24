@@ -797,7 +797,7 @@ class User extends Common
                 ];
                 Db::name('user_cancel_order_log')->insert($data);
             }else{
-                Db::table('user_cancel_order_log')
+                Db::name('user_cancel_order_log')
                     ->where('id', $cancel_log['id'])
                     ->setInc('num');
             }
@@ -807,7 +807,8 @@ class User extends Common
             $res = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->update(['trade_status' => 4]); //取消
             if($res !== false){
                 $depute_ids = Db::name('user_trade_depute_log')->where(['order_num' => $order_num])->column('trade_depute_id');
-                $res2 = Db::name('user_trade_depute')->where(['id' => ['in', $depute_ids]])->update(['lock' => 0]); //取消锁定
+
+                $res2 = Db::name('user_trade_depute')->where('id','in', $depute_ids)->update(['lock' => 0]); //取消锁定
 
                 if($res2 != false){
                     Db::commit();

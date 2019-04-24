@@ -19,6 +19,7 @@ class Member extends Common{
     //会员管理首页
     public function index()
     {
+
         return $this->fetch('index');
     }
 

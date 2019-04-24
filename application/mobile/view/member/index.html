@@ -10,15 +10,18 @@
 
             <div class="mui-usercenter-c">
                 <ul class="mui-table-view bg-zong">
+                    {if $user_info['baodan_center'] == 1 }
                     <li class="mui-table-view-cell">
                         <a href="{:url('register')}" class="mui-navigate-right zi-zong"><img src="" alt=""> 新用户注册</a>
                     </li>
                     <li class="mui-table-view-cell">
-                        <a href="{:url('userList')}" class="mui-navigate-right zi-zong"><img src="" alt="" > 会员列表</a>
-                    </li>
-                    <li class="mui-table-view-cell">
                         <a href="{:url('noActivateList')}" class="mui-navigate-right zi-zong"><img src="" alt="" > 未激活列表</a>
                     </li>
+                    {/if}
+                    <li class="mui-table-view-cell">
+                        <a href="{:url('userList')}" class="mui-navigate-right zi-zong"><img src="" alt="" > 会员列表</a>
+                    </li>
+
                     <li class="mui-table-view-cell">
                         <a href="{:url('originReset')}" class="mui-navigate-right zi-zong"><img src="" alt=""> 原点复投</a>
                     </li>

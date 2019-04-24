@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>提现管理</title>
+
+    <link href="/static/mobilenew/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/fonts/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/mobilenew/css/index.css"/>
+    <style type="text/css">
+        .mui-segmented-control.mui-scroll-wrapper{height: -webkit-fill-available;}
+    </style>
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left mui-text-bai" href="javascript:;"></a>
+    <h1 class="mui-title mui-text-bai">订单详情</h1>
+</header>
+<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+    <div class="mui-scroll">
+
+        <div class="mui-table-view mui-table-view-chevron mui-chezi "  >
+
+            <div class="mui-control-content mui-team mui-active" id="userList">
+                <div class="c2cjilu">
+                <ul class="mui-list-unstyled">
+                    <li>
+                        <p class=" mui-text-left"><i class="fa fa-database zi-green"></i>购买AMB</p>
+                        <div class="flex">
+                            <div class="flex-item mui-text-left">
+                                单价：{$order_info['price']} CNY
+                            </div>
+                            <div class="flex-item mui-text-center">
+                                数量：{$order_info['trade_num']}
+                            </div>
+                            <div class="flex-item mui-text-right">
+                                支付总价：{$order_info['sum']} CNY
+                            </div>
+                        </div>
+                        <p class=" mui-text-left"><span class="mui-pull-right">交易状态：<b class="zi-green">{$order_info['trade_status_str']}</b></span></p>
+                    </li>
+
+                    <li>
+                        <p class=" mui-text-left">卖家信息</p>
+                        <div class="flex">
+                            <div class="flex-item mui-text-left">
+                                姓名：{$sell_info['username']}
+                            </div>
+
+                            <div class="flex-item mui-text-right">
+                                手机号：{$sell_info['mobile']}
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="flex-item mui-text-left">
+                                开户行：{$sell_info['bank_name']}
+                            </div>
+
+                            <div class="flex-item mui-text-right">
+                                银行卡号：{$sell_info['bank_account']}
+                            </div>
+                        </div>
+                        <input type="hidden" name="order_id" value="{$order_info['id']}" id="order_id">
+                        <input type="hidden"  name="order_num" value="{$order_info['order_num']}" id="order_num">
+                        {if $order_info['trade_status'] == 1 }
+                        <p class=" mui-text-left">
+
+                            <button class="mui-btns mui-bg-green" type="button" id="paysure">确认已付款</button>
+                        </p>
+                        <button class="mui-btns mui-bg-red" type="button" id="cancel">取消订单</button>
+                        {/if}
+
+                    </li>
+
+                </ul>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{include file="common/footer"/}
+
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            down: {
+                style: 'circle',
+                callback: pulldownRefresh
+            }
+        }
+
+    });
+
+    function pulldownRefresh() {
+        setTimeout(function() {
+            window.location.reload();
+            mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+        }, 1500);
+    }
+
+    //确认付款
+    $('#paysure')[0].addEventListener('tap',function(){
+
+        var order_id = $("#order_id").val();
+        var order_num = $("#order_num").val();
+        mui.confirm('确定已向卖家付款？',function(e){
+            if(e.index==1) {
+                $.post("{:url('home/user/paySure')}", {'order_id': order_id, 'order_num': order_num}, function (res) {
+                    if (res.code > 0) {
+                        mui.toast(res.msg);
+                        location.href = "{:url('mobile/user/orderList')}";
+                    } else {
+                        mui.toast(res.msg);
+                        return false;
+                    }
+                });
+            }
+        })
+    });
+
+    //取消订单
+    $('#cancel')[0].addEventListener('tap',function(){
+
+        var order_id = $("#order_id").val();
+        var order_num = $("#order_num").val();
+        mui.confirm('确定取消吗？',function(e){
+            if(e.index==1) {
+                $.post("{:url('home/user/cancelOrder')}", {'order_id': order_id, 'order_num': order_num}, function (res) {
+                    if (res.code > 0) {
+                        mui.toast(res.msg);
+                        location.href = "{:url('mobile/user/orderList')}";
+                    } else {
+                        mui.toast(res.msg);
+                        return false;
+                    }
+                });
+            }
+        })
+    });
+
+
+
+
+</script>

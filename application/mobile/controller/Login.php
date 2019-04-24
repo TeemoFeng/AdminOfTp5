@@ -9,7 +9,10 @@ namespace app\mobile\controller;
 use clt\Lunar;
 class Login extends Common{
 
+    public function initialize()
+    {
 
+    }
     //登录
     public function index()
     {

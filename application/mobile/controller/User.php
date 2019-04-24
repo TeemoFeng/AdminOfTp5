@@ -110,6 +110,27 @@ class User extends Common{
         return $this->fetch('orderList');
     }
 
+    //用户交易详情
+    public function orderDetail()
+    {
+        $id = input('id');
+        $user_info = session('user');
+        $trade_count = Db::name('user_trade_depute')->where(['user_id' => $user_info['id'], 'status' => ['in', '2,3']])->count();
+        $order_info = Db::name('user_trade_depute_log')->where(['id' => $id])->find();  //订单详情
+        $order_info['trade_status_str'] = UserTradeDeputeLog::$trade_status[$order_info['trade_status']];
+        $order_info['create_time'] = date('Y-m-d H:i:s', $order_info['create_time']);
+        //获取卖家信息
+        $sell_info = Db::name('users')->where(['id' => $order_info['about_id']])->find();
+        $bank_name = Db::name('bank')->where(['id' => $sell_info['bank_id']])->value('bank_name');
+        $sell_info['bank_name'] = $bank_name;
+        $this->assign('order_info', $order_info);
+        $this->assign('user_info', $user_info);
+        $this->assign('trade_count', $trade_count);
+        $this->assign('sell_info', $sell_info);
+        return $this->fetch('orderDetail');
+    }
+
+
     //个人资料
     public function userInfo()
     {

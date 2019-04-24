@@ -260,7 +260,21 @@
                                         </div>
                                     </div>
                                     <p class=" mui-text-left">时间：{$v['create_time']|date='Y-m-d H:i:s'} <span class="mui-pull-right">交易状态：<b class="zi-green">{$status[$v['status']]}</b></span></p>
+                                    {if ($v['status'] == 1 || $v['status'] == 2) }
+                                    <div class="flex">
+                                        <div class="flex-item mui-text-left">
+                                        </div>
+                                        <div class="flex-item mui-text-center">
+                                        </div>
+                                        <div class="flex-item mui-text-right">
+                                            <a href="#" class="chedan" iid="{$v['id']}" >撤单</a>
+                                        </div>
+                                    </div>
+                                    {/if}
                                 </li>
+
+
+
                                 {/foreach}
                             </ul>
                             {/if}
@@ -580,6 +594,32 @@
         return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 
     }
+
+    var chedan =$('.chedan');
+    for(var i=0;i<chedan.length;i++){
+        chedan[i].addEventListener('tap',function(){
+            var id=$(this).attr('iid');
+            mui.confirm('确定撤销该委托吗？',function(e){
+                if(e.index==1){
+
+                    $.post("{:url('home/user/cancelDepute')}",{id:id},function(res){
+                        if(res.code > 0){
+                            mui.toast(res.msg);
+                            setTimeout(function(){
+                                window.location.reload();
+                            },2000)
+
+                        }else{
+                            mui.toast(res.msg);return false;
+                        }
+                    });
+
+                }
+
+            })
+        })
+    }
+
 
 
 </script>
