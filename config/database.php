@@ -17,9 +17,9 @@ return [
     // 数据库名
     'database'        => 'cltdemo_db',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'cltdemo_db',
     // 密码
-    'password'        => 'root',
+    'password'        => 'yanweifeng',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
