@@ -117,7 +117,12 @@ class Index extends Common
         $general_all = $finance['income'];
         $total_expenditure = $finance['expenses'];
         $total_precipitation = bcsub($finance['income'], $finance['expenses'], 4);
-        $ratio = bcdiv($finance['expenses'],$finance['income'], 4);
+        if($finance['expenses'] == 0){
+            $ratio = 0;
+        }else{
+            $ratio = bcdiv($finance['expenses'],$finance['income'], 4);
+
+        }
         $allocation_ratio = ($ratio*100).'%';
 
         $finance_arr[] = ['name' => '总收入', 'num' => $general_all];
@@ -131,8 +136,18 @@ class Index extends Common
             ->select();
         foreach($finance_7day as $k => $v){
             $finance_7day[$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
-            $ratio = bcdiv($v['expenses'],$v['income'], 4);
-            $finance_7day[$k]['ratio'] = ($ratio*100).'%';
+            if($v['expenses'] == 0){
+                $finance_7day[$k]['ratio'] = '0%';
+            }
+            if($v['income'] == 0 && $v['expenses'] != 0){
+                $finance_7day[$k]['ratio'] = '100%';
+            }
+            if($v['income'] != 0 && $v['expenses'] != 0){
+                $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                $finance_7day[$k]['ratio'] = ($ratio*100).'%';
+            }
+
+
             $finance_7day[$k]['time'] = date('Y-m-d',time());
         }
 
@@ -165,8 +180,16 @@ class Index extends Common
                     ->select();
                 foreach($finance as $k => $v){
                     $finance[$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
-                    $ratio = bcdiv($v['expenses'],$v['income'], 4);
-                    $finance[$k]['ratio'] = ($ratio*100);
+                    if($v['expenses'] == 0){
+                        $finance[$k]['ratio'] = '0%';
+                    }
+                    if($v['income'] == 0 && $v['expenses'] != 0){
+                        $finance[$k]['ratio'] = '100%';
+                    }
+                    if($v['income'] != 0 && $v['expenses'] != 0){
+                        $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                        $finance[$k]['ratio'] = ($ratio*100).'%';
+                    }
                 }
 
                 return ['finance' => $finance];
