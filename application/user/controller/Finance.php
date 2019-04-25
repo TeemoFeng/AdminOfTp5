@@ -305,7 +305,7 @@ class Finance extends Common{
             if(empty($data['user_id']) || empty($data['cash_type']))
                 return ['code' => 0, 'msg' => '非法请求'];
             if(empty($data['bank_account']) || empty($data['alipay_account'])){
-                return ['code' => 0, 'msg' => '请先报备支付宝或银行卡信息才可提现'];
+                return ['code' => 0, 'msg' => '需要先完善资料再来提现'];
             }
             if($data['cash_type'] == 1){
                 //1 沙特提交
