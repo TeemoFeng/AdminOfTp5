@@ -7,6 +7,11 @@
         <a href="{:url('ruleAdd')}" class="layui-btn layui-btn-sm">{:lang('add')}节点</a>
         <a href="{:url('clear')}" class="layui-btn layui-btn-sm layui-btn-danger">清除节点</a>
         <a class="layui-btn layui-btn-normal layui-btn-sm"  onclick="openAll();">展开或折叠全部</a>
+
+        <a href="{:url('cli/bourse/userStaticBourse')}" target="_blank" class="layui-btn layui-btn-sm">静态收益</a>
+        <a href="{:url('cli/bourse/dynamic')}" target="_blank" class="layui-btn layui-btn-sm">动态收益</a>
+        <a href="{:url('cli/bourse/autoTrade')}" target="_blank" class="layui-btn layui-btn-sm">自动撮合交易</a>
+        <a href="{:url('cli/bourse/companyDayRunning')}" target="_blank" class="layui-btn layui-btn-sm">每日公司拨比</a>
     </blockquote>
     <table class="layui-table" id="treeTable" lay-filter="treeTable"></table>
 </div>

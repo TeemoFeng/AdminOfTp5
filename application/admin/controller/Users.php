@@ -870,14 +870,14 @@ class Users extends Common{
             $user_info = db('users')
                 ->alias('u')
                 ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-                ->field('u.id,u.usernum,u.username,ul.level_name')
+                ->field('u.id,u.usernum,u.username,ul.level_name,ul.level_id')
                 ->where($where)
                 ->find();
 
             $user_info['children'] = db('users')
                 ->alias('u')
                 ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-                ->field('u.id,u.usernum,u.username,ul.level_name')
+                ->field('u.id,u.usernum,u.username,ul.level_name,ul.level_id')
                 ->where($where2)
                 ->select();
 
@@ -887,11 +887,12 @@ class Users extends Common{
                     $user_info['children'][$key]['children'] = db('users')
                         ->alias('u')
                         ->join(config('database.prefix').'user_level ul','u.level = ul.level_id','left')
-                        ->field('u.id,u.usernum,u.username,ul.level_name')
+                        ->field('u.id,u.usernum,u.username,ul.level_name,ul.level_id')
                         ->where($where3)
                         ->select();
                 }
             }
+
             return ['code' => 1, 'data' => $user_info];
 //            $html = '<li>';
 //            $html .= '<div>';

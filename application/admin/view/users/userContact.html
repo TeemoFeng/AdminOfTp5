@@ -52,9 +52,30 @@
                 $('#last_id').attr('value',0);
 
                 var nodeTemplate = function(data) {
-                    return '<span class="office">'+data.level_name+'</span>'+
-        '<div class="title"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>'+
-        '<div class="content"><a href="#" class="userInfo" user-id="'+data.id+'">'+data.username+'</a></div>';
+                    if(data.level_name == null){
+                        data.level_name = '未激活';
+                    }
+                    var str = '<span class="office">'+data.level_name+'</span>';
+                    if(data.level_id == 1){
+                        str += '<div class="title" style="background-color: #663399"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>';
+                    }else if(data.level_id == 2){
+                        str += '<div class="title" style="background-color: #008000"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>';
+                    }else if(data.level_id == 3){
+                        str += '<div class="title" style="background-color: #0D47A1"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>';
+                    }else if(data.level_id == 4){
+                        str += '<div class="title" style="background-color: #cc0066"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>';
+                    }else if(data.level_id == 5){
+                        str += '<div class="title" style="background-color: #CC0000"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>';
+                    }else{
+                        str += '<div class="title" style="background-color: #ffa000"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>';
+                    }
+
+                    str += '<div class="content"><a href="#" class="userInfo" user-id="'+data.id+'">'+data.username+'</a></div>';
+
+                    return str;
+        //             return '<span class="office">'+data.level_name+'</span>'+
+        // '<div class="title"><a href="#" class="userChart" user-id="'+data.id+'">'+data.usernum+'</a></div>'+
+        // '<div class="content"><a href="#" class="userInfo" user-id="'+data.id+'">'+data.username+'</a></div>';
                 };
 
                 //全局oc
