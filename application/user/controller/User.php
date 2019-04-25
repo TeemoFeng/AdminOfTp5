@@ -363,7 +363,7 @@ class User extends Common{
             return $list;
 
         }
-        return $this->fetch('UserTree');
+        return $this->fetch('userTree');
     }
 
     //原点复投
@@ -520,6 +520,11 @@ class User extends Common{
             $result = $validate->check($check);
             if (!$result) {
                 return ['code' => 0, 'msg' => $validate->getError()];
+            }
+            //验证会员编号是否重复
+            $check_user = UsersModel::where(['usernum' => $data['usernum']])->find();
+            if ($check_user) {
+                return ['code' => 0, 'msg' => '该会员编号已存在'];
             }
             //检测密码是否相等
             if($data['password'] != $data['confirmPwd']) return ['code' => 0, 'msg' => '两次输入的登录密码不一致'];

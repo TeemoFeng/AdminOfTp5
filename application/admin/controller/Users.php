@@ -405,6 +405,13 @@ class Users extends Common{
             if (!$result) {
                 return ['code' => 0, 'msg' => $validate->getError()];
             }
+
+            //验证会员编号是否重复
+            $check_user = UsersModel::where(['usernum' => $data['usernum']])->find();
+            if ($check_user) {
+                return $result = ['code' => 0, 'msg' => '该会员编号已存在'];
+            }
+
             //检测密码是否相等
             if($data['password'] != $data['confirmPwd']) return ['code' => 0, 'msg' => '两次输入的登录密码不一致'];
             if($data['safeword'] != $data['confirmSafePwd']) return ['code' => 0, 'msg' => '两次输入的安全密码不一致'];
