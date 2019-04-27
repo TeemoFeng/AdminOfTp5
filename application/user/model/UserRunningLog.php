@@ -47,6 +47,7 @@ class UserRunningLog extends Model
     const TYPE34 = 34;
     const TYPE35 = 35;
     const TYPE36 = 36;
+    const TYPE37 = 37;
     public static $running_type = [
         self::TYPE1 => '后台充值',
         self::TYPE2 => '后台扣除',
@@ -83,7 +84,8 @@ class UserRunningLog extends Model
         self::TYPE33 => '撤回复投',
         self::TYPE34 => '撤回复投手续费',
         self::TYPE35 => '锁仓扣除',
-        self::TYPE36 => '截仓扣除'
+        self::TYPE36 => '截仓扣除',
+        self::TYPE37 => '后台激活',
     ];
 
 

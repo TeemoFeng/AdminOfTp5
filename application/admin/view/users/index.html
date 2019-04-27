@@ -37,7 +37,7 @@
     <input type="checkbox" name="is_lock" value="{{d.id}}" lay-skin="switch" lay-text="正常|冻结" lay-filter="is_lock" {{ d.is_lock == 0 ? 'checked' : '' }}>
 </script>
 <script type="text/html" id="action">
-    <a href="{:url('user/login/index')}?mobile={{d.mobile}}&password={{d.password}}" target="_blank" class="layui-btn layui-btn-xs">前台访问</a>
+    <a href="{:url('user/login/index')}?mobile={{d.usernum}}&password={{d.password}}" target="_blank" class="layui-btn layui-btn-xs">前台访问</a>
     <a href="{:url('edit')}?id={{d.id}}" class="layui-btn layui-bg-orange layui-btn-xs">编辑</a>
     <a href="{:url('userDetail')}?id={{d.id}}" class="layui-btn layui-bg-blue layui-btn-xs">详情</a>
 </script>

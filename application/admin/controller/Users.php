@@ -527,7 +527,7 @@ class Users extends Common
         $search = input('post.search');
         $type = input('post.type');
         if (empty($search) || empty($type)) {
-            return ['code' => 0, 'msg' => '请求不合法'];
+            return ['code' => 0, 'msg' => '此用户不存在'];
         }
         //推荐人/接点人/报单中心
         $where['usernum'] = $search;
@@ -740,6 +740,21 @@ class Users extends Common
             $res3 = UserCurrencyAccount::where(['user_id' => $data['id']])->update(['corpus' => $bonus_ratio['declaration']]);
 
             if ($res3 === false) {
+                Db::rollback();
+                return ['code' => 0, 'msg' => '激活失败请重试'];
+            }
+
+            $log_baodan = UserRunningLog::create([
+                'user_id'  =>  $data['id'],
+                'about_id' =>  -session('aid'),
+                'running_type'  => UserRunningLog::TYPE37,
+                'account_type'  => 2,
+                'change_num'    => 0,
+                'balance'       => 0,
+                'create_time'   => time(),
+                'remark'        => '后台激活用户'
+            ]);
+            if($log_baodan == false){
                 Db::rollback();
                 return ['code' => 0, 'msg' => '激活失败请重试'];
             }

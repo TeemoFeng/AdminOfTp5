@@ -32,7 +32,13 @@ class User extends Common{
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
 
             $user_id = session('user.id');
-            $where['pid'] = $user_id;
+            $baodan_center = session('user.baodan_center');
+            if($baodan_center == 1){
+                $where['baodan_user'] = session('user.usernum'); //报单中心获取注册的用户
+            }else{
+                $where['pid'] = $user_id; //普通用户获取自己推荐会员
+
+            }
             $where['status'] = 1;
             //根绝用户id获取推荐的人员信息
             $list = db('users')
@@ -648,7 +654,7 @@ class User extends Common{
         $search = input('post.search');
         $type = input('post.type');
         if(empty($search) || empty($type)){
-            return ['code' => 0, 'msg' => '请求不合法'];
+            return ['code' => 0, 'msg' => '此用户不存在'];
         }
         if($type == 1){
             //推荐人
