@@ -314,7 +314,7 @@
                     layer.close(loading);
                     if (res.code > 0) {
                         layer.msg(res.msg, {time: 1800, icon: 1}, function () {
-                            location.href = res.url;
+                            location.reload();
                         });
                     } else {
                         layer.msg(res.msg, {time: 1800, icon: 2});
@@ -342,7 +342,6 @@
 
                 });
 
-                $('#key').val('');
             });
 
             //点击验证接点人
@@ -364,7 +363,6 @@
 
                 });
 
-                $('#key').val('');
             });
 
             //点击验证报单中心
@@ -386,8 +384,11 @@
 
                 });
 
-                $('#key').val('');
             });
+
+
+
+
 
 
         });

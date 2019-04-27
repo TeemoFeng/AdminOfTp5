@@ -126,7 +126,7 @@
                 layer.close(loading);
                 if (res.code > 0) {
                     layer.msg(res.msg, {time: 1800, icon: 1}, function () {
-                        location.reload();
+                        window.location.href = "{:url('financialFlow')}";
                     });
                 } else {
                     layer.msg(res.msg, {time: 1800, icon: 2});
