@@ -11,7 +11,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">会员级别</label>
             <div class="layui-input-4">
-                <select name="level" lay-verify="required" id="status2" lay-search>
+                <select lay-filter="business" name="level" lay-verify="required" id="status2" lay-search>
                     <option value="">请选择会员</option>
                     {foreach $user_level as $k => $v}
                     <option value="{$v['level_id']}">{$v['level_name']}</option>
@@ -27,6 +27,15 @@
             </div>
 
         </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">报单额</label>
+            <div class="layui-input-4">
+                <input type="text" name="baodannum" id="baodannum" class="layui-input" value="" disabled>
+            </div>
+
+        </div>
+
 
 
         <div class="layui-form-item">
@@ -58,6 +67,18 @@
                     layer.msg(res.msg, {time: 1800, icon: 2});
                 }
             });
+        })
+
+        //监听选择级别
+        form.on('select(business)', function(data){
+            $.post('{:url("getBaodan")}', {'level':data.value}, function (res) {
+                if (res.code > 0) {
+                    $('#baodannum').val(res.val);
+                } else {
+                    layer.msg('获取报单额失败请重试', {time: 1800, icon: 2});
+                }
+            });
+
         })
 
 

@@ -32,7 +32,13 @@ class User extends Common{
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
 
             $user_id = session('user.id');
-            $where['pid'] = $user_id;
+            $baodan_center = session('user.baodan_center');
+            if($baodan_center == 1){
+                $where['baodan_user'] = session('user.usernum'); //报单中心获取注册的用户
+            }else{
+                $where['pid'] = $user_id; //普通用户获取自己推荐会员
+
+            }
             $where['status'] = 1;
             //根绝用户id获取推荐的人员信息
             $list = db('users')
@@ -135,6 +141,23 @@ class User extends Common{
         return $this->fetch('userActive');
     }
 
+    //获取报单额
+    public function getBaodan()
+    {
+        if(request()->isPost()){
+            $level = input('post.level');
+            $val =  Db::name('bonus_set')->where(['level_id' => $level])->value('declaration');
+            if(!empty($val)){
+                return ['code' => 1, 'val' => $val];
+            }else{
+                return ['code' => 0, 'msg' => '查找失败'];
+            }
+
+
+        }
+
+    }
+
     //激活提交
     public function sureActive()
     {
@@ -158,7 +181,7 @@ class User extends Common{
                 $bonus_ratio = BonusSet::where(['level_id' => 2])->find();
             }elseif ($data['level'] == 3){
                 $bonus_ratio = BonusSet::where(['level_id' => 3])->find();
-            }elseif ($data['levle'] == 4){
+            }elseif ($data['level'] == 4){
                 $bonus_ratio = BonusSet::where(['level_id' => 4])->find();
             }elseif ($data['level'] == 5){
                 $bonus_ratio = BonusSet::where(['level_id' => 5])->find();
@@ -169,6 +192,10 @@ class User extends Common{
 
             //查找用户的推荐人/报单中心信息
             $user_info = UsersModel::where(['id' => $data['id']])->find();
+            //判断用户是否重复激活、
+            if($user_info['status'] == 1){
+                return ['code' => 0, 'msg' => '该会员已激活，请勿重复激活'];
+            }
             $referee = UsersModel::where(['usernum' => $user_info['referee']])->find();
             $baodan_user = UsersModel::where(['usernum' => $user_info['baodan_user']])->find(); //保单中心信息
             //查询报单中心激活钱包数量
@@ -501,10 +528,7 @@ class User extends Common{
 //            $district       = explode(':',$data['district']);
 //            $data['district'] = isset( $district[1]) ? $district[1] : '';
             if (empty($data['mobile'])) return ['code' => 0, 'msg' => '手机号不能为空'];
-            $check_user = UsersModel::where(['mobile' => $data['mobile']])->find();
-            if ($check_user) {
-                return $result = ['code' => 0, 'msg' => '该手机号已存在'];
-            }
+
             //验证
             $check = [
                 'usernum'           => $data['usernum'],
@@ -535,15 +559,27 @@ class User extends Common{
             $data['nickname'] = $data['username'];
             //推荐人关系
             $referrr_info =  UsersModel::get(['usernum' => $data['referee']]);
+            if(empty($referrr_info)){
+                return ['code' => 0, 'msg' => '推荐人不存在，请重新选择'];
+            }
             $data['pid'] = $referrr_info['id'];
             $data['referee'] = $referrr_info['usernum'];
 
             //报单人
-            $node_info    = UsersModel::get(['usernum' => $data['baodan_user']]);
-            $data['baodan_user'] = $node_info['usernum'];
+            $baodan_info    = UsersModel::get(['usernum' => $data['baodan_user']]);
+            if (empty($baodan_info)) {
+                return ['code' => 0, 'msg' => '报单中心不存在，请重新选择'];
+            }
+            if($baodan_info['baodan_center'] != 1){
+                return ['code' => 0, 'msg' => '该账号不是有效的报单中心，请重新选择'];
+            }
+            $data['baodan_user'] = $baodan_info['usernum'];
 
             //接点人
             $node_info    = UsersModel::get(['usernum' => $data['contact_person']]);
+            if (empty($node_info)) {
+                return ['code' => 0, 'msg' => '接点人不存在，请重新选择'];
+            }
             $data['npid'] = $node_info['id'];
             $data['contact_person'] = $node_info['usernum'];
             //是否报备银行
@@ -618,7 +654,7 @@ class User extends Common{
         $search = input('post.search');
         $type = input('post.type');
         if(empty($search) || empty($type)){
-            return ['code' => 0, 'msg' => '请求不合法'];
+            return ['code' => 0, 'msg' => '此用户不存在'];
         }
         if($type == 1){
             //推荐人

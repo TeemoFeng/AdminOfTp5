@@ -48,9 +48,10 @@ class Finance extends Common{
                 ->alias('a')
                 ->join(config('database.prefix').'users u','a.user_id = u.id','left')
                 ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
-                ->field('a.*,u.username,ab.username about_user')
-                ->where($where)
+                ->field('a.*,u.username,u.usernum,ab.username about_user,ab.usernum aboutnum')
                 ->order('a.id DESC')
+                ->where($where)
+                ->order('id DESC')
                 ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                 ->toArray();
             if(empty($list))
@@ -58,6 +59,16 @@ class Finance extends Common{
             foreach ($list['data'] as $k=>$v){
                 $list['data'][$k]['create_time'] = date('Y-m-d',$v['create_time']);
                 $list['data'][$k]['running_type'] = $running_type[$v['running_type']];
+                $list['data'][$k]['username'] = $v['usernum'] . '【' . $v['username'] . '】';
+                if(empty($v['about_user'])){
+                    //如果相关用户是管理员
+                    $ab_id = abs($v['about_id']);
+                    $ab_user = Db::name('admin')->where(['admin_id' => $ab_id])->value('username');
+                    $list['data'][$k]['about_user'] = $ab_user;
+                }else{
+                    $list['data'][$k]['about_user'] = $v['aboutnum'] . '【' . $v['about_user'] . '】';
+
+                }
 
             }
 

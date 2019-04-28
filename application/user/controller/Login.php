@@ -38,7 +38,8 @@ class Login extends Common {
             if(!$username || !$password){
                 return array('code'=>0,'msg'=>'请填写账号或密码');
             }
-            $user = $table->where("mobile","=",$username)->whereOr('usernum','=',$username)->find();
+
+            $user = $table->where("usernum","=",$username)->find();
             $userLogin = new UserLoginLog();
             $user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
             $user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];
@@ -80,7 +81,7 @@ class Login extends Common {
             $mobile = input('get.mobile');
 
             $password = input('get.password');
-            $user = $table->where(["mobile" => $mobile, 'password' => $password])->find();
+            $user = $table->where(["usernum" => $mobile, 'password' => $password])->find();
 
             session('user', $user);
             return $this->redirect(url('user/index/index'));

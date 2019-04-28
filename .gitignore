@@ -4,3 +4,4 @@
 .env
 /runtime
 /public/Data
+/config/database.php

@@ -119,9 +119,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">推荐人编号</label>
                     <div class="layui-input-4">
-                        <input type="text" name="referee" lay-verify="required" placeholder="请填写推荐人编号" class="layui-input" id="referee" value="{$user_info['usernum']}">
+                        <input type="text" name="referee" lay-verify="required" placeholder="请填写推荐人编号" class="layui-input" id="referee" value="">
                     </div>
-                    <button class="layui-btn" id="search" data-type="reload">获取姓名</button>
+                    <!--<button class="layui-btn" id="search" data-type="reload">获取姓名</button>-->
 
                     <span id="userReferee">
 
@@ -133,7 +133,7 @@
                     <div class="layui-input-4">
                         <input type="text" name="contact_person" lay-verify="required" placeholder="请填写接点人编号" class="layui-input" id="contact_person">
                     </div>
-                    <button class="layui-btn" id="search2" data-type="reload">获取姓名</button>
+                    <!--<button class="layui-btn" id="search2" data-type="reload">获取姓名</button>-->
                     <span id="userContact">
 
                     </span>
@@ -143,9 +143,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">报单中心(必填)</label>
                     <div class="layui-input-4">
-                        <input type="text" name="baodan_user" lay-verify="required" placeholder="请填写报单中心" class="layui-input" id="baodan_center" value="{$user_info['usernum']}">
+                        <input type="text" name="baodan_user" lay-verify="required" placeholder="请填写报单中心" class="layui-input" id="baodan_center" value="{$user_info['usernum']}" disabled>
                     </div>
-                    <button class="layui-btn" id="search3" data-type="reload">获取姓名</button>
+                    <!--<button class="layui-btn" id="search3" data-type="reload">获取姓名</button>-->
                     <span id="baodan_user">
 
                     </span>
@@ -314,7 +314,7 @@
                     layer.close(loading);
                     if (res.code > 0) {
                         layer.msg(res.msg, {time: 1800, icon: 1}, function () {
-                            location.href = res.url;
+                            location.reload();
                         });
                     } else {
                         layer.msg(res.msg, {time: 1800, icon: 2});
@@ -342,7 +342,6 @@
 
                 });
 
-                $('#key').val('');
             });
 
             //点击验证接点人
@@ -364,7 +363,6 @@
 
                 });
 
-                $('#key').val('');
             });
 
             //点击验证报单中心
@@ -386,8 +384,57 @@
 
                 });
 
-                $('#key').val('');
             });
+
+            $('#referee').focus(function () {
+                $('#userReferee').text('');
+            });
+
+            $("#referee").blur(function() {
+                var referee = $('#referee').val();
+                if($.trim(referee)==='') {
+                    layer.msg('请输入推荐人编号',{icon:0});
+                    return;
+
+                }
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('validateUser')}",{'search' : referee, 'type' : 1},function (data) {
+                    layer.close(loading);
+                    if(data.code == 1){
+                        $('#userReferee').text(data.name);
+                    }else{
+                        $('#userReferee').text(data.msg);
+                        layer.msg(data.msg,{icon:0});
+                    }
+
+                });
+            });
+
+            $('#contact_person').focus(function () {
+                $('#userContact').text('');
+            });
+
+            $("#contact_person").blur(function() {
+                var contact_person = $('#contact_person').val();
+                if($.trim(contact_person)==='') {
+                    layer.msg('请输入接点人编号',{icon:0});
+                    return;
+
+                }
+                var loading = layer.load(2, {shade: [0.1, '#fff']});
+                $.post("{:url('validateUser')}",{'search' : contact_person, 'type' : 2},function (data) {
+                    layer.close(loading);
+                    if(data.code == 1){
+                        $('#userContact').text(data.name);
+                    }else{
+                        $('#userContact').text(data.msg);
+                        layer.msg(data.msg,{icon:0});
+                    }
+
+                });
+            });
+
+
 
 
         });

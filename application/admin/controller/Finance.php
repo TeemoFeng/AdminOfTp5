@@ -177,7 +177,7 @@ class Finance extends Common
                 ->alias('a')
                 ->join(config('database.prefix').'users u','a.user_id = u.id','left')
                 ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
-                ->field('a.*,u.username,u. usernum,ab.username about_user,ab.usernum aboutnum')
+                ->field('a.*,u.username,u.usernum,ab.username about_user,ab.usernum aboutnum')
                 ->order('a.id DESC')
                 ->where($where)
                 ->order('id DESC')
@@ -189,7 +189,15 @@ class Finance extends Common
                 $list['data'][$k]['create_time'] = date('Y-m-d',$v['create_time']);
                 $list['data'][$k]['running_type'] = $running_type[$v['running_type']];
                 $list['data'][$k]['username'] = $v['usernum'] . '【' . $v['username'] . '】';
-                $list['data'][$k]['about_user'] = $v['aboutnum'] . '【' . $v['about_user'] . '】';
+                if(empty($v['about_user'])){
+                    //如果相关用户是管理员
+                    $ab_id = abs($v['about_id']);
+                    $ab_user = Db::name('admin')->where(['admin_id' => $ab_id])->value('username');
+                    $list['data'][$k]['about_user'] = $ab_user;
+                }else{
+                    $list['data'][$k]['about_user'] = $v['aboutnum'] . '【' . $v['about_user'] . '】';
+
+                }
 
             }
 
@@ -307,7 +315,7 @@ class Finance extends Common
                 //添加充值记录
                $res2 =  UserRunningLog::create([
                     'user_id'  =>  $data['user_id'],
-                    'about_id' =>  $data['user_id'],
+                    'about_id' =>  -session('aid'),
                     'running_type'  => UserRunningLog::TYPE1,
                     'account_type'  => $data['currency_id'],
                     'change_num'    => $data['amount'],
@@ -407,7 +415,7 @@ class Finance extends Common
                     //添加扣除记录
                     $res2 =  UserRunningLog::create([
                         'user_id'  =>  $data['user_id'],
-                        'about_id' =>  $data['user_id'],
+                        'about_id' =>  -session('aid'),
                         'running_type'  => UserRunningLog::TYPE2,
                         'account_type'  => $data['currency_id'],
                         'change_num'    => -$data['amount'],

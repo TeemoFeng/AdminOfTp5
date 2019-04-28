@@ -22,10 +22,10 @@
                 <div data-v-c9fe8806="" class="login-main hc-bgColor2">
                     <div data-v-c9fe8806=""
                          style="animation-name: fadeIn; animation-duration: 3s; float: left; margin-top: 135px; margin-left: 60px;">
-                        <p data-v-c9fe8806="" class="login-div1 login-div3 hc-color3">还没有</p>
-                        <p data-v-c9fe8806="" class="login-div1 hc-color3">{:config('sys_name')}账号?</p>
-                        <p data-v-c9fe8806="" class="login-div2 hc-color">立即注册,在{:config('sys_name')}区块连资产交易所进行交易。</p>
-                        <a href="{:url('user/login/reg')}"><p data-v-c9fe8806="" class="hc-btn login-regbtn">免费注册</p></a></div>
+                        <p data-v-c9fe8806="" class="login-div1 login-div3 hc-color3">已有账号</p>
+                        <p data-v-c9fe8806="" class="login-div1 hc-color3">立即体验</p>
+                        <p data-v-c9fe8806="" class="login-div2 hc-color"></p>
+                        <a href="#"><p data-v-c9fe8806="" class=""></p></a></div>
                 </div>
                 <div data-v-c9fe8806="" class="login-main2 hc-bgColor2">
                     <form action="" class="layui-form">
@@ -85,12 +85,12 @@
             //自定义验证规则
             form.verify({
 
-                phoneEmail: function (value) {
-                    var result = phoneEmail(value);
-                    if (result != "num") {
-                        return result;
-                    }
-                },
+                // phoneEmail: function (value) {
+                //     var result = phoneEmail(value);
+                //     if (result != "num") {
+                //         return result;
+                //     }
+                // },
                 // validatePwd: function (value) {
                 //     var result = validatePwd(value);
                 //     if (result != "pwd") {
