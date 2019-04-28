@@ -36,7 +36,7 @@
                                 <div data-v-c9fe8806="">
                                     <input data-v-c9fe8806="" type="text" name="username" id="username"
                                            lay-verify="require|phoneEmail"
-                                           class="login-input" placeholder="请输入您的登录账号" autocomplete="off">
+                                           class="login-input" placeholder="请输入用户编号或手机号" autocomplete="off">
                                 </div>
                             </div>
                             <div data-v-c9fe8806="" class="login-form">
@@ -141,7 +141,7 @@
             if (PReg.test(_id) || EReg.test(_id)) {
                 return "num"
             }
-            return "手机号码或邮箱格式不正确!"
+            return "登录账号不正确!"
         }
 
 
