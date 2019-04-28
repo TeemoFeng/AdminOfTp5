@@ -40,7 +40,7 @@
 
                     </div>
                     <button class="layui-btn" id="search1" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" onclick="excl_rep()">导出</button>
                 </div>
                 <table class="layui-table" id="table1" lay-filter="table1"></table>
             </div>
@@ -72,7 +72,7 @@
 
                     </div>
                     <button class="layui-btn" id="search2" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" onclick="excl_rep()">导出</button>
                 </div>
                 <table class="layui-table" id="table2" lay-filter="table2"></table>
 
@@ -259,7 +259,25 @@
                     {field: 'remark', title: '备注', width: 200,hide:true},
                     {title:'操作', width: 100, align: 'center', toolbar: '#action'}
                 ]],
-                limit: 10 //每页默认显示的数量
+                limit: 10, //每页默认显示的数量
+
+                done: function(){
+                    if (tableWhere.city != this.where.city || tableWhere.activity != this.where.activity || tableWhere.interval != this.where.interval){
+                        $.ajax({
+                            type: 'POST',
+                            url: '服务端全部数据接口',
+                            data:this.where,
+                            success: function(res){
+                                if (res.code>0){
+                                    downDatas=res.data;
+                                }
+                            }
+                        });
+                        tableWhere=this.where;
+                    }
+
+                }
+
             });
         };
 
@@ -286,6 +304,7 @@
             //     return;
             // }
             table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1}})
+
         });
 
         //搜索2

@@ -171,6 +171,7 @@ class Finance extends Common
                 return ['code' => 0, 'msg' => '账户类型不能为空'];
             }
             $where  = $this->makeSearch2($data);
+
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             $list = db('user_running_log')

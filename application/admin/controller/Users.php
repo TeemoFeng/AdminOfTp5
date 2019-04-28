@@ -471,25 +471,32 @@ class Users extends Common
                 $user_referee_model = new UserReferee();
                 $user_node_model = new UserNode();
                 if ($data['pid'] == 1) {
-                    //接入用户和接点人关系
+                    //接入用户和推荐人关系
                     $data2['user_id'] = $new_user_id->id;
                     $data2['user_son_str'] = 1 . ',';
                     $data2['deep'] = count(explode(',', $data2['user_son_str'])) - 1;
-                    //接入用户和推荐人的关系
-                    $data3['user_id'] = $new_user_id->id;
-                    $data3['user_son_str'] = 1 . ',';
-                    $data3['deep'] = count(explode(',', $data2['user_son_str'])) - 1;
+
                 } else {
                     $son_str = $user_referee_model->where(['user_id' => $referrr_info['id']])->value('user_son_str');
-                    $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
-                    //接入用户和接点人关系
+                    //接入用户和推荐人关系
                     $data2['user_id'] = $new_user_id->id;
                     $data2['user_son_str'] = $son_str . $referrr_info["id"] . ',';
                     $data2['deep'] = count(explode(',', $data2['user_son_str'])) - 1;
-                    //接入用户和推荐人的关系
+
+                }
+
+                if($data['npid'] == 1){
+                    //接入用户和接点人的关系
+                    $data3['user_id'] = $new_user_id->id;
+                    $data3['user_son_str'] = 1 . ',';
+                    $data3['deep'] = count(explode(',', $data3['user_son_str'])) - 1;
+                }else{
+                    $son_node_str = $user_node_model->where(['user_id' => $node_info['id']])->value('user_son_str');
+
+                    //接入用户和接点人的关系
                     $data3['user_id'] = $new_user_id->id;
                     $data3['user_son_str'] = $son_node_str . $node_info['id'] . ',';
-                    $data3['deep'] = count(explode(',', $data2['user_son_str'])) - 1;
+                    $data3['deep'] = count(explode(',', $data3['user_son_str'])) - 1;
                 }
 
                 UserReferee::create($data2);
