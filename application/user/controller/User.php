@@ -96,8 +96,7 @@ class User extends Common{
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
 
-            $user_id = session('user.id');
-            $where['pid'] = $user_id;
+            $where['baodan_user'] = session('user.usernum'); //报单中心获取注册的用户
             $where['status'] = 0;
             //根绝用户id获取推荐的人员信息
             $list = db('users')

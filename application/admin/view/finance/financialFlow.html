@@ -261,23 +261,6 @@
                 ]],
                 limit: 10, //每页默认显示的数量
 
-                done: function(){
-                    if (tableWhere.city != this.where.city || tableWhere.activity != this.where.activity || tableWhere.interval != this.where.interval){
-                        $.ajax({
-                            type: 'POST',
-                            url: '服务端全部数据接口',
-                            data:this.where,
-                            success: function(res){
-                                if (res.code>0){
-                                    downDatas=res.data;
-                                }
-                            }
-                        });
-                        tableWhere=this.where;
-                    }
-
-                }
-
             });
         };
 
