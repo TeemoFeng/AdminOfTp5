@@ -180,7 +180,7 @@ class Bourse extends Controller {
 
                 //加入动态转换表
                 $this->sendBouse($uid,$v['user_id'], $jiangli_one, $rate, $price, $currency_id);
-
+                usleep(50000);
             }
 
 
@@ -246,17 +246,19 @@ class Bourse extends Controller {
 
 
         $user_account = UserCurrencyAccount::where(['user_id' => $uid])->value('cash_currency_num');
-        $user_account = bcadd($user_account, $jiangli,4);
+        $user_account = bcadd($user_account, $jiangli_num,4);
+        //更新用户沙特链数量
+        UserCurrencyAccount::where(['user_id' => $uid])->update(['cash_currency_num' => $user_account]);
         //添加动态奖流水日志
         UserRunningLog::create([
             'user_id'  =>  $uid,
             'about_id' =>  $sonid,
             'running_type'  => UserRunningLog::TYPE20,
             'account_type'  => 1,
-            'change_num'    => $jiangli,
+            'change_num'    => $jiangli_num,
             'balance'       =>  $user_account,
             'create_time'   => time(),
-            'remark'        => '动态奖奖励'.$jiangli,
+            'remark'        => '动态奖奖励'.$jiangli_num,
         ]);
 
         //添加阿美币转换日志
@@ -266,10 +268,10 @@ class Bourse extends Controller {
             'about_id' =>  $sonid,
             'running_type'  => UserRunningLog::TYPE23,
             'account_type'  => 1,
-            'change_num'    => $jiangli_num,
+            'change_num'    => $num,
             'balance'       => $chang_num,
             'create_time'   => time(),
-            'remark'        => '动态奖装换阿美币因【'.$from_user.'】',
+            'remark'        => '动态奖转换阿美币因【'.$from_user.'】',
         ]);
 
     }
