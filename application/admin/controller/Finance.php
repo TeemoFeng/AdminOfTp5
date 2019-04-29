@@ -171,6 +171,54 @@ class Finance extends Common
                 return ['code' => 0, 'msg' => '账户类型不能为空'];
             }
             $where  = $this->makeSearch2($data);
+            if(!empty($data['export'])){
+                $list = db('user_running_log')
+                    ->alias('a')
+                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                    ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
+                    ->field('a.*,u.username,u.usernum,ab.username about_user,ab.usernum aboutnum')
+                    ->order('a.id DESC')
+                    ->where($where)
+                    ->order('id DESC')
+                    ->select();
+                if(empty($list))
+                    $list = [];
+                $list2 = [];
+                foreach ($list as $k=>$v){
+                    $list2[$k]['id'] = $v['id'];
+                    $list2[$k]['username'] = $v['usernum'] . '【' . $v['username'] . '】';
+                    if(empty($v['about_user'])){
+                        //如果相关用户是管理员
+                        $ab_id = abs($v['about_id']);
+                        $ab_user = Db::name('admin')->where(['admin_id' => $ab_id])->value('username');
+                        $list2[$k]['about_user'] = $ab_user;
+                    }else{
+                        $list2[$k]['about_user'] = $v['aboutnum'] . '【' . $v['about_user'] . '】';
+
+                    }
+                    $list2[$k]['running_type'] = $running_type[$v['running_type']];
+                    $list2[$k]['change_num'] = $v['change_num'];
+                    $list2[$k]['balance'] = $v['balance'];
+                    $list2[$k]['create_time'] = date('Y-m-d',$v['create_time']);
+                    $list2[$k]['remark'] = $v['remark'];
+
+
+                }
+                if($data['account_type'] == 1){
+                    $file_name = '财务流水-沙特链';
+                }elseif($data['account_type'] == 2){
+                    $file_name = '财务流水-激活钱包';
+                }elseif($data['account_type'] == 3){
+                    $file_name = '财务流水-消费钱包';
+                }elseif($data['account_type'] == 4){
+                    $file_name = '财务流水-交易账号';
+                }elseif($data['account_type'] == 5){
+                    $file_name = '财务流水-本金账户';
+                }
+                $headArr = ['id','用户','相关用户','流水类型','变更数量','余额','流水时间','备注'];
+                $this->excelExport($file_name, $headArr, $list2);
+
+            }
 
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
@@ -253,59 +301,10 @@ class Finance extends Common
     }
 
 
-    private function _exportIndex( $serach,$type )
+
+    private function _export()
     {
 
-        $searchWhere = $this->_searchWhere($search); //判断搜索条件
-        $count=$this->model->where($searchWhere)->count(); //获取总数
-        if( $count < 1 )
-            $this->error( '没有符合条件的数据' );
-
-        $model      = BaseLogic::getExportModel( $type );
-        if( !is_object( $model ) )
-            $this->error( $model );
-
-        if( $type == 'csv' )
-            $this->_csvExport( $model, $searchWhere, $count );
-    }
-
-    private function _csvExport( $model , $search, $count )
-    {
-        $model->setFileName('(大)分销开通记录导出' . date('YmdH'));
-        $model->export(['记录ID', '订单编号', '套餐', '设备', '小计', '小计单位','实收', '实收单位', '开通时间', '归属']);
-
-        $pageSize   = \Csv::PAGESIZE;
-        $maxSize    = ceil( $count / $pageSize );
-        $partners   = $this->partner_model->where( ['status' => 1] )->order( "id desc")->getField('id,name');
-
-        for ($i = 0; $i < $maxSize; $i++) {
-
-            $lst = $i * $pageSize;
-            $res = $this->model->where($search)->order('id DESC')->limit($lst, $pageSize)->select();
-            array_walk($res, function (&$v) use ($partners) {
-                $v['ctm'] = date('Y-m-d H:i', $v['ctm']);
-                $v['partner_id'] = isset($partners[$v['partner_id']]) ? $partners[$v['partner_id']] : '未找到';
-            });
-
-            $expdata    = [];
-            array_map( function( $v ) use ( &$expdata, $model ) {
-                $expdata    = [
-                    $v['id'],
-                    $v['oid'],
-                    $v['gnames'],
-                    $v['imeis'] . "\t",
-                    $v['suppprice'],
-                    $v['suppunit'],
-                    $v['trueprice'],
-                    $v['trueunit'],
-                    $v['ctm'],
-                    $v['partner_id']
-                ];
-                $model->export( $expdata );
-            }, $res );
-
-            $model->flush();
-        }
     }
 
 

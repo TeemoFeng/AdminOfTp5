@@ -18,7 +18,6 @@ class Users extends Common
     public function index()
     {
         if (request()->isPost()) {
-
             $data = input('post.');
             $where = $this->makeSearch($data);
             $page = $data['page'] ? $data['page'] : 1;
