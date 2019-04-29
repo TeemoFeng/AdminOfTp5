@@ -253,6 +253,61 @@ class Finance extends Common
     }
 
 
+    private function _exportIndex( $serach,$type )
+    {
+
+        $searchWhere = $this->_searchWhere($search); //判断搜索条件
+        $count=$this->model->where($searchWhere)->count(); //获取总数
+        if( $count < 1 )
+            $this->error( '没有符合条件的数据' );
+
+        $model      = BaseLogic::getExportModel( $type );
+        if( !is_object( $model ) )
+            $this->error( $model );
+
+        if( $type == 'csv' )
+            $this->_csvExport( $model, $searchWhere, $count );
+    }
+
+    private function _csvExport( $model , $search, $count )
+    {
+        $model->setFileName('(大)分销开通记录导出' . date('YmdH'));
+        $model->export(['记录ID', '订单编号', '套餐', '设备', '小计', '小计单位','实收', '实收单位', '开通时间', '归属']);
+
+        $pageSize   = \Csv::PAGESIZE;
+        $maxSize    = ceil( $count / $pageSize );
+        $partners   = $this->partner_model->where( ['status' => 1] )->order( "id desc")->getField('id,name');
+
+        for ($i = 0; $i < $maxSize; $i++) {
+
+            $lst = $i * $pageSize;
+            $res = $this->model->where($search)->order('id DESC')->limit($lst, $pageSize)->select();
+            array_walk($res, function (&$v) use ($partners) {
+                $v['ctm'] = date('Y-m-d H:i', $v['ctm']);
+                $v['partner_id'] = isset($partners[$v['partner_id']]) ? $partners[$v['partner_id']] : '未找到';
+            });
+
+            $expdata    = [];
+            array_map( function( $v ) use ( &$expdata, $model ) {
+                $expdata    = [
+                    $v['id'],
+                    $v['oid'],
+                    $v['gnames'],
+                    $v['imeis'] . "\t",
+                    $v['suppprice'],
+                    $v['suppunit'],
+                    $v['trueprice'],
+                    $v['trueunit'],
+                    $v['ctm'],
+                    $v['partner_id']
+                ];
+                $model->export( $expdata );
+            }, $res );
+
+            $model->flush();
+        }
+    }
+
 
     //货币充值
     public function currencyRecharge()

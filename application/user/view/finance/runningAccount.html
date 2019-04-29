@@ -187,6 +187,13 @@
 
 </script>
 
+<script type="text/html" id="color">
+    {{# if(d.change_num > '0'){ }}
+    <span style="color: green">{{d.change_num}}</span>
+    {{# }else{ }}
+    <span style="color: red">{{d.change_num}}</span>
+    {{# } }}
+</script>
 
 <script type="text/html" id="topBtn">
 
@@ -253,7 +260,7 @@
                     {field: 'username', title: '用户', width: 200, fixed: true},
                     {field: 'about_user', title: '相关用户', width: 200},
                     {field: 'running_type', title: '流水类型', width: 200},
-                    {field: 'change_num', title: '变更数量', width: 200},
+                    {field: 'change_num', title: '变更数量', width: 200,templet:'#color'},
                     {field: 'balance', title: '余额', width: 200},
                     {field: 'create_time', title: '流水时间', width: 100},
                     {field: 'remark', title: '备注', width: 200,hide:true},

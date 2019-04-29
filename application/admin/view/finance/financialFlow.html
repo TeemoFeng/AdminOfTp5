@@ -40,7 +40,7 @@
 
                     </div>
                     <button class="layui-btn" id="search1" data-type="reload">搜索</button>
-                    <button class="layui-btn layui-btn layui-btn-warm" onclick="excl_rep()">导出</button>
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export1">导出</button>
                 </div>
                 <table class="layui-table" id="table1" lay-filter="table1"></table>
             </div>
@@ -186,7 +186,13 @@
     <a href="#" data-id="{{d.id}}" data-centent="{{d.remark}}" class="layui-btn layui-btn-xs" id="beizhu">查看备注</a>
 
 </script>
-
+<script type="text/html" id="color">
+    {{# if(d.change_num > '0'){ }}
+    <span style="color: green">{{d.change_num}}</span>
+    {{# }else{ }}
+    <span style="color: red">{{d.change_num}}</span>
+    {{# } }}
+</script>
 
 <script type="text/html" id="topBtn">
 
@@ -253,7 +259,7 @@
                     {field: 'username', title: '用户', width: 200, fixed: true},
                     {field: 'about_user', title: '相关用户', width: 200},
                     {field: 'running_type', title: '流水类型', width: 200},
-                    {field: 'change_num', title: '变更数量', width: 200},
+                    {field: 'change_num', title: '变更数量', width: 200,templet:'#color'},
                     {field: 'balance', title: '余额', width: 200},
                     {field: 'create_time', title: '流水时间', width: 200},
                     {field: 'remark', title: '备注', width: 200,hide:true},
@@ -286,6 +292,42 @@
             //     layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
             //     return;
             // }
+            table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1}})
+
+        });
+
+        $('export1').on('click', function() {
+            var key = $('#key1').val();
+            var start_time = $('#start_time1').val();
+            var end_time = $('#end_time1').val();
+            var running_type = $('#status1').val();
+            // if($.trim(key)==='') {
+            //     layer.msg('{:lang("pleaseEnter")}关键字！',{icon:0});
+            //     return;
+            // }
+            var ins1 = table.render({
+                id: 'table1',
+                elem: '#table1',
+                url: '{:url("financialFlow")}',
+                where: {'account_type':_type},
+                method: 'post',
+                toolbar: '#topBtn',
+                cols: [[
+                    {checkbox:true,fixed: true},
+                    {field: 'id', title: 'id', width: 100, fixed: true},
+                    {field: 'username', title: '用户', width: 200, fixed: true},
+                    {field: 'about_user', title: '相关用户', width: 200},
+                    {field: 'running_type', title: '流水类型', width: 200},
+                    {field: 'change_num', title: '变更数量', width: 200},
+                    {field: 'balance', title: '余额', width: 200},
+                    {field: 'create_time', title: '流水时间', width: 200},
+                    {field: 'remark', title: '备注', width: 200,hide:true},
+                    {title:'操作', width: 100, align: 'center', toolbar: '#action'}
+                ]],
+            });
+
+            table.exportFile(ins1.config.id, data);
+
             table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1}})
 
         });
