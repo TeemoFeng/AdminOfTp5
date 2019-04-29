@@ -566,8 +566,20 @@ class Finance extends Common{
                     'create_time'   => time()
                 ];
                 //用户转换之后失去所有收益，变成无效会员
-               $res2 = db('users')->where(['id' => $user_id])->update(['enabled' => 0]);
+                $res2 = db('users')->where(['id' => $user_id])->update(['enabled' => 0]);
                 if($res2 === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '转换失败，请重试'];
+                }
+
+                $res3 = Db::name('user_node')->where(['user_id' => $user_id])->update(['enabled' => 0]);
+                if($res3 === false){
+                    Db::rollback();
+                    return ['code' => 0, 'msg' => '转换失败，请重试'];
+                }
+
+                $res4 = Db::name('user_referee')->where(['user_id' => $user_id])->update(['enabled' => 0]);
+                if($res4 === false){
                     Db::rollback();
                     return ['code' => 0, 'msg' => '转换失败，请重试'];
                 }

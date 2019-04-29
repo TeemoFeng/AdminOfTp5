@@ -37,9 +37,10 @@ class Bourse extends Controller {
                 continue;
             }
             //查询用户级别
-            $level_id = Db::name('users')->where(['id' => $account['user_id']])->value('level');
+            $user_info = Db::name('users')->where(['id' => $account['user_id']])->field('level,enabled')->find();
+            $level_id = $user_info['level'];
             //如果用户没有级别直接略过
-            if($level_id == 0){
+            if($level_id == 0 || $user_info['enabled'] == 0){
                 continue;
             }
             $user_shate = bcadd($account['corpus'], $account['cash_input_num'],4);
