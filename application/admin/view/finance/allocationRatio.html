@@ -24,6 +24,8 @@
                     </div>
 
                     <button class="layui-btn" id="search1" data-type="reload">搜索</button>
+                    <a href="{:url('allocationRatio')}" class="layui-btn">显示全部</a>
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export">导出</button>
 
                 </div>
                 <table class="layui-table" id="table1" lay-filter="table1"></table>
@@ -45,6 +47,14 @@
 <script>
     layui.use(['table','form','laydate','element'], function() {
         var table = layui.table,form = layui.form, $ = layui.jquery, laydate = layui.laydate, element = layui.element;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start_time1' //指定元素
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end_time1' //指定元素
+        });
 
         function show_table(_type){
             table.render({
@@ -93,6 +103,14 @@
             var end_time = $('#end_time1').val();
 
             table.reload('table1',{ page: {page: 1},where: {start_time:start_time, end_time:end_time,type:1}})
+        });
+
+        //搜索
+        $('#export').on('click', function() {
+            var start_time = $('#start_time1').val();
+            var end_time = $('#end_time1').val();
+            var url = '{:url("allocationRatio")}?export=1&start_time='+start_time+'&end_time='+end_time+'&type=1';
+            location.href = url;
         });
 
         show_table(1);

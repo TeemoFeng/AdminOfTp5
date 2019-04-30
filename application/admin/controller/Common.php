@@ -2,7 +2,12 @@
 namespace app\admin\controller;
 use think\Db;
 use think\Controller;
+
 use PHPExcel;
+use PHPExcel_IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 class Common extends Controller
 {
     protected $mod,$role,$system,$nav,$menudata,$cache_model,$categorys,$module,$moduleid,$adminRules,$HrefId;
@@ -56,11 +61,8 @@ class Common extends Controller
      * @param array $data 要导出的数据
      * @author static7  */
     public function excelExport($fileName = '', $headArr = [], $data = []) {
-        $data .= "_" . date("Y_m_d", time()) . ".xls";
-        vendor("PHPExcel.PHPExcel");
-        $objPHPExcel = new \PHPExcel();
-
-        dump($objPHPExcel);
+        $fileName .= "_" . date("Y_m_d", time()) . ".xls";
+        $objPHPExcel = new PHPExcel();
 
         $objPHPExcel->getProperties();
         $key = ord("A"); // 设置表头
@@ -86,7 +88,7 @@ class Common extends Controller
         header('Content-Type: application/vnd.ms-excel');
         header("Content-Disposition: attachment;filename='$fileName'");
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output'); // 文件通过浏览器下载
         exit();
     }

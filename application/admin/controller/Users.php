@@ -11,15 +11,18 @@ use think\console\Input;
 use think\Db;
 use think\db\Where;
 use think\Validate;
-
+use think\facade\Request;
 class Users extends Common
 {
     //会员列表
     public function index()
     {
+        $data = Request::param();
+        $where  = $this->makeSearch($data);
+        if(!empty($data['export'])){
+            $this->_exportUser($where);
+        }
         if (request()->isPost()) {
-            $data = input('post.');
-            $where = $this->makeSearch($data);
             $page = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             $list = db('users')->alias('u')
@@ -52,6 +55,50 @@ class Users extends Common
         $status = UsersModel::$status;
         $this->assign('status', $status);
         return $this->fetch();
+    }
+
+    //导出会员
+    private function _exportUser($where)
+    {
+        $list = db('users')->alias('u')
+            ->join(config('database.prefix') . 'user_level ul', 'u.level = ul.level_id', 'left')
+            ->join(config('database.prefix') . 'user_currency_account c', 'c.user_id = u.id', 'left')
+            ->join(config('database.prefix') . 'bonus_set d', 'ul.level_id = d.level_id', 'left')
+            ->field('u.*,ul.level_name,c.cash_currency_num,c.cash_input_num,c.corpus,c.activation_num,c.consume_num,c.transaction_num,c.rate,d.declaration')
+            ->where($where)
+            ->order('u.id desc')
+            ->select();
+        $list2 = [];
+        foreach ($list as $k => $v) {
+            $list2[$k]['usernum'] = $v['usernum'];
+            $list2[$k]['username'] = $v['username'];
+            $list2[$k]['mobile'] = $v['mobile'];
+            $list2[$k]['cash_currency_num'] = $v['cash_currency_num'];
+            $list2[$k]['transaction_num'] = $v['transaction_num'];
+            $list2[$k]['activation_num'] = $v['activation_num'];
+            $list2[$k]['consume_num'] = $v['consume_num'];
+            $list2[$k]['corpus'] = $v['corpus'];
+            $list2[$k]['rate'] = $v['rate'];
+            $list2[$k]['level_name'] = $v['level_name'];
+            $list2[$k]['declaration'] = $v['declaration'];
+            $list2[$k]['cash_input_num'] = $v['cash_input_num'];
+
+            $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
+            $list2[$k]['referee'] = $v['referee'] . '【' . $tuijian_user . '】';
+            $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
+            $list2[$k]['contact_person'] = $v['contact_person'] . '【' . $jidianren_user . '】';
+            $baodan_user = UsersModel::where(['usernum' => $v['baodan_user']])->value('username');
+            $list2[$k]['baodan_user'] = $v['baodan_user'] . '【' . $baodan_user . '】';
+
+            $list2[$k]['reg_time'] = date('Y-m-d H:s', $v['reg_time']);
+            $list2[$k]['active_time'] = date('Y-m-d H:s', $v['active_time']);
+            $list2[$k]['enabled'] = UsersModel::$vastatus2[$v['enabled']];
+            $list2[$k]['baodan_center'] = UsersModel::$bdstatus2[$v['baodan_center']];
+            $list2[$k]['is_report'] = UsersModel::$yhstatus[$v['is_report']];
+
+
+
+        }
     }
 
     //搜索

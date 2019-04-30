@@ -27,10 +27,13 @@ class Finance extends Common
     //动态奖金转阿美币列表
     public function convert()
     {
+        $data = Request::param();
+        $where  = $this->convertSearch($data);
+        if(!empty($data['export'])){
+            $this->_exportCovert($where);
+        }
         //获取用户动态转阿美币的列表
         if(request()->isPost()){
-            $data   = input('post.');
-            $where  = $this->convertSearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
 
@@ -50,6 +53,36 @@ class Finance extends Common
 
         return $this->fetch('convert');
     }
+
+    //动态奖金转阿美币列表转出
+    public function _exportCovert($where)
+    {
+        $list = db('user_dynamic_amei_bonus')
+            ->alias('a')
+            ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+            ->field('a.*,u.usernum,u.username')
+            ->where($where)
+            ->order('a.id DESC')
+            ->select();
+        $list2 = [];
+        foreach ($list as $k=>$v){
+            $list2[$k]['id'] = $v['id'];
+            $list2[$k]['usernum'] = $v['usernum'];
+            $list2[$k]['username'] = $v['username'];
+            $list2[$k]['dynamic_bonus'] = $v['dynamic_bonus'];
+            $list2[$k]['rate'] = $v['rate'];
+            $list2[$k]['ameibi_price'] = $v['ameibi_price'];
+            $list2[$k]['ameibi_num'] = $v['ameibi_num'];
+            $list2[$k]['status'] = UserDynamicAmeiBonus::$status[$v['status']];
+            $list2[$k]['create_time'] = $v['create_time'];
+            $list2[$k]['grant_time'] = $v['grant_time'];
+            $list2[$k]['remark'] = $v['remark'];
+        }
+        $file_name = '动态奖转换阿美币';
+        $headArr = ['id','用户编号','用户名','动态奖金$','1$=￥汇率','阿美币价格￥','应发阿美币数量','状态','创建时间','发放时间','备注'];
+        $this->excelExport($file_name, $headArr, $list2);
+    }
+
 
     //搜索条件
     public function convertSearch($data)
@@ -89,8 +122,16 @@ class Finance extends Common
     //公司拨比列表
     public function allocationRatio()
     {
+        $data = Request::param();
+        $where  = $this->makeSearch3($data);
+
+        if(!empty($data['export'])){
+            if($data['type'] == 1){
+                $this->_exportBobi($where);
+            }
+        }
+
         if(request()->isPost()){
-            $data = input('post.');
             if(empty($data['type'])){
                 return ['code' => 0, 'msg' => '非法请求'];
             }
@@ -98,9 +139,9 @@ class Finance extends Common
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             if($data['type'] == 1){
                 //日拨比
-                $where = $this->makeSearch3($data);
                 $list = db('company_day_running')
                     ->where($where)
+                    ->order('id DESC')
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                     ->toArray();
                 foreach ($list['data'] as $k=>$v){
@@ -143,6 +184,34 @@ class Finance extends Common
         return $this->fetch('allocationRatio');
     }
 
+    //公司拨比导出
+    public function _exportBobi($where)
+    {
+        $list = db('company_day_running')
+            ->where($where)
+            ->order('id DESC')
+            ->select();
+        $list2 = [];
+        foreach ($list as $k=>$v){
+            $list2[$k]['id'] = $v['id'];
+            $list2[$k]['time'] = $v['time'];
+            $list2[$k]['income'] = $v['income'];
+            $list2[$k]['expenses'] = $v['expenses'];
+            $list2[$k]['subside'] = bcsub($v['income'], $v['expenses'], 4);
+            if($v['expenses'] == 0){
+                $list2[$k]['ratio'] = '0%';
+            }else{
+                $ratio = bcdiv($v['expenses'],$v['income'], 4);
+                $list2[$k]['ratio'] = ($ratio*100).'%';
+            }
+
+        }
+        $file_name = '公司拨比';
+        $headArr = ['id','时间','收入','支出','沉淀','拨比率'];
+        $this->excelExport($file_name, $headArr, $list2);
+
+    }
+
     //拨比条件搜索
     public function makeSearch3($data)
     {
@@ -165,59 +234,59 @@ class Finance extends Common
     public function financialFlow()
     {
         $running_type = UserRunningLog::$running_type;
+        $data = Request::param();
+        $where  = $this->makeSearch2($data);
+
+        if(!empty($data['export'])){
+            $list = db('user_running_log')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
+                ->field('a.*,u.username,u.usernum,ab.username about_user,ab.usernum aboutnum')
+                ->order('a.id ASC')
+                ->where($where)
+                ->select();
+            if(empty($list))
+                $list = [];
+            $list2 = [];
+            foreach ($list as $k=>$v){
+                $list2[$k]['id'] = $v['id'];
+                $list2[$k]['username'] = $v['usernum'] . '【' . $v['username'] . '】';
+                if(empty($v['about_user'])){
+                    //如果相关用户是管理员
+                    $ab_id = abs($v['about_id']);
+                    $ab_user = Db::name('admin')->where(['admin_id' => $ab_id])->value('username');
+                    $list2[$k]['about_user'] = $ab_user;
+                }else{
+                    $list2[$k]['about_user'] = $v['aboutnum'] . '【' . $v['about_user'] . '】';
+
+                }
+                $list2[$k]['running_type'] = $running_type[$v['running_type']];
+                $list2[$k]['change_num'] = $v['change_num'];
+                $list2[$k]['balance'] = $v['balance'];
+                $list2[$k]['create_time'] = date('Y-m-d',$v['create_time']);
+                $list2[$k]['remark'] = $v['remark'];
+
+
+            }
+            if($data['account_type'] == 1){
+                $file_name = '财务流水-沙特链';
+            }elseif($data['account_type'] == 2){
+                $file_name = '财务流水-激活钱包';
+            }elseif($data['account_type'] == 3){
+                $file_name = '财务流水-消费钱包';
+            }elseif($data['account_type'] == 4){
+                $file_name = '财务流水-交易账号';
+            }elseif($data['account_type'] == 5){
+                $file_name = '财务流水-本金账户';
+            }
+            $headArr = ['id','用户','相关用户','流水类型','变更数量','余额','流水时间','备注'];
+            $this->excelExport($file_name, $headArr, $list2);
+
+        }
         if(request()->isPost()){
-            $data = input('post.');
             if(empty($data['account_type'])){
                 return ['code' => 0, 'msg' => '账户类型不能为空'];
-            }
-            $where  = $this->makeSearch2($data);
-            if(!empty($data['export'])){
-                $list = db('user_running_log')
-                    ->alias('a')
-                    ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->join(config('database.prefix').'users ab','a.about_id = ab.id','left')
-                    ->field('a.*,u.username,u.usernum,ab.username about_user,ab.usernum aboutnum')
-                    ->order('a.id DESC')
-                    ->where($where)
-                    ->order('id DESC')
-                    ->select();
-                if(empty($list))
-                    $list = [];
-                $list2 = [];
-                foreach ($list as $k=>$v){
-                    $list2[$k]['id'] = $v['id'];
-                    $list2[$k]['username'] = $v['usernum'] . '【' . $v['username'] . '】';
-                    if(empty($v['about_user'])){
-                        //如果相关用户是管理员
-                        $ab_id = abs($v['about_id']);
-                        $ab_user = Db::name('admin')->where(['admin_id' => $ab_id])->value('username');
-                        $list2[$k]['about_user'] = $ab_user;
-                    }else{
-                        $list2[$k]['about_user'] = $v['aboutnum'] . '【' . $v['about_user'] . '】';
-
-                    }
-                    $list2[$k]['running_type'] = $running_type[$v['running_type']];
-                    $list2[$k]['change_num'] = $v['change_num'];
-                    $list2[$k]['balance'] = $v['balance'];
-                    $list2[$k]['create_time'] = date('Y-m-d',$v['create_time']);
-                    $list2[$k]['remark'] = $v['remark'];
-
-
-                }
-                if($data['account_type'] == 1){
-                    $file_name = '财务流水-沙特链';
-                }elseif($data['account_type'] == 2){
-                    $file_name = '财务流水-激活钱包';
-                }elseif($data['account_type'] == 3){
-                    $file_name = '财务流水-消费钱包';
-                }elseif($data['account_type'] == 4){
-                    $file_name = '财务流水-交易账号';
-                }elseif($data['account_type'] == 5){
-                    $file_name = '财务流水-本金账户';
-                }
-                $headArr = ['id','用户','相关用户','流水类型','变更数量','余额','流水时间','备注'];
-                $this->excelExport($file_name, $headArr, $list2);
-
             }
 
             $page   = $data['page'] ? $data['page'] : 1;
@@ -229,7 +298,6 @@ class Finance extends Common
                 ->field('a.*,u.username,u.usernum,ab.username about_user,ab.usernum aboutnum')
                 ->order('a.id DESC')
                 ->where($where)
-                ->order('id DESC')
                 ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                 ->toArray();
             if(empty($list))
@@ -505,11 +573,36 @@ class Finance extends Common
     public function applicationRecharge()
     {
         $status = ApplyRecharge::$status;
+        $data = Request::param();
+        $where  = $this->applySearch($data);
+        if(!empty($data['export'])){
+            //申请列表
+            $list = db('user_apply_active')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->field('a.*,u.usernum,u.username')
+                ->where($where)
+                ->order('a.id ASC')
+                ->select();
+            if(empty($list))
+                $list = [];
+            $list2 = [];
+            foreach ($list as $k=>$v){
+                $list2[$k]['id'] = $v['id'];
+                $list2[$k]['usernum'] = $v['usernum'];
+                $list2[$k]['username'] = $v['username'];
+                $list2[$k]['amount'] = $v['amount'];
+                $list2[$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+                $list2[$k]['status'] = UserApplyActive::$status[$v['status']];
+            }
+            $file_name = '申请充值';
+
+            $headArr = ['id','用户编号','用户名','充值金额($)','申请时间','状态'];
+            $this->excelExport($file_name, $headArr, $list2);
+        }
         //获取用户申请充值列表
         if(request()->isPost()){
 
-            $data   =input('post.');
-            $where  = $this->applySearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
 
@@ -674,10 +767,13 @@ class Finance extends Common
     public function applicationForCash()
     {
         $status = ApplyCash::$status;
+        $data = Request::param();
+        $where  = $this->makeSearch($data);
+        if(!empty($data['export'])){
+            $this->_exportCash($where, $data);
+        }
         //获取用户申请充值列表
         if(request()->isPost()){
-            $data   =input('post.');
-            $where  = $this->makeSearch($data);
             $page   = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             if($data['type'] == 1){
@@ -685,7 +781,7 @@ class Finance extends Common
                 $list = db('user_apply_shate_cash')
                     ->alias('a')
                     ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username,u.id user_id')
+                    ->field('a.*,u.usernum,u.username,u.id user_id,u.alipay_account')
                     ->where($where)
                     ->order('id DESC')
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
@@ -705,7 +801,7 @@ class Finance extends Common
                 $list = db('user_apply_consume_cash')
                     ->alias('a')
                     ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username,u.id user_id')
+                    ->field('a.*,u.usernum,u.username,u.id user_id,u.alipay_account')
                     ->where($where)
                     ->order('id DESC')
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
@@ -724,7 +820,7 @@ class Finance extends Common
                 $list = db('user_apply_trade_cash')
                     ->alias('a')
                     ->join(config('database.prefix').'users u','a.user_id = u.id','left')
-                    ->field('a.*,u.usernum,u.username,u.id user_id')
+                    ->field('a.*,u.usernum,u.username,u.id user_id,u.alipay_account')
                     ->where($where)
                     ->order('id DESC')
                     ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
@@ -747,6 +843,99 @@ class Finance extends Common
         $this->assign('status', $status);
         $this->assign('currency_arr', $currency_arr);
         return $this->fetch('applicationForCash');
+    }
+
+    //提现申请导出
+    private function _exportCash($where, $data)
+    {
+        if($data['type'] == 1){
+            //沙特链申请列表
+            $list = db('user_apply_shate_cash')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->field('a.*,u.usernum,u.username,u.id user_id,u.alipay_account')
+                ->where($where)
+                ->order('id DESC')
+                ->select();
+
+            $list2 = [];
+            foreach ($list as $k => $v){
+                $list2[$k]['id'] = $v['id'];
+                $list2[$k]['usernum'] = $v['usernum'];
+                $list2[$k]['username'] = $v['username'];
+                $list2[$k]['cash_sum'] = $v['cash_sum'];
+                $list2[$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                $list2[$k]['poundage'] = $v['poundage'];
+                $list2[$k]['real_sum'] = $v['real_sum'];
+                $list2[$k]['alipay_account'] = $v['alipay_account'];
+                $list2[$k]['status_str'] = UserApplyShateCash::$status[$v['status']];
+                $list2[$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+
+            }
+            $file_name = '申请提现-沙特链';
+            $headArr = ['id','用户编号','用户名','提现金额($)','提现方式','手续费','到账金额','支付宝账户','状态','申请时间'];
+            $this->excelExport($file_name, $headArr, $list2);
+
+        }
+
+        if($data['type'] == 2){
+            //消费钱包申请列表
+            $list = db('user_apply_consume_cash')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->field('a.*,u.usernum,u.username,u.id user_id,u.alipay_account')
+                ->where($where)
+                ->order('id DESC')
+                ->select();
+
+            $list2 = [];
+            foreach ($list as $k => $v){
+                $list2[$k]['id'] = $v['id'];
+                $list2[$k]['usernum'] = $v['usernum'];
+                $list2[$k]['username'] = $v['username'];
+                $list2[$k]['cash_sum'] = $v['cash_sum'];
+                $list2[$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                $list2[$k]['poundage'] = $v['poundage'];
+                $list2[$k]['real_sum'] = $v['real_sum'];
+                $list2[$k]['alipay_account'] = $v['alipay_account'];
+                $list2[$k]['status_str'] = UserApplyShateCash::$status[$v['status']];
+                $list2[$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+
+            }
+            $file_name = '申请提现-消费钱包';
+            $headArr = ['id','用户编号','用户名','提现金额($)','提现方式','手续费','到账金额','支付宝账户','状态','申请时间'];
+            $this->excelExport($file_name, $headArr, $list2);
+        }
+
+        if($data['type'] == 3){
+            //交易账号申请列表
+            $list = db('user_apply_trade_cash')
+                ->alias('a')
+                ->join(config('database.prefix').'users u','a.user_id = u.id','left')
+                ->field('a.*,u.usernum,u.username,u.id user_id,u.alipay_account')
+                ->where($where)
+                ->order('id DESC')
+                ->select();
+
+            $list2 = [];
+            foreach ($list as $k => $v){
+                $list2[$k]['id'] = $v['id'];
+                $list2[$k]['usernum'] = $v['usernum'];
+                $list2[$k]['username'] = $v['username'];
+                $list2[$k]['cash_sum'] = $v['cash_sum'];
+                $list2[$k]['cash_method'] = UserApplyShateCash::$cash_method[$v['cash_method']];
+                $list2[$k]['poundage'] = $v['poundage'];
+                $list2[$k]['real_sum'] = $v['real_sum'];
+                $list2[$k]['alipay_account'] = $v['alipay_account'];
+                $list2[$k]['status_str'] = UserApplyShateCash::$status[$v['status']];
+                $list2[$k]['create_time'] = date('Y-m-d H:i:s', $v['create_time']);
+
+            }
+            $file_name = '申请提现-交易账号';
+            $headArr = ['id','用户编号','用户名','提现金额','提现方式','手续费','到账金额','支付宝账户','状态','申请时间'];
+            $this->excelExport($file_name, $headArr, $list2);
+        }
+
     }
 
     //提现申请删除

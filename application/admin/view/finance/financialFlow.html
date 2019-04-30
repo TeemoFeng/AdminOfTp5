@@ -72,7 +72,7 @@
 
                     </div>
                     <button class="layui-btn" id="search2" data-type="reload">搜索</button>
-                    <button class="layui-btn layui-btn layui-btn-warm" onclick="excl_rep()">导出</button>
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export2">导出</button>
                 </div>
                 <table class="layui-table" id="table2" lay-filter="table2"></table>
 
@@ -105,7 +105,7 @@
 
                     </div>
                     <button class="layui-btn" id="search3" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export3">导出</button>
                 </div>
                 <table class="layui-table" id="table3" lay-filter="table3"></table>
 
@@ -138,7 +138,7 @@
 
                     </div>
                     <button class="layui-btn" id="search4" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export4">导出</button>
                 </div>
                 <table class="layui-table" id="table4" lay-filter="table4"></table>
 
@@ -171,7 +171,7 @@
 
                     </div>
                     <button class="layui-btn" id="search5" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export5">导出</button>
                 </div>
                 <table class="layui-table" id="table5" lay-filter="table5"></table>
 
@@ -301,10 +301,9 @@
             var start_time = $('#start_time1').val();
             var end_time = $('#end_time1').val();
             var running_type = $('#status1').val();
-            $.post('{:url("financialFlow")}', {export:1,key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:1},function () {
 
-            })
-
+            var url = '{:url("financialFlow")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&running_type='+running_type+'&account_type=1';
+            location.href = url;
 
         });
 
@@ -317,6 +316,16 @@
             table.reload('table2',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:2}})
         });
 
+        $('#export2').on('click', function() {
+            var key = $('#key2').val();
+            var start_time = $('#start_time2').val();
+            var end_time = $('#end_time2').val();
+            var running_type = $('#status2').val();
+            var url = '{:url("financialFlow")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&running_type='+running_type+'&account_type=2';
+            location.href = url;
+
+        });
+
         //搜索3
         $('#search3').on('click', function() {
             var key = $('#key3').val();
@@ -324,6 +333,16 @@
             var end_time = $('#end_time3').val();
             var running_type = $('#status3').val();
             table.reload('table3',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:3}})
+        });
+
+        $('#export3').on('click', function() {
+            var key = $('#key3').val();
+            var start_time = $('#start_time3').val();
+            var end_time = $('#end_time3').val();
+            var running_type = $('#status3').val();
+            var url = '{:url("financialFlow")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&running_type='+running_type+'&account_type=3';
+            location.href = url;
+
         });
 
         //搜索4
@@ -335,6 +354,16 @@
             table.reload('table4',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:4}})
         });
 
+        $('#export4').on('click', function() {
+            var key = $('#key4').val();
+            var start_time = $('#start_time4').val();
+            var end_time = $('#end_time4').val();
+            var running_type = $('#status4').val();
+            var url = '{:url("financialFlow")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&running_type='+running_type+'&account_type=4';
+            location.href = url;
+
+        });
+
         //搜索5
         $('#search5').on('click', function() {
             var key = $('#key5').val();
@@ -342,6 +371,16 @@
             var end_time = $('#end_time5').val();
             var running_type = $('#status5').val();
             table.reload('table5',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, running_type:running_type,account_type:5}})
+        });
+
+        $('#export5').on('click', function() {
+            var key = $('#key5').val();
+            var start_time = $('#start_time5').val();
+            var end_time = $('#end_time5').val();
+            var running_type = $('#status5').val();
+            var url = '{:url("financialFlow")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&running_type='+running_type+'&account_type=5';
+            location.href = url;
+
         });
 
         show_table(1);

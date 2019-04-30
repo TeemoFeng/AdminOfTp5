@@ -30,10 +30,22 @@ class Users extends Model
         1 => '<i class="layui-icon layui-icon-ok"></i>',
     ];
 
+    //是否有效状态
+    public static $vastatus2 = [
+        0 => '否',
+        1 => '是',
+    ];
+
     //是否报单中心
     public static $bdstatus = [
         0 => '<i class="layui-icon layui-icon-close-fill"></i>',
         1 => '<i class="layui-icon layui-icon-ok-circle"></i>',
+    ];
+
+    //是否报单中心
+    public static $bdstatus2 = [
+        0 => '否',
+        1 => '是',
     ];
 
     //是否报单中心

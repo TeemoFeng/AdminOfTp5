@@ -38,7 +38,7 @@
 
                     </div>
                     <button class="layui-btn" id="search1" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export1">导出</button>
                 </div>
                 <table class="layui-table" id="table1" lay-filter="table1"></table>
             </div>
@@ -70,7 +70,7 @@
 
                     </div>
                     <button class="layui-btn" id="search2" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export2">导出</button>
                 </div>
                 <table class="layui-table" id="table2" lay-filter="table2"></table>
 
@@ -103,7 +103,7 @@
 
                     </div>
                     <button class="layui-btn" id="search3" data-type="reload">搜索</button>
-
+                    <button class="layui-btn layui-btn layui-btn-warm" id="export3">导出</button>
                 </div>
                 <table class="layui-table" id="table3" lay-filter="table3"></table>
 
@@ -235,7 +235,7 @@
                     {field: 'id', title: 'id', width: 50, fixed: true},
                     {field: 'usernum', title: '用户编号', width: 200, fixed: true},
                     {field: 'username', title: '用户名', width: 200, fixed: true},
-                    {field: 'cash_sum', title: '提现金额($)', width: 100},
+                    {field: 'cash_sum', title: '提现金额', width: 100},
                     {field: 'cash_method', title: '提现方式', width: 100},
                     {field: 'poundage', title: '手续费', width: 100},
                     {field: 'real_sum', title: '到账金额', width: 100},
@@ -263,6 +263,17 @@
             table.reload('table1',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status,type:1}})
         });
 
+        //导出
+        $('#export1').on('click', function() {
+            var key = $('#key1').val();
+            var start_time = $('#start_time1').val();
+            var end_time = $('#end_time1').val();
+            var status = $('#status1').val();
+            var url = '{:url("applicationForCash")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&status='+status+'&type=1';
+            location.href = url;
+
+        });
+
         //搜索2
         $('#search2').on('click', function() {
             var key = $('#key2').val();
@@ -270,6 +281,17 @@
             var end_time = $('#end_time2').val();
             var status = $('#status2').val();
             table.reload('table2',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status,type:2}})
+        });
+
+        //导出
+        $('#export2').on('click', function() {
+            var key = $('#key2').val();
+            var start_time = $('#start_time2').val();
+            var end_time = $('#end_time2').val();
+            var status = $('#status2').val();
+            var url = '{:url("applicationForCash")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&status='+status+'&type=2';
+            location.href = url;
+
         });
 
         //搜索3
@@ -281,6 +303,16 @@
             table.reload('table3',{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status,type:3}})
         });
 
+        //导出
+        $('#export3').on('click', function() {
+            var key = $('#key3').val();
+            var start_time = $('#start_time3').val();
+            var end_time = $('#end_time3').val();
+            var status = $('#status3').val();
+            var url = '{:url("applicationForCash")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&status='+status+'&type=3';
+            location.href = url;
+
+        });
 
 
         show_table(1);

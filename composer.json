@@ -21,7 +21,9 @@
         "topthink/think-captcha": "^2.0",
         "phpmailer/phpmailer": "^6.0",
         "tp5er/tp5-databackup": "^1.0",
-        "kuange/qqconnect": "^0.0.1"
+        "kuange/qqconnect": "^0.0.1",
+        "phpoffice/phpspreadsheet": "^1.6",
+        "phpoffice/phpexcel": "^1.8"
     },
     "autoload": {
         "psr-4": {

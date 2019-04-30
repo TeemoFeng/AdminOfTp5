@@ -31,7 +31,7 @@
         </div>
         <button class="layui-btn" id="search" data-type="reload">搜索</button>
         <a href="{:url('applicationRecharge')}" class="layui-btn">显示全部</a>
-
+        <button class="layui-btn layui-btn layui-btn-warm" id="export">导出</button>
 
     </div>
 
@@ -105,6 +105,20 @@
             // }
             tableIn.reload({ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status}});
         });
+
+        //导出
+        $('#export').on('click', function() {
+            var key = $('#key').val();
+            var start_time = $('#start_time').val();
+            var end_time = $('#end_time').val();
+            var status = $('#status').val();
+
+            var url = '{:url("applicationRecharge")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&status='+status;
+            location.href = url;
+        });
+
+
+
         table.on('tool(list)', function(obj) {
             var data = obj.data;
             if (obj.event === 'del') {
