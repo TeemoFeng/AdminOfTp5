@@ -1249,18 +1249,18 @@
                 all_price2 = parseFloat(all_price2).toFixed(4);
                 var ratio2 = FloatDiv(ratio,100); //手续费
                 var ratio3 = FloatSub(1, ratio2);
-                // var real_num2 = FloatMul(all_price2,ratio3);
+                var real_num2 = FloatMul(all_price2,ratio3);
 
                 //手续费
                 poundage2 = FloatMul(all_price2,ratio2);
-                //总金额加手续费
-                real_num2 = FloatAdd(all_price2,poundage2);
-                //计算交易额
-                real_num2 = parseFloat(real_num2).toFixed(4);
+                // //总金额加手续费
+                // real_num2 = FloatAdd(all_price2,poundage2);
+                // //计算交易额
+                // real_num2 = parseFloat(real_num2).toFixed(4);
                 poundage2 = parseFloat(poundage2).toFixed(4);
-                $('#all_num2').val(all_price2);
-                $('#trade_num2').val(real_num2);
-                $('#trade_num_span2').html(all_price2);
+                $('#all_num2').val(all_price2); //总价
+                $('#trade_num2').val(real_num2); //交易额
+                $('#trade_num_span2').html(real_num2);
                 $('#poundage2').val(poundage2);
                 $('#poundage_span2').html(poundage2);
             }else{

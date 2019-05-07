@@ -83,7 +83,7 @@ class Trade extends Common{
             $where['a.create_time'] = array('between time', array($start_time, $end_time));
         }
         if(!empty($data['key'])){
-            $where['u.id|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
+            $where['u.id|u.usernum|u.email|u.mobile|u.username'] = array('like', '%' . $data['key'] . '%');
         }
         return $where;
     }

@@ -70,6 +70,7 @@ class Users extends Common
             ->select();
         $list2 = [];
         foreach ($list as $k => $v) {
+            $list2[$k]['id'] = $v['id'];
             $list2[$k]['usernum'] = $v['usernum'];
             $list2[$k]['username'] = $v['username'];
             $list2[$k]['mobile'] = $v['mobile'];
@@ -95,7 +96,10 @@ class Users extends Common
             $list2[$k]['enabled'] = UsersModel::$vastatus2[$v['enabled']];
             $list2[$k]['baodan_center'] = UsersModel::$bdstatus2[$v['baodan_center']];
             $list2[$k]['is_report'] = UsersModel::$yhstatus[$v['is_report']];
+            $file_name = '会员列表';
 
+            $headArr = ['id','用户名','用户编号','手机号','沙特链','交易账户','激活钱包','消费钱包','本金账号','投资单价','会员等级','报单额','复投数量','推荐人编号','接点人编号','报单中心','注册时间','激活时间','有效会员','是否报单中心','是否报备银行'];
+            $this->excelExport($file_name, $headArr, $list2);
 
 
         }

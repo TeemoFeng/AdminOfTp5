@@ -7,6 +7,7 @@
  */
 namespace app\cli\controller;
 use app\admin\controller\Users;
+use app\admin\model\Currency;
 use app\admin\model\CurrencyList;
 use app\admin\model\UserCurrencyAccount;
 use app\admin\model\UserReferee;
@@ -18,6 +19,7 @@ use app\user\model\UserRunningLog;
 use think\Controller;
 use think\Db;
 use think\db\Where;
+use think\Log;
 
 class Bourse extends Controller {
 
@@ -43,8 +45,8 @@ class Bourse extends Controller {
             if($level_id == 0 || $user_info['enabled'] == 0){
                 continue;
             }
-            $user_shate = bcadd($account['corpus'], $account['cash_input_num'],4);
 
+            $user_shate = bcadd($account['corpus'], $account['cash_input_num'],4);
 
             if($level_id == 1){
                 $shouyi = bcmul($user_shate,$static_set[0],4);
@@ -366,18 +368,19 @@ class Bourse extends Controller {
         $where = new Where();
         $where['depute_status'] = 1; //正在委托
         $where['depute_type'] = 1; //买入
-        $where['status'] = ['in', '1,2']; //未完成成交的
         $where['lock'] = 0;
+        $where['status'] = ['in', '1,2']; //未完成成交的
         $buy_list = UserTradeDepute::where($where)->select();
 
         //2.查询用户 卖币列表
         $where2 = new Where();
         $where2['depute_status'] = 1; //正在委托
         $where2['depute_type'] = 2; //卖出
-        $where2['status'] = ['in', '1,2']; //未完成成交的
         $where2['lock'] = 0;
+        $where2['status'] = ['in', '1,2']; //未完成成交的
         $sell_list = UserTradeDepute::where($where2)->select();
 
+        $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
         //3.产生交易
         foreach ($buy_list as $k => $v){
 //            //查询该委托是否已经锁定
@@ -402,45 +405,176 @@ class Bourse extends Controller {
                 //如果买入价格高于卖价且卖家数量大于等于买家要购买的数量
                 $sell_count = bcsub($vv['num'], $vv['have_trade'], 4);
                 $buy_count = bcsub($v['num'], $v['have_trade'], 4);
-                if(bccomp($v['price'], $vv['price']) >=0 && bccomp($sell_count, $buy_count >=0)){
-                    //创建交易订单
-                   $order_num =  $this->createOrderNum();
-                   $all_num = bcmul($v['num'], $v['price'],4);
-//                   $poundage = bcmul($all_num, 0.0001,4);
-//                   $sum = bcsub($all_num, $poundage, 4);
-                   $add_buy = [
-                       'users_id'   => $v['user_id'], //卖家用户id 方便订单查询记录
-                       'user_id'    => $v['user_id'], //买方
-                       'about_id'   => $vv['user_id'], //关联卖方id
-                       'order_num'  => $order_num,
-                       'trade_num'  => $v['num'], //买家购买量
-                       'trade_currency' => $v['depute_currency'],
-                       'price'          => $v['price'],
-                       'poundage'        => 0,
-                       'sum'             => $all_num,
-                       'trade_depute_id' => $v['id'],
-                       'trade_type'      => 1, //买入
-                       'trade_status'    => 1, //未完成
-                       'create_time'     => time()
+                //step 1 生成订单
+                if(bccomp($v['price'], $vv['price']) >=0 ){
+                    $order_num =  $this->createOrderNum();
+                    //如果买入数量大于等于卖出数量
+                    if(bccomp($sell_count, $buy_count, 4) >= 0){
 
-                   ];
-                    $add_sell = [
-                        'users_id'   => $vv['user_id'], //卖家用户id 方便订单查询记录
-                        'user_id'    => $vv['user_id'], //卖方
-                        'about_id'   => $v['user_id'],  //关联买方id
-                        'order_num'  => $order_num,
-                        'trade_num'  => $v['num'], //买家购买量
-                        'trade_currency'  => $v['depute_currency'],
-                        'price'           => $v['price'],
-                        'poundage'        => 0,
-                        'sum'             => $all_num,
-                        'trade_depute_id' => $vv['id'],
-                        'trade_type'      => 2, //卖出
-                        'trade_status'    => 1, //未完成
-                        'create_time'     => time()
+                        //创建交易订单
+                        $all_num = bcmul($buy_count, $v['price'],4);
 
-                    ];
+                        $add_buy = [
+                            'users_id'   => $v['user_id'], //卖家用户id 方便订单查询记录
+                            'user_id'    => $v['user_id'], //买方
+                            'about_id'   => $vv['user_id'], //关联卖方id
+                            'order_num'  => $order_num,
+                            'trade_num'  => $buy_count, //买家购买量
+                            'trade_currency' => $v['depute_currency'],
+                            'price'          => $v['price'],
+                            'poundage'        => 0,
+                            'sum'             => $all_num,
+                            'trade_depute_id' => $v['id'],
+                            'trade_type'      => 1, //买入
+                            'trade_status'    => 1,
+                            'create_time'     => time()
+
+                        ];
+                        $add_sell = [
+                            'users_id'   => $vv['user_id'], //卖家用户id 方便订单查询记录
+                            'user_id'    => $vv['user_id'], //卖方
+                            'about_id'   => $v['user_id'],  //关联买方id
+                            'order_num'  => $order_num,
+                            'trade_num'  => $buy_count, //买家购买量
+                            'trade_currency'  => $v['depute_currency'],
+                            'price'           => $v['price'],
+                            'poundage'        => 0,
+                            'sum'             => $all_num,
+                            'trade_depute_id' => $vv['id'],
+                            'trade_type'      => 2, //卖出
+                            'trade_status'    => 1, //未完成
+                            'create_time'     => time()
+
+                        ];
+                    }else{
+                        //如果购买数量小于卖家的数量
+                        $all_num = bcmul($sell_count, $v['price'],4);
+                        $add_buy = [
+                            'users_id'   => $v['user_id'], //卖家用户id 方便订单查询记录
+                            'user_id'    => $v['user_id'], //买方
+                            'about_id'   => $vv['user_id'], //关联卖方id
+                            'order_num'  => $order_num,
+                            'trade_num'  => $sell_count, //买家购买量
+                            'trade_currency' => $v['depute_currency'],
+                            'price'          => $v['price'],
+                            'poundage'        => 0,
+                            'sum'             => $all_num,
+                            'trade_depute_id' => $v['id'],
+                            'trade_type'      => 1, //买入
+                            'trade_status'    => 1, //未完成
+                            'create_time'     => time()
+
+                        ];
+                        $add_sell = [
+                            'users_id'   => $vv['user_id'], //卖家用户id 方便订单查询记录
+                            'user_id'    => $vv['user_id'], //卖方
+                            'about_id'   => $v['user_id'],  //关联买方id
+                            'order_num'  => $order_num,
+                            'trade_num'  => $sell_count, //买家购买量
+                            'trade_currency'  => $v['depute_currency'],
+                            'price'           => $v['price'],
+                            'poundage'        => 0,
+                            'sum'             => $all_num,
+                            'trade_depute_id' => $vv['id'],
+                            'trade_type'      => 2, //卖出
+                            'trade_status'    => 1, //未完成
+                            'create_time'     => time()
+
+                        ];
+                    }
+
                     Db::startTrans();
+
+                    //step2 更新买家货币数量
+                    $user_currecny = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();
+                    if(empty($user_currecny)) {
+                        $user_currency = [
+                            'user_id'       => $v['user_id'],
+                            'currency_id'   => $currency_id,
+                            'num'           => $add_buy['trade_num'], //本次交易数量
+                        ];
+                        $amei_num = $add_buy['trade_num'];
+                        $res5 = UserCurrencyList::create($user_currency);
+                        if($res5 === 0){
+                            Db::rollback();
+                            continue;
+                        }
+
+                    }else{
+                        $amei_num = bcadd($user_currecny['num'], $add_buy['trade_num'], 4);
+                        //添加用户币种列表
+                        $user_currency = [
+                            'num'    => $amei_num,
+                        ];
+                        $res6 = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->update($user_currency);
+                        if($res6 === false){
+                            Db::rollback();
+                            continue;
+                        }
+                    }
+
+//                    $res7= UserRunningLog::create([
+//                        'user_id'  =>  $add_buy['user_id'],
+//                        'about_id' =>  $add_buy['about_id'],
+//                        'running_type'  => UserRunningLog::TYPE28, //阿美币交易增加
+//                        'account_type'  => Currency::TRADE,
+//                        'change_num'    => $add_buy['trade_num'],
+//                        'balance'       => $amei_num,
+//                        'create_time'   => time(),
+//                    ]);
+//
+//                    if($res7 === false){
+//                        Db::rollback();
+//                        continue;
+//                    }
+
+                    //step3 更新卖家交易账户数量
+                    $trade_sum = bcmul($add_buy['trade_num'], $add_buy['price'], 4); //本次交易总价
+                    //本次手续费
+                    $trade_poundage = bcmul($trade_sum, 0.001, 4);
+                    $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
+                    //查询卖家交易账户
+                    $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $vv['user_id']])->value('transaction_num'); //获取交易钱包余额
+                    $sell_trade_account = bcadd($user_transaction_num, $real_sum);
+                    $res8 = UserCurrencyAccount::where(['user_id' => $vv['user_id']])->update(['transaction_num' => $sell_trade_account]);
+                    if($res8 === false){
+                        Db::rollback();
+                        continue;
+                    }
+
+                    $all_balance = bcadd($user_transaction_num, $trade_sum, 4);
+                    $res9= UserRunningLog::create([
+                        'user_id'  =>  $add_buy['about_id'],
+                        'about_id' =>  $add_buy['user_id'],
+                        'running_type'  => UserRunningLog::TYPE28, //阿美币交易增加
+                        'account_type'  => Currency::TRADE,
+                        'change_num'    => $trade_sum,
+                        'balance'       => $all_balance,
+                        'create_time'   => time(),
+                    ]);
+
+                    if($res9 === false){
+                        Db::rollback();
+                        continue;
+                    }
+                    //手续费扣除
+                    $res10 = UserRunningLog::create([
+                        'user_id'  =>  $add_buy['about_id'],
+                        'about_id' =>  $add_buy['user_id'],
+                        'running_type'  => UserRunningLog::TYPE30,
+                        'account_type'  => Currency::TRADE,
+                        'change_num'    => -$trade_poundage,
+                        'balance'       => $sell_trade_account,
+                        'create_time'   => time(),
+                        'remark'        => '委托购买阿美币手续费扣除',
+                    ]);
+
+                    if($res10 === false){
+                        Db::rollback();
+                        continue;
+                    }
+
+
                     $res  = Db::name('user_trade_depute_log')->insert($add_buy);
                     $res2 = Db::name('user_trade_depute_log')->insert($add_sell);
                     //锁定托管记录
@@ -451,15 +585,18 @@ class Bourse extends Controller {
                         continue;
                     }
 
-                    Db::commit();
+                    //step2 发生交易
 
+
+
+                    Db::commit();
                     //给买家和卖家发短信通知
-                    $buy_mobile = Db::name('users')->where(['id' => $v['user_id']])->value('mobile');
-                    $sell_mobile = Db::name('users')->where(['id' => $vv['user_id']])->value('mobile');
-                    $content = '您委托购买的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’为卖家打款，我们会在第一时间为您释放货币';
-                    $content2 = '您委托卖出的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’等待买家付款之后，确认收款完成交易';
-                    sendOrderSms($buy_mobile, $content); //给买家发送信息
-                    sendOrderSms($sell_mobile, $content2); //给买家发送信息
+//                    $buy_mobile = Db::name('users')->where(['id' => $v['user_id']])->value('mobile');
+//                    $sell_mobile = Db::name('users')->where(['id' => $vv['user_id']])->value('mobile');
+//                    $content = '您委托购买的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’为卖家打款，我们会在第一时间为您释放货币';
+//                    $content2 = '您委托卖出的阿美币订单已产生，订单号:'.$order_num.',请去‘我的订单’等待买家付款之后，确认收款完成交易';
+//                    sendOrderSms($buy_mobile, $content); //给买家发送信息
+//                    sendOrderSms($sell_mobile, $content2); //给买家发送信息
 
 
                 }
@@ -468,6 +605,54 @@ class Bourse extends Controller {
 
 
     }
+
+
+    //step 2 产生交易
+    public function haveTrade()
+    {
+        //更新买家货币数量
+        $user_currecny = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->find();
+        if(empty($user_currecny)) {
+            $user_currency = [
+                'user_id'       => $v['user_id'],
+                'currency_id'   => $currency_id,
+                'num'           => $buy_count,
+            ];
+            $amei_num = $buy_count;
+            UserCurrencyList::create($user_currency);
+
+        }else{
+            $amei_num = bcadd($user_currecny['num'], $buy_count, 4);
+            //添加用户币种列表
+            $user_currency = [
+                'num'    => $amei_num,
+            ];
+            $res3 = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $currency_id])->update($user_currency);
+            if($res3 === false){
+                Db::rollback();
+                return ['code' => 0, 'msg' => '操作失败请重试'];
+            }
+        }
+
+        $res4= UserRunningLog::create([
+            'user_id'  =>  $v['user_id'],
+            'about_id' =>  $v['about_id'],
+            'running_type'  => UserRunningLog::TYPE28, //交易增加
+            'account_type'  => Currency::TRADE,
+            'change_num'    => $v['trade_num'],
+            'balance'       => $amei_num,
+            'create_time'   => time(),
+        ]);
+
+        if($res4 == 0){
+            Db::rollback();
+            return ['code' => 0, 'msg' => '操作失败请重试'];
+        }
+
+    }
+
+
+
 
     public function createOrderNum()
     {
