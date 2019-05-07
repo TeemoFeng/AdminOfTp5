@@ -635,8 +635,8 @@ class User extends Common
                 $sell_count = bcsub($v['num'], $v['have_trade'], 4);
                 //如果买入价格大于卖出价格,且卖家数量尚有剩余
                 if(bccomp($data['price'], $v['price']) >=0 && $sell_count > 0){
-                    //如果买入数量大于卖出数量
-                    if(bccomp($buy_count, $sell_count, 4) > 0){
+                    //如果买入数量大于等于 卖出数量
+                    if(bccomp($buy_count, $sell_count, 4) >= 0){
                         //已卖家的价格结算
                         $all_num = bcmul($sell_count, $v['price'],4);
                         //创建交易订单
@@ -647,7 +647,7 @@ class User extends Common
                             'order_num'  => $order_num,
                             'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency' => $amei_infos['id'],
-                            'price'          => $data['price'],
+                            'price'          => $v['price'],
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $buy_id,
@@ -663,7 +663,7 @@ class User extends Common
                             'order_num'  => $order_num,
                             'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency'  => $amei_infos['id'],
-                            'price'           => $data['price'],
+                            'price'           => $v['price'],
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $v['id'],
@@ -694,11 +694,29 @@ class User extends Common
                             $user_currency = [
                                 'num'    => $amei_num,
                             ];
-                            $res6 = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $amei_infos['id']])->update($user_currency);
+                            $res6 = UserCurrencyList::where(['id' => $user_currecny['id']])->update($user_currency);
                             if($res6 === false){
                                 Db::rollback();
                                 continue;
                             }
+                        }
+
+                        //记录阿美比交易
+                        $run_log = [
+                            'user_id'   => $data['user_id'],
+                            'about_id'  => $v['user_id'],
+                            'running_type' => UserRunningLog::TYPE28,
+                            'currency_from' => $amei_infos['id'],
+                            'currency_to'   => $amei_infos['id'],
+                            'change_num'    => $add_buy['trade_num'],
+                            'create_time'   => time(),
+                            'remark'        => '交易增加'
+
+                        ];
+                        $res7 = Db::name('currency_running_log')->insert($run_log);
+                        if($res7 === 0){
+                            Db::rollback();
+                            continue;
                         }
 
                         //step3 更新卖家交易账户数量
@@ -708,7 +726,7 @@ class User extends Common
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
                         $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $v['user_id']])->value('transaction_num'); //获取交易钱包余额
-                        $sell_trade_account = bcadd($user_transaction_num, $real_sum);
+                        $sell_trade_account = bcadd($user_transaction_num, $real_sum,4);
                         $res8 = UserCurrencyAccount::where(['user_id' => $v['user_id']])->update(['transaction_num' => $sell_trade_account]);
                         if($res8 === false){
                             Db::rollback();
@@ -761,7 +779,7 @@ class User extends Common
                         $res13 = Db::name('user_trade_depute')->where(['id' => $buy_id])->update($buy_up);
                         //修改卖家托管成交数量
                         $sell_have_trade = Db::name('user_trade_depute')->where(['id' => $v['id']])->find();
-                        $sell_count_this = bcadd($sell_have_trade['have_trade'], $sell_count, 4);
+                        $sell_count_this = bcadd($sell_have_trade['have_trade'], $add_buy['trade_num'], 4);
                         $sell_up['have_trade'] = $sell_count_this;
                         if(bccomp($sell_count_this, $sell_have_trade['num']) == 0){
                             $sell_up['status'] = 3;
@@ -769,7 +787,7 @@ class User extends Common
                         }else{
                             $sell_up['status'] = 2;
                         }
-                        $res14 = Db::name('user_trade_depute')->where(['id' => $v['id']])->update(['have_trade' => $sell_count_this]);
+                        $res14 = Db::name('user_trade_depute')->where(['id' => $v['id']])->update($sell_up);
 
                         if($res11 === 0 || $res12 === 0 || $res13 === false || $res14 === false){
                             Db::rollback();
@@ -837,7 +855,7 @@ class User extends Common
                             $user_currency = [
                                 'num'    => $amei_num,
                             ];
-                            $res6 = UserCurrencyList::where(['user_id' => $data['user_id'],'currency_id' => $amei_infos['id']])->update($user_currency);
+                            $res6 = UserCurrencyList::where(['id' => $user_currecny['id']])->update($user_currency);
                             if($res6 === false){
                                 Db::rollback();
                                 continue;
@@ -845,8 +863,8 @@ class User extends Common
                         }
                         //记录阿美比交易
                         $run_log = [
-                            'user_id'   => $v['user_id'],
-                            'about_id'  => $data['user_id'],
+                            'user_id'   => $data['user_id'],
+                            'about_id'  => $v['user_id'],
                             'running_type' => UserRunningLog::TYPE28,
                             'currency_from' => $amei_infos['id'],
                             'currency_to'   => $amei_infos['id'],
@@ -868,7 +886,7 @@ class User extends Common
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
                         $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $v['user_id']])->value('transaction_num'); //获取交易钱包余额
-                        $sell_trade_account = bcadd($user_transaction_num, $real_sum);
+                        $sell_trade_account = bcadd($user_transaction_num, $real_sum,4);
                         $res8 = UserCurrencyAccount::where(['user_id' => $v['user_id']])->update(['transaction_num' => $sell_trade_account]);
                         if($res8 === false){
                             Db::rollback();
@@ -918,7 +936,7 @@ class User extends Common
                         $res13 = Db::name('user_trade_depute')->where(['id' => $buy_id])->update($buy_up);
                         //修改卖家托管成交数量
                         $sell_have_trade = Db::name('user_trade_depute')->where(['id' => $v['id']])->find();
-                        $sell_count_this = bcadd($sell_have_trade['have_trade'], $sell_count, 4);
+                        $sell_count_this = bcadd($sell_have_trade['have_trade'], $add_buy['trade_num'], 4);
                         $sell_up['have_trade'] = $sell_count_this;
                         if(bccomp($sell_count_this, $sell_have_trade['num']) == 0){
                             $sell_up['status'] = 3;
@@ -926,7 +944,7 @@ class User extends Common
                         }else{
                             $sell_up['status'] = 2;
                         }
-                        $res14 = Db::name('user_trade_depute')->where(['id' => $v['id']])->update(['have_trade' => $sell_count_this]);
+                        $res14 = Db::name('user_trade_depute')->where(['id' => $v['id']])->update($sell_up);
 
 
                         if($res11 === 0 || $res12 === 0 || $res13 === false || $res14 === false){
@@ -963,7 +981,7 @@ class User extends Common
                 //如果买入价格大于卖出价格,且买家数量尚有剩余
                 if(bccomp($v['price'], $data['price']) >=0 && $buy_count > 0){
                     //如果卖出数量大于买入数量
-                    if(bccomp($sell_count, $buy_count, 4) > 0){
+                    if(bccomp($sell_count, $buy_count, 4) >= 0){
                         //已卖家的价格结算
                         $all_num = bcmul($buy_count, $data['price'],4);
                         //创建交易订单
@@ -1028,6 +1046,24 @@ class User extends Common
                             }
                         }
 
+                        //记录阿美比交易
+                        $run_log = [
+                            'user_id'   => $v['user_id'],
+                            'about_id'  => $data['user_id'],
+                            'running_type' => UserRunningLog::TYPE28,
+                            'currency_from' => $amei_infos['id'],
+                            'currency_to'   => $amei_infos['id'],
+                            'change_num'    => $add_buy['trade_num'],
+                            'create_time'   => time(),
+                            'remark'        => '交易增加'
+
+                        ];
+                        $res7 = Db::name('currency_running_log')->insert($run_log);
+                        if($res7 === 0){
+                            Db::rollback();
+                            continue;
+                        }
+
                         //step3 更新卖家交易账户数量
                         $trade_sum = bcmul($add_buy['trade_num'], $add_buy['price'], 4); //本次交易总价
                         //本次手续费
@@ -1035,7 +1071,7 @@ class User extends Common
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
                         $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $data['user_id']])->value('transaction_num'); //获取交易钱包余额
-                        $sell_trade_account = bcadd($user_transaction_num, $real_sum);
+                        $sell_trade_account = bcadd($user_transaction_num, $real_sum, 4);
                         $res8 = UserCurrencyAccount::where(['user_id' => $data['user_id']])->update(['transaction_num' => $sell_trade_account]);
                         if($res8 === false){
                             Db::rollback();
@@ -1078,7 +1114,7 @@ class User extends Common
 
                         //修改买家托管成交数量
                         $buy_have_trade = Db::name('user_trade_depute')->where(['id' => $v['id']])->find();
-                        $buy_count_this = bcadd($buy_have_trade['have_trade'], $buy_count, 4);
+                        $buy_count_this = bcadd($buy_have_trade['have_trade'], $add_buy['trade_num'], 4);
                         $buy_up['have_trade'] = $buy_count_this;
                         if(bccomp($buy_count_this, $buy_have_trade['num']) == 0){
                             $buy_up['status'] = 3;
@@ -1097,7 +1133,7 @@ class User extends Common
                         }else{
                             $sell_up['status'] = 2;
                         }
-                        $res14 = Db::name('user_trade_depute')->where(['id' => $sell_id])->update(['have_trade' => $sell_count_this]);
+                        $res14 = Db::name('user_trade_depute')->where(['id' => $sell_id])->update($sell_up);
 
                         if($res11 === 0 || $res12 === 0 || $res13 === false || $res14 === false){
                             Db::rollback();
@@ -1114,7 +1150,7 @@ class User extends Common
                             'user_id'    => $v['user_id'], //买方
                             'about_id'   => $data['user_id'], //关联卖方id
                             'order_num'  => $order_num,
-                            'trade_num'  => $buy_count, //本次交易数量
+                            'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency' => $amei_infos['id'],
                             'price'          => $data['price'],
                             'poundage'        => 0,
@@ -1130,7 +1166,7 @@ class User extends Common
                             'user_id'    => $data['user_id'], //卖方
                             'about_id'   => $v['user_id'],  //关联买方id
                             'order_num'  => $order_num,
-                            'trade_num'  => $buy_count, //本次交易数量
+                            'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency'  => $amei_infos['id'],
                             'price'           => $data['price'],
                             'poundage'        => 0,
@@ -1163,11 +1199,29 @@ class User extends Common
                             $user_currency = [
                                 'num'    => $amei_num,
                             ];
-                            $res6 = UserCurrencyList::where(['user_id' => $v['user_id'],'currency_id' => $amei_infos['id']])->update($user_currency);
+                            $res6 = UserCurrencyList::where(['id' => $user_currecny['id']])->update($user_currency);
                             if($res6 === false){
                                 Db::rollback();
                                 continue;
                             }
+                        }
+
+                        //记录阿美比交易
+                        $run_log = [
+                            'user_id'   => $v['user_id'],
+                            'about_id'  => $data['user_id'],
+                            'running_type' => UserRunningLog::TYPE28,
+                            'currency_from' => $amei_infos['id'],
+                            'currency_to'   => $amei_infos['id'],
+                            'change_num'    => $add_buy['trade_num'],
+                            'create_time'   => time(),
+                            'remark'        => '交易增加'
+
+                        ];
+                        $res7 = Db::name('currency_running_log')->insert($run_log);
+                        if($res7 === 0){
+                            Db::rollback();
+                            continue;
                         }
 
                         //step3 更新卖家交易账户数量
@@ -1176,8 +1230,8 @@ class User extends Common
                         $trade_poundage = bcmul($trade_sum, 0.001, 4);
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
-                        $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $sell_id])->value('transaction_num'); //获取交易钱包余额
-                        $sell_trade_account = bcadd($user_transaction_num, $real_sum);
+                        $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $data['user_id']])->value('transaction_num'); //获取交易钱包余额
+                        $sell_trade_account = bcadd($user_transaction_num, $real_sum, 4);
                         $res8 = UserCurrencyAccount::where(['user_id' => $v['user_id']])->update(['transaction_num' => $sell_trade_account]);
                         if($res8 === false){
                             Db::rollback();
@@ -1220,8 +1274,8 @@ class User extends Common
 
                         //修改买家托管成交数量
                         $buy_have_trade = Db::name('user_trade_depute')->where(['id' => $v['id']])->find();
-                        $buy_count_this = bcadd($buy_have_trade['have_trade'], $sell_count, 4);
-
+                        $buy_count_this = bcadd($buy_have_trade['have_trade'], $add_buy['trade_num'], 4);
+                        $buy_up['have_trade'] = $buy_count_this;
                         if(bccomp($buy_count_this, $buy_have_trade['num']) == 0){
                             $buy_up['status'] = 3;
                             $buy_up['depute_status'] = 2;
@@ -1233,12 +1287,12 @@ class User extends Common
 
                         //修改卖家托管成交数量
                         $sell_have_trade = Db::name('user_trade_depute')->where(['id' => $sell_id])->find();
-                        $sell_count_this = bcadd($sell_have_trade['have_trade'], $sell_count, 4);
+//                        $sell_count_this = bcadd($sell_have_trade['have_trade'], $add_buy['trade_num'], 4);
                         $sell_up['have_trade'] = $sell_have_trade['num'];
                         $sell_up['status'] = 3;
                         $sell_up['depute_status'] = 2;
 
-                        $res14 = Db::name('user_trade_depute')->where(['id' => $sell_id])->update(['have_trade' => $sell_count_this]);
+                        $res14 = Db::name('user_trade_depute')->where(['id' => $sell_id])->update($sell_up);
 
 
                         if($res11 === 0 || $res12 === 0 || $res13 === false || $res14 === false){
