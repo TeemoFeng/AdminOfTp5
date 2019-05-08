@@ -85,7 +85,7 @@ class UserRunningLog extends Model
         self::TYPE33 => '撤回复投',
         self::TYPE34 => '撤回复投手续费',
         self::TYPE35 => '锁仓扣除',
-        self::TYPE36 => '截仓扣除',
+        self::TYPE36 => '解仓扣除',
         self::TYPE37 => '后台激活',
         self::TYPE38 => '挂单手续费扣除',
 

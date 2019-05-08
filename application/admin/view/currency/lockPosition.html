@@ -1,0 +1,99 @@
+{include file="common/head"/}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>锁仓</legend>
+    </fieldset>
+
+    <form class="layui-form " lay-filter="form">
+
+        <fieldset class="layui-elem-field layui-field-title">
+            <div class="layui-field-box">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="username"  placeholder="" class="layui-input" disabled value="{$info['username']}">
+                    </div>
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">可用数量</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="num"   lay-verify="num" id="num" disabled placeholder="" class="layui-input" value="{$info['num']}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">冻结数量</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="freeze_num"   lay-verify="freeze_num" disabled placeholder="" class="layui-input" value="{$info['freeze_num']}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">已锁仓数量</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="lock_num" lay-verify="lock_num"  disabled placeholder="" class="layui-input" value="{$info['lock_num']}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">要锁仓数量</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="this_lock_num" lay-verify="this_lock_num"  placeholder="" class="layui-input" value="">
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info['id']}">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">确定</button>
+                <a href="{:url('userCurrency')}" class="layui-btn layui-btn-primary">返回</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{include file="common/foot"/}
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, layer = layui.layer,$= layui.jquery;
+        form.verify({
+            this_lock_num : function (value, item) { //手机验证可以直接采用lay-verify
+                if(value.length < 1){
+                    return '锁仓数量不能为空';
+                }
+                var corpus = $('#num').val();
+                if(Number(value) > Number(corpus)){
+                    return '锁仓数量不能大于可用数量';
+                }
+            }
+        });
+
+
+        //提交表单
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(2, {shade: [0.1,'#fff']});
+
+            $.post('{:url("lockPosition")}', data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                        location.href= '{:url("userCurrency")}';
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        })
+
+
+
+    });
+</script>

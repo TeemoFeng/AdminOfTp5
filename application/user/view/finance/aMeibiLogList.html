@@ -45,6 +45,13 @@
 
     </script>
 
+    <script type="text/html" id="color">
+        {{# if(d.change_num > '0'){ }}
+        <span style="color: green">{{d.change_num}}</span>
+        {{# }else{ }}
+        <span style="color: red">{{d.change_num}}</span>
+        {{# } }}
+    </script>
 
     <script type="text/html" id="topBtn">
 
@@ -77,7 +84,7 @@
                         {field: 'running_str', title: '流水类型', width: 200},
                         {field: 'mobile', title: '手机号', width: 200},
                         {field: 'en_name', title: '货币', width: 200},
-                        {field: 'change_num', title: '变更数量', width: 200},
+                        {field: 'change_num', title: '变更数量', width: 200,templet:'#color'},
                         {field: 'create_time', title: '流水时间', width: 200},
                         {field: 'remark', title: '备注', width: 100},
 

@@ -40,10 +40,13 @@
 </div>
 
 
-<script type="text/html" id="action">
-    <a href="{:url('applyDetail')}?id={{d.id}}" class="layui-btn layui-btn-primary layui-btn-xs">查看备注</a>
+    <script type="text/html" id="action">
+        <a href="#" class="layui-btn layui-bg-green layui-btn-xs" lay-event="recharge">冲币</a>
 
-</script>
+        <a href="#" class="layui-btn layui-bg-orange layui-btn-xs" lay-event="deduction">扣币</a>
+        <a href="{:url('lockPosition')}?id={{d.id}}" class="layui-btn layui-bg-blue layui-btn-xs">锁仓</a>
+        <a href="{:url('solutionWarehouse')}?id={{d.id}}" class="layui-btn layui-bg-red layui-btn-xs">解仓</a>
+    </script>
 
 
 <script type="text/html" id="topBtn">
@@ -78,7 +81,7 @@
                     {field: 'num', title: '数量', width: 200},
                     {field: 'freeze_num', title: '冻结数量', width: 200},
                     {field: 'lock_num', title: '锁仓数量', width: 100},
-                    {title:'操作', width: 100, align: 'center', toolbar: '#action'}
+                    {title:'操作', width: 230, align: 'center', toolbar: '#action'}
                 ]],
                 limit: 10 //每页默认显示的数量
             });
@@ -104,6 +107,59 @@
             $('#key'+index).val('');
             show_table(index);
         });
+
+        table.on('tool(table0)', function(obj) {
+            var data = obj.data;
+            //冲币
+            if (obj.event === 'recharge') {
+                //例子2
+                layer.prompt({
+                    value: 0, //初始值
+                    title: '请输入充值数量',
+                }, function(value, index, elem){
+                    loading =layer.load(2, {shade: [0.1,'#fff']});
+                    //发送修改请求
+                    $.post('{:url("recharge")}',{'id':data.id,'val':value},function (res) {
+                        layer.close(loading);
+                        if (res.code==1) {
+                            location.reload();
+                            layer.msg(res.msg,{time:1000,icon:1});
+                        }else{
+                            layer.msg(res.msg,{time:1000,icon:2});
+                            return false;
+                        }
+                    });
+
+                    layer.close(index);
+                });
+            }
+
+            //扣币
+            if (obj.event === 'deduction') {
+                //例子2
+                layer.prompt({
+                    value: 0, //初始值
+                    title: '请输入扣除数量',
+                }, function(value, index, elem){
+                    loading =layer.load(2, {shade: [0.1,'#fff']});
+                    //发送修改请求
+                    $.post('{:url("deduction")}',{'id':data.id,'val':value},function (res) {
+                        layer.close(loading);
+                        if (res.code==1) {
+                            location.reload();
+                            layer.msg(res.msg,{time:1000,icon:1});
+                        }else{
+                            layer.msg(res.msg,{time:1000,icon:2});
+                            return false;
+                        }
+                    });
+
+                    layer.close(index);
+                });
+            }
+        });
+
+
 
     });
 </script>

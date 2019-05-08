@@ -770,28 +770,12 @@ class User extends Common
                             continue;
                         }
 
-                        //记录阿美比交易 卖方扣除
-                        $run_log = [
-                            'user_id'   => $v['user_id'],
-                            'about_id'  => $data['user_id'],
-                            'running_type' => UserRunningLog::TYPE29,
-                            'currency_from' => $amei_infos['id'],
-                            'currency_to'   => $amei_infos['id'],
-                            'change_num'    => $add_buy['trade_num'],
-                            'create_time'   => time(),
-                            'remark'        => '交易扣除'
-
-                        ];
-                        $res71 = Db::name('currency_running_log')->insert($run_log);
-                        if($res71 === 0){
-                            Db::rollback();
-                            continue;
-                        }
 
                         //step3 更新卖家交易账户数量
                         $trade_sum = bcmul($add_buy['trade_num'], $add_buy['price'], 4); //本次交易总价
                         //本次手续费
                         $trade_poundage = bcmul($trade_sum, 0.001, 4);
+                        $add_sell['poundage'] = $trade_poundage;
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
                         $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $v['user_id']])->value('transaction_num'); //获取交易钱包余额
@@ -948,28 +932,12 @@ class User extends Common
                             continue;
                         }
 
-                        //记录阿美比交易 卖方扣除
-                        $run_log = [
-                            'user_id'   => $v['user_id'],
-                            'about_id'  => $data['user_id'],
-                            'running_type' => UserRunningLog::TYPE29,
-                            'currency_from' => $amei_infos['id'],
-                            'currency_to'   => $amei_infos['id'],
-                            'change_num'    => $add_buy['trade_num'],
-                            'create_time'   => time(),
-                            'remark'        => '交易扣除'
-
-                        ];
-                        $res71 = Db::name('currency_running_log')->insert($run_log);
-                        if($res71 === 0){
-                            Db::rollback();
-                            continue;
-                        }
 
                         //step3 更新卖家交易账户数量
                         $trade_sum = bcmul($add_buy['trade_num'], $add_buy['price'], 4); //本次交易总价
                         //本次手续费
                         $trade_poundage = bcmul($trade_sum, 0.001, 4);
+                        $add_sell['poundage'] = $trade_poundage;
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
                         $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $v['user_id']])->value('transaction_num'); //获取交易钱包余额
@@ -1151,28 +1119,12 @@ class User extends Common
                             continue;
                         }
 
-                        //记录阿美比交易 卖方扣除
-                        $run_log = [
-                            'user_id'   => $data['user_id'],
-                            'about_id'  => $v['user_id'],
-                            'running_type' => UserRunningLog::TYPE29,
-                            'currency_from' => $amei_infos['id'],
-                            'currency_to'   => $amei_infos['id'],
-                            'change_num'    => $add_buy['trade_num'],
-                            'create_time'   => time(),
-                            'remark'        => '交易扣除'
-
-                        ];
-                        $res71 = Db::name('currency_running_log')->insert($run_log);
-                        if($res71 === 0){
-                            Db::rollback();
-                            continue;
-                        }
 
                         //step3 更新卖家交易账户数量
                         $trade_sum = bcmul($add_buy['trade_num'], $add_buy['price'], 4); //本次交易总价
                         //本次手续费
                         $trade_poundage = bcmul($trade_sum, 0.001, 4);
+                        $add_sell['poundage'] = $trade_poundage;
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
                         $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $data['user_id']])->value('transaction_num'); //获取交易钱包余额
@@ -1328,29 +1280,13 @@ class User extends Common
                             Db::rollback();
                             continue;
                         }
-
-                        //记录阿美比交易 卖方扣除
-                        $run_log = [
-                            'user_id'   => $data['user_id'],
-                            'about_id'  => $v['user_id'],
-                            'running_type' => UserRunningLog::TYPE29,
-                            'currency_from' => $amei_infos['id'],
-                            'currency_to'   => $amei_infos['id'],
-                            'change_num'    => $add_buy['trade_num'],
-                            'create_time'   => time(),
-                            'remark'        => '交易扣除'
-
-                        ];
-                        $res71 = Db::name('currency_running_log')->insert($run_log);
-                        if($res71 === 0){
-                            Db::rollback();
-                            continue;
-                        }
+                        
 
                         //step3 更新卖家交易账户数量
                         $trade_sum = bcmul($add_buy['trade_num'], $add_buy['price'], 4); //本次交易总价
                         //本次手续费
                         $trade_poundage = bcmul($trade_sum, 0.001, 4);
+                        $add_sell['poundage'] = $trade_poundage;
                         $real_sum = bcsub($trade_sum, $trade_poundage, 4); //卖家本次实际收入
                         //查询卖家交易账户
                         $user_transaction_num =  UserCurrencyAccount::where(['user_id' => $data['user_id']])->value('transaction_num'); //获取交易钱包余额
@@ -1475,8 +1411,25 @@ class User extends Common
 
                 $res3 = UserCurrencyList::where(['user_id' => $data['user_id'],'currency_id' => $amei_infos['id']])->update($up_data);
 
+                //记录阿美比交易 卖方扣除
+                $run_log = [
+                    'user_id'   => $data['user_id'],
+                    'about_id'  => $data['user_id'],
+                    'running_type' => UserRunningLog::TYPE32, //挂单扣除
+                    'currency_from' => $amei_infos['id'],
+                    'currency_to'   => $amei_infos['id'],
+                    'change_num'    => -$data['sell_num'],
+                    'create_time'   => time(),
+                    'remark'        => '挂单扣除'
+
+                ];
+                $res71 = Db::name('currency_running_log')->insert($run_log);
+                if($res71 === 0){
+                    Db::rollback();
+                }
 
                 if($res3 !== false){
+
                     Db::commit();
 
                     $this->sellAmei($data, $res->id, $amei_infos);
