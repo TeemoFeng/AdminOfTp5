@@ -264,7 +264,7 @@
                                 数量(AMB)
                             </div>
                             <div data-v-ed42075c="" class="latestPrice-table-td4 latestPrice-table-td latestPrice-th">
-                                累计(AMB)
+                                总量
                             </div>
                         </div>
                         <div data-v-ed42075c="" class="latestPrice-table" id="sell">
@@ -509,13 +509,13 @@
                                             <div class="cell">时间</div>
                                         </th>
                                         <th colspan="1" rowspan="1" class="el-table_32_column_194  is-center   is-leaf">
-                                            <div class="cell">方向</div>
+                                            <div class="cell">价格</div>
                                         </th>
                                         <th colspan="1" rowspan="1" class="el-table_32_column_195  is-center   is-leaf">
-                                            <div class="cell">价格(AMB)</div>
+                                            <div class="cell">成交量</div>
                                         </th>
                                         <th colspan="1" rowspan="1" class="el-table_32_column_196  is-center   is-leaf">
-                                            <div class="cell">数量(AMB)</div>
+                                            <div class="cell">总计</div>
                                         </th>
                                         <th class="gutter" style="width: 7px;"></th>
                                     </tr>
@@ -537,22 +537,25 @@
                                         <td rowspan="1" colspan="1" class="el-table_32_column_193 is-center ">
                                             <div class="cell">{$v['time']}</div>
                                         </td>
+                                        <!--<td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">-->
+                                            <!--{if condition="$v['trade_type'] eq 1"}-->
+                                            <!--<div class="cell">-->
+                                                <!--<div data-v-77d8c010="" class="hc-color2">{$v['type_str']}</div>-->
+                                            <!--</div>-->
+                                            <!--{else /}-->
+                                            <!--<div class="cell">-->
+                                                <!--<div data-v-77d8c010="" class="hc-color1">{$v['type_str']}</div>-->
+                                            <!--</div>-->
+                                            <!--{/if}-->
+                                        <!--</td>-->
                                         <td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">
-                                            {if condition="$v['type'] eq 1"}
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color2">{$v['type_str']}</div>
-                                            </div>
-                                            {else /}
-                                            <div class="cell">
-                                                <div data-v-77d8c010="" class="hc-color1">{$v['type_str']}</div>
-                                            </div>
-                                            {/if}
-                                        </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
                                             <div class="cell">{$v['price']}</div>
                                         </td>
-                                        <td rowspan="1" colspan="1" class="el-table_32_column_196 is-center ">
+                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
                                             <div class="cell">{$v['trade_num']}</div>
+                                        </td>
+                                        <td rowspan="1" colspan="1" class="el-table_32_column_195 is-center ">
+                                            <div class="cell">{$v['sum']}</div>
                                         </td>
                                     </tr>
                                     {/foreach}
@@ -1057,18 +1060,19 @@
                     $.each(data.trade,function(i,v){
                         html3 += '<tr class="el-table__row">';
                         html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_193 is-center "> <div class="cell">'+ v.time +'</div></td>';
-                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">';
-                        if(v.type == 1){
-                            html3 += '<div class="cell"><div data-v-77d8c010="" class="hc-color2">'+v.type_str+'</div></div></td>';
-                        }else{
-                            html3 += '<div class="cell"><div data-v-77d8c010="" class="hc-color1">'+v.type_str+'</div></div></td>'
-                        }
+                        // html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_194 is-center ">';
+                        // if(v.trade_type == 1){
+                        //     html3 += '<div class="cell"><div data-v-77d8c010="" class="hc-color2">'+v.type_str+'</div></div></td>';
+                        // }else{
+                        //     html3 += '<div class="cell"><div data-v-77d8c010="" class="hc-color1">'+v.type_str+'</div></div></td>'
+                        // }
 
+                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_194 is-center "><div class="cell">'+v.price+'</div></td>';
 
-                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_195 is-center "><div class="cell">'+v.price+'</div></td>';
-
-                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_196 is-center "><div class="cell">'+v.trade_num+'</div></td>';
+                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_195 is-center "><div class="cell">'+v.trade_num+'</div></td>';
+                        html3 += '<td rowspan="1" colspan="1" class="el-table_32_column_196 is-center "><div class="cell">'+v.sum+'</div></td>';
                         html3 += '</tr>';
+
 
                     });
 

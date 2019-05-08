@@ -686,6 +686,7 @@ class Finance extends Common{
                 ->join(config('database.prefix').'currency_list d','a.currency_to = d.id','left')
                 ->field('a.*,b.usernum formnum,b.username formname,b.mobile,c.usernum aboutnum, c.username aboutname,d.en_name')
                 ->where($where)
+                ->order('a.id DESC')
                 ->paginate(array('list_rows'=>$pageSize, 'page'=>$page))
                 ->toArray();
             foreach ($list['data'] as $k=>$v){
