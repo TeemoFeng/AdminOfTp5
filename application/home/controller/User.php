@@ -430,7 +430,7 @@ class User extends Common
             $shengyu_all = bcadd($shengyu, $shengyu_pou ,4);    //剩余总共需要退款
             $jiaoyi_num = bcadd($user_account['transaction_num'], $shengyu_all, 2);
             //更新用户交易钱包
-            DB::startTrans();
+            Db::startTrans();
             $res = UserCurrencyAccount::where(['user_id' => $depute_info['user_id']])->update(['transaction_num' => $jiaoyi_num]);
             if($res === false){
                 Db::rollback();
@@ -474,7 +474,7 @@ class User extends Common
             }
 
             $currency_num = bcadd($currency_account['num'], $cancel_num, 4);
-            DB::startTrans();
+            Db::startTrans();
             $res = UserCurrencyList::where(['user_id' => $depute_info['user_id'],'currency_id' =>$amei_infos['id']])->update(['num' => $currency_num]);
             if($res === false){
                 Db::rollback();
@@ -1280,7 +1280,7 @@ class User extends Common
                             Db::rollback();
                             continue;
                         }
-                        
+
 
                         //step3 更新卖家交易账户数量
                         $trade_sum = bcmul($add_buy['trade_num'], $add_buy['price'], 4); //本次交易总价
