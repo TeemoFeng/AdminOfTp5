@@ -247,10 +247,18 @@ class User extends Common
 
     }
 
+    //阿美币k线图
+    public function kline()
+    {
+        return $this->fetch('kline');
+    }
+
     //交易大厅
     public function currencyExchange()
     {
         $user_info = session('user');
+        $start_time = strtotime(date('Y-m-d 00:00:00'));
+        $end_time = strtotime(date('Y-m-d 23:59:59'));
         //阿美币
         $amei_infos = CurrencyList::where(['en_name' => 'AMB'])->find();
         //获取用户交易账户
@@ -265,13 +273,14 @@ class User extends Common
         $user_account['ameibi_lock_num'] = $user_amei['lock_num'] ?: 0;
 
         $amei_info = CurrencyList::where(['status' => 'open', 'en_name' => 'AMB'])->find();
-        $high = db('user_trade_depute_log')->where(['trade_type' => 2])->order('price DESC')->value('price');
-        $low = db('user_trade_depute_log')->where(['trade_type' => 2])->order('price ASC')->value('price');
-        $new_price = db('user_trade_depute_log')->order('id DESC')->value('price');
+        $where1 = new Where();
+        $where1['trade_type'] = 2;
+        $where1['create_time'] = array('between time', array($start_time, $end_time));
+        $high = db('user_trade_depute_log')->where($where1)->order('price DESC')->value('price');
+        $low = db('user_trade_depute_log')->where($where1)->order('price ASC')->value('price');
+        $new_price = db('user_trade_depute_log')->where($where1)->order('id DESC')->value('price');
         if(empty($new_price)) $new_price = $amei_info['price'];
         $map = new Where();
-        $start_time = strtotime(date('Y-m-d 00:00:00'));
-        $end_time = strtotime(date('Y-m-d 23:59:59'));
         $map['create_time'] = array('between time', array($start_time, $end_time));
 
         $vol = db('user_trade_depute_log')->where($map)->sum('trade_num');
