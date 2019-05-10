@@ -507,60 +507,74 @@
     //    }, 10);
     //}
     var kline = new Kline();
-    var klineUrl = "";
+    var klineUrl = "{:url('home/user/realTimeInfo')}";
+    var initurl = "{:url('home/user/ambInfo')}";
+
 
     //如果是1分鐘線，實際是60秒請求一次服務器數據
     //這裡是測試效果，所以設置成間隔3000毫秒，請求一次
     //實際要換成真實的間隔時間
-    setInterval(function () {
-        console.log("週期到");
-        var d = new Date();
-        //console.log(GLOBAL_VAR.time_type);
-        //if (d.getSeconds() == 0 && GLOBAL_VAR.time_type == "1min") {
-        //    //K线图每分钟更新1分钟线
-        //    GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "1min", null, 100000000000);
-        //    RequestData();
-        //    //console.log('1分钟线即时');
-        //  //var inst=  ChartManager.getInstance();
-        //  //console.log(GLOBAL_VAR.time_type);
-        //}
-        GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "1min", null, 100000000000);
-        RequestData();
-    }, 3000);
+    // setInterval(function () {
+    //     console.log("週期到");
+    //     var d = new Date();
+    //     console.log(GLOBAL_VAR.time_type);
+    //     console.log(GLOBAL_VAR.url);
+    //     // if (d.getSeconds() == 0 && GLOBAL_VAR.time_type == "1min") {
+    //     //    //K线图每分钟更新1分钟线
+    //     //    GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "1min", null, 100000000000);
+    //     //    RequestData();
+    //     //    console.log('1分钟线即时');
+    //      //var inst=  ChartManager.getInstance();
+    //      //console.log(GLOBAL_VAR.time_type);
+    //     // }
+    //     GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "1min", null, 100000000000);
+    //     RequestData();
+    // }, 3000);
 
-    //setInterval(function () {
-    //    var d = new Date();
-    //    if (d.getMinutes() % 3 == 0 && GLOBAL_VAR.time_type=="3min") {
-    //        //K线3分钟线即时数据
-    //        GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "3min", null, 103000000000);
-    //        RequestData();
-    //        //console.log('3分钟线即时');
-    //    }
-    //    if (d.getMinutes() % 5 == 0 && GLOBAL_VAR.time_type == "5min") {
-    //        //K线5分钟线每五分钟更新
-    //        GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "5min", null, 105000000000);
-    //        RequestData();
-    //        //console.log('5分钟线即时');
-    //    }
-    //    if (d.getMinutes() % 15 == 0 && GLOBAL_VAR.time_type == "15min") {
-    //        //K线15分钟线周期更新
-    //        GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "15min", null, 150000000000);
-    //        RequestData();
-    //        //console.log('15分钟线即时');
-    //    }
-    //    if (d.getMinutes() % 30 == 0 && GLOBAL_VAR.time_type == "30min") {
-    //        //三十分钟线即时点
-    //        GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "30min", null, 300000000000);
-    //        RequestData();
-    //        //console.log('30分钟线即时');
-    //    }
-    //    if (d.getMinutes() == 0 && GLOBAL_VAR.time_type == "1hour") {
-    //        //请求1小时线即时点
-    //        GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "1hour", null, 600000000000);
-    //        RequestData();
-    //        //console.log('1小时线即时');
-    //    }
-    //}, 1000 * 60);
+    setInterval(function () {
+        console.log(GLOBAL_VAR.time_type);
+       var d = new Date();
+       console.log(d.getSeconds());
+        if (GLOBAL_VAR.time_type == "1min") {
+           //K线图每分钟更新1分钟线
+           GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "1min", null, 100000000000);
+           RequestData();
+           console.log('1分钟线即时');
+         //var inst=  ChartManager.getInstance();
+         //console.log(GLOBAL_VAR.time_type);
+        }
+
+       if (d.getMinutes() % 3 == 0 && GLOBAL_VAR.time_type=="3min") {
+           //K线3分钟线即时数据
+           GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "3min", null, 103000000000);
+           RequestData();
+           //console.log('3分钟线即时');
+       }
+       if (d.getMinutes() % 5 == 0 && GLOBAL_VAR.time_type == "5min") {
+           //K线5分钟线每五分钟更新
+           GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "5min", null, 105000000000);
+           RequestData();
+           //console.log('5分钟线即时');
+       }
+       if (d.getMinutes() % 15 == 0 && GLOBAL_VAR.time_type == "15min") {
+           //K线15分钟线周期更新
+           GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "15min", null, 150000000000);
+           RequestData();
+           //console.log('15分钟线即时');
+       }
+       if (d.getMinutes() % 30 == 0 && GLOBAL_VAR.time_type == "30min") {
+           //三十分钟线即时点
+           GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "30min", null, 300000000000);
+           RequestData();
+           //console.log('30分钟线即时');
+       }
+       if (d.getMinutes() == 0 && GLOBAL_VAR.time_type == "1hour") {
+           //请求1小时线即时点
+           GLOBAL_VAR.requestParam = setHttpRequestParam(biType, "1hour", null, 600000000000);
+           RequestData();
+           //console.log('1小时线即时');
+       }
+    }, 1000 * 60);
 </script>
 <script src="/static/kline/js/kline.draw.js"></script>
 </body>

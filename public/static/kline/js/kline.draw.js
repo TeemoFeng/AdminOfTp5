@@ -11,11 +11,11 @@ var GLOBAL_VAR = {
     TimeOutId: null,
     button_down: false,
     init: false,
-    url: klineUrl //表示请求的数据地址
+    url: klineUrl, //"http://localhost:8083/KlineTest/GetKline"//表示请求的数据地址
+    initurl:initurl
 };
 GLOBAL_VAR.periodMap = {
-    "30d": "30day",
-    "01w": "7day",
+    "01w": "1week",
     "03d": "3day",
     "01d": "1day",
     "12h": "12hour",
@@ -32,7 +32,6 @@ GLOBAL_VAR.periodMap = {
 GLOBAL_VAR.tagMapPeriod = {
     "1w": "01w",
     "3d": "03d",
-    "30d": "030d",
     "1d": "01d",
     "12h": "12h",
     "6h": "06h",
@@ -48,7 +47,7 @@ GLOBAL_VAR.tagMapPeriod = {
 var classId = 0;
 function create_class() {
     var j = arguments.length;
-    var e = function() {};
+    var e = function () { };
     var d;
     if (j) {
         d = arguments[0];
@@ -73,7 +72,7 @@ function create_class() {
             b.prototype.__construct = g
         }
     }
-    var h = function() {
+    var h = function () {
         if (this.__construct) {
             this.__construct.apply(this, arguments)
         }
@@ -108,10 +107,10 @@ function is_instance(c, a) {
     return false
 }
 var MEvent = create_class();
-MEvent.prototype.__construct = function() {
+MEvent.prototype.__construct = function () {
     this._handlers = []
 };
-MEvent.prototype.addHandler = function(b, a) {
+MEvent.prototype.addHandler = function (b, a) {
     if (this._indexOf(b, a) < 0) {
         this._handlers.push({
             obj: b,
@@ -119,13 +118,13 @@ MEvent.prototype.addHandler = function(b, a) {
         })
     }
 };
-MEvent.prototype.removeHandler = function(c, b) {
+MEvent.prototype.removeHandler = function (c, b) {
     var a = this._indexOf(c, b);
     if (a >= 0) {
         this._handlers.splice(a, 1)
     }
 };
-MEvent.prototype.raise = function(f, h) {
+MEvent.prototype.raise = function (f, h) {
     var b = this._handlers;
     var j, d, k = b.length;
     for (d = 0; d < k; d++) {
@@ -133,7 +132,7 @@ MEvent.prototype.raise = function(f, h) {
         j.func.call(j.obj, f, h)
     }
 };
-MEvent.prototype._indexOf = function(j, g) {
+MEvent.prototype._indexOf = function (j, g) {
     var b = this._handlers;
     var h, d, k = b.length;
     for (d = 0; d < k; d++) {
@@ -142,9 +141,9 @@ MEvent.prototype._indexOf = function(j, g) {
             return d
         }
     }
-    return - 1
+    return -1
 };
-String.fromFloat = function(a, c) {
+String.fromFloat = function (a, c) {
     var d = a.toFixed(c);
     for (var b = d.length - 1; b >= 0; b--) {
         if (d[b] == ".") {
@@ -156,83 +155,83 @@ String.fromFloat = function(a, c) {
     }
 };
 var ExprEnv = create_class();
-ExprEnv.get = function() {
+ExprEnv.get = function () {
     return ExprEnv.inst
 };
-ExprEnv.set = function(a) {
+ExprEnv.set = function (a) {
     ExprEnv.inst = a
 };
-ExprEnv.prototype.getDataSource = function() {
+ExprEnv.prototype.getDataSource = function () {
     return this._ds
 };
-ExprEnv.prototype.setDataSource = function(a) {
+ExprEnv.prototype.setDataSource = function (a) {
     return this._ds = a
 };
-ExprEnv.prototype.getFirstIndex = function() {
+ExprEnv.prototype.getFirstIndex = function () {
     return this._firstIndex
 };
-ExprEnv.prototype.setFirstIndex = function(a) {
+ExprEnv.prototype.setFirstIndex = function (a) {
     return this._firstIndex = a
 };
 var Expr = create_class();
-Expr.prototype.__construct = function() {
+Expr.prototype.__construct = function () {
     this._rid = 0
 };
-Expr.prototype.execute = function(a) {};
-Expr.prototype.reserve = function(a, b) {};
-Expr.prototype.clear = function() {};
+Expr.prototype.execute = function (a) { };
+Expr.prototype.reserve = function (a, b) { };
+Expr.prototype.clear = function () { };
 var OpenExpr = create_class(Expr);
 var HighExpr = create_class(Expr);
 var LowExpr = create_class(Expr);
 var CloseExpr = create_class(Expr);
 var VolumeExpr = create_class(Expr);
-OpenExpr.prototype.execute = function(a) {
+OpenExpr.prototype.execute = function (a) {
     return ExprEnv.get()._ds.getDataAt(a).open
 };
-HighExpr.prototype.execute = function(a) {
+HighExpr.prototype.execute = function (a) {
     return ExprEnv.get()._ds.getDataAt(a).high
 };
-LowExpr.prototype.execute = function(a) {
+LowExpr.prototype.execute = function (a) {
     return ExprEnv.get()._ds.getDataAt(a).low
 };
-CloseExpr.prototype.execute = function(a) {
+CloseExpr.prototype.execute = function (a) {
     return ExprEnv.get()._ds.getDataAt(a).close
 };
-VolumeExpr.prototype.execute = function(a) {
+VolumeExpr.prototype.execute = function (a) {
     return ExprEnv.get()._ds.getDataAt(a).volume
 };
 var ConstExpr = create_class(Expr);
-ConstExpr.prototype.__construct = function(a) {
+ConstExpr.prototype.__construct = function (a) {
     ConstExpr.__super.__construct.call(this);
     this._value = a
 };
-ConstExpr.prototype.execute = function(a) {
+ConstExpr.prototype.execute = function (a) {
     return this._value
 };
 var ParameterExpr = create_class(Expr);
-ParameterExpr.prototype.__construct = function(b, c, d, a) {
+ParameterExpr.prototype.__construct = function (b, c, d, a) {
     ParameterExpr.__super.__construct.call(this);
     this._name = b;
     this._minValue = c;
     this._maxValue = d;
     this._value = this._defaultValue = a
 };
-ParameterExpr.prototype.execute = function(a) {
+ParameterExpr.prototype.execute = function (a) {
     return this._value
 };
-ParameterExpr.prototype.getMinValue = function() {
+ParameterExpr.prototype.getMinValue = function () {
     return this._minValue
 };
-ParameterExpr.prototype.getMaxValue = function() {
+ParameterExpr.prototype.getMaxValue = function () {
     return this._maxValue
 };
-ParameterExpr.prototype.getDefaultValue = function() {
+ParameterExpr.prototype.getDefaultValue = function () {
     return this._defaultValue
 };
-ParameterExpr.prototype.getValue = function() {
+ParameterExpr.prototype.getValue = function () {
     return this._value
 };
-ParameterExpr.prototype.setValue = function(a) {
+ParameterExpr.prototype.setValue = function (a) {
     if (a == 0) {
         this._value = 0
     } else {
@@ -251,42 +250,42 @@ var OpAExpr = create_class(Expr);
 var OpABExpr = create_class(Expr);
 var OpABCExpr = create_class(Expr);
 var OpABCDExpr = create_class(Expr);
-OpAExpr.prototype.__construct = function(b) {
+OpAExpr.prototype.__construct = function (b) {
     OpAExpr.__super.__construct.call(this);
     this._exprA = b
 };
-OpAExpr.prototype.reserve = function(a, b) {
+OpAExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         this._rid = a;
         this._exprA.reserve(a, b)
     }
 };
-OpAExpr.prototype.clear = function() {
+OpAExpr.prototype.clear = function () {
     this._exprA.clear()
 };
-OpABExpr.prototype.__construct = function(d, c) {
+OpABExpr.prototype.__construct = function (d, c) {
     OpABExpr.__super.__construct.call(this);
     this._exprA = d;
     this._exprB = c
 };
-OpABExpr.prototype.reserve = function(a, b) {
+OpABExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         this._rid = a;
         this._exprA.reserve(a, b);
         this._exprB.reserve(a, b)
     }
 };
-OpABExpr.prototype.clear = function() {
+OpABExpr.prototype.clear = function () {
     this._exprA.clear();
     this._exprB.clear()
 };
-OpABCExpr.prototype.__construct = function(e, d, f) {
+OpABCExpr.prototype.__construct = function (e, d, f) {
     OpABCExpr.__super.__construct.call(this);
     this._exprA = e;
     this._exprB = d;
     this._exprC = f
 };
-OpABCExpr.prototype.reserve = function(a, b) {
+OpABCExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         this._rid = a;
         this._exprA.reserve(a, b);
@@ -294,19 +293,19 @@ OpABCExpr.prototype.reserve = function(a, b) {
         this._exprC.reserve(a, b)
     }
 };
-OpABCExpr.prototype.clear = function() {
+OpABCExpr.prototype.clear = function () {
     this._exprA.clear();
     this._exprB.clear();
     this._exprC.clear()
 };
-OpABCDExpr.prototype.__construct = function(f, e, h, g) {
+OpABCDExpr.prototype.__construct = function (f, e, h, g) {
     OpABCDExpr.__super.__construct.call(this);
     this._exprA = f;
     this._exprB = e;
     this._exprC = h;
     this._exprD = g
 };
-OpABCDExpr.prototype.reserve = function(a, b) {
+OpABCDExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         this._rid = a;
         this._exprA.reserve(a, b);
@@ -315,45 +314,45 @@ OpABCDExpr.prototype.reserve = function(a, b) {
         this._exprD.reserve(a, b)
     }
 };
-OpABCDExpr.prototype.clear = function() {
+OpABCDExpr.prototype.clear = function () {
     this._exprA.clear();
     this._exprB.clear();
     this._exprC.clear();
     this._exprD.clear()
 };
 var NegExpr = create_class(OpAExpr);
-NegExpr.prototype.__construct = function(b) {
+NegExpr.prototype.__construct = function (b) {
     NegExpr.__super.__construct.call(this, b)
 };
-NegExpr.prototype.execute = function(a) {
-    return - (this._exprA.execute(a))
+NegExpr.prototype.execute = function (a) {
+    return -(this._exprA.execute(a))
 };
 var AddExpr = create_class(OpABExpr);
 var SubExpr = create_class(OpABExpr);
 var MulExpr = create_class(OpABExpr);
 var DivExpr = create_class(OpABExpr);
-AddExpr.prototype.__construct = function(d, c) {
+AddExpr.prototype.__construct = function (d, c) {
     AddExpr.__super.__construct.call(this, d, c)
 };
-SubExpr.prototype.__construct = function(d, c) {
+SubExpr.prototype.__construct = function (d, c) {
     SubExpr.__super.__construct.call(this, d, c)
 };
-MulExpr.prototype.__construct = function(d, c) {
+MulExpr.prototype.__construct = function (d, c) {
     MulExpr.__super.__construct.call(this, d, c)
 };
-DivExpr.prototype.__construct = function(d, c) {
+DivExpr.prototype.__construct = function (d, c) {
     DivExpr.__super.__construct.call(this, d, c)
 };
-AddExpr.prototype.execute = function(a) {
+AddExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) + this._exprB.execute(a)
 };
-SubExpr.prototype.execute = function(a) {
+SubExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) - this._exprB.execute(a)
 };
-MulExpr.prototype.execute = function(a) {
+MulExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) * this._exprB.execute(a)
 };
-DivExpr.prototype.execute = function(e) {
+DivExpr.prototype.execute = function (e) {
     var d = this._exprA.execute(e);
     var c = this._exprB.execute(e);
     if (d == 0) {
@@ -369,56 +368,56 @@ var GeExpr = create_class(OpABExpr);
 var LtExpr = create_class(OpABExpr);
 var LeExpr = create_class(OpABExpr);
 var EqExpr = create_class(OpABExpr);
-GtExpr.prototype.__construct = function(d, c) {
+GtExpr.prototype.__construct = function (d, c) {
     GtExpr.__super.__construct.call(this, d, c)
 };
-GeExpr.prototype.__construct = function(d, c) {
+GeExpr.prototype.__construct = function (d, c) {
     GeExpr.__super.__construct.call(this, d, c)
 };
-LtExpr.prototype.__construct = function(d, c) {
+LtExpr.prototype.__construct = function (d, c) {
     LtExpr.__super.__construct.call(this, d, c)
 };
-LeExpr.prototype.__construct = function(d, c) {
+LeExpr.prototype.__construct = function (d, c) {
     LeExpr.__super.__construct.call(this, d, c)
 };
-EqExpr.prototype.__construct = function(d, c) {
+EqExpr.prototype.__construct = function (d, c) {
     EqExpr.__super.__construct.call(this, d, c)
 };
-GtExpr.prototype.execute = function(a) {
+GtExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) > this._exprB.execute(a) ? 1 : 0
 };
-GeExpr.prototype.execute = function(a) {
+GeExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) >= this._exprB.execute(a) ? 1 : 0
 };
-LtExpr.prototype.execute = function(a) {
+LtExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) < this._exprB.execute(a) ? 1 : 0
 };
-LeExpr.prototype.execute = function(a) {
+LeExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) <= this._exprB.execute(a) ? 1 : 0
 };
-EqExpr.prototype.execute = function(a) {
+EqExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) == this._exprB.execute(a) ? 1 : 0
 };
 var MaxExpr = create_class(OpABExpr);
-MaxExpr.prototype.__construct = function(d, c) {
+MaxExpr.prototype.__construct = function (d, c) {
     MaxExpr.__super.__construct.call(this, d, c)
 };
-MaxExpr.prototype.execute = function(a) {
+MaxExpr.prototype.execute = function (a) {
     return Math.max(this._exprA.execute(a), this._exprB.execute(a))
 };
 var AbsExpr = create_class(OpAExpr);
-AbsExpr.prototype.__construct = function(b) {
+AbsExpr.prototype.__construct = function (b) {
     AbsExpr.__super.__construct.call(this, b)
 };
-AbsExpr.prototype.execute = function(a) {
+AbsExpr.prototype.execute = function (a) {
     return Math.abs(this._exprA.execute(a))
 };
 var RefExpr = create_class(OpABExpr);
-RefExpr.prototype.__construct = function(d, c) {
+RefExpr.prototype.__construct = function (d, c) {
     RefExpr.__super.__construct.call(this, d, c);
     this._offset = -1
 };
-RefExpr.prototype.execute = function(b) {
+RefExpr.prototype.execute = function (b) {
     if (this._offset < 0) {
         this._offset = this._exprB.execute(b);
         if (this._offset < 0) {
@@ -437,38 +436,38 @@ RefExpr.prototype.execute = function(b) {
 };
 var AndExpr = create_class(OpABExpr);
 var OrExpr = create_class(OpABExpr);
-AndExpr.prototype.__construct = function(d, c) {
+AndExpr.prototype.__construct = function (d, c) {
     AndExpr.__super.__construct.call(this, d, c)
 };
-OrExpr.prototype.__construct = function(d, c) {
+OrExpr.prototype.__construct = function (d, c) {
     OrExpr.__super.__construct.call(this, d, c)
 };
-AndExpr.prototype.execute = function(a) {
+AndExpr.prototype.execute = function (a) {
     return (this._exprA.execute(a) != 0) && (this._exprB.execute(a) != 0) ? 1 : 0
 };
-OrExpr.prototype.execute = function(a) {
+OrExpr.prototype.execute = function (a) {
     return (this._exprA.execute(a) != 0) || (this._exprB.execute(a) != 0) ? 1 : 0
 };
 var IfExpr = create_class(OpABCExpr);
-IfExpr.prototype.__construct = function(e, d, f) {
+IfExpr.prototype.__construct = function (e, d, f) {
     IfExpr.__super.__construct.call(this, e, d, f)
 };
-IfExpr.prototype.execute = function(a) {
+IfExpr.prototype.execute = function (a) {
     return this._exprA.execute(a) != 0 ? this._exprB.execute(a) : this._exprC.execute(a)
 };
 var AssignExpr = create_class(OpAExpr);
-AssignExpr.prototype.__construct = function(c, b) {
+AssignExpr.prototype.__construct = function (c, b) {
     AssignExpr.__super.__construct.call(this, b);
     this._name = c;
     this._buf = []
 };
-AssignExpr.prototype.getName = function() {
+AssignExpr.prototype.getName = function () {
     return this._name
 };
-AssignExpr.prototype.execute = function(a) {
+AssignExpr.prototype.execute = function (a) {
     return this._buf[a]
 };
-AssignExpr.prototype.assign = function(a) {
+AssignExpr.prototype.assign = function (a) {
     this._buf[a] = this._exprA.execute(a);
     if (ExprEnv.get()._firstIndex >= 0) {
         if (isNaN(this._buf[a]) && !isNaN(this._buf[a - 1])) {
@@ -476,7 +475,7 @@ AssignExpr.prototype.assign = function(a) {
         }
     }
 };
-AssignExpr.prototype.reserve = function(a, b) {
+AssignExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         for (var d = b; d > 0; d--) {
             this._buf.push(NaN)
@@ -484,7 +483,7 @@ AssignExpr.prototype.reserve = function(a, b) {
     }
     AssignExpr.__super.reserve.call(this, a, b)
 };
-AssignExpr.prototype.clear = function() {
+AssignExpr.prototype.clear = function () {
     AssignExpr.__super.clear.call(this);
     this._buf = []
 };
@@ -496,37 +495,37 @@ var OutputStyle = {
     SARPoint: 4
 };
 var OutputExpr = create_class(AssignExpr);
-OutputExpr.prototype.__construct = function(d, b, e, c) {
+OutputExpr.prototype.__construct = function (d, b, e, c) {
     OutputExpr.__super.__construct.call(this, d, b);
-    this._style = (e === undefined) ? OutputStyle.Line: e;
+    this._style = (e === undefined) ? OutputStyle.Line : e;
     this._color = c
 };
-OutputExpr.prototype.getStyle = function() {
+OutputExpr.prototype.getStyle = function () {
     return this._style
 };
-OutputExpr.prototype.getColor = function() {
+OutputExpr.prototype.getColor = function () {
     return this._color
 };
 var RangeOutputExpr = create_class(OutputExpr);
-RangeOutputExpr.prototype.__construct = function(d, b, e, c) {
+RangeOutputExpr.prototype.__construct = function (d, b, e, c) {
     RangeOutputExpr.__super.__construct.call(this, d, b, e, c)
 };
-RangeOutputExpr.prototype.getName = function() {
+RangeOutputExpr.prototype.getName = function () {
     return this._name + this._exprA.getRange()
 };
 var RangeExpr = create_class(OpABExpr);
-RangeExpr.prototype.__construct = function(d, c) {
+RangeExpr.prototype.__construct = function (d, c) {
     RangeExpr.__super.__construct.call(this, d, c);
     this._range = -1;
     this._buf = []
 };
-RangeExpr.prototype.getRange = function() {
+RangeExpr.prototype.getRange = function () {
     return this._range
 };
-RangeExpr.prototype.initRange = function() {
+RangeExpr.prototype.initRange = function () {
     this._range = this._exprB.execute(0)
 };
-RangeExpr.prototype.execute = function(a) {
+RangeExpr.prototype.execute = function (a) {
     if (this._range < 0) {
         this.initRange()
     }
@@ -534,7 +533,7 @@ RangeExpr.prototype.execute = function(a) {
     var b = this._buf[a].result = this.calcResult(a, c);
     return b
 };
-RangeExpr.prototype.reserve = function(a, b) {
+RangeExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         for (var d = b; d > 0; d--) {
             this._buf.push({
@@ -545,20 +544,20 @@ RangeExpr.prototype.reserve = function(a, b) {
     }
     RangeExpr.__super.reserve.call(this, a, b)
 };
-RangeExpr.prototype.clear = function() {
+RangeExpr.prototype.clear = function () {
     RangeExpr.__super.clear.call(this);
     this._range = -1;
     this._buf = []
 };
 var HhvExpr = create_class(RangeExpr);
 var LlvExpr = create_class(RangeExpr);
-HhvExpr.prototype.__construct = function(d, c) {
+HhvExpr.prototype.__construct = function (d, c) {
     HhvExpr.__super.__construct.call(this, d, c)
 };
-LlvExpr.prototype.__construct = function(d, c) {
+LlvExpr.prototype.__construct = function (d, c) {
     LlvExpr.__super.__construct.call(this, d, c)
 };
-HhvExpr.prototype.calcResult = function(b, h) {
+HhvExpr.prototype.calcResult = function (b, h) {
     if (this._range == 0) {
         return NaN
     }
@@ -582,7 +581,7 @@ HhvExpr.prototype.calcResult = function(b, h) {
         return h
     }
 };
-LlvExpr.prototype.calcResult = function(b, h) {
+LlvExpr.prototype.calcResult = function (b, h) {
     if (this._range == 0) {
         return NaN
     }
@@ -607,10 +606,10 @@ LlvExpr.prototype.calcResult = function(b, h) {
     }
 };
 var CountExpr = create_class(RangeExpr);
-CountExpr.prototype.__construct = function(d, c) {
+CountExpr.prototype.__construct = function (d, c) {
     CountExpr.__super.__construct.call(this, d, c)
 };
-CountExpr.prototype.calcResult = function(a, e) {
+CountExpr.prototype.calcResult = function (a, e) {
     if (this._range == 0) {
         return NaN
     }
@@ -635,10 +634,10 @@ CountExpr.prototype.calcResult = function(a, e) {
     }
 };
 var SumExpr = create_class(RangeExpr);
-SumExpr.prototype.__construct = function(d, c) {
+SumExpr.prototype.__construct = function (d, c) {
     SumExpr.__super.__construct.call(this, d, c)
 };
-SumExpr.prototype.calcResult = function(a, d) {
+SumExpr.prototype.calcResult = function (a, d) {
     var b = ExprEnv.get()._firstIndex;
     if (b < 0) {
         return d
@@ -654,10 +653,10 @@ SumExpr.prototype.calcResult = function(a, d) {
     }
 };
 var StdExpr = create_class(RangeExpr);
-StdExpr.prototype.__construct = function(d, c) {
+StdExpr.prototype.__construct = function (d, c) {
     StdExpr.__super.__construct.call(this, d, c)
 };
-StdExpr.prototype.calcResult = function(b, g) {
+StdExpr.prototype.calcResult = function (b, g) {
     if (this._range == 0) {
         return NaN
     }
@@ -684,7 +683,7 @@ StdExpr.prototype.calcResult = function(b, g) {
     a.resultMA = g;
     return 0
 };
-StdExpr.prototype.reserve = function(a, b) {
+StdExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         for (var d = b; d > 0; d--) {
             this._stdBuf.push({
@@ -694,15 +693,15 @@ StdExpr.prototype.reserve = function(a, b) {
     }
     StdExpr.__super.reserve.call(this, a, b)
 };
-StdExpr.prototype.clear = function() {
+StdExpr.prototype.clear = function () {
     StdExpr.__super.clear.call(this);
     this._stdBuf = []
 };
 var MaExpr = create_class(RangeExpr);
-MaExpr.prototype.__construct = function(d, c) {
+MaExpr.prototype.__construct = function (d, c) {
     MaExpr.__super.__construct.call(this, d, c)
 };
-MaExpr.prototype.calcResult = function(a, d) {
+MaExpr.prototype.calcResult = function (a, d) {
     if (this._range == 0) {
         return NaN
     }
@@ -722,14 +721,14 @@ MaExpr.prototype.calcResult = function(a, d) {
     }
 };
 var EmaExpr = create_class(RangeExpr);
-EmaExpr.prototype.__construct = function(d, c) {
+EmaExpr.prototype.__construct = function (d, c) {
     EmaExpr.__super.__construct.call(this, d, c)
 };
-EmaExpr.prototype.initRange = function() {
+EmaExpr.prototype.initRange = function () {
     EmaExpr.__super.initRange.call(this);
     this._alpha = 2 / (this._range + 1)
 };
-EmaExpr.prototype.calcResult = function(a, d) {
+EmaExpr.prototype.calcResult = function (a, d) {
     if (this._range == 0) {
         return NaN
     }
@@ -744,10 +743,10 @@ EmaExpr.prototype.calcResult = function(a, d) {
     return d
 };
 var ExpmemaExpr = create_class(EmaExpr);
-ExpmemaExpr.prototype.__construct = function(d, c) {
+ExpmemaExpr.prototype.__construct = function (d, c) {
     ExpmemaExpr.__super.__construct.call(this, d, c)
 };
-ExpmemaExpr.prototype.calcResult = function(a, e) {
+ExpmemaExpr.prototype.calcResult = function (a, e) {
     var c = ExprEnv.get()._firstIndex;
     if (c < 0) {
         return e
@@ -764,16 +763,16 @@ ExpmemaExpr.prototype.calcResult = function(a, e) {
     return e
 };
 var SmaExpr = create_class(RangeExpr);
-SmaExpr.prototype.__construct = function(e, d, f) {
+SmaExpr.prototype.__construct = function (e, d, f) {
     SmaExpr.__super.__construct.call(this, e, d);
     this._exprC = f;
     this._mul
 };
-SmaExpr.prototype.initRange = function() {
+SmaExpr.prototype.initRange = function () {
     SmaExpr.__super.initRange.call(this);
     this._mul = this._exprC.execute(0)
 };
-SmaExpr.prototype.calcResult = function(a, d) {
+SmaExpr.prototype.calcResult = function (a, d) {
     if (this._range == 0) {
         return NaN
     }
@@ -791,7 +790,7 @@ SmaExpr.prototype.calcResult = function(a, d) {
     return d
 };
 var SarExpr = create_class(OpABCDExpr);
-SarExpr.prototype.__construct = function(f, e, h, g) {
+SarExpr.prototype.__construct = function (f, e, h, g) {
     SarExpr.__super.__construct.call(this, f, e, h, g);
     this._buf = [];
     this._range = -1;
@@ -799,7 +798,7 @@ SarExpr.prototype.__construct = function(f, e, h, g) {
     this._step;
     this._max
 };
-SarExpr.prototype.execute = function(j) {
+SarExpr.prototype.execute = function (j) {
     if (this._range < 0) {
         this._range = this._exprA.execute(0);
         this._min = this._exprB.execute(0) / 100;
@@ -831,7 +830,7 @@ SarExpr.prototype.execute = function(j) {
             if (d.sar > k) {
                 d.longPos = false;
                 var e = j - this._range + 1;
-                for (e = Math.max(e, g); e < j; e++) {
+                for (e = Math.max(e, g) ; e < j; e++) {
                     var f = m._ds.getDataAt(e).high;
                     if (c < f) {
                         c = f
@@ -853,7 +852,7 @@ SarExpr.prototype.execute = function(j) {
             if (d.sar < c) {
                 d.longPos = true;
                 var e = j - this._range + 1;
-                for (e = Math.max(e, g); e < j; e++) {
+                for (e = Math.max(e, g) ; e < j; e++) {
                     var a = m._ds.getDataAt(e).low;
                     if (k > a) {
                         k = a
@@ -867,7 +866,7 @@ SarExpr.prototype.execute = function(j) {
     }
     return d.sar
 };
-SarExpr.prototype.reserve = function(a, b) {
+SarExpr.prototype.reserve = function (a, b) {
     if (this._rid < a) {
         for (var d = b; d > 0; d--) {
             this._buf.push({
@@ -880,41 +879,41 @@ SarExpr.prototype.reserve = function(a, b) {
     }
     SarExpr.__super.reserve.call(this, a, b)
 };
-SarExpr.prototype.clear = function() {
+SarExpr.prototype.clear = function () {
     SarExpr.__super.clear.call(this);
     this._range = -1
 };
 var Indicator = create_class();
-Indicator.prototype.__construct = function() {
+Indicator.prototype.__construct = function () {
     this._exprEnv = new ExprEnv();
     this._rid = 0;
     this._params = [];
     this._assigns = [];
     this._outputs = []
 };
-Indicator.prototype.addParameter = function(a) {
+Indicator.prototype.addParameter = function (a) {
     this._params.push(a)
 };
-Indicator.prototype.addAssign = function(a) {
+Indicator.prototype.addAssign = function (a) {
     this._assigns.push(a)
 };
-Indicator.prototype.addOutput = function(a) {
+Indicator.prototype.addOutput = function (a) {
     this._outputs.push(a)
 };
-Indicator.prototype.getParameterCount = function() {
+Indicator.prototype.getParameterCount = function () {
     return this._params.length
 };
-Indicator.prototype.getParameterAt = function(a) {
+Indicator.prototype.getParameterAt = function (a) {
     return this._params[a]
 };
-Indicator.prototype.getOutputCount = function() {
+Indicator.prototype.getOutputCount = function () {
     return this._outputs.length
 };
-Indicator.prototype.getOutputAt = function(a) {
+Indicator.prototype.getOutputAt = function (a) {
     return this._outputs[a]
 };
-Indicator.prototype.clear = function() {
-    this._exprEnv.setFirstIndex( - 1);
+Indicator.prototype.clear = function () {
+    this._exprEnv.setFirstIndex(-1);
     var b, a;
     a = this._assigns.length;
     for (b = 0; b < a; b++) {
@@ -925,7 +924,7 @@ Indicator.prototype.clear = function() {
         this._outputs[b].clear()
     }
 };
-Indicator.prototype.reserve = function(c) {
+Indicator.prototype.reserve = function (c) {
     this._rid++;
     var b, a;
     a = this._assigns.length;
@@ -937,7 +936,7 @@ Indicator.prototype.reserve = function(c) {
         this._outputs[b].reserve(this._rid, c)
     }
 };
-Indicator.prototype.execute = function(d, a) {
+Indicator.prototype.execute = function (d, a) {
     if (a < 0) {
         return
     }
@@ -956,14 +955,14 @@ Indicator.prototype.execute = function(d, a) {
         if (this._exprEnv.getFirstIndex() < 0) {
             this._exprEnv.setFirstIndex(a)
         }
-    } catch(f) {
+    } catch (f) {
         if (this._exprEnv.getFirstIndex() >= 0) {
             alert(f);
             throw f
         }
     }
 };
-Indicator.prototype.getParameters = function() {
+Indicator.prototype.getParameters = function () {
     var c = [];
     var b, a = this._params.length;
     for (b = 0; b < a; b++) {
@@ -971,7 +970,7 @@ Indicator.prototype.getParameters = function() {
     }
     return c
 };
-Indicator.prototype.setParameters = function(b) {
+Indicator.prototype.setParameters = function (b) {
     if ((b instanceof Array) && b.length == this._params.length) {
         for (var a in this._params) {
             this._params[a].setValue(b[a])
@@ -979,7 +978,7 @@ Indicator.prototype.setParameters = function(b) {
     }
 };
 var HLCIndicator = create_class(Indicator);
-HLCIndicator.prototype.__construct = function() {
+HLCIndicator.prototype.__construct = function () {
     HLCIndicator.__super.__construct.call(this);
     var a = new ParameterExpr("M1", 2, 1000, 60);
     this.addParameter(a);
@@ -988,11 +987,11 @@ HLCIndicator.prototype.__construct = function() {
     this.addOutput(new OutputExpr("CLOSE", new CloseExpr(), OutputStyle.Line, Theme.Color.Indicator0));
     this.addOutput(new RangeOutputExpr("MA", new MaExpr(new CloseExpr(), a), OutputStyle.Line, Theme.Color.Indicator1))
 };
-HLCIndicator.prototype.getName = function() {
+HLCIndicator.prototype.getName = function () {
     return "CLOSE"
 };
 var MAIndicator = create_class(Indicator);
-MAIndicator.prototype.__construct = function() {
+MAIndicator.prototype.__construct = function () {
     MAIndicator.__super.__construct.call(this);
     var f = new ParameterExpr("M1", 2, 1000, 7);
     var e = new ParameterExpr("M2", 2, 1000, 30);
@@ -1013,11 +1012,11 @@ MAIndicator.prototype.__construct = function() {
     this.addOutput(new RangeOutputExpr("MA", new MaExpr(new CloseExpr(), b)));
     this.addOutput(new RangeOutputExpr("MA", new MaExpr(new CloseExpr(), a)))
 };
-MAIndicator.prototype.getName = function() {
+MAIndicator.prototype.getName = function () {
     return "MA"
 };
 var EMAIndicator = create_class(Indicator);
-EMAIndicator.prototype.__construct = function() {
+EMAIndicator.prototype.__construct = function () {
     EMAIndicator.__super.__construct.call(this);
     var f = new ParameterExpr("M1", 2, 1000, 7);
     var e = new ParameterExpr("M2", 2, 1000, 30);
@@ -1038,11 +1037,11 @@ EMAIndicator.prototype.__construct = function() {
     this.addOutput(new RangeOutputExpr("EMA", new EmaExpr(new CloseExpr(), b)));
     this.addOutput(new RangeOutputExpr("EMA", new EmaExpr(new CloseExpr(), a)))
 };
-EMAIndicator.prototype.getName = function() {
+EMAIndicator.prototype.getName = function () {
     return "EMA"
 };
 var VOLUMEIndicator = create_class(Indicator);
-VOLUMEIndicator.prototype.__construct = function() {
+VOLUMEIndicator.prototype.__construct = function () {
     VOLUMEIndicator.__super.__construct.call(this);
     var c = new ParameterExpr("M1", 2, 500, 5);
     var a = new ParameterExpr("M2", 2, 500, 10);
@@ -1053,11 +1052,11 @@ VOLUMEIndicator.prototype.__construct = function() {
     this.addOutput(new RangeOutputExpr("MA", new MaExpr(b, c), OutputStyle.Line, Theme.Color.Indicator0));
     this.addOutput(new RangeOutputExpr("MA", new MaExpr(b, a), OutputStyle.Line, Theme.Color.Indicator1))
 };
-VOLUMEIndicator.prototype.getName = function() {
+VOLUMEIndicator.prototype.getName = function () {
     return "VOLUME"
 };
 var MACDIndicator = create_class(Indicator);
-MACDIndicator.prototype.__construct = function() {
+MACDIndicator.prototype.__construct = function () {
     MACDIndicator.__super.__construct.call(this);
     var c = new ParameterExpr("SHORT", 2, 200, 12);
     var d = new ParameterExpr("LONG", 2, 200, 26);
@@ -1072,11 +1071,11 @@ MACDIndicator.prototype.__construct = function() {
     var e = new OutputExpr("MACD", new MulExpr(new SubExpr(b, f), new ConstExpr(2)), OutputStyle.MACDStick);
     this.addOutput(e)
 };
-MACDIndicator.prototype.getName = function() {
+MACDIndicator.prototype.getName = function () {
     return "MACD"
 };
 var DMIIndicator = create_class(Indicator);
-DMIIndicator.prototype.__construct = function() {
+DMIIndicator.prototype.__construct = function () {
     DMIIndicator.__super.__construct.call(this);
     var c = new ParameterExpr("N", 2, 90, 14);
     var h = new ParameterExpr("MM", 2, 60, 6);
@@ -1101,11 +1100,11 @@ DMIIndicator.prototype.__construct = function() {
     var e = new OutputExpr("ADXR", new ExpmemaExpr(f, h));
     this.addOutput(e)
 };
-DMIIndicator.prototype.getName = function() {
+DMIIndicator.prototype.getName = function () {
     return "DMI"
 };
 var DMAIndicator = create_class(Indicator);
-DMAIndicator.prototype.__construct = function() {
+DMAIndicator.prototype.__construct = function () {
     DMAIndicator.__super.__construct.call(this);
     var c = new ParameterExpr("N1", 2, 60, 10);
     var b = new ParameterExpr("N2", 2, 250, 50);
@@ -1118,11 +1117,11 @@ DMAIndicator.prototype.__construct = function() {
     var d = new OutputExpr("DIFMA", new MaExpr(a, e));
     this.addOutput(d)
 };
-DMAIndicator.prototype.getName = function() {
+DMAIndicator.prototype.getName = function () {
     return "DMA"
 };
 var TRIXIndicator = create_class(Indicator);
-TRIXIndicator.prototype.__construct = function() {
+TRIXIndicator.prototype.__construct = function () {
     TRIXIndicator.__super.__construct.call(this);
     var d = new ParameterExpr("N", 2, 100, 12);
     var e = new ParameterExpr("M", 2, 100, 9);
@@ -1135,11 +1134,11 @@ TRIXIndicator.prototype.__construct = function() {
     var a = new OutputExpr("MATRIX", new MaExpr(b, e));
     this.addOutput(a)
 };
-TRIXIndicator.prototype.getName = function() {
+TRIXIndicator.prototype.getName = function () {
     return "TRIX"
 };
 var BRARIndicator = create_class(Indicator);
-BRARIndicator.prototype.__construct = function() {
+BRARIndicator.prototype.__construct = function () {
     BRARIndicator.__super.__construct.call(this);
     var d = new ParameterExpr("N", 2, 120, 26);
     this.addParameter(d);
@@ -1150,11 +1149,11 @@ BRARIndicator.prototype.__construct = function() {
     var a = new OutputExpr("AR", new MulExpr(new DivExpr(new SumExpr(new SubExpr(new HighExpr(), new OpenExpr()), d), new SumExpr(new SubExpr(new OpenExpr(), new LowExpr()), d)), new ConstExpr(100)));
     this.addOutput(a)
 };
-BRARIndicator.prototype.getName = function() {
+BRARIndicator.prototype.getName = function () {
     return "BRAR"
 };
 var VRIndicator = create_class(Indicator);
-VRIndicator.prototype.__construct = function() {
+VRIndicator.prototype.__construct = function () {
     VRIndicator.__super.__construct.call(this);
     var g = new ParameterExpr("N", 2, 100, 26);
     var h = new ParameterExpr("M", 2, 100, 6);
@@ -1173,11 +1172,11 @@ VRIndicator.prototype.__construct = function() {
     var c = new OutputExpr("MAVR", new MaExpr(a, h));
     this.addOutput(c)
 };
-VRIndicator.prototype.getName = function() {
+VRIndicator.prototype.getName = function () {
     return "VR"
 };
 var OBVIndicator = create_class(Indicator);
-OBVIndicator.prototype.__construct = function() {
+OBVIndicator.prototype.__construct = function () {
     OBVIndicator.__super.__construct.call(this);
     var e = new ParameterExpr("M", 2, 100, 30);
     this.addParameter(e);
@@ -1190,11 +1189,11 @@ OBVIndicator.prototype.__construct = function() {
     var b = new OutputExpr("MAOBV", new MaExpr(a, e));
     this.addOutput(b)
 };
-OBVIndicator.prototype.getName = function() {
+OBVIndicator.prototype.getName = function () {
     return "OBV"
 };
 var EMVIndicator = create_class(Indicator);
-EMVIndicator.prototype.__construct = function() {
+EMVIndicator.prototype.__construct = function () {
     EMVIndicator.__super.__construct.call(this);
     var e = new ParameterExpr("N", 2, 90, 14);
     var f = new ParameterExpr("M", 2, 60, 9);
@@ -1209,11 +1208,11 @@ EMVIndicator.prototype.__construct = function() {
     var c = new OutputExpr("MAEMV", new MaExpr(a, f));
     this.addOutput(c)
 };
-EMVIndicator.prototype.getName = function() {
+EMVIndicator.prototype.getName = function () {
     return "EMV"
 };
 var RSIIndicator = create_class(Indicator);
-RSIIndicator.prototype.__construct = function() {
+RSIIndicator.prototype.__construct = function () {
     RSIIndicator.__super.__construct.call(this);
     var e = new ParameterExpr("N1", 2, 120, 6);
     var b = new ParameterExpr("N2", 2, 250, 12);
@@ -1229,11 +1228,11 @@ RSIIndicator.prototype.__construct = function() {
     this.addOutput(new OutputExpr("RSI2", new MulExpr(new DivExpr(new SmaExpr(new MaxExpr(c, new ConstExpr(0)), b, new ConstExpr(1)), new SmaExpr(new AbsExpr(c), b, new ConstExpr(1))), new ConstExpr(100))));
     this.addOutput(new OutputExpr("RSI3", new MulExpr(new DivExpr(new SmaExpr(new MaxExpr(c, new ConstExpr(0)), a, new ConstExpr(1)), new SmaExpr(new AbsExpr(c), a, new ConstExpr(1))), new ConstExpr(100))))
 };
-RSIIndicator.prototype.getName = function() {
+RSIIndicator.prototype.getName = function () {
     return "RSI"
 };
 var WRIndicator = create_class(Indicator);
-WRIndicator.prototype.__construct = function() {
+WRIndicator.prototype.__construct = function () {
     WRIndicator.__super.__construct.call(this);
     var h = new ParameterExpr("N", 2, 100, 10);
     var e = new ParameterExpr("N1", 2, 100, 6);
@@ -1252,11 +1251,11 @@ WRIndicator.prototype.__construct = function() {
     var d = new OutputExpr("WR2", new MulExpr(new DivExpr(new SubExpr(c, new CloseExpr()), new SubExpr(c, g)), new ConstExpr(100)));
     this.addOutput(d)
 };
-WRIndicator.prototype.getName = function() {
+WRIndicator.prototype.getName = function () {
     return "WR"
 };
 var SARIndicator = create_class(Indicator);
-SARIndicator.prototype.__construct = function() {
+SARIndicator.prototype.__construct = function () {
     SARIndicator.__super.__construct.call(this);
     var d = new ConstExpr(4);
     var b = new ConstExpr(2);
@@ -1264,11 +1263,11 @@ SARIndicator.prototype.__construct = function() {
     var c = new ConstExpr(20);
     this.addOutput(new OutputExpr("SAR", new SarExpr(d, b, a, c), OutputStyle.SARPoint))
 };
-SARIndicator.prototype.getName = function() {
+SARIndicator.prototype.getName = function () {
     return "SAR"
 };
 var KDJIndicator = create_class(Indicator);
-KDJIndicator.prototype.__construct = function() {
+KDJIndicator.prototype.__construct = function () {
     KDJIndicator.__super.__construct.call(this);
     var f = new ParameterExpr("N", 2, 90, 9);
     var c = new ParameterExpr("M1", 2, 30, 3);
@@ -1289,11 +1288,11 @@ KDJIndicator.prototype.__construct = function() {
     var h = new OutputExpr("J", new SubExpr(new MulExpr(g, new ConstExpr(3)), new MulExpr(a, new ConstExpr(2))));
     this.addOutput(h)
 };
-KDJIndicator.prototype.getName = function() {
+KDJIndicator.prototype.getName = function () {
     return "KDJ"
 };
 var ROCIndicator = create_class(Indicator);
-ROCIndicator.prototype.__construct = function() {
+ROCIndicator.prototype.__construct = function () {
     ROCIndicator.__super.__construct.call(this);
     var d = new ParameterExpr("N", 2, 120, 12);
     var e = new ParameterExpr("M", 2, 60, 6);
@@ -1306,11 +1305,11 @@ ROCIndicator.prototype.__construct = function() {
     var c = new OutputExpr("MAROC", new MaExpr(b, e));
     this.addOutput(c)
 };
-ROCIndicator.prototype.getName = function() {
+ROCIndicator.prototype.getName = function () {
     return "ROC"
 };
 var MTMIndicator = create_class(Indicator);
-MTMIndicator.prototype.__construct = function() {
+MTMIndicator.prototype.__construct = function () {
     MTMIndicator.__super.__construct.call(this);
     var c = new ParameterExpr("N", 2, 120, 12);
     var d = new ParameterExpr("M", 2, 60, 6);
@@ -1321,11 +1320,11 @@ MTMIndicator.prototype.__construct = function() {
     var a = new OutputExpr("MTMMA", new MaExpr(b, d));
     this.addOutput(a)
 };
-MTMIndicator.prototype.getName = function() {
+MTMIndicator.prototype.getName = function () {
     return "MTM"
 };
 var BOLLIndicator = create_class(Indicator);
-BOLLIndicator.prototype.__construct = function() {
+BOLLIndicator.prototype.__construct = function () {
     BOLLIndicator.__super.__construct.call(this);
     var e = new ParameterExpr("N", 2, 120, 20);
     this.addParameter(e);
@@ -1338,11 +1337,11 @@ BOLLIndicator.prototype.__construct = function() {
     var c = new OutputExpr("LB", new SubExpr(a, new MulExpr(new ConstExpr(2), d)));
     this.addOutput(c)
 };
-BOLLIndicator.prototype.getName = function() {
+BOLLIndicator.prototype.getName = function () {
     return "BOLL"
 };
 var PSYIndicator = create_class(Indicator);
-PSYIndicator.prototype.__construct = function() {
+PSYIndicator.prototype.__construct = function () {
     PSYIndicator.__super.__construct.call(this);
     var c = new ParameterExpr("N", 2, 100, 12);
     var d = new ParameterExpr("M", 2, 100, 6);
@@ -1353,11 +1352,11 @@ PSYIndicator.prototype.__construct = function() {
     var a = new OutputExpr("PSYMA", new MaExpr(b, d));
     this.addOutput(a)
 };
-PSYIndicator.prototype.getName = function() {
+PSYIndicator.prototype.getName = function () {
     return "PSY"
 };
 var STOCHRSIIndicator = create_class(Indicator);
-STOCHRSIIndicator.prototype.__construct = function() {
+STOCHRSIIndicator.prototype.__construct = function () {
     STOCHRSIIndicator.__super.__construct.call(this);
     var f = new ParameterExpr("N", 3, 100, 14);
     var h = new ParameterExpr("M", 3, 100, 14);
@@ -1377,7 +1376,7 @@ STOCHRSIIndicator.prototype.__construct = function() {
     this.addOutput(b);
     this.addOutput(new RangeOutputExpr("MA", new MaExpr(b, g)))
 };
-STOCHRSIIndicator.prototype.getName = function() {
+STOCHRSIIndicator.prototype.getName = function () {
     return "StochRSI"
 };
 var Chart = create_class();
@@ -1431,7 +1430,7 @@ Chart.strPeriod = {
         "3day": "(3天)"
     }
 };
-Chart.prototype.__construct = function() {
+Chart.prototype.__construct = function () {
     this._data = null;
     this._charStyle = "CandleStick";
     this._depthData = {
@@ -1452,7 +1451,7 @@ Chart.prototype.__construct = function() {
     this.strCurrentMarket = 20150403001;
     this.strCurrentMarketType = 1
 };
-Chart.prototype.setTitle = function() {
+Chart.prototype.setTitle = function () {
     var b = ChartManager.getInstance().getLanguage();
     var a = GLOBAL_VAR.market_from_name;
     a += " ";
@@ -1462,12 +1461,12 @@ Chart.prototype.setTitle = function() {
     kline.title = a;
     kline.setTitle()
 };
-Chart.prototype.setCurrentList = function() {};
-Chart.prototype.setMarketFrom = function(a) {
+Chart.prototype.setCurrentList = function () { };
+Chart.prototype.setMarketFrom = function (a) {
     this._market_from = a;
     this.updateDataAndDisplay()
 };
-Chart.prototype.updateDataAndDisplay = function() {
+Chart.prototype.updateDataAndDisplay = function () {
     GLOBAL_VAR.market_from = this._market_from;
     GLOBAL_VAR.time_type = this._time;
     this.setTitle();
@@ -1483,23 +1482,23 @@ Chart.prototype.updateDataAndDisplay = function() {
     }
     ChartManager.getInstance().redraw("All", false)
 };
-Chart.prototype.setCurrentContractUnit = function(a) {
+Chart.prototype.setCurrentContractUnit = function (a) {
     this._contract_unit = a;
     this.updateDataAndDisplay()
 };
-Chart.prototype.setCurrentMoneyType = function(a) {
+Chart.prototype.setCurrentMoneyType = function (a) {
     this._money_type = a;
     this.updateDataAndDisplay()
 };
-Chart.prototype.setCurrentPeriod = function(a) {
+Chart.prototype.setCurrentPeriod = function (a) {
     this._time = GLOBAL_VAR.periodMap[a];
     this.updateDataAndDisplay()
 };
-Chart.prototype.updateDataSource = function(a) {
+Chart.prototype.updateDataSource = function (a) {
     this._data = a;
     ChartManager.getInstance().updateData("frame0.k0", this._data)
 };
-Chart.prototype.updateDepth = function(d) {
+Chart.prototype.updateDepth = function (d) {
     if (d == null) {
         this._depthData.array = [];
         ChartManager.getInstance().redraw("All", false);
@@ -1544,7 +1543,7 @@ Chart.prototype.updateDepth = function(d) {
     }
     ChartManager.getInstance().redraw("All", false)
 };
-Chart.prototype.setMainIndicator = function(a) {
+Chart.prototype.setMainIndicator = function (a) {
     this._mainIndicator = a;
     if (a == "NONE") {
         ChartManager.getInstance().removeMainIndicator("frame0.k0")
@@ -1553,7 +1552,7 @@ Chart.prototype.setMainIndicator = function(a) {
     }
     ChartManager.getInstance().redraw("All", true)
 };
-Chart.prototype.setIndicator = function(b, a) {
+Chart.prototype.setIndicator = function (b, a) {
     if (a == "NONE") {
         var b = 2;
         if (Template.displayVolume == false) {
@@ -1577,17 +1576,17 @@ Chart.prototype.setIndicator = function(b, a) {
     }
     ChartManager.getInstance().redraw("All", true)
 };
-Chart.prototype.addIndicator = function(a) {
+Chart.prototype.addIndicator = function (a) {
     ChartManager.getInstance().addIndicator(a);
     ChartManager.getInstance().redraw("All", true)
 };
-Chart.prototype.removeIndicator = function(a) {
+Chart.prototype.removeIndicator = function (a) {
     var b = ChartManager.getInstance().getIndicatorAreaName(2);
     ChartManager.getInstance().removeIndicator(b);
     ChartManager.getInstance().redraw("All", true)
 };
 var CName = create_class();
-CName.prototype.__construct = function(a) {
+CName.prototype.__construct = function (a) {
     this._names = [];
     this._comps = [];
     if (a instanceof CName) {
@@ -1608,13 +1607,13 @@ CName.prototype.__construct = function(a) {
         }
     }
 };
-CName.prototype.getCompAt = function(a) {
+CName.prototype.getCompAt = function (a) {
     if (a >= 0 && a < this._comps.length) {
         return this._comps[a]
     }
     return ""
 };
-CName.prototype.getName = function(a) {
+CName.prototype.getName = function (a) {
     if (a < 0) {
         if (this._names.length > 0) {
             return this._names[this._names.length - 1]
@@ -1627,27 +1626,27 @@ CName.prototype.getName = function(a) {
     return ""
 };
 var NamedObject = create_class();
-NamedObject.prototype.__construct = function(a) {
+NamedObject.prototype.__construct = function (a) {
     this._name = a;
     this._nameObj = new CName(a)
 };
-NamedObject.prototype.getFrameName = function() {
+NamedObject.prototype.getFrameName = function () {
     return this._nameObj.getName(0)
 };
-NamedObject.prototype.getDataSourceName = function() {
+NamedObject.prototype.getDataSourceName = function () {
     return this._nameObj.getName(1)
 };
-NamedObject.prototype.getAreaName = function() {
+NamedObject.prototype.getAreaName = function () {
     return this._nameObj.getName(2)
 };
-NamedObject.prototype.getName = function() {
-    return this._nameObj.getName( - 1)
+NamedObject.prototype.getName = function () {
+    return this._nameObj.getName(-1)
 };
-NamedObject.prototype.getNameObject = function() {
+NamedObject.prototype.getNameObject = function () {
     return this._nameObj
 };
 var ChartArea = create_class(NamedObject);
-ChartArea.prototype.__construct = function(a) {
+ChartArea.prototype.__construct = function (a) {
     ChartArea.__super.__construct.call(this, a);
     this._left = 0;
     this._top = 0;
@@ -1666,49 +1665,49 @@ ChartArea.DockStyle = {
     Bottom: 3,
     Fill: 4
 };
-ChartArea.prototype.getDockStyle = function() {
+ChartArea.prototype.getDockStyle = function () {
     return this._dockStyle
 };
-ChartArea.prototype.setDockStyle = function(a) {
+ChartArea.prototype.setDockStyle = function (a) {
     this._dockStyle = a
 };
-ChartArea.prototype.getLeft = function() {
+ChartArea.prototype.getLeft = function () {
     return this._left
 };
-ChartArea.prototype.getTop = function() {
+ChartArea.prototype.getTop = function () {
     return this._top
 };
-ChartArea.prototype.setTop = function(a) {
+ChartArea.prototype.setTop = function (a) {
     if (this._top != a) {
         this._top = a;
         this._changed = true
     }
 };
-ChartArea.prototype.getRight = function() {
+ChartArea.prototype.getRight = function () {
     return this._right
 };
-ChartArea.prototype.getBottom = function() {
+ChartArea.prototype.getBottom = function () {
     return this._bottom
 };
-ChartArea.prototype.setBottom = function(a) {
+ChartArea.prototype.setBottom = function (a) {
     if (this._bottom != a) {
         this._bottom = a;
         this._changed = true
     }
 };
-ChartArea.prototype.getCenter = function() {
+ChartArea.prototype.getCenter = function () {
     return (this._left + this._right) >> 1
 };
-ChartArea.prototype.getMiddle = function() {
+ChartArea.prototype.getMiddle = function () {
     return (this._top + this._bottom) >> 1
 };
-ChartArea.prototype.getWidth = function() {
+ChartArea.prototype.getWidth = function () {
     return this._right - this._left
 };
-ChartArea.prototype.getHeight = function() {
+ChartArea.prototype.getHeight = function () {
     return this._bottom - this._top
 };
-ChartArea.prototype.getRect = function() {
+ChartArea.prototype.getRect = function () {
     return {
         X: this._left,
         Y: this._top,
@@ -1716,7 +1715,7 @@ ChartArea.prototype.getRect = function() {
         Height: this._bottom - this._top
     }
 };
-ChartArea.prototype.contains = function(a, b) {
+ChartArea.prototype.contains = function (a, b) {
     if (a >= this._left && a < this._right) {
         if (b >= this._top && b < this._bottom) {
             return [this]
@@ -1724,17 +1723,17 @@ ChartArea.prototype.contains = function(a, b) {
     }
     return null
 };
-ChartArea.prototype.getMeasuredWidth = function() {
+ChartArea.prototype.getMeasuredWidth = function () {
     return this._measuredWidth
 };
-ChartArea.prototype.getMeasuredHeight = function() {
+ChartArea.prototype.getMeasuredHeight = function () {
     return this._measuredHeight
 };
-ChartArea.prototype.setMeasuredDimension = function(b, a) {
+ChartArea.prototype.setMeasuredDimension = function (b, a) {
     this._measuredWidth = b;
     this._measuredHeight = a
 };
-ChartArea.prototype.measure = function(b, c, a) {
+ChartArea.prototype.measure = function (b, c, a) {
     this._measuredWidth = 0;
     this._measuredHeight = 0;
     this.Measuring.raise(this, {
@@ -1745,7 +1744,7 @@ ChartArea.prototype.measure = function(b, c, a) {
         this.setMeasuredDimension(c, a)
     }
 };
-ChartArea.prototype.layout = function(e, d, c, a, b) {
+ChartArea.prototype.layout = function (e, d, c, a, b) {
     e <<= 0;
     if (this._left != e) {
         this._left = e;
@@ -1770,57 +1769,57 @@ ChartArea.prototype.layout = function(e, d, c, a, b) {
         this._changed = true
     }
 };
-ChartArea.prototype.isChanged = function() {
+ChartArea.prototype.isChanged = function () {
     return this._changed
 };
-ChartArea.prototype.setChanged = function(a) {
+ChartArea.prototype.setChanged = function (a) {
     this._changed = a
 };
-ChartArea.prototype.isHighlighted = function() {
+ChartArea.prototype.isHighlighted = function () {
     return this._highlighted
 };
-ChartArea.prototype.getHighlightedArea = function() {
-    return this._highlighted ? this: null
+ChartArea.prototype.getHighlightedArea = function () {
+    return this._highlighted ? this : null
 };
-ChartArea.prototype.highlight = function(a) {
+ChartArea.prototype.highlight = function (a) {
     this._highlighted = (this == a);
-    return this._highlighted ? this: null
+    return this._highlighted ? this : null
 };
-ChartArea.prototype.isPressed = function() {
+ChartArea.prototype.isPressed = function () {
     return this._pressed
 };
-ChartArea.prototype.setPressed = function(a) {
+ChartArea.prototype.setPressed = function (a) {
     this._pressed = a
 };
-ChartArea.prototype.isSelected = function() {
+ChartArea.prototype.isSelected = function () {
     return this._selected
 };
-ChartArea.prototype.getSelectedArea = function() {
-    return this._selected ? this: null
+ChartArea.prototype.getSelectedArea = function () {
+    return this._selected ? this : null
 };
-ChartArea.prototype.select = function(a) {
+ChartArea.prototype.select = function (a) {
     this._selected = (this == a);
-    return this._selected ? this: null
+    return this._selected ? this : null
 };
-ChartArea.prototype.onMouseMove = function(a, b) {
+ChartArea.prototype.onMouseMove = function (a, b) {
     return null
 };
-ChartArea.prototype.onMouseLeave = function(a, b) {};
-ChartArea.prototype.onMouseDown = function(a, b) {
+ChartArea.prototype.onMouseLeave = function (a, b) { };
+ChartArea.prototype.onMouseDown = function (a, b) {
     return null
 };
-ChartArea.prototype.onMouseUp = function(a, b) {
+ChartArea.prototype.onMouseUp = function (a, b) {
     return null
 };
 var MainArea = create_class(ChartArea);
-MainArea.prototype.__construct = function(a) {
+MainArea.prototype.__construct = function (a) {
     MainArea.__super.__construct.call(this, a);
     this._dragStarted = false;
     this._oldX = 0;
     this._oldY = 0;
     this._passMoveEventToToolManager = true
 };
-MainArea.prototype.onMouseMove = function(a, c) {
+MainArea.prototype.onMouseMove = function (a, c) {
     var b = ChartManager.getInstance();
     if (b._capturingMouseArea == this) {
         if (this._dragStarted == false) {
@@ -1842,27 +1841,27 @@ MainArea.prototype.onMouseMove = function(a, c) {
         return this
     }
     switch (b._drawingTool) {
-    case ChartManager.DrawingTool.Cursor:
-        b.showCursor();
-        break;
-    case ChartManager.DrawingTool.CrossCursor:
-        if (b.showCrossCursor(this, a, c)) {
-            b.hideCursor()
-        } else {
-            b.showCursor()
-        }
-        break;
-    default:
-        b.hideCursor();
-        break
+        case ChartManager.DrawingTool.Cursor:
+            b.showCursor();
+            break;
+        case ChartManager.DrawingTool.CrossCursor:
+            if (b.showCrossCursor(this, a, c)) {
+                b.hideCursor()
+            } else {
+                b.showCursor()
+            }
+            break;
+        default:
+            b.hideCursor();
+            break
     }
     return this
 };
-MainArea.prototype.onMouseLeave = function(a, b) {
+MainArea.prototype.onMouseLeave = function (a, b) {
     this._dragStarted = false;
     this._passMoveEventToToolManager = true
 };
-MainArea.prototype.onMouseDown = function(a, c) {
+MainArea.prototype.onMouseDown = function (a, c) {
     var b = ChartManager.getInstance();
     b.getTimeline(this.getDataSourceName()).startMove();
     this._oldX = a;
@@ -1873,7 +1872,7 @@ MainArea.prototype.onMouseDown = function(a, c) {
     }
     return this
 };
-MainArea.prototype.onMouseUp = function(a, d) {
+MainArea.prototype.onMouseUp = function (a, d) {
     var c = ChartManager.getInstance();
     var b = null;
     if (this._dragStarted) {
@@ -1887,13 +1886,13 @@ MainArea.prototype.onMouseUp = function(a, d) {
     return b
 };
 var IndicatorArea = create_class(ChartArea);
-IndicatorArea.prototype.__construct = function(a) {
+IndicatorArea.prototype.__construct = function (a) {
     IndicatorArea.__super.__construct.call(this, a);
     this._dragStarted = false;
     this._oldX = 0;
     this._oldY = 0
 };
-IndicatorArea.prototype.onMouseMove = function(a, c) {
+IndicatorArea.prototype.onMouseMove = function (a, c) {
     var b = ChartManager.getInstance();
     if (b._capturingMouseArea == this) {
         if (this._dragStarted == false) {
@@ -1908,23 +1907,23 @@ IndicatorArea.prototype.onMouseMove = function(a, c) {
         return this
     }
     switch (b._drawingTool) {
-    case ChartManager.DrawingTool.CrossCursor:
-        if (b.showCrossCursor(this, a, c)) {
-            b.hideCursor()
-        } else {
-            b.showCursor()
-        }
-        break;
-    default:
-        b.showCursor();
-        break
+        case ChartManager.DrawingTool.CrossCursor:
+            if (b.showCrossCursor(this, a, c)) {
+                b.hideCursor()
+            } else {
+                b.showCursor()
+            }
+            break;
+        default:
+            b.showCursor();
+            break
     }
     return this
 };
-IndicatorArea.prototype.onMouseLeave = function(a, b) {
+IndicatorArea.prototype.onMouseLeave = function (a, b) {
     this._dragStarted = false
 };
-IndicatorArea.prototype.onMouseDown = function(a, c) {
+IndicatorArea.prototype.onMouseDown = function (a, c) {
     var b = ChartManager.getInstance();
     b.getTimeline(this.getDataSourceName()).startMove();
     this._oldX = a;
@@ -1932,7 +1931,7 @@ IndicatorArea.prototype.onMouseDown = function(a, c) {
     this._dragStarted = false;
     return this
 };
-IndicatorArea.prototype.onMouseUp = function(a, b) {
+IndicatorArea.prototype.onMouseUp = function (a, b) {
     if (this._dragStarted) {
         this._dragStarted = false;
         return this
@@ -1940,37 +1939,37 @@ IndicatorArea.prototype.onMouseUp = function(a, b) {
     return null
 };
 var MainRangeArea = create_class(ChartArea);
-MainRangeArea.prototype.__construct = function(a) {
+MainRangeArea.prototype.__construct = function (a) {
     MainRangeArea.__super.__construct.call(this, a)
 };
-MainRangeArea.prototype.onMouseMove = function(a, b) {
+MainRangeArea.prototype.onMouseMove = function (a, b) {
     ChartManager.getInstance().showCursor();
     return this
 };
 var IndicatorRangeArea = create_class(ChartArea);
-IndicatorRangeArea.prototype.__construct = function(a) {
+IndicatorRangeArea.prototype.__construct = function (a) {
     IndicatorRangeArea.__super.__construct.call(this, a)
 };
-IndicatorRangeArea.prototype.onMouseMove = function(a, b) {
+IndicatorRangeArea.prototype.onMouseMove = function (a, b) {
     ChartManager.getInstance().showCursor();
     return this
 };
 var TimelineArea = create_class(ChartArea);
-TimelineArea.prototype.__construct = function(a) {
+TimelineArea.prototype.__construct = function (a) {
     TimelineArea.__super.__construct.call(this, a)
 };
-TimelineArea.prototype.onMouseMove = function(a, b) {
+TimelineArea.prototype.onMouseMove = function (a, b) {
     ChartManager.getInstance().showCursor();
     return this
 };
 var ChartAreaGroup = create_class(ChartArea);
-ChartAreaGroup.prototype.__construct = function(a) {
+ChartAreaGroup.prototype.__construct = function (a) {
     ChartAreaGroup.__super.__construct.call(this, a);
     this._areas = [];
     this._highlightedArea = null;
     this._selectedArea = null
 };
-ChartAreaGroup.prototype.contains = function(b, g) {
+ChartAreaGroup.prototype.contains = function (b, g) {
     var d;
     var c, f, e = this._areas.length;
     for (f = 0; f < e; f++) {
@@ -1983,19 +1982,19 @@ ChartAreaGroup.prototype.contains = function(b, g) {
     }
     return ChartAreaGroup.__super.contains(b, g)
 };
-ChartAreaGroup.prototype.getAreaCount = function() {
+ChartAreaGroup.prototype.getAreaCount = function () {
     return this._areas.length
 };
-ChartAreaGroup.prototype.getAreaAt = function(a) {
+ChartAreaGroup.prototype.getAreaAt = function (a) {
     if (a < 0 || a >= this._areas.length) {
         return null
     }
     return this._areas[a]
 };
-ChartAreaGroup.prototype.addArea = function(a) {
+ChartAreaGroup.prototype.addArea = function (a) {
     this._areas.push(a)
 };
-ChartAreaGroup.prototype.removeArea = function(c) {
+ChartAreaGroup.prototype.removeArea = function (c) {
     var b, a = this._areas.length;
     for (b = 0; b < a; b++) {
         if (c == this._areas[b]) {
@@ -2005,19 +2004,19 @@ ChartAreaGroup.prototype.removeArea = function(c) {
         }
     }
 };
-ChartAreaGroup.prototype.getGridColor = function() {
+ChartAreaGroup.prototype.getGridColor = function () {
     return this._gridColor
 };
-ChartAreaGroup.prototype.setGridColor = function(a) {
+ChartAreaGroup.prototype.setGridColor = function (a) {
     this._gridColor = a
 };
-ChartAreaGroup.prototype.getHighlightedArea = function() {
+ChartAreaGroup.prototype.getHighlightedArea = function () {
     if (this._highlightedArea != null) {
         return this._highlightedArea.getHighlightedArea()
     }
     return null
 };
-ChartAreaGroup.prototype.highlight = function(c) {
+ChartAreaGroup.prototype.highlight = function (c) {
     this._highlightedArea = null;
     var d, b, a = this._areas.length;
     for (b = 0; b < a; b++) {
@@ -2029,13 +2028,13 @@ ChartAreaGroup.prototype.highlight = function(c) {
     }
     return null
 };
-ChartAreaGroup.prototype.getSelectedArea = function() {
+ChartAreaGroup.prototype.getSelectedArea = function () {
     if (this._selectedArea != null) {
         return this._selectedArea.getSelectedArea()
     }
     return null
 };
-ChartAreaGroup.prototype.select = function(c) {
+ChartAreaGroup.prototype.select = function (c) {
     this._selectedArea = null;
     var d, b, a = this._areas.length;
     for (b = 0; b < a; b++) {
@@ -2047,13 +2046,13 @@ ChartAreaGroup.prototype.select = function(c) {
     }
     return null
 };
-ChartAreaGroup.prototype.onMouseLeave = function(a, d) {
+ChartAreaGroup.prototype.onMouseLeave = function (a, d) {
     var c, b = this._areas.length;
     for (c = 0; c < b; c++) {
         this._areas[c].onMouseLeave(a, d)
     }
 };
-ChartAreaGroup.prototype.onMouseUp = function(b, f) {
+ChartAreaGroup.prototype.onMouseUp = function (b, f) {
     var c, e, d = this._areas.length;
     for (e = 0; e < d; e++) {
         c = this._areas[e].onMouseUp(b, f);
@@ -2064,15 +2063,15 @@ ChartAreaGroup.prototype.onMouseUp = function(b, f) {
     return null
 };
 var TableLayout = create_class(ChartAreaGroup);
-TableLayout.prototype.__construct = function(a) {
+TableLayout.prototype.__construct = function (a) {
     TableLayout.__super.__construct.call(this, a);
     this._nextRowId = 0;
     this._focusedRowIndex = -1
 };
-TableLayout.prototype.getNextRowId = function() {
+TableLayout.prototype.getNextRowId = function () {
     return this._nextRowId++
 };
-TableLayout.prototype.measure = function(a, u, m) {
+TableLayout.prototype.measure = function (a, u, m) {
     this.setMeasuredDimension(u, m);
     var g, p = 0,
     H = 0;
@@ -2159,7 +2158,7 @@ TableLayout.prototype.measure = function(a, u, m) {
         this._areas[w].measure(a, c, o[w >> 1])
     }
 };
-TableLayout.prototype.layout = function(g, k, l, a, d) {
+TableLayout.prototype.layout = function (g, k, l, a, d) {
     TableLayout.__super.layout.call(this, g, k, l, a, d);
     if (this._areas.length < 1) {
         return
@@ -2183,7 +2182,7 @@ TableLayout.prototype.layout = function(g, k, l, a, d) {
     }
     this.setChanged(false)
 };
-TableLayout.prototype.drawGrid = function(c) {
+TableLayout.prototype.drawGrid = function (c) {
     if (this._areas.length < 1) {
         return
     }
@@ -2205,7 +2204,7 @@ TableLayout.prototype.drawGrid = function(c) {
         }
     }
 };
-TableLayout.prototype.highlight = function(c) {
+TableLayout.prototype.highlight = function (c) {
     this._highlightedArea = null;
     var d, b, a = this._areas.length;
     for (b = 0; b < a; b++) {
@@ -2223,9 +2222,9 @@ TableLayout.prototype.highlight = function(c) {
             d.highlight(null)
         }
     }
-    return this._highlightedArea != null ? this: null
+    return this._highlightedArea != null ? this : null
 };
-TableLayout.prototype.select = function(c) {
+TableLayout.prototype.select = function (c) {
     this._selectedArea = null;
     var d, b, a = this._areas.length;
     for (b = 0; b < a; b++) {
@@ -2242,9 +2241,9 @@ TableLayout.prototype.select = function(c) {
             d.select(null)
         }
     }
-    return this._selectedArea != null ? this: null
+    return this._selectedArea != null ? this : null
 };
-TableLayout.prototype.onMouseMove = function(l, k) {
+TableLayout.prototype.onMouseMove = function (l, k) {
     if (this._focusedRowIndex >= 0) {
         var m = this._areas[this._focusedRowIndex];
         var e = this._areas[this._focusedRowIndex + 2];
@@ -2270,10 +2269,10 @@ TableLayout.prototype.onMouseMove = function(l, k) {
     }
     return null
 };
-TableLayout.prototype.onMouseLeave = function(a, b) {
+TableLayout.prototype.onMouseLeave = function (a, b) {
     this._focusedRowIndex = -1
 };
-TableLayout.prototype.onMouseDown = function(c, f) {
+TableLayout.prototype.onMouseDown = function (c, f) {
     var e, d = this._areas.length - 2;
     for (e = 0; e < d; e += 2) {
         var a = this._areas[e].getBottom();
@@ -2287,7 +2286,7 @@ TableLayout.prototype.onMouseDown = function(c, f) {
     }
     return null
 };
-TableLayout.prototype.onMouseUp = function(b, e) {
+TableLayout.prototype.onMouseUp = function (b, e) {
     if (this._focusedRowIndex >= 0) {
         this._focusedRowIndex = -1;
         var d, c = this._areas.length;
@@ -2301,10 +2300,10 @@ TableLayout.prototype.onMouseUp = function(b, e) {
     return this
 };
 var DockableLayout = create_class(ChartAreaGroup);
-DockableLayout.prototype.__construct = function(a) {
+DockableLayout.prototype.__construct = function (a) {
     DockableLayout.__super.__construct.call(this, a)
 };
-DockableLayout.prototype.measure = function(c, d, a) {
+DockableLayout.prototype.measure = function (c, d, a) {
     DockableLayout.__super.measure.call(this, c, d, a);
     d = this.getMeasuredWidth();
     a = this.getMeasuredHeight();
@@ -2312,22 +2311,22 @@ DockableLayout.prototype.measure = function(c, d, a) {
         var e = this._areas[b];
         e.measure(c, d, a);
         switch (e.getDockStyle()) {
-        case ChartArea.DockStyle.left:
-        case ChartArea.DockStyle.Right:
-            d -= e.getMeasuredWidth();
-            break;
-        case ChartArea.DockStyle.Top:
-        case ChartArea.DockStyle.Bottom:
-            a -= e.getMeasuredHeight();
-            break;
-        case ChartArea.DockStyle.Fill:
-            d = 0;
-            a = 0;
-            break
+            case ChartArea.DockStyle.left:
+            case ChartArea.DockStyle.Right:
+                d -= e.getMeasuredWidth();
+                break;
+            case ChartArea.DockStyle.Top:
+            case ChartArea.DockStyle.Bottom:
+                a -= e.getMeasuredHeight();
+                break;
+            case ChartArea.DockStyle.Fill:
+                d = 0;
+                a = 0;
+                break
         }
     }
 };
-DockableLayout.prototype.layout = function(d, g, k, a, b) {
+DockableLayout.prototype.layout = function (d, g, k, a, b) {
     DockableLayout.__super.layout.call(this, d, g, k, a, b);
     d = this.getLeft();
     g = this.getTop();
@@ -2340,36 +2339,36 @@ DockableLayout.prototype.layout = function(d, g, k, a, b) {
     for (var e in this._areas) {
         var c = this._areas[e];
         switch (c.getDockStyle()) {
-        case ChartArea.DockStyle.left:
-            j = c.getMeasuredWidth();
-            c.layout(d, g, d + j, a, b);
-            d += j;
-            break;
-        case ChartArea.DockStyle.Top:
-            f = c.getMeasuredHeight();
-            c.layout(d, g, k, g + f, b);
-            g += f;
-            break;
-        case ChartArea.DockStyle.Right:
-            j = c.getMeasuredWidth();
-            c.layout(k - j, g, k, a, b);
-            k -= j;
-            break;
-        case ChartArea.DockStyle.Bottom:
-            f = c.getMeasuredHeight();
-            c.layout(d, a - f, k, a, b);
-            a -= f;
-            break;
-        case ChartArea.DockStyle.Fill:
-            c.layout(d, g, k, a, b);
-            d = k;
-            g = a;
-            break
+            case ChartArea.DockStyle.left:
+                j = c.getMeasuredWidth();
+                c.layout(d, g, d + j, a, b);
+                d += j;
+                break;
+            case ChartArea.DockStyle.Top:
+                f = c.getMeasuredHeight();
+                c.layout(d, g, k, g + f, b);
+                g += f;
+                break;
+            case ChartArea.DockStyle.Right:
+                j = c.getMeasuredWidth();
+                c.layout(k - j, g, k, a, b);
+                k -= j;
+                break;
+            case ChartArea.DockStyle.Bottom:
+                f = c.getMeasuredHeight();
+                c.layout(d, a - f, k, a, b);
+                a -= f;
+                break;
+            case ChartArea.DockStyle.Fill:
+                c.layout(d, g, k, a, b);
+                d = k;
+                g = a;
+                break
         }
     }
     this.setChanged(false)
 };
-DockableLayout.prototype.drawGrid = function(c) {
+DockableLayout.prototype.drawGrid = function (c) {
     var j = ChartManager.getInstance();
     var e = j.getTheme(this.getFrameName());
     var d = this.getLeft();
@@ -2380,22 +2379,22 @@ DockableLayout.prototype.drawGrid = function(c) {
     for (var f in this._areas) {
         var b = this._areas[f];
         switch (b.getDockStyle()) {
-        case ChartArea.DockStyle.Left:
-            c.fillRect(b.getRight(), g, 1, a - g);
-            d += b.getWidth();
-            break;
-        case ChartArea.DockStyle.Top:
-            c.fillRect(d, b.getBottom(), h - d, 1);
-            g += b.getHeight();
-            break;
-        case ChartArea.DockStyle.Right:
-            c.fillRect(b.getLeft(), g, 1, a - g);
-            h -= b.getWidth();
-            break;
-        case ChartArea.DockStyle.Bottom:
-            c.fillRect(d, b.getTop(), h - d, 1);
-            a -= b.getHeight();
-            break
+            case ChartArea.DockStyle.Left:
+                c.fillRect(b.getRight(), g, 1, a - g);
+                d += b.getWidth();
+                break;
+            case ChartArea.DockStyle.Top:
+                c.fillRect(d, b.getBottom(), h - d, 1);
+                g += b.getHeight();
+                break;
+            case ChartArea.DockStyle.Right:
+                c.fillRect(b.getLeft(), g, 1, a - g);
+                h -= b.getWidth();
+                break;
+            case ChartArea.DockStyle.Bottom:
+                c.fillRect(d, b.getTop(), h - d, 1);
+                a -= b.getHeight();
+                break
         }
     }
 };
@@ -2421,13 +2420,13 @@ ChartManager.DrawingTool = {
     BandLine: 17
 };
 ChartManager._instance = null;
-ChartManager.getInstance = function() {
+ChartManager.getInstance = function () {
     if (ChartManager._instance == null) {
         ChartManager._instance = new ChartManager()
     }
     return ChartManager._instance
 };
-ChartManager.prototype.__construct = function() {
+ChartManager.prototype.__construct = function () {
     this._dataSources = {};
     this._dataSourceCache = {};
     this._dataProviders = {};
@@ -2454,7 +2453,7 @@ ChartManager.prototype.__construct = function() {
     this._mainContext = null;
     this._overlayContext = null
 };
-ChartManager.prototype.redraw = function(a, b) {
+ChartManager.prototype.redraw = function (a, b) {
     if (a == undefined || b) {
         a = "All"
     }
@@ -2470,7 +2469,7 @@ ChartManager.prototype.redraw = function(a, b) {
         this.drawOverlay("frame0", this._overlayContext)
     }
 };
-ChartManager.prototype.bindCanvas = function(b, a) {
+ChartManager.prototype.bindCanvas = function (b, a) {
     if (b == "main") {
         this._mainCanvas = a;
         this._mainContext = a.getContext("2d")
@@ -2484,10 +2483,10 @@ ChartManager.prototype.bindCanvas = function(b, a) {
         }
     }
 };
-ChartManager.prototype.getCaptureMouseWheelDirectly = function() {
+ChartManager.prototype.getCaptureMouseWheelDirectly = function () {
     return this._captureMouseWheelDirectly
 };
-ChartManager.prototype.setCaptureMouseWheelDirectly = function(a) {
+ChartManager.prototype.setCaptureMouseWheelDirectly = function (a) {
     this._captureMouseWheelDirectly = a;
     if (a) {
         $(this._overlayCanvas).bind("mousewheel", mouseWheel)
@@ -2495,10 +2494,10 @@ ChartManager.prototype.setCaptureMouseWheelDirectly = function(a) {
         $(this._overlayCanvas).unbind("mousewheel")
     }
 };
-ChartManager.prototype.getChart = function(a) {
+ChartManager.prototype.getChart = function (a) {
     return this._chart.defaultFrame
 };
-ChartManager.prototype.init = function() {
+ChartManager.prototype.init = function () {
     delete this._ranges["frame0.k0.indic1"];
     delete this._ranges["frame0.k0.indic1Range"];
     delete this._areas["frame0.k0.indic1"];
@@ -2506,42 +2505,42 @@ ChartManager.prototype.init = function() {
     DefaultTemplate.loadTemplate("frame0.k0", "BTC123");
     this.redraw("All", true)
 };
-ChartManager.prototype.setCurrentDrawingTool = function(a) {
+ChartManager.prototype.setCurrentDrawingTool = function (a) {
     this._drawingTool = ChartManager.DrawingTool[a];
     this.setRunningMode(this._drawingTool)
 };
-ChartManager.prototype.getLanguage = function() {
+ChartManager.prototype.getLanguage = function () {
     return this._language
 };
-ChartManager.prototype.setLanguage = function(a) {
+ChartManager.prototype.setLanguage = function (a) {
     this._language = a
 };
-ChartManager.prototype.setThemeName = function(a, b) {
+ChartManager.prototype.setThemeName = function (a, b) {
     if (b == undefined) {
         b = "Dark"
     }
     var c;
     switch (b) {
-    case "Light":
-        c = new LightTheme();
-        break;
-    default:
-        b = "Dark";
-        c = new DarkTheme();
-        break
+        case "Light":
+            c = new LightTheme();
+            break;
+        default:
+            b = "Dark";
+            c = new DarkTheme();
+            break
     }
     this._themeName = b;
     this.setTheme(a, c);
     this.getFrame(a).setChanged(true)
 };
-ChartManager.prototype.getChartStyle = function(b) {
+ChartManager.prototype.getChartStyle = function (b) {
     var a = this._dsChartStyle[b];
     if (a == undefined) {
         return "CandleStick"
     }
     return a
 };
-ChartManager.prototype.setChartStyle = function(e, c) {
+ChartManager.prototype.setChartStyle = function (e, c) {
     if (this._dsChartStyle[e] == c) {
         return
     }
@@ -2550,45 +2549,45 @@ ChartManager.prototype.setChartStyle = function(e, c) {
     var a = g + ".main";
     var f, d;
     switch (c) {
-    case "CandleStick":
-    case "CandleStickHLC":
-    case "OHLC":
-        f = this.getDataProvider(b);
-        if (f == undefined || !is_instance(f, MainDataProvider)) {
-            f = new MainDataProvider(b);
-            this.setDataProvider(b, f);
-            f.updateData()
-        }
-        this.setMainIndicator(e, ChartSettings.get().charts.mIndic);
-        switch (c) {
         case "CandleStick":
-            d = new CandlestickPlotter(a);
-            break;
         case "CandleStickHLC":
-            d = new CandlestickHLCPlotter(a);
-            break;
         case "OHLC":
-            d = new OHLCPlotter(a);
+            f = this.getDataProvider(b);
+            if (f == undefined || !is_instance(f, MainDataProvider)) {
+                f = new MainDataProvider(b);
+                this.setDataProvider(b, f);
+                f.updateData()
+            }
+            this.setMainIndicator(e, ChartSettings.get().charts.mIndic);
+            switch (c) {
+                case "CandleStick":
+                    d = new CandlestickPlotter(a);
+                    break;
+                case "CandleStickHLC":
+                    d = new CandlestickHLCPlotter(a);
+                    break;
+                case "OHLC":
+                    d = new OHLCPlotter(a);
+                    break
+            }
+            this.setPlotter(a, d);
+            d = new MinMaxPlotter(g + ".decoration");
+            this.setPlotter(d.getName(), d);
+            break;
+        case "Line":
+            f = new IndicatorDataProvider(b);
+            this.setDataProvider(f.getName(), f);
+            f.setIndicator(new HLCIndicator());
+            this.removeMainIndicator(e);
+            d = new IndicatorPlotter(a);
+            this.setPlotter(a, d);
+            this.removePlotter(g + ".decoration");
             break
-        }
-        this.setPlotter(a, d);
-        d = new MinMaxPlotter(g + ".decoration");
-        this.setPlotter(d.getName(), d);
-        break;
-    case "Line":
-        f = new IndicatorDataProvider(b);
-        this.setDataProvider(f.getName(), f);
-        f.setIndicator(new HLCIndicator());
-        this.removeMainIndicator(e);
-        d = new IndicatorPlotter(a);
-        this.setPlotter(a, d);
-        this.removePlotter(g + ".decoration");
-        break
     }
     this.getArea(d.getAreaName()).setChanged(true);
     this._dsChartStyle[e] = c
 };
-ChartManager.prototype.setNormalMode = function() {
+ChartManager.prototype.setNormalMode = function () {
     this._drawingTool = this._beforeDrawingTool;
     $(".chart_dropdown_data").removeClass("chart_dropdown-hover");
     $("#chart_toolpanel .chart_toolpanel_button").removeClass("selected");
@@ -2602,7 +2601,7 @@ ChartManager.prototype.setNormalMode = function() {
         this.hideCursor()
     }
 };
-ChartManager.prototype.setRunningMode = function(b) {
+ChartManager.prototype.setRunningMode = function (b) {
     var c = this.getDataSource("frame0.k0");
     var a = c.getCurrentToolObject();
     if (a != null && a.state != CToolObject.state.AfterDraw) {
@@ -2615,71 +2614,71 @@ ChartManager.prototype.setRunningMode = function(b) {
     this._drawingTool = b;
     if (b == ChartManager.DrawingTool.Cursor) {
         this.showCursor()
-    } else {}
+    } else { }
     switch (b) {
-    case ChartManager.DrawingTool.Cursor:
-        this._beforeDrawingTool = b;
-        break;
-    case ChartManager.DrawingTool.ArrowLine:
-        c.addToolObject(new CArrowLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.BandLine:
-        c.addToolObject(new CBandLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.BiParallelLine:
-        c.addToolObject(new CBiParallelLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.BiParallelRayLine:
-        c.addToolObject(new CBiParallelRayLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.CrossCursor:
-        this._beforeDrawingTool = b;
-        break;
-    case ChartManager.DrawingTool.DrawFibFans:
-        c.addToolObject(new CFibFansObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.DrawFibRetrace:
-        c.addToolObject(new CFibRetraceObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.DrawLines:
-        c.addToolObject(new CStraightLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.HoriRayLine:
-        c.addToolObject(new CHoriRayLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.HoriSegLine:
-        c.addToolObject(new CHoriSegLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.HoriStraightLine:
-        c.addToolObject(new CHoriStraightLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.PriceLine:
-        c.addToolObject(new CPriceLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.RayLine:
-        c.addToolObject(new CRayLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.SegLine:
-        c.addToolObject(new CSegLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.StraightLine:
-        c.addToolObject(new CStraightLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.TriParallelLine:
-        c.addToolObject(new CTriParallelLineObject("frame0.k0"));
-        break;
-    case ChartManager.DrawingTool.VertiStraightLine:
-        c.addToolObject(new CVertiStraightLineObject("frame0.k0"));
-        break
+        case ChartManager.DrawingTool.Cursor:
+            this._beforeDrawingTool = b;
+            break;
+        case ChartManager.DrawingTool.ArrowLine:
+            c.addToolObject(new CArrowLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.BandLine:
+            c.addToolObject(new CBandLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.BiParallelLine:
+            c.addToolObject(new CBiParallelLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.BiParallelRayLine:
+            c.addToolObject(new CBiParallelRayLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.CrossCursor:
+            this._beforeDrawingTool = b;
+            break;
+        case ChartManager.DrawingTool.DrawFibFans:
+            c.addToolObject(new CFibFansObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.DrawFibRetrace:
+            c.addToolObject(new CFibRetraceObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.DrawLines:
+            c.addToolObject(new CStraightLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.HoriRayLine:
+            c.addToolObject(new CHoriRayLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.HoriSegLine:
+            c.addToolObject(new CHoriSegLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.HoriStraightLine:
+            c.addToolObject(new CHoriStraightLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.PriceLine:
+            c.addToolObject(new CPriceLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.RayLine:
+            c.addToolObject(new CRayLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.SegLine:
+            c.addToolObject(new CSegLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.StraightLine:
+            c.addToolObject(new CStraightLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.TriParallelLine:
+            c.addToolObject(new CTriParallelLineObject("frame0.k0"));
+            break;
+        case ChartManager.DrawingTool.VertiStraightLine:
+            c.addToolObject(new CVertiStraightLineObject("frame0.k0"));
+            break
     }
 };
-ChartManager.prototype.getTitle = function(a) {
+ChartManager.prototype.getTitle = function (a) {
     return this._titles[a]
 };
-ChartManager.prototype.setTitle = function(b, a) {
+ChartManager.prototype.setTitle = function (b, a) {
     this._titles[b] = a
 };
-ChartManager.prototype.setCurrentDataSource = function(d, a) {
+ChartManager.prototype.setCurrentDataSource = function (d, a) {
     var b = this.getCachedDataSource(a);
     if (b != null) {
         this.setDataSource(d, b, true)
@@ -2702,82 +2701,82 @@ ChartManager.prototype.setCurrentDataSource = function(d, a) {
         }
     }
 };
-ChartManager.prototype.getDataSource = function(a) {
+ChartManager.prototype.getDataSource = function (a) {
     return this._dataSources[a]
 };
-ChartManager.prototype.setDataSource = function(a, b, c) {
+ChartManager.prototype.setDataSource = function (a, b, c) {
     this._dataSources[a] = b;
     if (c) {
         this.updateData(a, null)
     }
 };
-ChartManager.prototype.getCachedDataSource = function(a) {
+ChartManager.prototype.getCachedDataSource = function (a) {
     return this._dataSourceCache[a]
 };
-ChartManager.prototype.setCachedDataSource = function(a, b) {
+ChartManager.prototype.setCachedDataSource = function (a, b) {
     this._dataSourceCache[a] = b
 };
-ChartManager.prototype.getDataProvider = function(a) {
+ChartManager.prototype.getDataProvider = function (a) {
     return this._dataProviders[a]
 };
-ChartManager.prototype.setDataProvider = function(a, b) {
+ChartManager.prototype.setDataProvider = function (a, b) {
     this._dataProviders[a] = b
 };
-ChartManager.prototype.removeDataProvider = function(a) {
+ChartManager.prototype.removeDataProvider = function (a) {
     delete this._dataProviders[a]
 };
-ChartManager.prototype.getFrame = function(a) {
+ChartManager.prototype.getFrame = function (a) {
     return this._frames[a]
 };
-ChartManager.prototype.setFrame = function(a, b) {
+ChartManager.prototype.setFrame = function (a, b) {
     this._frames[a] = b
 };
-ChartManager.prototype.removeFrame = function(a) {
+ChartManager.prototype.removeFrame = function (a) {
     delete this._frames[a]
 };
-ChartManager.prototype.getArea = function(a) {
+ChartManager.prototype.getArea = function (a) {
     return this._areas[a]
 };
-ChartManager.prototype.setArea = function(a, b) {
+ChartManager.prototype.setArea = function (a, b) {
     this._areas[a] = b
 };
-ChartManager.prototype.removeArea = function(a) {
+ChartManager.prototype.removeArea = function (a) {
     delete this._areas[a]
 };
-ChartManager.prototype.getTimeline = function(a) {
+ChartManager.prototype.getTimeline = function (a) {
     return this._timelines[a]
 };
-ChartManager.prototype.setTimeline = function(a, b) {
+ChartManager.prototype.setTimeline = function (a, b) {
     this._timelines[a] = b
 };
-ChartManager.prototype.removeTimeline = function(a) {
+ChartManager.prototype.removeTimeline = function (a) {
     delete this._timelines[a]
 };
-ChartManager.prototype.getRange = function(a) {
+ChartManager.prototype.getRange = function (a) {
     return this._ranges[a]
 };
-ChartManager.prototype.setRange = function(b, a) {
+ChartManager.prototype.setRange = function (b, a) {
     this._ranges[b] = a
 };
-ChartManager.prototype.removeRange = function(a) {
+ChartManager.prototype.removeRange = function (a) {
     delete this._ranges[a]
 };
-ChartManager.prototype.getPlotter = function(a) {
+ChartManager.prototype.getPlotter = function (a) {
     return this._plotters[a]
 };
-ChartManager.prototype.setPlotter = function(a, b) {
+ChartManager.prototype.setPlotter = function (a, b) {
     this._plotters[a] = b
 };
-ChartManager.prototype.removePlotter = function(a) {
+ChartManager.prototype.removePlotter = function (a) {
     delete this._plotters[a]
 };
-ChartManager.prototype.getTheme = function(a) {
+ChartManager.prototype.getTheme = function (a) {
     return this._themes[a]
 };
-ChartManager.prototype.setTheme = function(a, b) {
+ChartManager.prototype.setTheme = function (a, b) {
     this._themes[a] = b
 };
-ChartManager.prototype.getFrameMousePos = function(b, a) {
+ChartManager.prototype.getFrameMousePos = function (b, a) {
     if (this._frameMousePos[b] != undefined) {
         a.x = this._frameMousePos[b].x;
         a.y = this._frameMousePos[b].y
@@ -2786,13 +2785,13 @@ ChartManager.prototype.getFrameMousePos = function(b, a) {
         a.y = -1
     }
 };
-ChartManager.prototype.setFrameMousePos = function(b, c, a) {
+ChartManager.prototype.setFrameMousePos = function (b, c, a) {
     this._frameMousePos[b] = {
         x: c,
         y: a
     }
 };
-ChartManager.prototype.drawArea = function(c, d, f) {
+ChartManager.prototype.drawArea = function (c, d, f) {
     var g = d.getNameObject().getCompAt(2);
     if (g == "timeline") {
         if (d.getHeight() < 20) {
@@ -2816,7 +2815,7 @@ ChartManager.prototype.drawArea = function(c, d, f) {
         }
     }
 };
-ChartManager.prototype.drawAreaMain = function(a, b) {
+ChartManager.prototype.drawAreaMain = function (a, b) {
     var c = this._dataSources[b.getDataSourceName()];
     var d;
     if (c.getDataCount() < 1) {
@@ -2827,7 +2826,7 @@ ChartManager.prototype.drawAreaMain = function(a, b) {
     this.drawArea(a, b, d);
     b.setChanged(false)
 };
-ChartManager.prototype.drawAreaOverlay = function(a, b) {
+ChartManager.prototype.drawAreaOverlay = function (a, b) {
     var c = this._dataSources[b.getDataSourceName()];
     var d;
     if (c.getDataCount() < 1) {
@@ -2837,7 +2836,7 @@ ChartManager.prototype.drawAreaOverlay = function(a, b) {
     }
     this.drawArea(a, b, d)
 };
-ChartManager.prototype.drawMain = function(a, c) {
+ChartManager.prototype.drawMain = function (a, c) {
     drawn = false;
     if (!drawn) {
         for (var d in this._areas) {
@@ -2866,7 +2865,7 @@ ChartManager.prototype.drawMain = function(a, c) {
         }
     }
 };
-ChartManager.prototype.drawOverlay = function(a, b) {
+ChartManager.prototype.drawOverlay = function (a, b) {
     for (var d in this._areas) {
         var c = this._areas[d];
         if (is_instance(c, ChartAreaGroup)) {
@@ -2884,7 +2883,7 @@ ChartManager.prototype.drawOverlay = function(a, b) {
         }
     }
 };
-ChartManager.prototype.updateData = function(a, g) {
+ChartManager.prototype.updateData = function (a, g) {
     var d = this.getDataSource(a);
     if (d == undefined) {
         return
@@ -2926,7 +2925,7 @@ ChartManager.prototype.updateData = function(a, g) {
     }
     return true
 };
-ChartManager.prototype.updateRange = function(a) {
+ChartManager.prototype.updateRange = function (a) {
     var d = this.getDataSource(a);
     if (d.getDataCount() < 1) {
         return
@@ -2957,7 +2956,7 @@ ChartManager.prototype.updateRange = function(a) {
         }
     }
 };
-ChartManager.prototype.layout = function(b, g, f, i, j, a) {
+ChartManager.prototype.layout = function (b, g, f, i, j, a) {
     var c = this.getFrame(g);
     c.measure(b, j - f, a - i);
     c.layout(f, i, j, a);
@@ -2973,7 +2972,7 @@ ChartManager.prototype.layout = function(b, g, f, i, j, a) {
         }
     }
 };
-ChartManager.prototype.SelectRange = function(b, f) {
+ChartManager.prototype.SelectRange = function (b, f) {
     var c;
     for (var a in this._ranges) {
         var e = this._ranges[a].getAreaName();
@@ -2985,7 +2984,7 @@ ChartManager.prototype.SelectRange = function(b, f) {
         }
     }
 };
-ChartManager.prototype.scale = function(b) {
+ChartManager.prototype.scale = function (b) {
     if (this._highlightedFrame == null) {
         return
     }
@@ -2999,18 +2998,18 @@ ChartManager.prototype.scale = function(b) {
         }
     }
 };
-ChartManager.prototype.showCursor = function(a) {
+ChartManager.prototype.showCursor = function (a) {
     if (a === undefined) {
         a = "default"
     }
     this._mainCanvas.style.cursor = a;
     this._overlayCanvas.style.cursor = a
 };
-ChartManager.prototype.hideCursor = function() {
+ChartManager.prototype.hideCursor = function () {
     this._mainCanvas.style.cursor = "none";
     this._overlayCanvas.style.cursor = "none"
 };
-ChartManager.prototype.showCrossCursor = function(b, a, d) {
+ChartManager.prototype.showCrossCursor = function (b, a, d) {
     var c = this.getRange(b.getName());
     if (c != undefined) {
         c.selectAt(d);
@@ -3023,7 +3022,7 @@ ChartManager.prototype.showCrossCursor = function(b, a, d) {
     }
     return false
 };
-ChartManager.prototype.hideCrossCursor = function(a) {
+ChartManager.prototype.hideCrossCursor = function (a) {
     if (a != null) {
         for (var c in this._timelines) {
             var b = this._timelines[c];
@@ -3040,13 +3039,13 @@ ChartManager.prototype.hideCrossCursor = function(a) {
         this._ranges[c].unselect()
     }
 };
-ChartManager.prototype.clearHighlight = function() {
+ChartManager.prototype.clearHighlight = function () {
     if (this._highlightedFrame != null) {
         this._highlightedFrame.highlight(null);
         this._highlightedFrame = null
     }
 };
-ChartManager.prototype.onToolMouseMove = function(b, a, f) {
+ChartManager.prototype.onToolMouseMove = function (b, a, f) {
     var c = false;
     b += ".";
     for (var e in this._dataSources) {
@@ -3061,7 +3060,7 @@ ChartManager.prototype.onToolMouseMove = function(b, a, f) {
     }
     return c
 };
-ChartManager.prototype.onToolMouseDown = function(b, a, f) {
+ChartManager.prototype.onToolMouseDown = function (b, a, f) {
     var c = false;
     b += ".";
     for (var e in this._dataSources) {
@@ -3076,7 +3075,7 @@ ChartManager.prototype.onToolMouseDown = function(b, a, f) {
     }
     return c
 };
-ChartManager.prototype.onToolMouseUp = function(b, a, f) {
+ChartManager.prototype.onToolMouseUp = function (b, a, f) {
     var c = false;
     b += ".";
     for (var e in this._dataSources) {
@@ -3091,7 +3090,7 @@ ChartManager.prototype.onToolMouseUp = function(b, a, f) {
     }
     return c
 };
-ChartManager.prototype.onToolMouseDrag = function(b, a, f) {
+ChartManager.prototype.onToolMouseDrag = function (b, a, f) {
     var c = false;
     b += ".";
     for (var e in this._dataSources) {
@@ -3106,7 +3105,7 @@ ChartManager.prototype.onToolMouseDrag = function(b, a, f) {
     }
     return c
 };
-ChartManager.prototype.onMouseMove = function(f, k, h, g) {
+ChartManager.prototype.onMouseMove = function (f, k, h, g) {
     var c = this.getFrame(f);
     if (c === undefined) {
         return
@@ -3137,7 +3136,7 @@ ChartManager.prototype.onMouseMove = function(f, k, h, g) {
         }
     }
 };
-ChartManager.prototype.onMouseLeave = function(c, a, e, b) {
+ChartManager.prototype.onMouseLeave = function (c, a, e, b) {
     var d = this.getFrame(c);
     if (d == undefined) {
         return
@@ -3151,7 +3150,7 @@ ChartManager.prototype.onMouseLeave = function(c, a, e, b) {
     }
     this._dragStarted = false
 };
-ChartManager.prototype.onMouseDown = function(d, b, j) {
+ChartManager.prototype.onMouseDown = function (d, b, j) {
     var h = this.getFrame(d);
     if (h == undefined) {
         return
@@ -3170,7 +3169,7 @@ ChartManager.prototype.onMouseDown = function(d, b, j) {
         }
     }
 };
-ChartManager.prototype.onMouseUp = function(b, a, d) {
+ChartManager.prototype.onMouseUp = function (b, a, d) {
     var c = this.getFrame(b);
     if (c == undefined) {
         return
@@ -3200,7 +3199,7 @@ ChartManager.prototype.onMouseUp = function(b, a, d) {
         this._dragStarted = false
     }
 };
-ChartManager.prototype.deleteToolObject = function() {
+ChartManager.prototype.deleteToolObject = function () {
     var b = this.getDataSource("frame0.k0");
     var c = b.getSelectToolObjcet();
     if (c != null) {
@@ -3212,7 +3211,7 @@ ChartManager.prototype.deleteToolObject = function() {
     }
     this.setNormalMode()
 };
-ChartManager.prototype.unloadTemplate = function(a) {
+ChartManager.prototype.unloadTemplate = function (a) {
     var b = this.getFrame(a);
     if (b == undefined) {
         return
@@ -3251,91 +3250,91 @@ ChartManager.prototype.unloadTemplate = function(a) {
     delete this._themes[a];
     delete this._frameMousePos[a]
 };
-ChartManager.prototype.createIndicatorAndRange = function(e, a, c) {
+ChartManager.prototype.createIndicatorAndRange = function (e, a, c) {
     var d, b;
     switch (a) {
-    case "MA":
-        d = new MAIndicator();
-        b = new PositiveRange(e);
-        break;
-    case "EMA":
-        d = new EMAIndicator();
-        b = new PositiveRange(e);
-        break;
-    case "VOLUME":
-        d = new VOLUMEIndicator();
-        b = new ZeroBasedPositiveRange(e);
-        break;
-    case "MACD":
-        d = new MACDIndicator();
-        b = new ZeroCenteredRange(e);
-        break;
-    case "DMI":
-        d = new DMIIndicator();
-        b = new PercentageRange(e);
-        break;
-    case "DMA":
-        d = new DMAIndicator();
-        b = new Range(e);
-        break;
-    case "TRIX":
-        d = new TRIXIndicator();
-        b = new Range(e);
-        break;
-    case "BRAR":
-        d = new BRARIndicator();
-        b = new Range(e);
-        break;
-    case "VR":
-        d = new VRIndicator();
-        b = new Range(e);
-        break;
-    case "OBV":
-        d = new OBVIndicator();
-        b = new Range(e);
-        break;
-    case "EMV":
-        d = new EMVIndicator();
-        b = new Range(e);
-        break;
-    case "RSI":
-        d = new RSIIndicator();
-        b = new PercentageRange(e);
-        break;
-    case "WR":
-        d = new WRIndicator();
-        b = new PercentageRange(e);
-        break;
-    case "SAR":
-        d = new SARIndicator();
-        b = new PositiveRange(e);
-        break;
-    case "KDJ":
-        d = new KDJIndicator();
-        b = new PercentageRange(e);
-        break;
-    case "ROC":
-        d = new ROCIndicator();
-        b = new Range(e);
-        break;
-    case "MTM":
-        d = new MTMIndicator();
-        b = new Range(e);
-        break;
-    case "BOLL":
-        d = new BOLLIndicator();
-        b = new Range(e);
-        break;
-    case "PSY":
-        d = new PSYIndicator();
-        b = new Range(e);
-        break;
-    case "StochRSI":
-        d = new STOCHRSIIndicator();
-        b = new PercentageRange(e);
-        break;
-    default:
-        return null
+        case "MA":
+            d = new MAIndicator();
+            b = new PositiveRange(e);
+            break;
+        case "EMA":
+            d = new EMAIndicator();
+            b = new PositiveRange(e);
+            break;
+        case "VOLUME":
+            d = new VOLUMEIndicator();
+            b = new ZeroBasedPositiveRange(e);
+            break;
+        case "MACD":
+            d = new MACDIndicator();
+            b = new ZeroCenteredRange(e);
+            break;
+        case "DMI":
+            d = new DMIIndicator();
+            b = new PercentageRange(e);
+            break;
+        case "DMA":
+            d = new DMAIndicator();
+            b = new Range(e);
+            break;
+        case "TRIX":
+            d = new TRIXIndicator();
+            b = new Range(e);
+            break;
+        case "BRAR":
+            d = new BRARIndicator();
+            b = new Range(e);
+            break;
+        case "VR":
+            d = new VRIndicator();
+            b = new Range(e);
+            break;
+        case "OBV":
+            d = new OBVIndicator();
+            b = new Range(e);
+            break;
+        case "EMV":
+            d = new EMVIndicator();
+            b = new Range(e);
+            break;
+        case "RSI":
+            d = new RSIIndicator();
+            b = new PercentageRange(e);
+            break;
+        case "WR":
+            d = new WRIndicator();
+            b = new PercentageRange(e);
+            break;
+        case "SAR":
+            d = new SARIndicator();
+            b = new PositiveRange(e);
+            break;
+        case "KDJ":
+            d = new KDJIndicator();
+            b = new PercentageRange(e);
+            break;
+        case "ROC":
+            d = new ROCIndicator();
+            b = new Range(e);
+            break;
+        case "MTM":
+            d = new MTMIndicator();
+            b = new Range(e);
+            break;
+        case "BOLL":
+            d = new BOLLIndicator();
+            b = new Range(e);
+            break;
+        case "PSY":
+            d = new PSYIndicator();
+            b = new Range(e);
+            break;
+        case "StochRSI":
+            d = new STOCHRSIIndicator();
+            b = new PercentageRange(e);
+            break;
+        default:
+            return null
     }
     if (!c) {
         d.setParameters(ChartSettings.get().indics[a])
@@ -3345,7 +3344,7 @@ ChartManager.prototype.createIndicatorAndRange = function(e, a, c) {
         range: b
     }
 };
-ChartManager.prototype.setMainIndicator = function(e, a) {
+ChartManager.prototype.setMainIndicator = function (e, a) {
     var h = e + ".main";
     var g = this.getDataProvider(h + ".main");
     if (g == undefined || !is_instance(g, MainDataProvider)) {
@@ -3353,20 +3352,20 @@ ChartManager.prototype.setMainIndicator = function(e, a) {
     }
     var f;
     switch (a) {
-    case "MA":
-        f = new MAIndicator();
-        break;
-    case "EMA":
-        f = new EMAIndicator();
-        break;
-    case "BOLL":
-        f = new BOLLIndicator();
-        break;
-    case "SAR":
-        f = new SARIndicator();
-        break;
-    default:
-        return false
+        case "MA":
+            f = new MAIndicator();
+            break;
+        case "EMA":
+            f = new EMAIndicator();
+            break;
+        case "BOLL":
+            f = new BOLLIndicator();
+            break;
+        case "SAR":
+            f = new SARIndicator();
+            break;
+        default:
+            return false
     }
     f.setParameters(ChartSettings.get().indics[a]);
     var c = h + ".secondary";
@@ -3384,7 +3383,7 @@ ChartManager.prototype.setMainIndicator = function(e, a) {
     this.getArea(h).setChanged(true);
     return true
 };
-ChartManager.prototype.setIndicator = function(h, a) {
+ChartManager.prototype.setIndicator = function (h, a) {
     var d = this.getArea(h);
     if (d == undefined || d.getNameObject().getCompAt(2) == "main") {
         return false
@@ -3422,7 +3421,7 @@ ChartManager.prototype.setIndicator = function(h, a) {
     }
     return true
 };
-ChartManager.prototype.removeMainIndicator = function(c) {
+ChartManager.prototype.removeMainIndicator = function (c) {
     var d = c + ".main";
     var b = d + ".secondary";
     var a = this.getDataProvider(b);
@@ -3433,7 +3432,7 @@ ChartManager.prototype.removeMainIndicator = function(c) {
     this.removePlotter(b);
     this.getArea(d).setChanged(true)
 };
-ChartManager.prototype.removeIndicator = function(g) {
+ChartManager.prototype.removeIndicator = function (g) {
     var b = this.getArea(g);
     if (b == undefined || b.getNameObject().getCompAt(2) == "main") {
         return
@@ -3476,7 +3475,7 @@ ChartManager.prototype.removeIndicator = function(g) {
         }
     }
 };
-ChartManager.prototype.getIndicatorParameters = function(a) {
+ChartManager.prototype.getIndicatorParameters = function (a) {
     var f = this._fakeIndicators[a];
     if (f == undefined) {
         var b = this.createIndicatorAndRange("", a);
@@ -3492,7 +3491,7 @@ ChartManager.prototype.getIndicatorParameters = function(a) {
     }
     return e
 };
-ChartManager.prototype.setIndicatorParameters = function(a, c) {
+ChartManager.prototype.setIndicatorParameters = function (a, c) {
     var f, e;
     for (f in this._dataProviders) {
         var d = this._dataProviders[f];
@@ -3516,7 +3515,7 @@ ChartManager.prototype.setIndicatorParameters = function(a, c) {
     }
     e.setParameters(c)
 };
-ChartManager.prototype.getIndicatorAreaName = function(c, a) {
+ChartManager.prototype.getIndicatorAreaName = function (c, a) {
     var d = this.getArea(c + ".charts");
     var b = d.getAreaCount() >> 1;
     if (a < 0 || a >= b) {
@@ -3529,7 +3528,7 @@ Timeline._ItemWidth = [1, 3, 3, 5, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 
 Timeline._SpaceWidth = [1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 5, 5, 5, 5, 7, 7, 7];
 Timeline.PADDING_LEFT = 4;
 Timeline.PADDING_RIGHT = 8;
-Timeline.prototype.__construct = function(a) {
+Timeline.prototype.__construct = function (a) {
     Timeline.__super.__construct.call(this, a);
     this._updated = false;
     this._innerLeft = 0;
@@ -3543,64 +3542,64 @@ Timeline.prototype.__construct = function(a) {
     this._selectedIndex = -1;
     this._savedFirstIndex = -1
 };
-Timeline.prototype.isLatestShown = function() {
+Timeline.prototype.isLatestShown = function () {
     return this.getLastIndex() == this._maxIndex
 };
-Timeline.prototype.isUpdated = function() {
+Timeline.prototype.isUpdated = function () {
     return this._updated
 };
-Timeline.prototype.setUpdated = function(a) {
+Timeline.prototype.setUpdated = function (a) {
     this._updated = a
 };
-Timeline.prototype.getItemWidth = function() {
+Timeline.prototype.getItemWidth = function () {
     return Timeline._ItemWidth[this._scale]
 };
-Timeline.prototype.getSpaceWidth = function() {
+Timeline.prototype.getSpaceWidth = function () {
     return Timeline._SpaceWidth[this._scale]
 };
-Timeline.prototype.getColumnWidth = function() {
+Timeline.prototype.getColumnWidth = function () {
     return this.getSpaceWidth() + this.getItemWidth()
 };
-Timeline.prototype.getInnerWidth = function() {
+Timeline.prototype.getInnerWidth = function () {
     return this._innerWidth
 };
-Timeline.prototype.getItemLeftOffset = function() {
+Timeline.prototype.getItemLeftOffset = function () {
     return this.getSpaceWidth()
 };
-Timeline.prototype.getItemCenterOffset = function() {
+Timeline.prototype.getItemCenterOffset = function () {
     return this.getSpaceWidth() + (this.getItemWidth() >> 1)
 };
-Timeline.prototype.getFirstColumnLeft = function() {
+Timeline.prototype.getFirstColumnLeft = function () {
     return this._firstColumnLeft
 };
-Timeline.prototype.getMaxItemCount = function() {
+Timeline.prototype.getMaxItemCount = function () {
     return this._maxItemCount
 };
-Timeline.prototype.getFirstIndex = function() {
+Timeline.prototype.getFirstIndex = function () {
     return this._firstIndex
 };
-Timeline.prototype.getLastIndex = function() {
+Timeline.prototype.getLastIndex = function () {
     return Math.min(this._firstIndex + this._maxItemCount, this._maxIndex)
 };
-Timeline.prototype.getSelectedIndex = function() {
+Timeline.prototype.getSelectedIndex = function () {
     return this._selectedIndex
 };
-Timeline.prototype.getMaxIndex = function() {
+Timeline.prototype.getMaxIndex = function () {
     return this._maxIndex
 };
-Timeline.prototype.calcColumnCount = function(a) {
+Timeline.prototype.calcColumnCount = function (a) {
     return Math.floor(a / this.getColumnWidth()) << 0
 };
-Timeline.prototype.calcFirstColumnLeft = function(a) {
+Timeline.prototype.calcFirstColumnLeft = function (a) {
     return this._innerLeft + this._innerWidth - (this.getColumnWidth() * a)
 };
-Timeline.prototype.calcFirstIndexAlignRight = function(c, a, b) {
+Timeline.prototype.calcFirstIndexAlignRight = function (c, a, b) {
     return Math.max(0, c + Math.max(a, 1) - Math.max(b, 1))
 };
-Timeline.prototype.calcFirstIndex = function(a) {
+Timeline.prototype.calcFirstIndex = function (a) {
     return this.validateFirstIndex(this.calcFirstIndexAlignRight(this._firstIndex, this._maxItemCount, a), a)
 };
-Timeline.prototype.updateMaxItemCount = function() {
+Timeline.prototype.updateMaxItemCount = function () {
     var a = this.calcColumnCount(this._innerWidth);
     var c;
     if (this._maxItemCount < 1) {
@@ -3609,7 +3608,7 @@ Timeline.prototype.updateMaxItemCount = function() {
         if (this._lastScale == this._scale) {
             c = this.validateFirstIndex(this._firstIndex - (a - this._maxItemCount))
         } else {
-            var b = (this._selectedIndex >= 0) ? this._selectedIndex: this.getLastIndex() - 1;
+            var b = (this._selectedIndex >= 0) ? this._selectedIndex : this.getLastIndex() - 1;
             c = this.validateFirstIndex(b - Math.round((b - this._firstIndex) * a / this._maxItemCount))
         }
     }
@@ -3627,9 +3626,9 @@ Timeline.prototype.updateMaxItemCount = function() {
     }
     this._firstColumnLeft = this.calcFirstColumnLeft(a)
 };
-Timeline.prototype.validateFirstIndex = function(a, c) {
+Timeline.prototype.validateFirstIndex = function (a, c) {
     if (this._maxIndex < 1) {
-        return - 1
+        return -1
     }
     if (a < 0) {
         return 0
@@ -3640,7 +3639,7 @@ Timeline.prototype.validateFirstIndex = function(a, c) {
     }
     return a
 };
-Timeline.prototype.validateSelectedIndex = function() {
+Timeline.prototype.validateSelectedIndex = function () {
     if (this._selectedIndex < this._firstIndex) {
         this._selectedIndex = -1
     } else {
@@ -3649,7 +3648,7 @@ Timeline.prototype.validateSelectedIndex = function() {
         }
     }
 };
-Timeline.prototype.onLayout = function() {
+Timeline.prototype.onLayout = function () {
     var c = ChartManager.getInstance();
     var b = c.getArea(this.getDataSourceName() + ".main");
     if (b != null) {
@@ -3661,67 +3660,67 @@ Timeline.prototype.onLayout = function() {
         }
     }
 };
-Timeline.prototype.toIndex = function(a) {
+Timeline.prototype.toIndex = function (a) {
     return this._firstIndex + this.calcColumnCount(a - this._firstColumnLeft)
 };
-Timeline.prototype.toColumnLeft = function(a) {
+Timeline.prototype.toColumnLeft = function (a) {
     return this._firstColumnLeft + (this.getColumnWidth() * (a - this._firstIndex))
 };
-Timeline.prototype.toItemLeft = function(a) {
+Timeline.prototype.toItemLeft = function (a) {
     return this.toColumnLeft(a) + this.getItemLeftOffset()
 };
-Timeline.prototype.toItemCenter = function(a) {
+Timeline.prototype.toItemCenter = function (a) {
     return this.toColumnLeft(a) + this.getItemCenterOffset()
 };
-Timeline.prototype.selectAt = function(a) {
+Timeline.prototype.selectAt = function (a) {
     this._selectedIndex = this.toIndex(a);
     this.validateSelectedIndex();
     return (this._selectedIndex >= 0)
 };
-Timeline.prototype.unselect = function() {
+Timeline.prototype.unselect = function () {
     this._selectedIndex = -1
 };
-Timeline.prototype.update = function() {
+Timeline.prototype.update = function () {
     var c = ChartManager.getInstance();
     var b = c.getDataSource(this.getDataSourceName());
     var d = this._maxIndex;
     this._maxIndex = b.getDataCount();
     switch (b.getUpdateMode()) {
-    case DataSource.UpdateMode.Refresh:
-        if (this._maxIndex < 1) {
-            this._firstIndex = -1
-        } else {
-            this._firstIndex = Math.max(this._maxIndex - this._maxItemCount, 0)
-        }
-        this._selectedIndex = -1;
-        this._updated = true;
-        break;
-    case DataSource.UpdateMode.Append:
-        var e = this.getLastIndex();
-        var a = b.getErasedCount();
-        if (e < d) {
-            if (a > 0) {
-                this._firstIndex = Math.max(this._firstIndex - a, 0);
-                if (this._selectedIndex >= 0) {
-                    this._selectedIndex -= a;
-                    this.validateSelectedIndex()
-                }
-                this._updated = true
+        case DataSource.UpdateMode.Refresh:
+            if (this._maxIndex < 1) {
+                this._firstIndex = -1
+            } else {
+                this._firstIndex = Math.max(this._maxIndex - this._maxItemCount, 0)
             }
-        } else {
-            if (e == d) {
-                this._firstIndex += (this._maxIndex - d);
-                if (this._selectedIndex >= 0) {
-                    this._selectedIndex -= a;
-                    this.validateSelectedIndex()
+            this._selectedIndex = -1;
+            this._updated = true;
+            break;
+        case DataSource.UpdateMode.Append:
+            var e = this.getLastIndex();
+            var a = b.getErasedCount();
+            if (e < d) {
+                if (a > 0) {
+                    this._firstIndex = Math.max(this._firstIndex - a, 0);
+                    if (this._selectedIndex >= 0) {
+                        this._selectedIndex -= a;
+                        this.validateSelectedIndex()
+                    }
+                    this._updated = true
                 }
-                this._updated = true
+            } else {
+                if (e == d) {
+                    this._firstIndex += (this._maxIndex - d);
+                    if (this._selectedIndex >= 0) {
+                        this._selectedIndex -= a;
+                        this.validateSelectedIndex()
+                    }
+                    this._updated = true
+                }
             }
-        }
-        break
+            break
     }
 };
-Timeline.prototype.move = function(a) {
+Timeline.prototype.move = function (a) {
     if (this.isLatestShown()) {
         ChartManager.getInstance().getArea(this.getDataSourceName() + ".mainRange").setChanged(true)
     }
@@ -3731,10 +3730,10 @@ Timeline.prototype.move = function(a) {
         this.validateSelectedIndex()
     }
 };
-Timeline.prototype.startMove = function() {
+Timeline.prototype.startMove = function () {
     this._savedFirstIndex = this._firstIndex
 };
-Timeline.prototype.scale = function(a) {
+Timeline.prototype.scale = function (a) {
     this._scale += a;
     if (this._scale < 0) {
         this._scale = 0
@@ -3749,7 +3748,7 @@ Timeline.prototype.scale = function(a) {
     }
 };
 var Range = create_class(NamedObject);
-Range.prototype.__construct = function(a) {
+Range.prototype.__construct = function (a) {
     Range.__super.__construct.call(this, a);
     this._updated = true;
     this._minValue = Number.MAX_VALUE;
@@ -3766,84 +3765,84 @@ Range.prototype.__construct = function(a) {
     this._selectedValue = -Number.MAX_VALUE;
     this._gradations = []
 };
-Range.prototype.isUpdated = function() {
+Range.prototype.isUpdated = function () {
     return this._updated
 };
-Range.prototype.setUpdated = function(a) {
+Range.prototype.setUpdated = function (a) {
     this._updated = a
 };
-Range.prototype.getMinValue = function() {
+Range.prototype.getMinValue = function () {
     return this._minValue
 };
-Range.prototype.getMaxValue = function() {
+Range.prototype.getMaxValue = function () {
     return this._maxValue
 };
-Range.prototype.getRange = function() {
+Range.prototype.getRange = function () {
     return this._maxValue - this._minValue
 };
-Range.prototype.getOuterMinValue = function() {
+Range.prototype.getOuterMinValue = function () {
     return this._outerMinValue
 };
-Range.prototype.getOuterMaxValue = function() {
+Range.prototype.getOuterMaxValue = function () {
     return this._outerMaxValue
 };
-Range.prototype.getOuterRange = function() {
+Range.prototype.getOuterRange = function () {
     return this._outerMaxValue - this._outerMinValue
 };
-Range.prototype.getHeight = function() {
+Range.prototype.getHeight = function () {
     return Math.max(0, this._bottom - this._top)
 };
-Range.prototype.getGradations = function() {
+Range.prototype.getGradations = function () {
     return this._gradations
 };
-Range.prototype.getMinInterval = function() {
+Range.prototype.getMinInterval = function () {
     return this._minInterval
 };
-Range.prototype.setMinInterval = function(a) {
+Range.prototype.setMinInterval = function (a) {
     this._minInterval = a
 };
-Range.prototype.getSelectedPosition = function() {
+Range.prototype.getSelectedPosition = function () {
     if (this._selectedPosition >= 0) {
         return this._selectedPosition
     }
     if (this._selectedValue > -Number.MAX_VALUE) {
         return this.toY(this._selectedValue)
     }
-    return - 1
+    return -1
 };
-Range.prototype.getSelectedValue = function() {
+Range.prototype.getSelectedValue = function () {
     if (this._selectedValue > -Number.MAX_VALUE) {
         return this._selectedValue
     }
     var b = ChartManager.getInstance();
     var a = b.getArea(this.getAreaName());
     if (a == null) {
-        return - Number.MAX_VALUE
+        return -Number.MAX_VALUE
     }
     if (this._selectedPosition < a.getTop() + 12 || this._selectedPosition >= a.getBottom() - 4) {
-        return - Number.MAX_VALUE
+        return -Number.MAX_VALUE
     }
     return this.toValue(this._selectedPosition)
 };
-Range.prototype.setPaddingTop = function(a) {
+Range.prototype.setPaddingTop = function (a) {
     this._paddingTop = a
 };
-Range.prototype.setPaddingBottom = function(a) {
+Range.prototype.setPaddingBottom = function (a) {
     this._paddingBottom = a
 };
-Range.prototype.toValue = function(a) {
+Range.prototype.toValue = function (a) {
     return this._maxValue - (a - this._top) / this._ratio
 };
-Range.prototype.toY = function(a) {
+Range.prototype.toY = function (a) {
     if (this._ratio > 0) {
         return this._top + Math.floor((this._maxValue - a) * this._ratio + 0.5)
     }
     return this._top
 };
-Range.prototype.toHeight = function(a) {
+Range.prototype.toHeight = function (a) {
     return Math.floor(a * this._ratio + 1.5)
 };
-Range.prototype.update = function() {
+Range.prototype.update = function () {
     var c = Number.MAX_VALUE;
     var a = -Number.MAX_VALUE;
     var e = ChartManager.getInstance();
@@ -3862,25 +3861,25 @@ Range.prototype.update = function() {
     this.preSetRange(d);
     this.setRange(d.min, d.max)
 };
-Range.prototype.select = function(a) {
+Range.prototype.select = function (a) {
     this._selectedValue = a;
     this._selectedPosition = -1
 };
-Range.prototype.selectAt = function(a) {
+Range.prototype.selectAt = function (a) {
     this._selectedPosition = a;
     this._selectedValue = -Number.MAX_VALUE
 };
-Range.prototype.unselect = function() {
+Range.prototype.unselect = function () {
     this._selectedPosition = -1;
     this._selectedValue = -Number.MAX_VALUE
 };
-Range.prototype.preSetRange = function(a) {
+Range.prototype.preSetRange = function (a) {
     if (a.min == a.max) {
         a.min = -1;
         a.max = 1
     }
 };
-Range.prototype.setRange = function(d, f) {
+Range.prototype.setRange = function (d, f) {
     var c = ChartManager.getInstance();
     var b = c.getArea(this.getAreaName());
     if (this._minValue == d && this._maxValue == f && !b.isChanged()) {
@@ -3907,7 +3906,7 @@ Range.prototype.setRange = function(d, f) {
     this._outerMaxValue = this.toValue(b.getTop());
     this.updateGradations()
 };
-Range.prototype.calcInterval = function() {
+Range.prototype.calcInterval = function () {
     var e = this.getHeight();
     var f = this.getMinInterval();
     if ((e / f) <= 1) {
@@ -3920,7 +3919,7 @@ Range.prototype.calcInterval = function() {
         b--
     }
     var a, j;
-    for (;; b++) {
+    for (; ; b++) {
         j = Math.pow(10, b);
         a = j;
         if (this.toHeight(a) > f) {
@@ -3937,7 +3936,7 @@ Range.prototype.calcInterval = function() {
     }
     return a
 };
-Range.prototype.updateGradations = function() {
+Range.prototype.updateGradations = function () {
     this._gradations = [];
     var b = this.calcInterval();
     if (b <= 0) {
@@ -3947,13 +3946,13 @@ Range.prototype.updateGradations = function() {
     do {
         this._gradations.push(a);
         a -= b
-    } while ( a > this . getMinValue ())
+    } while (a > this.getMinValue())
 };
 var PositiveRange = create_class(Range);
-PositiveRange.prototype.__construct = function(a) {
+PositiveRange.prototype.__construct = function (a) {
     PositiveRange.__super.__construct.call(this, a)
 };
-PositiveRange.prototype.preSetRange = function(a) {
+PositiveRange.prototype.preSetRange = function (a) {
     if (a.min < 0) {
         a.min = 0
     }
@@ -3962,20 +3961,20 @@ PositiveRange.prototype.preSetRange = function(a) {
     }
 };
 var ZeroBasedPositiveRange = create_class(Range);
-ZeroBasedPositiveRange.prototype.__construct = function(a) {
+ZeroBasedPositiveRange.prototype.__construct = function (a) {
     ZeroBasedPositiveRange.__super.__construct.call(this, a)
 };
-ZeroBasedPositiveRange.prototype.preSetRange = function(a) {
+ZeroBasedPositiveRange.prototype.preSetRange = function (a) {
     a.min = 0;
     if (a.max < 0) {
         a.max = 0
     }
 };
 var MainRange = create_class(Range);
-MainRange.prototype.__construct = function(a) {
+MainRange.prototype.__construct = function (a) {
     MainRange.__super.__construct.call(this, a)
 };
-MainRange.prototype.preSetRange = function(e) {
+MainRange.prototype.preSetRange = function (e) {
     var l = ChartManager.getInstance();
     var n = l.getTimeline(this.getDataSourceName());
     var b = n.getMaxIndex() - n.getLastIndex();
@@ -4009,17 +4008,17 @@ MainRange.prototype.preSetRange = function(e) {
     }
 };
 var ZeroCenteredRange = create_class(Range);
-ZeroCenteredRange.prototype.__construct = function(a) {
+ZeroCenteredRange.prototype.__construct = function (a) {
     ZeroCenteredRange.__super.__construct.call(this, a)
 };
-ZeroCenteredRange.prototype.calcInterval = function(d) {
+ZeroCenteredRange.prototype.calcInterval = function (d) {
     var b = this.getMinInterval();
     if (d.getHeight() / b < 2) {
         return 0
     }
     var c = this.getRange();
     var a;
-    for (a = 3;; a += 2) {
+    for (a = 3; ; a += 2) {
         if (this.toHeight(c / a) <= b) {
             break
         }
@@ -4027,7 +4026,7 @@ ZeroCenteredRange.prototype.calcInterval = function(d) {
     a -= 2;
     return c / a
 };
-ZeroCenteredRange.prototype.updateGradations = function() {
+ZeroCenteredRange.prototype.updateGradations = function () {
     this._gradations = [];
     var d = ChartManager.getInstance();
     var c = d.getArea(this.getAreaName());
@@ -4038,20 +4037,20 @@ ZeroCenteredRange.prototype.updateGradations = function() {
     var a = b / 2;
     do {
         this._gradations.push(a);
-        this._gradations.push( - a);
+        this._gradations.push(-a);
         a += b
-    } while ( a <= this . getMaxValue ())
+    } while (a <= this.getMaxValue())
 };
-ZeroCenteredRange.prototype.preSetRange = function(b) {
+ZeroCenteredRange.prototype.preSetRange = function (b) {
     var a = Math.max(Math.abs(b.min), Math.abs(b.max));
     b.min = -a;
     b.max = a
 };
 var PercentageRange = create_class(Range);
-PercentageRange.prototype.__construct = function(a) {
+PercentageRange.prototype.__construct = function (a) {
     PercentageRange.__super.__construct.call(this, a)
 };
-PercentageRange.prototype.updateGradations = function() {
+PercentageRange.prototype.updateGradations = function () {
     this._gradations = [];
     var e = ChartManager.getInstance();
     var d = e.getArea(this.getAreaName());
@@ -4073,7 +4072,7 @@ PercentageRange.prototype.updateGradations = function() {
                 this._gradations.push(a)
             }
             a += b
-        } while ( a < this . getMaxValue ())
+        } while (a < this.getMaxValue())
     } else {
         do {
             if (c < 8) {
@@ -4086,11 +4085,11 @@ PercentageRange.prototype.updateGradations = function() {
                 }
             }
             a += b
-        } while ( a < this . getMaxValue ())
+        } while (a < this.getMaxValue())
     }
 };
 var DataSource = create_class(NamedObject);
-DataSource.prototype.__construct = function(a) {
+DataSource.prototype.__construct = function (a) {
     DataSource.__super.__construct.call(this, a)
 };
 DataSource.UpdateMode = {
@@ -4099,45 +4098,45 @@ DataSource.UpdateMode = {
     Update: 2,
     Append: 3
 };
-DataSource.prototype.getUpdateMode = function() {
+DataSource.prototype.getUpdateMode = function () {
     return this._updateMode
 };
-DataSource.prototype.setUpdateMode = function(a) {
+DataSource.prototype.setUpdateMode = function (a) {
     this._updateMode = a
 };
-DataSource.prototype.getCacheSize = function() {
+DataSource.prototype.getCacheSize = function () {
     return 0
 };
-DataSource.prototype.getDataCount = function() {
+DataSource.prototype.getDataCount = function () {
     return 0
 };
 var MainDataSource = create_class(DataSource);
-MainDataSource.prototype.__construct = function(a) {
+MainDataSource.prototype.__construct = function (a) {
     MainDataSource.__super.__construct.call(this, a);
     this._erasedCount = 0;
     this._dataItems = [];
     this._decimalDigits = 0;
     this.toolManager = new CToolManager(a)
 };
-MainDataSource.prototype.getCacheSize = function() {
+MainDataSource.prototype.getCacheSize = function () {
     return this._dataItems.length
 };
-MainDataSource.prototype.getDataCount = function() {
+MainDataSource.prototype.getDataCount = function () {
     return this._dataItems.length
 };
-MainDataSource.prototype.getUpdatedCount = function() {
+MainDataSource.prototype.getUpdatedCount = function () {
     return this._updatedCount
 };
-MainDataSource.prototype.getAppendedCount = function() {
+MainDataSource.prototype.getAppendedCount = function () {
     return this._appendedCount
 };
-MainDataSource.prototype.getErasedCount = function() {
+MainDataSource.prototype.getErasedCount = function () {
     return this._erasedCount
 };
-MainDataSource.prototype.getDecimalDigits = function() {
+MainDataSource.prototype.getDecimalDigits = function () {
     return this._decimalDigits
 };
-MainDataSource.prototype.calcDecimalDigits = function(a) {
+MainDataSource.prototype.calcDecimalDigits = function (a) {
     var c = "" + a;
     var b = c.indexOf(".");
     if (b < 0) {
@@ -4145,17 +4144,17 @@ MainDataSource.prototype.calcDecimalDigits = function(a) {
     }
     return (c.length - 1) - b
 };
-MainDataSource.prototype.getLastDate = function() {
+MainDataSource.prototype.getLastDate = function () {
     var a = this.getDataCount();
     if (a < 1) {
-        return - 1
+        return -1
     }
     return this.getDataAt(a - 1).date
 };
-MainDataSource.prototype.getDataAt = function(a) {
+MainDataSource.prototype.getDataAt = function (a) {
     return this._dataItems[a]
 };
-MainDataSource.prototype.update = function (c) { 
+MainDataSource.prototype.update = function (c) {
     this._updatedCount = 0;
     this._appendedCount = 0;
     this._erasedCount = 0;
@@ -4246,9 +4245,9 @@ MainDataSource.prototype.update = function (c) {
         }
         //如果点的时间大于当前时间，则不绘点
         var timestamp = Date.parse(new Date()); //当前时间戳
-        if (j[0] > timestamp) {         
+        if (j[0] > timestamp) {
             continue;
-        }     
+        }
         this._dataItems.push({
             date: j[0],
             open: j[1],
@@ -4260,54 +4259,54 @@ MainDataSource.prototype.update = function (c) {
     }
     return true
 };
-MainDataSource.prototype.select = function(a) {
+MainDataSource.prototype.select = function (a) {
     this.toolManager.selecedObject = a
 };
-MainDataSource.prototype.unselect = function() {
+MainDataSource.prototype.unselect = function () {
     this.toolManager.selecedObject = -1
 };
-MainDataSource.prototype.addToolObject = function(a) {
+MainDataSource.prototype.addToolObject = function (a) {
     this.toolManager.addToolObject(a)
 };
-MainDataSource.prototype.delToolObject = function() {
+MainDataSource.prototype.delToolObject = function () {
     this.toolManager.delCurrentObject()
 };
-MainDataSource.prototype.getToolObject = function(a) {
+MainDataSource.prototype.getToolObject = function (a) {
     return this.toolManager.getToolObject(a)
 };
-MainDataSource.prototype.getToolObjectCount = function() {
+MainDataSource.prototype.getToolObjectCount = function () {
     return this.toolManager.toolObjects.length
 };
-MainDataSource.prototype.getCurrentToolObject = function() {
+MainDataSource.prototype.getCurrentToolObject = function () {
     return this.toolManager.getCurrentObject()
 };
-MainDataSource.prototype.getSelectToolObjcet = function() {
+MainDataSource.prototype.getSelectToolObjcet = function () {
     return this.toolManager.getSelectedObject()
 };
-MainDataSource.prototype.delSelectToolObject = function() {
+MainDataSource.prototype.delSelectToolObject = function () {
     this.toolManager.delSelectedObject()
 };
 var DataProvider = create_class(NamedObject);
-DataProvider.prototype.__construct = function(a) {
+DataProvider.prototype.__construct = function (a) {
     DataProvider.__super.__construct.call(this, a);
     this._minValue = 0;
     this._maxValue = 0;
     this._minValueIndex = -1;
     this._maxValueIndex = -1
 };
-DataProvider.prototype.getMinValue = function() {
+DataProvider.prototype.getMinValue = function () {
     return this._minValue
 };
-DataProvider.prototype.getMaxValue = function() {
+DataProvider.prototype.getMaxValue = function () {
     return this._maxValue
 };
-DataProvider.prototype.getMinValueIndex = function() {
+DataProvider.prototype.getMinValueIndex = function () {
     return this._minValueIndex
 };
-DataProvider.prototype.getMaxValueIndex = function() {
+DataProvider.prototype.getMaxValueIndex = function () {
     return this._maxValueIndex
 };
-DataProvider.prototype.calcRange = function(l, h, d, j) {
+DataProvider.prototype.calcRange = function (l, h, d, j) {
     var e = Number.MAX_VALUE;
     var m = -Number.MAX_VALUE;
     var k = -1;
@@ -4349,7 +4348,7 @@ DataProvider.prototype.calcRange = function(l, h, d, j) {
         }
     }
 };
-DataProvider.prototype.updateRange = function() {
+DataProvider.prototype.updateRange = function () {
     var e = ChartManager.getInstance();
     var c = e.getTimeline(this.getDataSourceName());
     var b = [c.getFirstIndex()];
@@ -4362,11 +4361,11 @@ DataProvider.prototype.updateRange = function() {
     this._maxValueIndex = a[0].maxIndex
 };
 var MainDataProvider = create_class(DataProvider);
-MainDataProvider.prototype.__construct = function(a) {
+MainDataProvider.prototype.__construct = function (a) {
     MainDataProvider.__super.__construct.call(this, a);
     this._candlestickDS = null
 };
-MainDataProvider.prototype.updateData = function() {
+MainDataProvider.prototype.updateData = function () {
     var b = ChartManager.getInstance();
     var a = b.getDataSource(this.getDataSourceName());
     if (!is_instance(a, MainDataSource)) {
@@ -4374,21 +4373,21 @@ MainDataProvider.prototype.updateData = function() {
     }
     this._candlestickDS = a
 };
-MainDataProvider.prototype.getMinMaxAt = function(a, b) {
+MainDataProvider.prototype.getMinMaxAt = function (a, b) {
     var c = this._candlestickDS.getDataAt(a);
     b.min = c.low;
     b.max = c.high;
     return true
 };
 var IndicatorDataProvider = create_class(DataProvider);
-IndicatorDataProvider.prototype.getIndicator = function() {
+IndicatorDataProvider.prototype.getIndicator = function () {
     return this._indicator
 };
-IndicatorDataProvider.prototype.setIndicator = function(a) {
+IndicatorDataProvider.prototype.setIndicator = function (a) {
     this._indicator = a;
     this.refresh()
 };
-IndicatorDataProvider.prototype.refresh = function() {
+IndicatorDataProvider.prototype.refresh = function () {
     var d = ChartManager.getInstance();
     var c = d.getDataSource(this.getDataSourceName());
     if (c.getDataCount() < 1) {
@@ -4402,7 +4401,7 @@ IndicatorDataProvider.prototype.refresh = function() {
         e.execute(c, a)
     }
 };
-IndicatorDataProvider.prototype.updateData = function() {
+IndicatorDataProvider.prototype.updateData = function () {
     var e = ChartManager.getInstance();
     var d = e.getDataSource(this.getDataSourceName());
     if (d.getDataCount() < 1) {
@@ -4411,21 +4410,21 @@ IndicatorDataProvider.prototype.updateData = function() {
     var g = this._indicator;
     var f = d.getUpdateMode();
     switch (f) {
-    case DataSource.UpdateMode.Refresh:
-        this.refresh();
-        break;
-    case DataSource.UpdateMode.Append:
-        g.reserve(d.getAppendedCount());
-    case DataSource.UpdateMode.Update:
-        var b, c = d.getDataCount();
-        var a = d.getUpdatedCount() + d.getAppendedCount();
-        for (b = c - a; b < c; b++) {
-            g.execute(d, b)
-        }
-        break
+        case DataSource.UpdateMode.Refresh:
+            this.refresh();
+            break;
+        case DataSource.UpdateMode.Append:
+            g.reserve(d.getAppendedCount());
+        case DataSource.UpdateMode.Update:
+            var b, c = d.getDataCount();
+            var a = d.getUpdatedCount() + d.getAppendedCount();
+            for (b = c - a; b < c; b++) {
+                g.execute(d, b)
+            }
+            break
     }
 };
-IndicatorDataProvider.prototype.getMinMaxAt = function(b, f) {
+IndicatorDataProvider.prototype.getMinMaxAt = function (b, f) {
     f.min = Number.MAX_VALUE;
     f.max = -Number.MAX_VALUE;
     var a, e = false;
@@ -4447,10 +4446,10 @@ IndicatorDataProvider.prototype.getMinMaxAt = function(b, f) {
 var theme_color_id = 0;
 var theme_font_id = 0;
 var Theme = create_class();
-Theme.prototype.getColor = function(a) {
+Theme.prototype.getColor = function (a) {
     return this._colors[a]
 };
-Theme.prototype.getFont = function(a) {
+Theme.prototype.getFont = function (a) {
     return this._fonts[a]
 };
 Theme.Color = {
@@ -4490,7 +4489,7 @@ Theme.Font = {
 };
 var DarkTheme = create_class(Theme);
 //黑色背景
-DarkTheme.prototype.__construct = function() {
+DarkTheme.prototype.__construct = function () {
     this._colors = [];
     this._colors[Theme.Color.Positive] = "#FF3232";//涨价 红色
     this._colors[Theme.Color.Negative] = "#00ba53";//跌价 绿色
@@ -4527,7 +4526,7 @@ DarkTheme.prototype.__construct = function() {
 };
 var LightTheme = create_class(Theme);
 //白色背景
-LightTheme.prototype.__construct = function() {
+LightTheme.prototype.__construct = function () {
     this._colors = [];
     this._colors[Theme.Color.Positive] = "#db5542";//红色，涨价
     this._colors[Theme.Color.Negative] = "#53b37b";//绿色，跌价
@@ -4561,7 +4560,7 @@ LightTheme.prototype.__construct = function() {
     this._fonts[Theme.Font.Default] = "12px Tahoma"
 };
 var TemplateMeasuringHandler = create_class();
-TemplateMeasuringHandler.onMeasuring = function(c, b) {
+TemplateMeasuringHandler.onMeasuring = function (c, b) {
     var d = b.Width;
     var a = b.Height;
     var e = c.getNameObject().getCompAt(2);
@@ -4571,16 +4570,16 @@ TemplateMeasuringHandler.onMeasuring = function(c, b) {
 };
 var Template = create_class();
 Template.displayVolume = true;
-Template.createCandlestickDataSource = function(a) {
+Template.createCandlestickDataSource = function (a) {
     return new MainDataSource(a)
 };
-Template.createLiveOrderDataSource = function(a) {
+Template.createLiveOrderDataSource = function (a) {
     return new CLiveOrderDataSource(a)
 };
-Template.createLiveTradeDataSource = function(a) {
+Template.createLiveTradeDataSource = function (a) {
     return new CLiveTradeDataSource(a)
 };
-Template.createDataSource = function(d, a, c) {
+Template.createDataSource = function (d, a, c) {
     var b = ChartManager.getInstance();
     if (b.getCachedDataSource(a) == null) {
         b.setCachedDataSource(a, c(a))
@@ -4588,14 +4587,14 @@ Template.createDataSource = function(d, a, c) {
     b.setCurrentDataSource(d, a);
     b.updateData(d, null)
 };
-Template.createTableComps = function(a) {
+Template.createTableComps = function (a) {
     Template.createMainChartComps(a);
     if (Template.displayVolume) {
         Template.createIndicatorChartComps(a, "VOLUME")
     }
     Template.createTimelineComps(a)
 };
-Template.createMainChartComps = function(c) {
+Template.createMainChartComps = function (c) {
     var j = ChartManager.getInstance();
     var b = j.getArea(c + ".charts");
     var g = c + ".main";
@@ -4638,7 +4637,7 @@ Template.createMainChartComps = function(c) {
     a = new LastClosePlotter(g + "Range.decoration");
     j.setPlotter(a.getName(), a)
 };
-Template.createIndicatorChartComps = function(d, p) {
+Template.createIndicatorChartComps = function (d, p) {
     var o = ChartManager.getInstance();
     var c = o.getArea(d + ".charts");
     var h = d + ".indic" + c.getNextRowId();
@@ -4684,7 +4683,7 @@ Template.createIndicatorChartComps = function(d, p) {
     b = new RangeSelectionPlotter(h + "Range.selection");
     o.setPlotter(b.getName(), b)
 };
-Template.createTimelineComps = function(d) {
+Template.createTimelineComps = function (d) {
     var b = ChartManager.getInstance();
     var c;
     var a = new Timeline(d);
@@ -4696,7 +4695,7 @@ Template.createTimelineComps = function(d) {
     c = new TimelineSelectionPlotter(d + ".timeline.selection");
     b.setPlotter(c.getName(), c)
 };
-Template.createLiveOrderComps = function(c) {
+Template.createLiveOrderComps = function (c) {
     var a = ChartManager.getInstance();
     var b;
     b = new BackgroundPlotter(c + ".main.background");
@@ -4704,7 +4703,7 @@ Template.createLiveOrderComps = function(c) {
     b = new CLiveOrderPlotter(c + ".main.main");
     a.setPlotter(b.getName(), b)
 };
-Template.createLiveTradeComps = function(c) {
+Template.createLiveTradeComps = function (c) {
     var a = ChartManager.getInstance();
     var b;
     b = new BackgroundPlotter(c + ".main.background");
@@ -4713,7 +4712,7 @@ Template.createLiveTradeComps = function(c) {
     a.setPlotter(b.getName(), b)
 };
 var DefaultTemplate = create_class(Template);
-DefaultTemplate.loadTemplate = function(g, b) {
+DefaultTemplate.loadTemplate = function (g, b) {
     var e = ChartManager.getInstance();
     var c = ChartSettings.get();
     var a = (new CName(g)).getCompAt(0);
@@ -4737,17 +4736,17 @@ DefaultTemplate.loadTemplate = function(g, b) {
     return e
 };
 var Plotter = create_class(NamedObject);
-Plotter.prototype.__construct = function(a) {
+Plotter.prototype.__construct = function (a) {
     Plotter.__super.__construct.call(this, a)
 };
 Plotter.isChrome = (navigator.userAgent.toLowerCase().match(/chrome/) != null);
-Plotter.drawLine = function(d, b, e, a, c) {
+Plotter.drawLine = function (d, b, e, a, c) {
     d.beginPath();
     d.moveTo((b << 0) + 0.5, (e << 0) + 0.5);
     d.lineTo((a << 0) + 0.5, (c << 0) + 0.5);
     d.stroke()
 };
-Plotter.drawLines = function(c, d) {
+Plotter.drawLines = function (c, d) {
     var b, a = d.length;
     c.beginPath();
     c.moveTo(d[0].x, d[0].y);
@@ -4762,7 +4761,7 @@ Plotter.drawLines = function(c, d) {
     }
     c.stroke()
 };
-Plotter.drawDashedLine = function(b, c, l, a, k, g, j) {
+Plotter.drawDashedLine = function (b, c, l, a, k, g, j) {
     if (g < 2) {
         g = 2
     }
@@ -4791,7 +4790,7 @@ Plotter.drawDashedLine = function(b, c, l, a, k, g, j) {
         b.stroke()
     }
 };
-Plotter.createHorzDashedLine = function(b, c, a, j, f, h) {
+Plotter.createHorzDashedLine = function (b, c, a, j, f, h) {
     if (f < 2) {
         f = 2
     }
@@ -4802,7 +4801,7 @@ Plotter.createHorzDashedLine = function(b, c, a, j, f, h) {
         c += f
     }
 };
-Plotter.createRectangles = function(d, a) {
+Plotter.createRectangles = function (d, a) {
     d.beginPath();
     var f, c, b = a.length;
     for (c = 0; c < b; c++) {
@@ -4810,7 +4809,7 @@ Plotter.createRectangles = function(d, a) {
         d.rect(f.x, f.y, f.w, f.h)
     }
 };
-Plotter.createPolygon = function(c, d) {
+Plotter.createPolygon = function (c, d) {
     c.beginPath();
     c.moveTo(d[0].x + 0.5, d[0].y + 0.5);
     var b, a = d.length;
@@ -4819,7 +4818,7 @@ Plotter.createPolygon = function(c, d) {
     }
     c.closePath()
 };
-Plotter.drawString = function(b, d, c) {
+Plotter.drawString = function (b, d, c) {
     var a = b.measureText(d).width;
     if (c.w < a) {
         return false
@@ -4830,17 +4829,17 @@ Plotter.drawString = function(b, d, c) {
     return true
 };
 var BackgroundPlotter = create_class(Plotter);
-BackgroundPlotter.prototype.__construct = function(a) {
+BackgroundPlotter.prototype.__construct = function (a) {
     BackgroundPlotter.__super.__construct.call(this, a);
     this._color = Theme.Color.Background
 };
-BackgroundPlotter.prototype.getColor = function() {
+BackgroundPlotter.prototype.getColor = function () {
     return this._color
 };
-BackgroundPlotter.prototype.setColor = function(a) {
+BackgroundPlotter.prototype.setColor = function (a) {
     this._color = a
 };
-BackgroundPlotter.prototype.Draw = function(a) {
+BackgroundPlotter.prototype.Draw = function (a) {
     var c = ChartManager.getInstance();
     var b = c.getArea(this.getAreaName());
     var d = c.getTheme(this.getFrameName());
@@ -4848,10 +4847,10 @@ BackgroundPlotter.prototype.Draw = function(a) {
     a.fillRect(b.getLeft(), b.getTop(), b.getWidth(), b.getHeight())
 };
 var MainAreaBackgroundPlotter = create_class(BackgroundPlotter);
-MainAreaBackgroundPlotter.prototype.__construct = function(a) {
+MainAreaBackgroundPlotter.prototype.__construct = function (a) {
     MainAreaBackgroundPlotter.__super.__construct.call(this, a)
 };
-MainAreaBackgroundPlotter.prototype.Draw = function(c) {
+MainAreaBackgroundPlotter.prototype.Draw = function (c) {
     var i = ChartManager.getInstance();
     var b = i.getArea(this.getAreaName());
     var j = i.getTimeline(this.getDataSourceName());
@@ -4869,16 +4868,16 @@ MainAreaBackgroundPlotter.prototype.Draw = function(c) {
     c.fillRect(g.X, g.Y, g.Width, g.Height)
 };
 var RangeAreaBackgroundPlotter = create_class(BackgroundPlotter);
-RangeAreaBackgroundPlotter.prototype.__construct = function(a) {
+RangeAreaBackgroundPlotter.prototype.__construct = function (a) {
     RangeAreaBackgroundPlotter.__super.__construct.call(this, a)
 };
-RangeAreaBackgroundPlotter.prototype.Draw = function(c) {
+RangeAreaBackgroundPlotter.prototype.Draw = function (c) {
     var e = ChartManager.getInstance();
     var g = this.getAreaName();
     var d = e.getArea(g);
     var b = e.getRange(g.substring(0, g.lastIndexOf("Range")));
     var a = b.getNameObject().getCompAt(2) == "main";
-    if (a) {} else {
+    if (a) { } else {
         if (!d.isChanged() && !b.isUpdated()) {
             return
         }
@@ -4888,10 +4887,10 @@ RangeAreaBackgroundPlotter.prototype.Draw = function(c) {
     c.fillRect(d.getLeft(), d.getTop(), d.getWidth(), d.getHeight())
 };
 var TimelineAreaBackgroundPlotter = create_class(BackgroundPlotter);
-TimelineAreaBackgroundPlotter.prototype.__construct = function(a) {
+TimelineAreaBackgroundPlotter.prototype.__construct = function (a) {
     TimelineAreaBackgroundPlotter.__super.__construct.call(this, a)
 };
-TimelineAreaBackgroundPlotter.prototype.Draw = function(a) {
+TimelineAreaBackgroundPlotter.prototype.Draw = function (a) {
     var d = ChartManager.getInstance();
     var c = d.getArea(this.getAreaName());
     var b = d.getTimeline(this.getDataSourceName());
@@ -4903,10 +4902,10 @@ TimelineAreaBackgroundPlotter.prototype.Draw = function(a) {
     a.fillRect(c.getLeft(), c.getTop(), c.getWidth(), c.getHeight())
 };
 var CGridPlotter = create_class(NamedObject);
-CGridPlotter.prototype.__construct = function(a) {
+CGridPlotter.prototype.__construct = function (a) {
     CGridPlotter.__super.__construct.call(this, a)
 };
-CGridPlotter.prototype.Draw = function(c) {
+CGridPlotter.prototype.Draw = function (c) {
     var o = ChartManager.getInstance();
     var b = o.getArea(this.getAreaName());
     var p = o.getTimeline(this.getDataSourceName());
@@ -4941,10 +4940,10 @@ CGridPlotter.prototype.Draw = function(c) {
     }
 };
 var CandlestickPlotter = create_class(NamedObject);
-CandlestickPlotter.prototype.__construct = function(a) {
+CandlestickPlotter.prototype.__construct = function (a) {
     CandlestickPlotter.__super.__construct.call(this, a)
 };
-CandlestickPlotter.prototype.Draw = function(c) {
+CandlestickPlotter.prototype.Draw = function (c) {
     var A = ChartManager.getInstance();
     var s = A.getDataSource(this.getDataSourceName());
     if (s.getDataCount() < 1) {
@@ -5091,10 +5090,10 @@ CandlestickPlotter.prototype.Draw = function(c) {
     }
 };
 var CandlestickHLCPlotter = create_class(Plotter);
-CandlestickHLCPlotter.prototype.__construct = function(a) {
+CandlestickHLCPlotter.prototype.__construct = function (a) {
     CandlestickHLCPlotter.__super.__construct.call(this, a)
 };
-CandlestickHLCPlotter.prototype.Draw = function(c) {
+CandlestickHLCPlotter.prototype.Draw = function (c) {
     var A = ChartManager.getInstance();
     var s = A.getDataSource(this.getDataSourceName());
     if (!is_instance(s, MainDataSource) || s.getDataCount() < 1) {
@@ -5223,31 +5222,31 @@ CandlestickHLCPlotter.prototype.Draw = function(c) {
         z += v
     }
     if (w.length > 0) {
-        c.fillStyle = y.getColor(Theme.Color.Positive);    
+        c.fillStyle = y.getColor(Theme.Color.Positive);
         Plotter.createRectangles(c, w);
         c.fill();//实心柱     
     }
     if (f.length > 0) {
-        c.strokeStyle = y.getColor(Theme.Color.Positive);      
+        c.strokeStyle = y.getColor(Theme.Color.Positive);
         Plotter.createRectangles(c, f);
         c.stroke();//空心柱
     }
     if (b.length > 0) {
         c.fillStyle = y.getColor(Theme.Color.Negative);
-        Plotter.createRectangles(c, b);       
+        Plotter.createRectangles(c, b);
         c.fill();//实心柱
     }
     if (l.length > 0) {
         c.fillStyle = y.getColor(Theme.Color.Negative);
-        Plotter.createRectangles(c, l);      
+        Plotter.createRectangles(c, l);
         c.fill();//实心柱
     }
 };
 var OHLCPlotter = create_class(Plotter);
-OHLCPlotter.prototype.__construct = function(a) {
+OHLCPlotter.prototype.__construct = function (a) {
     OHLCPlotter.__super.__construct.call(this, a)
 };
-OHLCPlotter.prototype.Draw = function(b) {
+OHLCPlotter.prototype.Draw = function (b) {
     var z = ChartManager.getInstance();
     var q = z.getDataSource(this.getDataSourceName());
     if (!is_instance(q, MainDataSource) || q.getDataCount() < 1) {
@@ -5367,13 +5366,13 @@ OHLCPlotter.prototype.Draw = function(b) {
     }
 };
 var MainInfoPlotter = create_class(Plotter);
-MainInfoPlotter.prototype.__construct = function(a) {
+MainInfoPlotter.prototype.__construct = function (a) {
     MainInfoPlotter.__super.__construct.call(this, a)
 };
 function format_time(a) {
     return (a < 10) ? "0" + a.toString() : a.toString()
 }
-MainInfoPlotter.prototype.Draw = function(c) {
+MainInfoPlotter.prototype.Draw = function (c) {
     var B = ChartManager.getInstance();
     var w = B.getArea(this.getAreaName());
     var e = B.getTimeline(this.getDataSourceName());
@@ -5541,10 +5540,10 @@ MainInfoPlotter.prototype.Draw = function(c) {
     }
 };
 var IndicatorPlotter = create_class(NamedObject);
-IndicatorPlotter.prototype.__construct = function(a) {
+IndicatorPlotter.prototype.__construct = function (a) {
     IndicatorPlotter.__super.__construct.call(this, a)
 };
-IndicatorPlotter.prototype.Draw = function(a) {
+IndicatorPlotter.prototype.Draw = function (a) {
     var A = ChartManager.getInstance();
     var u = A.getArea(this.getAreaName());
     var e = A.getTimeline(this.getDataSourceName());
@@ -5624,7 +5623,7 @@ IndicatorPlotter.prototype.Draw = function(a) {
     }
     a.restore()
 };
-IndicatorPlotter.prototype.drawVolumeStick = function(b, s, m, f, j, o, p, r, k) {
+IndicatorPlotter.prototype.drawVolumeStick = function (b, s, m, f, j, o, p, r, k) {
     var a = is_instance(s, DarkTheme);
     var d = o;
     var h = k.toY(0);
@@ -5704,7 +5703,7 @@ IndicatorPlotter.prototype.drawVolumeStick = function(b, s, m, f, j, o, p, r, k)
         b.fill()
     }
 };
-IndicatorPlotter.prototype.drawMACDStick = function(a, r, g, e, h, n, o, q, k) {
+IndicatorPlotter.prototype.drawMACDStick = function (a, r, g, e, h, n, o, q, k) {
     var c = n;
     var s = k.toY(0);
     var p = [];
@@ -5732,7 +5731,7 @@ IndicatorPlotter.prototype.drawMACDStick = function(a, r, g, e, h, n, o, q, k) {
                 })
             }
         } else {
-            var b = k.toHeight( - m);
+            var b = k.toHeight(-m);
             if ((l == 0 || m >= j) && b > 1 && q > 1) {
                 t.push({
                     x: c + 0.5,
@@ -5773,7 +5772,7 @@ IndicatorPlotter.prototype.drawMACDStick = function(a, r, g, e, h, n, o, q, k) {
         a.fill()
     }
 };
-IndicatorPlotter.prototype.drawSARPoint = function(c, g, e, j, p, k, n, l, h) {
+IndicatorPlotter.prototype.drawSARPoint = function (c, g, e, j, p, k, n, l, h) {
     var b = l >> 1;
     if (b < 0.5) {
         b = 0.5
@@ -5799,10 +5798,10 @@ IndicatorPlotter.prototype.drawSARPoint = function(c, g, e, j, p, k, n, l, h) {
     c.restore()
 };
 var IndicatorInfoPlotter = create_class(Plotter);
-IndicatorInfoPlotter.prototype.__construct = function(a) {
+IndicatorInfoPlotter.prototype.__construct = function (a) {
     IndicatorInfoPlotter.__super.__construct.call(this, a)
 };
-IndicatorInfoPlotter.prototype.Draw = function(c) {
+IndicatorInfoPlotter.prototype.Draw = function (c) {
     var p = ChartManager.getInstance();
     var b = p.getArea(this.getAreaName());
     var q = p.getTimeline(this.getDataSourceName());
@@ -5821,23 +5820,23 @@ IndicatorInfoPlotter.prototype.Draw = function(c) {
     var a = h.getIndicator();
     var m;
     switch (a.getParameterCount()) {
-    case 0:
-        m = a.getName();
-        break;
-    case 1:
-        m = a.getName() + "(" + a.getParameterAt(0).getValue() + ")";
-        break;
-    case 2:
-        m = a.getName() + "(" + a.getParameterAt(0).getValue() + "," + a.getParameterAt(1).getValue() + ")";
-        break;
-    case 3:
-        m = a.getName() + "(" + a.getParameterAt(0).getValue() + "," + a.getParameterAt(1).getValue() + "," + a.getParameterAt(2).getValue() + ")";
-        break;
-    case 4:
-        m = a.getName() + "(" + a.getParameterAt(0).getValue() + "," + a.getParameterAt(1).getValue() + "," + a.getParameterAt(2).getValue() + "," + a.getParameterAt(3).getValue() + ")";
-        break;
-    default:
-        return
+        case 0:
+            m = a.getName();
+            break;
+        case 1:
+            m = a.getName() + "(" + a.getParameterAt(0).getValue() + ")";
+            break;
+        case 2:
+            m = a.getName() + "(" + a.getParameterAt(0).getValue() + "," + a.getParameterAt(1).getValue() + ")";
+            break;
+        case 3:
+            m = a.getName() + "(" + a.getParameterAt(0).getValue() + "," + a.getParameterAt(1).getValue() + "," + a.getParameterAt(2).getValue() + ")";
+            break;
+        case 4:
+            m = a.getName() + "(" + a.getParameterAt(0).getValue() + "," + a.getParameterAt(1).getValue() + "," + a.getParameterAt(2).getValue() + "," + a.getParameterAt(3).getValue() + ")";
+            break;
+        default:
+            return
     }
     if (!Plotter.drawString(c, m, l)) {
         return
@@ -5866,10 +5865,10 @@ IndicatorInfoPlotter.prototype.Draw = function(c) {
     }
 };
 var MinMaxPlotter = create_class(NamedObject);
-MinMaxPlotter.prototype.__construct = function(a) {
+MinMaxPlotter.prototype.__construct = function (a) {
     MinMaxPlotter.__super.__construct.call(this, a)
 };
-MinMaxPlotter.prototype.Draw = function(b) {
+MinMaxPlotter.prototype.Draw = function (b) {
     var i = ChartManager.getInstance();
     var d = i.getDataSource(this.getDataSourceName());
     if (d.getDataCount() < 1) {
@@ -5895,7 +5894,7 @@ MinMaxPlotter.prototype.Draw = function(b) {
     this.drawMark(b, e.getMinValue(), c, h.toY(e.getMinValue()), g, a, e.getMinValueIndex(), j);
     this.drawMark(b, e.getMaxValue(), c, h.toY(e.getMaxValue()), g, a, e.getMaxValueIndex(), j)
 };
-MinMaxPlotter.prototype.drawMark = function(d, k, e, j, g, a, h, l) {
+MinMaxPlotter.prototype.drawMark = function (d, k, e, j, g, a, h, l) {
     var f, c, b;
     var i;
     if (h > a) {
@@ -5917,7 +5916,7 @@ MinMaxPlotter.prototype.drawMark = function(d, k, e, j, g, a, h, l) {
     d.fillText(String.fromFloat(k, e), i, j)
 };
 var TimelinePlotter = create_class(Plotter);
-TimelinePlotter.prototype.__construct = function(a) {
+TimelinePlotter.prototype.__construct = function (a) {
     TimelinePlotter.__super.__construct.call(this, a)
 };
 TimelinePlotter.TP_MINUTE = 60 * 1000;
@@ -5925,20 +5924,20 @@ TimelinePlotter.TP_HOUR = 60 * TimelinePlotter.TP_MINUTE;
 TimelinePlotter.TP_DAY = 24 * TimelinePlotter.TP_HOUR;
 TimelinePlotter.TIME_INTERVAL = [5 * TimelinePlotter.TP_MINUTE, 10 * TimelinePlotter.TP_MINUTE, 15 * TimelinePlotter.TP_MINUTE, 30 * TimelinePlotter.TP_MINUTE, TimelinePlotter.TP_HOUR, 2 * TimelinePlotter.TP_HOUR, 3 * TimelinePlotter.TP_HOUR, 6 * TimelinePlotter.TP_HOUR, 12 * TimelinePlotter.TP_HOUR, TimelinePlotter.TP_DAY, 2 * TimelinePlotter.TP_DAY];
 TimelinePlotter.MonthConvert = {
-    1 : "Jan.",
-    2 : "Feb.",
-    3 : "Mar.",
-    4 : "Apr.",
-    5 : "May.",
-    6 : "Jun.",
-    7 : "Jul.",
-    8 : "Aug.",
-    9 : "Sep.",
-    10 : "Oct.",
-    11 : "Nov.",
-    12 : "Dec."
+    1: "Jan.",
+    2: "Feb.",
+    3: "Mar.",
+    4: "Apr.",
+    5: "May.",
+    6: "Jun.",
+    7: "Jul.",
+    8: "Aug.",
+    9: "Sep.",
+    10: "Oct.",
+    11: "Nov.",
+    12: "Dec."
 };
-TimelinePlotter.prototype.Draw = function(b) {
+TimelinePlotter.prototype.Draw = function (b) {
     var G = ChartManager.getInstance();
     var z = G.getArea(this.getAreaName());
     var e = G.getTimeline(this.getDataSourceName());
@@ -6055,16 +6054,16 @@ TimelinePlotter.prototype.Draw = function(b) {
     }
 };
 var RangePlotter = create_class(NamedObject);
-RangePlotter.prototype.__construct = function(a) {
+RangePlotter.prototype.__construct = function (a) {
     RangePlotter.__super.__construct.call(this, a)
 };
-RangePlotter.prototype.getRequiredWidth = function(b, a) {
+RangePlotter.prototype.getRequiredWidth = function (b, a) {
     var c = ChartManager.getInstance();
     var d = c.getTheme(this.getFrameName());
     b.font = d.getFont(Theme.Font.Default);
     return b.measureText((Math.floor(a) + 0.88).toString()).width + 16
 };
-RangePlotter.prototype.Draw = function(c) {
+RangePlotter.prototype.Draw = function (c) {
     var p = ChartManager.getInstance();
     var h = this.getAreaName();
     var b = p.getArea(h);
@@ -6074,7 +6073,7 @@ RangePlotter.prototype.Draw = function(c) {
         return
     }
     var j = i.getNameObject().getCompAt(2) == "main";
-    if (j) {} else {
+    if (j) { } else {
         if (!b.isChanged() && !i.isUpdated()) {
             return
         }
@@ -6115,13 +6114,13 @@ RangePlotter.prototype.Draw = function(c) {
     }
 };
 var COrderGraphPlotter = create_class(NamedObject);
-COrderGraphPlotter.prototype.__construct = function(a) {
+COrderGraphPlotter.prototype.__construct = function (a) {
     COrderGraphPlotter.__super.__construct.call(this, a)
 };
-COrderGraphPlotter.prototype.Draw = function(a) {
+COrderGraphPlotter.prototype.Draw = function (a) {
     return this._Draw_(a)
 };
-COrderGraphPlotter.prototype._Draw_ = function(a) {
+COrderGraphPlotter.prototype._Draw_ = function (a) {
     if (this.Update() == false) {
         return
     }
@@ -6155,7 +6154,7 @@ COrderGraphPlotter.prototype._Draw_ = function(a) {
     this.DrawLine(a);
     a.restore()
 };
-COrderGraphPlotter.prototype.DrawBackground = function(b) {
+COrderGraphPlotter.prototype.DrawBackground = function (b) {
     b.fillStyle = this.m_pTheme.getColor(Theme.Color.Background);
     b.fillRect(this.m_left, this.m_top, this.m_right - this.m_left, this.m_bottom - this.m_top);
     var c = ChartManager.getInstance().getChart()._depthData;
@@ -6190,7 +6189,7 @@ COrderGraphPlotter.prototype.DrawBackground = function(b) {
         }
     }
 };
-COrderGraphPlotter.prototype.DrawLine = function(b) {
+COrderGraphPlotter.prototype.DrawLine = function (b) {
     if (this.m_mode == 0 || this.m_mode == 1) {
         b.strokeStyle = this.m_pTheme.getColor(Theme.Color.Positive);
         b.beginPath();
@@ -6210,7 +6209,7 @@ COrderGraphPlotter.prototype.DrawLine = function(b) {
         b.stroke()
     }
 };
-COrderGraphPlotter.prototype.UpdatePoints = function() {
+COrderGraphPlotter.prototype.UpdatePoints = function () {
     var f = ChartManager.getInstance().getChart()._depthData;
     this.m_ask_points = [];
     var g = {};
@@ -6263,7 +6262,7 @@ COrderGraphPlotter.prototype.UpdatePoints = function() {
         }
     }
 };
-COrderGraphPlotter.prototype.updateData = function() {
+COrderGraphPlotter.prototype.updateData = function () {
     var d = ChartManager.getInstance().getChart()._depthData;
     if (d.array == null) {
         return false
@@ -6328,7 +6327,7 @@ COrderGraphPlotter.prototype.updateData = function() {
     }
     return true
 };
-COrderGraphPlotter.prototype.Update = function() {
+COrderGraphPlotter.prototype.Update = function () {
     this.m_pMgr = ChartManager.getInstance();
     var b = this.getAreaName();
     this.m_pArea = this.m_pMgr.getArea(b);
@@ -6346,7 +6345,7 @@ COrderGraphPlotter.prototype.Update = function() {
     }
     return true
 };
-COrderGraphPlotter.prototype.DrawGradations = function(b) {
+COrderGraphPlotter.prototype.DrawGradations = function (b) {
     var m = ChartManager.getInstance();
     var g = this.getAreaName();
     var a = m.getArea(g);
@@ -6384,7 +6383,7 @@ COrderGraphPlotter.prototype.DrawGradations = function(b) {
         b.fill()
     }
 };
-COrderGraphPlotter.prototype.FillBlack = function(f) {
+COrderGraphPlotter.prototype.FillBlack = function (f) {
     var c = this.m_ask_points;
     var g = this.m_bid_points;
     var a = {};
@@ -6421,7 +6420,7 @@ COrderGraphPlotter.prototype.FillBlack = function(f) {
     g.shift();
     g.pop()
 };
-COrderGraphPlotter.prototype.DrawTickerGraph = function(c) {
+COrderGraphPlotter.prototype.DrawTickerGraph = function (c) {
     return;
     var j = ChartManager.getInstance();
     var d = j.getDataSource(this.getDataSourceName());
@@ -6436,10 +6435,10 @@ COrderGraphPlotter.prototype.DrawTickerGraph = function(c) {
     c.strokeStyle = this.m_pTheme.getColor(Theme.Color.Mark)
 };
 var LastVolumePlotter = create_class(Plotter);
-LastVolumePlotter.prototype.__construct = function(a) {
+LastVolumePlotter.prototype.__construct = function (a) {
     LastVolumePlotter.__super.__construct.call(this, a)
 };
-LastVolumePlotter.prototype.Draw = function(b) {
+LastVolumePlotter.prototype.Draw = function (b) {
     var k = ChartManager.getInstance();
     var l = k.getTimeline(this.getDataSourceName());
     var f = this.getAreaName();
@@ -6468,10 +6467,10 @@ LastVolumePlotter.prototype.Draw = function(b) {
     b.fillText(String.fromFloat(j, 2), d + 10, h)
 };
 var LastClosePlotter = create_class(Plotter);
-LastClosePlotter.prototype.__construct = function(a) {
+LastClosePlotter.prototype.__construct = function (a) {
     LastClosePlotter.__super.__construct.call(this, a)
 };
-LastClosePlotter.prototype.Draw = function(b) {
+LastClosePlotter.prototype.Draw = function (b) {
     var k = ChartManager.getInstance();
     var l = k.getTimeline(this.getDataSourceName());
     var f = this.getAreaName();
@@ -6503,10 +6502,10 @@ LastClosePlotter.prototype.Draw = function(b) {
     b.fillText(String.fromFloat(j, c.getDecimalDigits()), d + 10, h)
 };
 var SelectionPlotter = create_class(Plotter);
-SelectionPlotter.prototype.__construct = function(a) {
+SelectionPlotter.prototype.__construct = function (a) {
     SelectionPlotter.__super.__construct.call(this, a)
 };
-SelectionPlotter.prototype.Draw = function(c) {
+SelectionPlotter.prototype.Draw = function (c) {
     var f = ChartManager.getInstance();
     if (f._drawingTool != ChartManager.DrawingTool.CrossCursor) {
         return
@@ -6528,23 +6527,23 @@ SelectionPlotter.prototype.Draw = function(c) {
 };
 var TimelineSelectionPlotter = create_class(NamedObject);
 TimelineSelectionPlotter.MonthConvert = {
-    1 : "Jan.",
-    2 : "Feb.",
-    3 : "Mar.",
-    4 : "Apr.",
-    5 : "May.",
-    6 : "Jun.",
-    7 : "Jul.",
-    8 : "Aug.",
-    9 : "Sep.",
-    10 : "Oct.",
-    11 : "Nov.",
-    12 : "Dec."
+    1: "Jan.",
+    2: "Feb.",
+    3: "Mar.",
+    4: "Apr.",
+    5: "May.",
+    6: "Jun.",
+    7: "Jul.",
+    8: "Aug.",
+    9: "Sep.",
+    10: "Oct.",
+    11: "Nov.",
+    12: "Dec."
 };
-TimelineSelectionPlotter.prototype.__construct = function(a) {
+TimelineSelectionPlotter.prototype.__construct = function (a) {
     TimelineSelectionPlotter.__super.__construct.call(this, a)
 };
-TimelineSelectionPlotter.prototype.Draw = function(b) {
+TimelineSelectionPlotter.prototype.Draw = function (b) {
     var q = ChartManager.getInstance();
     var l = q.getArea(this.getAreaName());
     var c = q.getTimeline(this.getDataSourceName());
@@ -6593,10 +6592,10 @@ TimelineSelectionPlotter.prototype.Draw = function(b) {
     b.fillText(h, g, l.getMiddle())
 };
 var RangeSelectionPlotter = create_class(NamedObject);
-RangeSelectionPlotter.prototype.__construct = function(a) {
+RangeSelectionPlotter.prototype.__construct = function (a) {
     RangeSelectionPlotter.__super.__construct.call(this, a)
 };
-RangeSelectionPlotter.prototype.Draw = function(b) {
+RangeSelectionPlotter.prototype.Draw = function (b) {
     var j = ChartManager.getInstance();
     var e = this.getAreaName();
     var a = j.getArea(e);
@@ -6650,7 +6649,7 @@ RangeSelectionPlotter.prototype.Draw = function(b) {
     b.fillText(String.fromFloat(i, c), a.getCenter(), g)
 };
 var ChartSettings = {};
-ChartSettings.checkVersion = function() {
+ChartSettings.checkVersion = function () {
     if (ChartSettings._data.ver < 2) {
         ChartSettings._data.ver = 2;
         var a = ChartSettings._data.charts;
@@ -6676,7 +6675,7 @@ ChartSettings.checkVersion = function() {
         a.areaHeight = []
     }
 };
-ChartSettings.get = function() {
+ChartSettings.get = function () {
     if (ChartSettings._data == undefined) {
         ChartSettings.init();
         ChartSettings.load();
@@ -6684,7 +6683,7 @@ ChartSettings.get = function() {
     }
     return ChartSettings._data
 };
-ChartSettings.init = function() {
+ChartSettings.init = function () {
     var f = {};
     var k = new Array("MA", "EMA", "VOLUME", "MACD", "KDJ", "StochRSI", "RSI", "DMI", "OBV", "BOLL", "DMA", "TRIX", "BRAR", "VR", "EMV", "WR", "ROC", "MTM", "PSY");
     for (var g = 0; g < k.length; g++) {
@@ -6716,7 +6715,7 @@ ChartSettings.init = function() {
     };
     ChartSettings.checkVersion()
 };
-ChartSettings.load = function() {
+ChartSettings.load = function () {
     if (document.cookie.length <= 0) {
         return
     }
@@ -6732,7 +6731,7 @@ ChartSettings.load = function() {
     var b = unescape(document.cookie.substring(c, a));
     ChartSettings._data = JSON.parse(b)
 };
-ChartSettings.save = function() {
+ChartSettings.save = function () {
     var a = new Date();
     a.setDate(a.getDate() + 2);
     document.cookie = "chartSettings=" + escape(JSON.stringify(ChartSettings._data)) + ";expires=" + a.toGMTString()
@@ -6743,7 +6742,7 @@ CPoint.state = {
     Show: 1,
     Highlight: 2
 };
-CPoint.prototype.__construct = function(a) {
+CPoint.prototype.__construct = function (a) {
     CPoint.__super.__construct.call(this, a);
     this.pos = {
         index: -1,
@@ -6751,7 +6750,7 @@ CPoint.prototype.__construct = function(a) {
     };
     this.state = CPoint.state.Hide
 };
-CPoint.prototype.getChartObjects = function() {
+CPoint.prototype.getChartObjects = function () {
     var b = ChartManager.getInstance();
     var d = b.getDataSource("frame0.k0");
     if (d == null || !is_instance(d, MainDataSource)) {
@@ -6772,7 +6771,7 @@ CPoint.prototype.getChartObjects = function() {
         pRange: a
     }
 };
-CPoint.prototype.setPosXY = function(b, f) {
+CPoint.prototype.setPosXY = function (b, f) {
     var e = this.getChartObjects();
     var d = e.pTimeline.toIndex(b);
     var c = e.pRange.toValue(f);
@@ -6782,19 +6781,19 @@ CPoint.prototype.setPosXY = function(b, f) {
     }
     this.setPosIV(d, c)
 };
-CPoint.prototype.setPosXYNoSnap = function(a, e) {
+CPoint.prototype.setPosXYNoSnap = function (a, e) {
     var d = this.getChartObjects();
     var c = d.pTimeline.toIndex(a);
     var b = d.pRange.toValue(e);
     this.setPosIV(c, b)
 };
-CPoint.prototype.setPosIV = function(b, a) {
+CPoint.prototype.setPosIV = function (b, a) {
     this.pos = {
         index: b,
         value: a
     }
 };
-CPoint.prototype.getPosXY = function() {
+CPoint.prototype.getPosXY = function () {
     var c = this.getChartObjects();
     var b = c.pTimeline.toItemCenter(this.pos.index);
     var a = c.pRange.toY(this.pos.value);
@@ -6803,19 +6802,19 @@ CPoint.prototype.getPosXY = function() {
         y: a
     }
 };
-CPoint.prototype.getPosIV = function() {
+CPoint.prototype.getPosIV = function () {
     return {
         i: this.pos.index,
         v: this.pos.value
     }
 };
-CPoint.prototype.setState = function(a) {
+CPoint.prototype.setState = function (a) {
     this.state = a
 };
-CPoint.prototype.getState = function() {
+CPoint.prototype.getState = function () {
     return this.state
 };
-CPoint.prototype.isSelected = function(a, c) {
+CPoint.prototype.isSelected = function (a, c) {
     var b = this.getPosXY();
     if (a < b.x - 4 || a > b.x + 4 || c < b.y - 4 || c > b.y + 4) {
         return false
@@ -6823,7 +6822,7 @@ CPoint.prototype.isSelected = function(a, c) {
     this.setState(CPoint.state.Highlight);
     return true
 };
-CPoint.prototype.snapValue = function(o, j) {
+CPoint.prototype.snapValue = function (o, j) {
     var k = this.getChartObjects();
     var h = null;
     var c = Math.floor(k.pTimeline.getFirstIndex());
@@ -6882,14 +6881,14 @@ CToolObject.state = {
     Draw: 1,
     AfterDraw: 2
 };
-CToolObject.prototype.__construct = function(a) {
+CToolObject.prototype.__construct = function (a) {
     CToolObject.__super.__construct.call(this, a);
     this.drawer = null;
     this.state = CToolObject.state.BeforeDraw;
     this.points = [];
     this.step = 0
 };
-CToolObject.prototype.getChartObjects = function() {
+CToolObject.prototype.getChartObjects = function () {
     var c = ChartManager.getInstance();
     var e = c.getDataSource("frame0.k0");
     if (e == null || !is_instance(e, MainDataSource)) {
@@ -6915,7 +6914,7 @@ CToolObject.prototype.getChartObjects = function() {
         pRange: b
     }
 };
-CToolObject.prototype.isValidMouseXY = function(a, d) {
+CToolObject.prototype.isValidMouseXY = function (a, d) {
     var b = this.getChartObjects();
     var c = {
         left: b.pArea.getLeft(),
@@ -6928,22 +6927,22 @@ CToolObject.prototype.isValidMouseXY = function(a, d) {
     }
     return true
 };
-CToolObject.prototype.getPlotter = function() {
+CToolObject.prototype.getPlotter = function () {
     return this.drawer
 };
-CToolObject.prototype.setState = function(a) {
+CToolObject.prototype.setState = function (a) {
     this.state = a
 };
-CToolObject.prototype.getState = function() {
+CToolObject.prototype.getState = function () {
     return this.state
 };
-CToolObject.prototype.addPoint = function(a) {
+CToolObject.prototype.addPoint = function (a) {
     this.points.push(a)
 };
-CToolObject.prototype.getPoint = function(a) {
+CToolObject.prototype.getPoint = function (a) {
     return this.points[a]
 };
-CToolObject.prototype.acceptMouseMoveEvent = function(a, b) {
+CToolObject.prototype.acceptMouseMoveEvent = function (a, b) {
     if (this.isValidMouseXY(a, b) == false) {
         return false
     }
@@ -6960,7 +6959,7 @@ CToolObject.prototype.acceptMouseMoveEvent = function(a, b) {
     }
     return true
 };
-CToolObject.prototype.acceptMouseDownEvent = function(a, b) {
+CToolObject.prototype.acceptMouseDownEvent = function (a, b) {
     if (this.isValidMouseXY(a, b) == false) {
         return false
     }
@@ -6987,7 +6986,7 @@ CToolObject.prototype.acceptMouseDownEvent = function(a, b) {
     }
     return true
 };
-CToolObject.prototype.acceptMouseDownMoveEvent = function(g, e) {
+CToolObject.prototype.acceptMouseDownMoveEvent = function (g, e) {
     if (this.isValidMouseXY(g, e) == false) {
         return false
     }
@@ -7017,7 +7016,7 @@ CToolObject.prototype.acceptMouseDownMoveEvent = function(g, e) {
     }
     return true
 };
-CToolObject.prototype.acceptMouseUpEvent = function(a, b) {
+CToolObject.prototype.acceptMouseUpEvent = function (a, b) {
     if (this.isValidMouseXY(a, b) == false) {
         return false
     }
@@ -7030,20 +7029,20 @@ CToolObject.prototype.acceptMouseUpEvent = function(a, b) {
     }
     return false
 };
-CToolObject.prototype.setBeforeDrawPos = function(a, c) {
+CToolObject.prototype.setBeforeDrawPos = function (a, c) {
     for (var b in this.points) {
         this.points[b].setPosXY(a, c);
         this.points[b].setState(CPoint.state.Show)
     }
 };
-CToolObject.prototype.setDrawPos = function(a, c) {
+CToolObject.prototype.setDrawPos = function (a, c) {
     for (var b in this.points) {
         if (this.points[b].getState() == CPoint.state.Highlight) {
             this.points[b].setPosXY(a, c)
         }
     }
 };
-CToolObject.prototype.setAfterDrawPos = function(a, d) {
+CToolObject.prototype.setAfterDrawPos = function (a, d) {
     if (this.step != 0) {
         this.step -= 1
     }
@@ -7055,7 +7054,7 @@ CToolObject.prototype.setAfterDrawPos = function(a, d) {
         c.pMgr.setNormalMode()
     }
 };
-CToolObject.prototype.isSelected = function(a, d) {
+CToolObject.prototype.isSelected = function (a, d) {
     var c = false;
     for (var b in this.points) {
         if (this.points[b].isSelected(a, d)) {
@@ -7070,21 +7069,21 @@ CToolObject.prototype.isSelected = function(a, d) {
     }
     return false
 };
-CToolObject.prototype.select = function() {
+CToolObject.prototype.select = function () {
     for (var a in this.points) {
         if (this.points[a].getState() == CPoint.state.Hide) {
             this.points[a].setState(CPoint.state.Show)
         }
     }
 };
-CToolObject.prototype.unselect = function() {
+CToolObject.prototype.unselect = function () {
     for (var a in this.points) {
         if (this.points[a].getState() != CPoint.state.Hide) {
             this.points[a].setState(CPoint.state.Hide)
         }
     }
 };
-CToolObject.prototype.calcDistance = function(l, i, g) {
+CToolObject.prototype.calcDistance = function (l, i, g) {
     var a = l.getPosXY().x;
     var j = l.getPosXY().y;
     var o = i.getPosXY().x;
@@ -7099,7 +7098,7 @@ CToolObject.prototype.calcDistance = function(l, i, g) {
     var e = Math.sqrt(Math.pow((o - a), 2) + Math.pow((h - j), 2));
     return c / e
 };
-CToolObject.prototype.calcGap = function(b, m, k) {
+CToolObject.prototype.calcGap = function (b, m, k) {
     var a = b.sx;
     var i = b.sy;
     var o = b.ex;
@@ -7114,7 +7113,7 @@ CToolObject.prototype.calcGap = function(b, m, k) {
     var f = Math.sqrt(Math.pow((o - a), 2) + Math.pow((h - i), 2));
     return d / f
 };
-CToolObject.prototype.isWithRect = function(g, d, c) {
+CToolObject.prototype.isWithRect = function (g, d, c) {
     var h = g.getPosXY().x;
     var f = g.getPosXY().y;
     var b = d.getPosXY().x;
@@ -7150,32 +7149,32 @@ CToolObject.prototype.isWithRect = function(g, d, c) {
     return false
 };
 CBiToolObject = create_class(CToolObject);
-CBiToolObject.prototype.__construct = function(a) {
+CBiToolObject.prototype.__construct = function (a) {
     CBiToolObject.__super.__construct.call(this, a);
     this.addPoint(new CPoint(a));
     this.addPoint(new CPoint(a))
 };
-CBiToolObject.prototype.setBeforeDrawPos = function(a, b) {
+CBiToolObject.prototype.setBeforeDrawPos = function (a, b) {
     this.step = 1;
     CBiToolObject.__super.setBeforeDrawPos.call(this, a, b);
     this.getPoint(0).setState(CPoint.state.Show);
     this.getPoint(1).setState(CPoint.state.Highlight)
 };
 CTriToolObject = create_class(CToolObject);
-CTriToolObject.prototype.__construct = function(a) {
+CTriToolObject.prototype.__construct = function (a) {
     CTriToolObject.__super.__construct.call(this, a);
     this.addPoint(new CPoint(a));
     this.addPoint(new CPoint(a));
     this.addPoint(new CPoint(a))
 };
-CTriToolObject.prototype.setBeforeDrawPos = function(a, b) {
+CTriToolObject.prototype.setBeforeDrawPos = function (a, b) {
     this.step = 2;
     CBiToolObject.__super.setBeforeDrawPos.call(this, a, b);
     this.getPoint(0).setState(CPoint.state.Show);
     this.getPoint(1).setState(CPoint.state.Show);
     this.getPoint(2).setState(CPoint.state.Highlight)
 };
-CTriToolObject.prototype.setAfterDrawPos = function(a, d) {
+CTriToolObject.prototype.setAfterDrawPos = function (a, d) {
     if (this.step != 0) {
         this.step -= 1
     }
@@ -7194,11 +7193,11 @@ CTriToolObject.prototype.setAfterDrawPos = function(a, d) {
     }
 };
 var CBandLineObject = create_class(CBiToolObject);
-CBandLineObject.prototype.__construct = function(a) {
+CBandLineObject.prototype.__construct = function (a) {
     CBandLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawBandLinesPlotter(a, this)
 };
-CBandLineObject.prototype.isSelected = function(l, h) {
+CBandLineObject.prototype.isSelected = function (l, h) {
     if (CBandLineObject.__super.isSelected.call(this, l, h) == true) {
         return true
     }
@@ -7219,11 +7218,11 @@ CBandLineObject.prototype.isSelected = function(l, h) {
     return false
 };
 var CBiParallelLineObject = create_class(CTriToolObject);
-CBiParallelLineObject.prototype.__construct = function(a) {
+CBiParallelLineObject.prototype.__construct = function (a) {
     CBiParallelLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawBiParallelLinesPlotter(a, this)
 };
-CBiParallelLineObject.prototype.isSelected = function(n, l) {
+CBiParallelLineObject.prototype.isSelected = function (n, l) {
     if (CTriParallelLineObject.__super.isSelected.call(this, n, l) == true) {
         return true
     }
@@ -7265,11 +7264,11 @@ CBiParallelLineObject.prototype.isSelected = function(n, l) {
     return true
 };
 var CBiParallelRayLineObject = create_class(CTriToolObject);
-CBiParallelRayLineObject.prototype.__construct = function(a) {
+CBiParallelRayLineObject.prototype.__construct = function (a) {
     CBiParallelRayLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawBiParallelRayLinesPlotter(a, this)
 };
-CBiParallelRayLineObject.prototype.isSelected = function(n, l) {
+CBiParallelRayLineObject.prototype.isSelected = function (n, l) {
     if (CTriParallelLineObject.__super.isSelected.call(this, n, l) == true) {
         return true
     }
@@ -7316,11 +7315,11 @@ CBiParallelRayLineObject.prototype.isSelected = function(n, l) {
     return true
 };
 var CFibFansObject = create_class(CBiToolObject);
-CFibFansObject.prototype.__construct = function(a) {
+CFibFansObject.prototype.__construct = function (a) {
     CFibFansObject.__super.__construct.call(this, a);
     this.drawer = new DrawFibFansPlotter(a, this)
 };
-CFibFansObject.prototype.isSelected = function(h, g) {
+CFibFansObject.prototype.isSelected = function (h, g) {
     if (CFibFansObject.__super.isSelected.call(this, h, g) == true) {
         return true
     }
@@ -7354,7 +7353,7 @@ CFibFansObject.prototype.isSelected = function(h, g) {
         var k = w > v ? {
             x: e[0].x,
             y: e[0].y
-        }: {
+        } : {
             x: e[1].x,
             y: e[1].y
         };
@@ -7377,11 +7376,11 @@ CFibFansObject.prototype.isSelected = function(h, g) {
     return false
 };
 var CFibRetraceObject = create_class(CBiToolObject);
-CFibRetraceObject.prototype.__construct = function(a) {
+CFibRetraceObject.prototype.__construct = function (a) {
     CFibRetraceObject.__super.__construct.call(this, a);
     this.drawer = new DrawFibRetracePlotter(a, this)
 };
-CFibRetraceObject.prototype.isSelected = function(l, h) {
+CFibRetraceObject.prototype.isSelected = function (l, h) {
     if (CFibRetraceObject.__super.isSelected.call(this, l, h) == true) {
         return true
     }
@@ -7402,11 +7401,11 @@ CFibRetraceObject.prototype.isSelected = function(l, h) {
     return false
 };
 var CHoriRayLineObject = create_class(CBiToolObject);
-CHoriRayLineObject.prototype.__construct = function(a) {
+CHoriRayLineObject.prototype.__construct = function (a) {
     CHoriRayLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawHoriRayLinesPlotter(a, this)
 };
-CHoriRayLineObject.prototype.setDrawPos = function(a, b) {
+CHoriRayLineObject.prototype.setDrawPos = function (a, b) {
     if (this.points[0].getState() == CPoint.state.Highlight) {
         this.points[0].setPosXY(a, b);
         this.points[1].setPosXYNoSnap(this.points[1].getPosXY().x, this.points[0].getPosXY().y);
@@ -7417,7 +7416,7 @@ CHoriRayLineObject.prototype.setDrawPos = function(a, b) {
         this.points[0].setPosXYNoSnap(this.points[0].getPosXY().x, this.points[1].getPosXY().y)
     }
 };
-CHoriRayLineObject.prototype.isSelected = function(a, g) {
+CHoriRayLineObject.prototype.isSelected = function (a, g) {
     if (CHoriRayLineObject.__super.isSelected.call(this, a, g) == true) {
         return true
     }
@@ -7439,11 +7438,11 @@ CHoriRayLineObject.prototype.isSelected = function(a, g) {
     return true
 };
 var CHoriSegLineObject = create_class(CBiToolObject);
-CHoriSegLineObject.prototype.__construct = function(a) {
+CHoriSegLineObject.prototype.__construct = function (a) {
     CHoriSegLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawHoriSegLinesPlotter(a, this)
 };
-CHoriSegLineObject.prototype.setDrawPos = function(a, b) {
+CHoriSegLineObject.prototype.setDrawPos = function (a, b) {
     if (this.points[0].getState() == CPoint.state.Highlight) {
         this.points[0].setPosXY(a, b);
         this.points[1].setPosXYNoSnap(this.points[1].getPosXY().x, this.points[0].getPosXY().y);
@@ -7454,7 +7453,7 @@ CHoriSegLineObject.prototype.setDrawPos = function(a, b) {
         this.points[0].setPosXYNoSnap(this.points[0].getPosXY().x, this.points[1].getPosXY().y)
     }
 };
-CHoriSegLineObject.prototype.isSelected = function(a, g) {
+CHoriSegLineObject.prototype.isSelected = function (a, g) {
     if (CHoriSegLineObject.__super.isSelected.call(this, a, g) == true) {
         return true
     }
@@ -7476,16 +7475,16 @@ CHoriSegLineObject.prototype.isSelected = function(a, g) {
     return true
 };
 var CHoriStraightLineObject = create_class(CBiToolObject);
-CHoriStraightLineObject.prototype.__construct = function(a) {
+CHoriStraightLineObject.prototype.__construct = function (a) {
     CHoriStraightLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawHoriStraightLinesPlotter(a, this)
 };
-CHoriStraightLineObject.prototype.setDrawPos = function(a, c) {
+CHoriStraightLineObject.prototype.setDrawPos = function (a, c) {
     for (var b in this.points) {
         this.points[b].setPosXY(a, c)
     }
 };
-CHoriStraightLineObject.prototype.isSelected = function(a, e) {
+CHoriStraightLineObject.prototype.isSelected = function (a, e) {
     if (CHoriStraightLineObject.__super.isSelected.call(this, a, e) == true) {
         return true
     }
@@ -7499,11 +7498,11 @@ CHoriStraightLineObject.prototype.isSelected = function(a, e) {
     return true
 };
 var CRayLineObject = create_class(CBiToolObject);
-CRayLineObject.prototype.__construct = function(a) {
+CRayLineObject.prototype.__construct = function (a) {
     CRayLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawRayLinesPlotter(a, this)
 };
-CRayLineObject.prototype.isSelected = function(a, f) {
+CRayLineObject.prototype.isSelected = function (a, f) {
     if (CRayLineObject.__super.isSelected.call(this, a, f) == true) {
         return true
     }
@@ -7524,11 +7523,11 @@ CRayLineObject.prototype.isSelected = function(a, f) {
     return false
 };
 var CSegLineObject = create_class(CBiToolObject);
-CSegLineObject.prototype.__construct = function(a) {
+CSegLineObject.prototype.__construct = function (a) {
     CSegLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawSegLinesPlotter(a, this)
 };
-CSegLineObject.prototype.isSelected = function(a, d) {
+CSegLineObject.prototype.isSelected = function (a, d) {
     if (CSegLineObject.__super.isSelected.call(this, a, d) == true) {
         return true
     }
@@ -7544,11 +7543,11 @@ CSegLineObject.prototype.isSelected = function(a, d) {
     return false
 };
 var CStraightLineObject = create_class(CBiToolObject);
-CStraightLineObject.prototype.__construct = function(a) {
+CStraightLineObject.prototype.__construct = function (a) {
     CStraightLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawStraightLinesPlotter(a, this)
 };
-CStraightLineObject.prototype.isSelected = function(a, d) {
+CStraightLineObject.prototype.isSelected = function (a, d) {
     if (CStraightLineObject.__super.isSelected.call(this, a, d) == true) {
         return true
     }
@@ -7561,11 +7560,11 @@ CStraightLineObject.prototype.isSelected = function(a, d) {
     return false
 };
 var CTriParallelLineObject = create_class(CTriToolObject);
-CTriParallelLineObject.prototype.__construct = function(a) {
+CTriParallelLineObject.prototype.__construct = function (a) {
     CTriParallelLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawTriParallelLinesPlotter(a, this)
 };
-CTriParallelLineObject.prototype.isSelected = function(p, o) {
+CTriParallelLineObject.prototype.isSelected = function (p, o) {
     if (CTriParallelLineObject.__super.isSelected.call(this, p, o) == true) {
         return true
     }
@@ -7635,16 +7634,16 @@ CTriParallelLineObject.prototype.isSelected = function(p, o) {
     return true
 };
 var CVertiStraightLineObject = create_class(CBiToolObject);
-CVertiStraightLineObject.prototype.__construct = function(a) {
+CVertiStraightLineObject.prototype.__construct = function (a) {
     CVertiStraightLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawVertiStraightLinesPlotter(a, this)
 };
-CVertiStraightLineObject.prototype.setDrawPos = function(a, c) {
+CVertiStraightLineObject.prototype.setDrawPos = function (a, c) {
     for (var b in this.points) {
         this.points[b].setPosXY(a, c)
     }
 };
-CVertiStraightLineObject.prototype.isSelected = function(a, e) {
+CVertiStraightLineObject.prototype.isSelected = function (a, e) {
     if (CVertiStraightLineObject.__super.isSelected.call(this, a, e) == true) {
         return true
     }
@@ -7658,16 +7657,16 @@ CVertiStraightLineObject.prototype.isSelected = function(a, e) {
     return true
 };
 var CPriceLineObject = create_class(CSegLineObject);
-CPriceLineObject.prototype.__construct = function(a) {
+CPriceLineObject.prototype.__construct = function (a) {
     CPriceLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawPriceLinesPlotter(a, this)
 };
-CPriceLineObject.prototype.setDrawPos = function(a, c) {
+CPriceLineObject.prototype.setDrawPos = function (a, c) {
     for (var b in this.points) {
         this.points[b].setPosXY(a, c)
     }
 };
-CPriceLineObject.prototype.isSelected = function(a, h) {
+CPriceLineObject.prototype.isSelected = function (a, h) {
     if (CFibRetraceObject.__super.isSelected.call(this, a, h) == true) {
         return true
     }
@@ -7687,42 +7686,42 @@ CPriceLineObject.prototype.isSelected = function(a, h) {
     return true
 };
 var CArrowLineObject = create_class(CSegLineObject);
-CArrowLineObject.prototype.__construct = function(a) {
+CArrowLineObject.prototype.__construct = function (a) {
     CArrowLineObject.__super.__construct.call(this, a);
     this.drawer = new DrawArrowLinesPlotter(a, this)
 };
 var CToolManager = create_class(NamedObject);
-CToolManager.prototype.__construct = function(a) {
+CToolManager.prototype.__construct = function (a) {
     CToolManager.__super.__construct.call(this, a);
     this.selectedObject = -1;
     this.toolObjects = []
 };
-CToolManager.prototype.getToolObjectCount = function() {
+CToolManager.prototype.getToolObjectCount = function () {
     return this.toolObjects.length
 };
-CToolManager.prototype.addToolObject = function(a) {
+CToolManager.prototype.addToolObject = function (a) {
     this.toolObjects.push(a)
 };
-CToolManager.prototype.getToolObject = function(a) {
+CToolManager.prototype.getToolObject = function (a) {
     if (a < this.toolObjects.length && a >= 0) {
         return this.toolObjects[a]
     }
     return null
 };
-CToolManager.prototype.getCurrentObject = function() {
+CToolManager.prototype.getCurrentObject = function () {
     return this.getToolObject(this.getToolObjectCount() - 1)
 };
-CToolManager.prototype.getSelectedObject = function() {
+CToolManager.prototype.getSelectedObject = function () {
     return this.getToolObject(this.selectedObject)
 };
-CToolManager.prototype.delCurrentObject = function() {
+CToolManager.prototype.delCurrentObject = function () {
     this.toolObjects.splice(this.getToolObjectCount() - 1, 1)
 };
-CToolManager.prototype.delSelectedObject = function() {
+CToolManager.prototype.delSelectedObject = function () {
     this.toolObjects.splice(this.selectedObject, 1);
     this.selectedObject = -1
 };
-CToolManager.prototype.acceptMouseMoveEvent = function(a, e) {
+CToolManager.prototype.acceptMouseMoveEvent = function (a, e) {
     if (this.selectedObject == -1) {
         var d = this.toolObjects[this.getToolObjectCount() - 1];
         if (d != null && d.getState() != CToolObject.state.AfterDraw) {
@@ -7744,7 +7743,7 @@ CToolManager.prototype.acceptMouseMoveEvent = function(a, e) {
     }
     return false
 };
-CToolManager.prototype.acceptMouseDownEvent = function(a, d) {
+CToolManager.prototype.acceptMouseDownEvent = function (a, d) {
     this.mouseDownMove = false;
     if (this.selectedObject == -1) {
         var c = this.toolObjects[this.getToolObjectCount() - 1];
@@ -7759,7 +7758,7 @@ CToolManager.prototype.acceptMouseDownEvent = function(a, d) {
     }
     return false
 };
-CToolManager.prototype.acceptMouseDownMoveEvent = function(b, f) {
+CToolManager.prototype.acceptMouseDownMoveEvent = function (b, f) {
     this.mouseDownMove = true;
     if (this.selectedObject == -1) {
         var e = this.toolObjects[this.getToolObjectCount() - 1];
@@ -7782,7 +7781,7 @@ CToolManager.prototype.acceptMouseDownMoveEvent = function(b, f) {
         }
     }
 };
-CToolManager.prototype.acceptMouseUpEvent = function(a, d) {
+CToolManager.prototype.acceptMouseUpEvent = function (a, d) {
     if (this.mouseDownMove == true) {
         if (this.selectedObject == -1) {
             var c = this.toolObjects[this.getToolObjectCount() - 1];
@@ -7815,7 +7814,7 @@ CToolManager.prototype.acceptMouseUpEvent = function(a, d) {
     return false
 };
 var CToolPlotter = create_class(NamedObject);
-CToolPlotter.prototype.__construct = function(a, d) {
+CToolPlotter.prototype.__construct = function (a, d) {
     CToolPlotter.__super.__construct.call(this, a);
     this.toolObject = d;
     var c = ChartManager.getInstance();
@@ -7842,10 +7841,10 @@ CToolPlotter.prototype.__construct = function(a, d) {
     this.cursorGapLen = 3;
     this.theme = ChartManager.getInstance().getTheme(this.getFrameName())
 };
-CToolPlotter.prototype.drawCursor = function(a) {
+CToolPlotter.prototype.drawCursor = function (a) {
     this.drawCrossCursor(a)
 };
-CToolPlotter.prototype.drawCrossCursor = function(e) {
+CToolPlotter.prototype.drawCrossCursor = function (e) {
     e.strokeStyle = this.theme.getColor(Theme.Color.LineColorNormal);
     e.fillStyle = this.theme.getColor(Theme.Color.LineColorNormal);
     var d = this.toolObject.getPoint(0).getPosXY();
@@ -7862,7 +7861,7 @@ CToolPlotter.prototype.drawCrossCursor = function(e) {
     Plotter.drawLine(e, c, f - b - a, c, f - a);
     Plotter.drawLine(e, c, f + b + a, c, f + a)
 };
-CToolPlotter.prototype.drawCircle = function(c, b, a) {
+CToolPlotter.prototype.drawCircle = function (c, b, a) {
     var e = b.x;
     var d = b.y;
     c.beginPath();
@@ -7871,13 +7870,13 @@ CToolPlotter.prototype.drawCircle = function(c, b, a) {
     c.fill();
     c.stroke()
 };
-CToolPlotter.prototype.drawCtrlPt = function(b) {
+CToolPlotter.prototype.drawCtrlPt = function (b) {
     b.strokeStyle = this.theme.getColor(Theme.Color.CircleColorStroke);
     for (var a = 0; a < this.ctrlPtsNum; a++) {
         this.drawCircle(b, this.ctrlPts[1][a], this.normalSize)
     }
 };
-CToolPlotter.prototype.highlightCtrlPt = function(b) {
+CToolPlotter.prototype.highlightCtrlPt = function (b) {
     b.strokeStyle = this.theme.getColor(Theme.Color.CircleColorStroke);
     for (var a = 0; a < this.ctrlPtsNum; a++) {
         if (this.toolObject.getPoint(a).getState() == CPoint.state.Highlight) {
@@ -7885,7 +7884,7 @@ CToolPlotter.prototype.highlightCtrlPt = function(b) {
         }
     }
 };
-CToolPlotter.prototype.drawFibRayLines = function(d, g, c) {
+CToolPlotter.prototype.drawFibRayLines = function (d, g, c) {
     for (var b = 0; b < this.fiboFansSequence.length; b++) {
         var a = g.y + (100 - this.fiboFansSequence[b]) / 100 * (c.y - g.y);
         var f = {
@@ -7899,7 +7898,7 @@ CToolPlotter.prototype.drawFibRayLines = function(d, g, c) {
         this.drawRayLines(d, f, e)
     }
 };
-CToolPlotter.prototype.drawRayLines = function(c, g, b) {
+CToolPlotter.prototype.drawRayLines = function (c, g, b) {
     this.getAreaPos();
     var e = {
         x: g.x,
@@ -7918,7 +7917,7 @@ CToolPlotter.prototype.drawRayLines = function(c, g, b) {
             a = b.y > g.y ? {
                 x: f[1].x,
                 y: f[1].y
-            }: {
+            } : {
                 x: f[0].x,
                 y: f[0].y
             }
@@ -7927,27 +7926,27 @@ CToolPlotter.prototype.drawRayLines = function(c, g, b) {
         a = b.x > g.x ? {
             x: f[1].x,
             y: f[1].y
-        }: {
+        } : {
             x: f[0].x,
             y: f[0].y
         }
     }
     Plotter.drawLine(c, g.x, g.y, a.x, a.y)
 };
-CToolPlotter.prototype.lenBetweenPts = function(b, a) {
+CToolPlotter.prototype.lenBetweenPts = function (b, a) {
     return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2))
 };
-CToolPlotter.prototype.getCtrlPts = function() {
+CToolPlotter.prototype.getCtrlPts = function () {
     for (var a = 0; a < this.ctrlPtsNum; a++) {
         this.ctrlPts[0][a] = this.toolObject.getPoint(a)
     }
 };
-CToolPlotter.prototype.updateCtrlPtPos = function() {
+CToolPlotter.prototype.updateCtrlPtPos = function () {
     for (var a = 0; a < this.ctrlPtsNum; a++) {
         this.ctrlPts[1][a] = this.ctrlPts[0][a].getPosXY()
     }
 };
-CToolPlotter.prototype.getAreaPos = function() {
+CToolPlotter.prototype.getAreaPos = function () {
     var b = ChartManager.getInstance();
     var a = b.getArea("frame0.k0.main");
     if (a == null) {
@@ -7966,30 +7965,30 @@ CToolPlotter.prototype.getAreaPos = function() {
         bottom: Math.floor(a.getBottom())
     }
 };
-CToolPlotter.prototype.updateDraw = function(a) {
+CToolPlotter.prototype.updateDraw = function (a) {
     a.strokeStyle = this.theme.getColor(Theme.Color.LineColorNormal);
     this.draw(a);
     this.drawCtrlPt(a)
 };
-CToolPlotter.prototype.finishDraw = function(a) {
+CToolPlotter.prototype.finishDraw = function (a) {
     a.strokeStyle = this.theme.getColor(Theme.Color.LineColorNormal);
     this.draw(a)
 };
-CToolPlotter.prototype.highlight = function(a) {
+CToolPlotter.prototype.highlight = function (a) {
     a.strokeStyle = this.theme.getColor(Theme.Color.LineColorSelected);
     this.draw(a);
     this.drawCtrlPt(a);
     this.highlightCtrlPt(a)
 };
 var DrawStraightLinesPlotter = create_class(CToolPlotter);
-DrawStraightLinesPlotter.prototype.__construct = function(a, b) {
+DrawStraightLinesPlotter.prototype.__construct = function (a, b) {
     DrawStraightLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.ctrlPtsNum = 2;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawStraightLinesPlotter.prototype.draw = function(a) {
+DrawStraightLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8002,14 +8001,14 @@ DrawStraightLinesPlotter.prototype.draw = function(a) {
     }
 };
 var DrawSegLinesPlotter = create_class(CToolPlotter);
-DrawSegLinesPlotter.prototype.__construct = function(a, b) {
+DrawSegLinesPlotter.prototype.__construct = function (a, b) {
     DrawSegLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.ctrlPtsNum = 2;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawSegLinesPlotter.prototype.draw = function(a) {
+DrawSegLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.startPoint = this.ctrlPts[1][0];
     this.endPoint = this.ctrlPts[1][1];
@@ -8019,14 +8018,14 @@ DrawSegLinesPlotter.prototype.draw = function(a) {
     Plotter.drawLine(a, this.startPoint.x, this.startPoint.y, this.endPoint.x, this.endPoint.y)
 };
 var DrawRayLinesPlotter = create_class(CToolPlotter);
-DrawRayLinesPlotter.prototype.__construct = function(a, b) {
+DrawRayLinesPlotter.prototype.__construct = function (a, b) {
     DrawRayLinesPlotter.__super.__construct.call(this, a);
     this.toolObject = b;
     this.ctrlPtsNum = 2;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawRayLinesPlotter.prototype.draw = function(a) {
+DrawRayLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8037,7 +8036,7 @@ DrawRayLinesPlotter.prototype.draw = function(a) {
     this.drawRayLines(a, this.startPoint, this.endPoint)
 };
 var DrawArrowLinesPlotter = create_class(CToolPlotter);
-DrawArrowLinesPlotter.prototype.__construct = function(a, b) {
+DrawArrowLinesPlotter.prototype.__construct = function (a, b) {
     DrawArrowLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.arrowSizeRatio = 0.03;
@@ -8050,12 +8049,12 @@ DrawArrowLinesPlotter.prototype.__construct = function(a, b) {
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawArrowLinesPlotter.prototype.drawArrow = function(c, b, f) {
+DrawArrowLinesPlotter.prototype.drawArrow = function (c, b, f) {
     var d = this.lenBetweenPts(b, f);
     var i = [f.x - b.x, f.y - b.y];
     this.crossPt.x = b.x + (1 - this.arrowSize / d) * i[0];
     this.crossPt.y = b.y + (1 - this.arrowSize / d) * i[1];
-    var h = [ - i[1], i[0]];
+    var h = [-i[1], i[0]];
     var a = {
         x: h[0],
         y: h[1]
@@ -8071,7 +8070,7 @@ DrawArrowLinesPlotter.prototype.drawArrow = function(c, b, f) {
     e = [this.crossPt.x - h[0], this.crossPt.y - h[1]];
     Plotter.drawLine(c, f.x, f.y, e[0], e[1])
 };
-DrawArrowLinesPlotter.prototype.draw = function(a) {
+DrawArrowLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.startPoint = this.ctrlPts[1][0];
     this.endPoint = this.ctrlPts[1][1];
@@ -8082,28 +8081,28 @@ DrawArrowLinesPlotter.prototype.draw = function(a) {
     this.drawArrow(a, this.startPoint, this.endPoint)
 };
 var DrawHoriStraightLinesPlotter = create_class(CToolPlotter);
-DrawHoriStraightLinesPlotter.prototype.__construct = function(a, b) {
+DrawHoriStraightLinesPlotter.prototype.__construct = function (a, b) {
     DrawHoriStraightLinesPlotter.__super.__construct.call(this, a);
     this.toolObject = b;
     this.ctrlPtsNum = 1;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawHoriStraightLinesPlotter.prototype.draw = function(a) {
+DrawHoriStraightLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
     Plotter.drawLine(a, this.areaPos.left, this.startPoint.y, this.areaPos.right, this.startPoint.y)
 };
 var DrawHoriRayLinesPlotter = create_class(CToolPlotter);
-DrawHoriRayLinesPlotter.prototype.__construct = function(a, b) {
+DrawHoriRayLinesPlotter.prototype.__construct = function (a, b) {
     DrawHoriRayLinesPlotter.__super.__construct.call(this, a);
     this.toolObject = b;
     this.ctrlPtsNum = 2;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawHoriRayLinesPlotter.prototype.draw = function(a) {
+DrawHoriRayLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8119,14 +8118,14 @@ DrawHoriRayLinesPlotter.prototype.draw = function(a) {
     }
 };
 var DrawHoriSegLinesPlotter = create_class(CToolPlotter);
-DrawHoriSegLinesPlotter.prototype.__construct = function(a, b) {
+DrawHoriSegLinesPlotter.prototype.__construct = function (a, b) {
     DrawHoriSegLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.ctrlPtsNum = 2;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawHoriSegLinesPlotter.prototype.draw = function(a) {
+DrawHoriSegLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.startPoint = this.ctrlPts[1][0];
     this.endPoint = this.ctrlPts[1][1];
@@ -8138,28 +8137,28 @@ DrawHoriSegLinesPlotter.prototype.draw = function(a) {
     }
 };
 var DrawVertiStraightLinesPlotter = create_class(CToolPlotter);
-DrawVertiStraightLinesPlotter.prototype.__construct = function(a, b) {
+DrawVertiStraightLinesPlotter.prototype.__construct = function (a, b) {
     DrawVertiStraightLinesPlotter.__super.__construct.call(this, a);
     this.toolObject = b;
     this.ctrlPtsNum = 1;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawVertiStraightLinesPlotter.prototype.draw = function(a) {
+DrawVertiStraightLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
     Plotter.drawLine(a, this.startPoint.x, this.areaPos.top, this.startPoint.x, this.areaPos.bottom)
 };
 var DrawPriceLinesPlotter = create_class(CToolPlotter);
-DrawPriceLinesPlotter.prototype.__construct = function(a, b) {
+DrawPriceLinesPlotter.prototype.__construct = function (a, b) {
     DrawPriceLinesPlotter.__super.__construct.call(this, a);
     this.toolObject = b;
     this.ctrlPtsNum = 1;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawPriceLinesPlotter.prototype.draw = function(a) {
+DrawPriceLinesPlotter.prototype.draw = function (a) {
     a.font = "12px Tahoma";
     a.textAlign = "left";
     a.fillStyle = this.theme.getColor(Theme.Color.LineColorNormal);
@@ -8171,11 +8170,11 @@ DrawPriceLinesPlotter.prototype.draw = function(a) {
     a.fillText(b.toFixed(2), this.startPoint.x + 2, this.startPoint.y - 15)
 };
 var ParallelLinesPlotter = create_class(CToolPlotter);
-ParallelLinesPlotter.prototype.__construct = function(a, b) {
+ParallelLinesPlotter.prototype.__construct = function (a, b) {
     ParallelLinesPlotter.__super.__construct.call(this, a);
     this.toolObject = b
 };
-ParallelLinesPlotter.prototype.getParaPt = function() {
+ParallelLinesPlotter.prototype.getParaPt = function () {
     var b = [];
     b[0] = this.endPoint.x - this.startPoint.x;
     b[1] = this.endPoint.y - this.startPoint.y;
@@ -8190,14 +8189,14 @@ ParallelLinesPlotter.prototype.getParaPt = function() {
     this.paraEndPoint.y = b[1] + a[1] + this.startPoint.y
 };
 var DrawBiParallelLinesPlotter = create_class(ParallelLinesPlotter);
-DrawBiParallelLinesPlotter.prototype.__construct = function(a, b) {
+DrawBiParallelLinesPlotter.prototype.__construct = function (a, b) {
     DrawBiParallelLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.ctrlPtsNum = 3;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawBiParallelLinesPlotter.prototype.draw = function(a) {
+DrawBiParallelLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8211,14 +8210,14 @@ DrawBiParallelLinesPlotter.prototype.draw = function(a) {
     Plotter.drawLine(a, this.crossPt1[0].x, this.crossPt1[0].y, this.crossPt1[1].x, this.crossPt1[1].y)
 };
 var DrawBiParallelRayLinesPlotter = create_class(ParallelLinesPlotter);
-DrawBiParallelRayLinesPlotter.prototype.__construct = function(a, b) {
+DrawBiParallelRayLinesPlotter.prototype.__construct = function (a, b) {
     DrawBiParallelRayLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.ctrlPtsNum = 3;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawBiParallelRayLinesPlotter.prototype.draw = function(a) {
+DrawBiParallelRayLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8232,14 +8231,14 @@ DrawBiParallelRayLinesPlotter.prototype.draw = function(a) {
     this.drawRayLines(a, this.paraStartPoint, this.paraEndPoint)
 };
 var DrawTriParallelLinesPlotter = create_class(ParallelLinesPlotter);
-DrawTriParallelLinesPlotter.prototype.__construct = function(a, b) {
+DrawTriParallelLinesPlotter.prototype.__construct = function (a, b) {
     DrawTriParallelLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.ctrlPtsNum = 3;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawTriParallelLinesPlotter.prototype.draw = function(c) {
+DrawTriParallelLinesPlotter.prototype.draw = function (c) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8278,14 +8277,14 @@ DrawTriParallelLinesPlotter.prototype.draw = function(c) {
     Plotter.drawLine(c, this.crossPt2[0].x, this.crossPt2[0].y, this.crossPt2[1].x, this.crossPt2[1].y)
 };
 var BandLinesPlotter = create_class(CToolPlotter);
-BandLinesPlotter.prototype.__construct = function(a, b) {
+BandLinesPlotter.prototype.__construct = function (a, b) {
     BandLinesPlotter.__super.__construct.call(this, a);
     this.toolObject = b;
     this.ctrlPtsNum = 2;
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-BandLinesPlotter.prototype.drawLinesAndInfo = function(d, f, c) {
+BandLinesPlotter.prototype.drawLinesAndInfo = function (d, f, c) {
     d.font = "12px Tahoma";
     d.textAlign = "left";
     d.fillStyle = this.theme.getColor(Theme.Color.LineColorNormal);
@@ -8306,7 +8305,7 @@ BandLinesPlotter.prototype.drawLinesAndInfo = function(d, f, c) {
         d.fillText(g, this.areaPos.left + 2, a - 15)
     }
 };
-BandLinesPlotter.prototype.draw = function(a) {
+BandLinesPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8314,19 +8313,19 @@ BandLinesPlotter.prototype.draw = function(a) {
     this.drawLinesAndInfo(a, this.startPoint, this.endPoint)
 };
 var DrawFibRetracePlotter = create_class(BandLinesPlotter);
-DrawFibRetracePlotter.prototype.__construct = function(a, b) {
+DrawFibRetracePlotter.prototype.__construct = function (a, b) {
     DrawFibRetracePlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.fiboSequence = [100, 78.6, 61.8, 50, 38.2, 23.6, 0]
 };
 var DrawBandLinesPlotter = create_class(BandLinesPlotter);
-DrawBandLinesPlotter.prototype.__construct = function(a, b) {
+DrawBandLinesPlotter.prototype.__construct = function (a, b) {
     DrawBandLinesPlotter.__super.__construct.call(this, a, b);
     this.toolObject = b;
     this.fiboSequence = [0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
 };
 var DrawFibFansPlotter = create_class(CToolPlotter);
-DrawFibFansPlotter.prototype.__construct = function(a, b) {
+DrawFibFansPlotter.prototype.__construct = function (a, b) {
     DrawFibFansPlotter.__super.__construct.call(this, a);
     this.toolObject = b;
     this.fiboFansSequence = [0, 38.2, 50, 61.8];
@@ -8334,10 +8333,10 @@ DrawFibFansPlotter.prototype.__construct = function(a, b) {
     this.ctrlPts = new Array(new Array(this.ctrlPtsNum), new Array(2));
     this.getCtrlPts()
 };
-DrawFibFansPlotter.prototype.drawLinesAndInfo = function(b, c, a) {
+DrawFibFansPlotter.prototype.drawLinesAndInfo = function (b, c, a) {
     this.drawFibRayLines(b, c, a)
 };
-DrawFibFansPlotter.prototype.draw = function(a) {
+DrawFibFansPlotter.prototype.draw = function (a) {
     this.updateCtrlPtPos();
     this.getAreaPos();
     this.startPoint = this.ctrlPts[1][0];
@@ -8348,12 +8347,12 @@ DrawFibFansPlotter.prototype.draw = function(a) {
     this.drawLinesAndInfo(a, this.startPoint, this.endPoint)
 };
 var CDynamicLinePlotter = create_class(NamedObject);
-CDynamicLinePlotter.prototype.__construct = function(a) {
+CDynamicLinePlotter.prototype.__construct = function (a) {
     CDynamicLinePlotter.__super.__construct.call(this, a);
     this.flag = true;
     this.context = ChartManager.getInstance()._overlayContext
 };
-CDynamicLinePlotter.prototype.getAreaPos = function() {
+CDynamicLinePlotter.prototype.getAreaPos = function () {
     var b = ChartManager.getInstance();
     var a = b.getArea("frame0.k0.main");
     if (a == null) {
@@ -8372,7 +8371,7 @@ CDynamicLinePlotter.prototype.getAreaPos = function() {
         bottom: Math.floor(a.getBottom())
     }
 };
-CDynamicLinePlotter.prototype.Draw = function(b) {
+CDynamicLinePlotter.prototype.Draw = function (b) {
     this.getAreaPos();
     var g = ChartManager.getInstance();
     var h = g.getDataSource(this.getDataSourceName());
@@ -8387,20 +8386,20 @@ CDynamicLinePlotter.prototype.Draw = function(b) {
         var f = h.getToolObject(a);
         var e = f.getState();
         switch (e) {
-        case CToolObject.state.BeforeDraw:
-            f.getPlotter().theme = ChartManager.getInstance().getTheme(this.getFrameName());
-            f.getPlotter().drawCursor(this.context);
-            break;
-        case CToolObject.state.Draw:
-            f.getPlotter().theme = ChartManager.getInstance().getTheme(this.getFrameName());
-            f.getPlotter().updateDraw(this.context);
-            break;
-        case CToolObject.state.AfterDraw:
-            f.getPlotter().theme = ChartManager.getInstance().getTheme(this.getFrameName());
-            f.getPlotter().finishDraw(this.context);
-            break;
-        default:
-            break
+            case CToolObject.state.BeforeDraw:
+                f.getPlotter().theme = ChartManager.getInstance().getTheme(this.getFrameName());
+                f.getPlotter().drawCursor(this.context);
+                break;
+            case CToolObject.state.Draw:
+                f.getPlotter().theme = ChartManager.getInstance().getTheme(this.getFrameName());
+                f.getPlotter().updateDraw(this.context);
+                break;
+            case CToolObject.state.AfterDraw:
+                f.getPlotter().theme = ChartManager.getInstance().getTheme(this.getFrameName());
+                f.getPlotter().finishDraw(this.context);
+                break;
+            default:
+                break
         }
     }
     var d = h.getSelectToolObjcet();
@@ -8411,7 +8410,7 @@ CDynamicLinePlotter.prototype.Draw = function(b) {
     return
 };
 function KLineMouseEvent() {
-    $(document).ready(function() {
+    $(document).ready(function () {
         function a() {
             if (navigator.userAgent.indexOf("Firefox") >= 0) {
                 setTimeout(on_size, 200)
@@ -8422,35 +8421,35 @@ function KLineMouseEvent() {
         a();
         $(window).resize(a);
         $("#chart_overlayCanvas").bind("contextmenu",
-        function(b) {
+        function (b) {
             b.cancelBubble = true;
             b.returnValue = false;
             b.preventDefault();
             b.stopPropagation();
             return false
         });
-        $("#chart_input_interface").submit(function(c) {
+        $("#chart_input_interface").submit(function (c) {
             c.preventDefault();
             var g = $("#chart_input_interface_text").val();
             var f = JSON.parse(g);
             var d = f.command;
             var b = f.content;
             switch (d) {
-            case "set current depth":
-                ChartManager.getInstance().getChart().updateDepth(b);
-                break;
-            case "set current future":
-                break;
-            case "set current language":
-                chart_switch_language(b);
-                break;
-            case "set current theme":
-                break;
-            default:
-                break
+                case "set current depth":
+                    ChartManager.getInstance().getChart().updateDepth(b);
+                    break;
+                case "set current future":
+                    break;
+                case "set current language":
+                    chart_switch_language(b);
+                    break;
+                case "set current theme":
+                    break;
+                default:
+                    break
             }
         });
-        $("#chart_container .chart_dropdown .chart_dropdown_t").mouseover(function() {
+        $("#chart_container .chart_dropdown .chart_dropdown_t").mouseover(function () {
             var b = $("#chart_container");
             var h = $(this);
             var k = h.next();
@@ -8474,26 +8473,26 @@ function KLineMouseEvent() {
             });
             h.addClass("chart_dropdown-hover");
             k.addClass("chart_dropdown-hover")
-        }).mouseout(function() {
+        }).mouseout(function () {
             $(this).next().removeClass("chart_dropdown-hover");
             $(this).removeClass("chart_dropdown-hover")
         });
-        $(".chart_dropdown_data").mouseover(function() {
+        $(".chart_dropdown_data").mouseover(function () {
             $(this).addClass("chart_dropdown-hover");
             $(this).prev().addClass("chart_dropdown-hover")
-        }).mouseout(function() {
+        }).mouseout(function () {
             $(this).prev().removeClass("chart_dropdown-hover");
             $(this).removeClass("chart_dropdown-hover")
         });
-        $("#chart_btn_parameter_settings").click(function() {
+        $("#chart_btn_parameter_settings").click(function () {
             $("#chart_parameter_settings").addClass("clicked");
             $(".chart_dropdown_data").removeClass("chart_dropdown-hover");
-            $("#chart_parameter_settings").find("th").each(function() {
+            $("#chart_parameter_settings").find("th").each(function () {
                 var c = $(this).html();
                 var b = 0;
                 var d = ChartSettings.get();
                 var e = d.indics[c];
-                $(this.nextElementSibling).find("input").each(function() {
+                $(this.nextElementSibling).find("input").each(function () {
                     if (e != null && b < e.length) {
                         $(this).val(e[b])
                     }
@@ -8501,40 +8500,40 @@ function KLineMouseEvent() {
                 })
             })
         });
-        $("#close_settings").click(function() {
+        $("#close_settings").click(function () {
             $("#chart_parameter_settings").removeClass("clicked")
         });
-        $("#chart_container .chart_toolbar_tabgroup a").click(function() {
+        $("#chart_container .chart_toolbar_tabgroup a").click(function () {
             switch_period($(this).parent().attr("name"))
         });
-        $("#chart_toolbar_periods_vert ul a").click(function() {
+        $("#chart_toolbar_periods_vert ul a").click(function () {
             switch_period($(this).parent().attr("name"))
         });
-        $(".market_chooser ul a").click(function() {
+        $(".market_chooser ul a").click(function () {
             switch_market($(this).attr("name"))
         });
-        $("#chart_show_tools").click(function() {
+        $("#chart_show_tools").click(function () {
             if ($(this).hasClass("selected")) {
                 switch_tools("off")
             } else {
                 switch_tools("on")
             }
         });
-        $("#chart_toolpanel .chart_toolpanel_button").click(function() {
+        $("#chart_toolpanel .chart_toolpanel_button").click(function () {
             $(".chart_dropdown_data").removeClass("chart_dropdown-hover");
             $("#chart_toolpanel .chart_toolpanel_button").removeClass("selected");
             $(this).addClass("selected");
             var b = $(this).children().attr("name");
             GLOBAL_VAR.chartMgr.setRunningMode(ChartManager.DrawingTool[b])
         });
-        $("#chart_show_indicator").click(function() {
+        $("#chart_show_indicator").click(function () {
             if ($(this).hasClass("selected")) {
                 switch_indic("off")
             } else {
                 switch_indic("on")
             }
         });
-        $("#chart_tabbar li a").click(function() {
+        $("#chart_tabbar li a").click(function () {
             $("#chart_tabbar li a").removeClass("selected");
             $(this).addClass("selected");
             var b = $(this).attr("name");
@@ -8547,7 +8546,7 @@ function KLineMouseEvent() {
                 ChartManager.getInstance().getChart().setIndicator(2, b)
             }
         });
-        $("#chart_select_chart_style a").click(function() {
+        $("#chart_select_chart_style a").click(function () {
             $("#chart_select_chart_style a").removeClass("selected");
             $(this).addClass("selected");
             var b = ChartSettings.get();
@@ -8557,7 +8556,7 @@ function KLineMouseEvent() {
             c.setChartStyle("frame0.k0", $(this).html());
             c.redraw()
         });
-        $("#chart_dropdown_themes li").click(function() {
+        $("#chart_dropdown_themes li").click(function () {
             $("#chart_dropdown_themes li a").removeClass("selected");
             var b = $(this).attr("name");
             if (b == "chart_themes_dark") {
@@ -8568,7 +8567,7 @@ function KLineMouseEvent() {
                 }
             }
         });
-        $("#chart_select_main_indicator a").click(function() {
+        $("#chart_select_main_indicator a").click(function () {
             $("#chart_select_main_indicator a").removeClass("selected");
             $(this).addClass("selected");
             var b = $(this).attr("name");
@@ -8581,7 +8580,7 @@ function KLineMouseEvent() {
             }
             d.redraw()
         });
-        $("#chart_toolbar_theme a").click(function() {
+        $("#chart_toolbar_theme a").click(function () {
             $("#chart_toolbar_theme a").removeClass("selected");
             if ($(this).attr("name") == "dark") {
                 switch_theme("dark")
@@ -8591,7 +8590,7 @@ function KLineMouseEvent() {
                 }
             }
         });
-        $("#chart_select_theme li a").click(function() {
+        $("#chart_select_theme li a").click(function () {
             $("#chart_select_theme a").removeClass("selected");
             if ($(this).attr("name") == "dark") {
                 switch_theme("dark")
@@ -8601,7 +8600,7 @@ function KLineMouseEvent() {
                 }
             }
         });
-        $("#chart_enable_tools li a").click(function() {
+        $("#chart_enable_tools li a").click(function () {
             $("#chart_enable_tools a").removeClass("selected");
             if ($(this).attr("name") == "on") {
                 switch_tools("on")
@@ -8611,7 +8610,7 @@ function KLineMouseEvent() {
                 }
             }
         });
-        $("#chart_enable_indicator li a").click(function() {
+        $("#chart_enable_indicator li a").click(function () {
             $("#chart_enable_indicator a").removeClass("selected");
             if ($(this).attr("name") == "on") {
                 switch_indic("on")
@@ -8621,7 +8620,7 @@ function KLineMouseEvent() {
                 }
             }
         });
-        $("#chart_language_setting_div li a").click(function() {
+        $("#chart_language_setting_div li a").click(function () {
             $("#chart_language_setting_div a").removeClass("selected");
             if ($(this).attr("name") == "zh-cn") {
                 chart_switch_language("zh-cn")
@@ -8635,13 +8634,13 @@ function KLineMouseEvent() {
                 }
             }
         });
-        $(document).keyup(function(b) {
+        $(document).keyup(function (b) {
             if (b.keyCode == 46) {
                 ChartManager.getInstance().deleteToolObject();
                 ChartManager.getInstance().redraw("OverlayCanvas", false)
             }
         });
-        $("#clearCanvas").click(function() {
+        $("#clearCanvas").click(function () {
             var d = ChartManager.getInstance().getDataSource("frame0.k0");
             var b = d.getToolObjectCount();
             for (var c = 0; c < b; c++) {
@@ -8649,7 +8648,7 @@ function KLineMouseEvent() {
             }
             ChartManager.getInstance().redraw("OverlayCanvas", false)
         });
-        $("#chart_overlayCanvas").mousemove(function(f) {
+        $("#chart_overlayCanvas").mousemove(function (f) {
             var c = f.target.getBoundingClientRect();
             var b = f.clientX - c.left;
             var g = f.clientY - c.top;
@@ -8661,14 +8660,14 @@ function KLineMouseEvent() {
                 d.onMouseMove("frame0", b, g, false);
                 d.redraw("OverlayCanvas")
             }
-        }).mouseleave(function(f) {
+        }).mouseleave(function (f) {
             var c = f.target.getBoundingClientRect();
             var b = f.clientX - c.left;
             var g = f.clientY - c.top;
             var d = ChartManager.getInstance();
             d.onMouseLeave("frame0", b, g, false);
             d.redraw("OverlayCanvas")
-        }).mouseup(function(f) {
+        }).mouseup(function (f) {
             if (f.which != 1) {
                 return
             }
@@ -8679,7 +8678,7 @@ function KLineMouseEvent() {
             var d = ChartManager.getInstance();
             d.onMouseUp("frame0", b, g);
             d.redraw("All")
-        }).mousedown(function(d) {
+        }).mousedown(function (d) {
             if (d.which != 1) {
                 ChartManager.getInstance().deleteToolObject();
                 ChartManager.getInstance().redraw("OverlayCanvas", false);
@@ -8691,12 +8690,12 @@ function KLineMouseEvent() {
             var f = d.clientY - c.top;
             ChartManager.getInstance().onMouseDown("frame0", b, f)
         });
-        $("#chart_parameter_settings :input").change(function() {
+        $("#chart_parameter_settings :input").change(function () {
             var d = $(this).attr("name");
             var c = 0;
             var f = [];
             var h = ChartManager.getInstance();
-            $("#chart_parameter_settings :input").each(function() {
+            $("#chart_parameter_settings :input").each(function () {
                 if ($(this).attr("name") == d) {
                     if ($(this).val() != "" && $(this).val() != null && $(this).val() != undefined) {
                         var j = parseInt($(this).val());
@@ -8710,7 +8709,7 @@ function KLineMouseEvent() {
                 var g = h.getIndicatorParameters(d);
                 var b = [];
                 c = 0;
-                $("#chart_parameter_settings :input").each(function() {
+                $("#chart_parameter_settings :input").each(function () {
                     if ($(this).attr("name") == d) {
                         if ($(this).val() != "" && $(this).val() != null && $(this).val() != undefined) {
                             $(this).val(g[c].getValue());
@@ -8725,12 +8724,12 @@ function KLineMouseEvent() {
                 h.redraw("All", false)
             }
         });
-        $("#chart_parameter_settings button").click(function() {
+        $("#chart_parameter_settings button").click(function () {
             var c = $(this).parents("tr").children("th").html();
             var b = 0;
             var f = ChartManager.getInstance().getIndicatorParameters(c);
             var e = [];
-            $(this).parent().prev().children("input").each(function() {
+            $(this).parent().prev().children("input").each(function () {
                 if (f != null && b < f.length) {
                     $(this).val(f[b].getDefaultValue());
                     e.push(f[b].getDefaultValue())
@@ -8787,82 +8786,199 @@ function clear_refresh_counter() {
     }
     refresh_handler = setInterval(refresh_function, 1000)
 }
-var RequestData = function(showLoading) {
-    AbortRequest();
-    window.clearTimeout(GLOBAL_VAR.TimeOutId);
-    if (showLoading == true) {
-        $("#chart_loading").addClass("activated")
+
+//測試用，實際生產環境請移除
+//生成从minNum到maxNum的随机数
+function randomNum(minNum, maxNum) {
+    switch (arguments.length) {
+        case 1:
+            return parseInt(Math.random() * minNum + 1, 10);
+            break;
+        case 2:
+            return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+            break;
+        default:
+            return 0;
+            break;
     }
-    $(document).ready(GLOBAL_VAR.G_HTTP_REQUEST = $.ajax({
-        type: "post",
-        url: GLOBAL_VAR.url,
-        dataType: "json",
-        data: GLOBAL_VAR.requestParam,
-        timeout: 30000,
-        created: Date.now(),
-        beforeSend: function() {
-            this.time = GLOBAL_VAR.time_type;
-            this.market = GLOBAL_VAR.market_from
-        },
-        success: function(json) { 
-            if (GLOBAL_VAR.G_HTTP_REQUEST) {
-                if (this.time != GLOBAL_VAR.time_type || this.market != GLOBAL_VAR.market_from) {
-                    GLOBAL_VAR.TimeOutId = setTimeout(RequestData, 1000);
-                    return
-                }
-                if (!json) {
-                    return
-                }
-                if (!json.isSuc) {
-                    //alert(json.des);
-                    //kline.refreshPage(json.datas.ecode == 101 ? null: GLOBAL_VAR.market_from);
-                    return
-                }
-                GLOBAL_VAR.market_from_name = json.datas.marketName;
-                var chart = ChartManager.getInstance().getChart();
-                chart._contract_unit = json.datas.contractUnit;
-                chart._money_type = json.datas.moneyType;
-                chart._usd_cny_rate = json.datas.USDCNY;
-                chart.setTitle();
-                //kline.setMarketShow(GLOBAL_VAR.market_from_name, chart._contract_unit, chart._money_type, json.datas.url);
-                //kline.setTopTickers(json.datas.topTickers);
-                //GLOBAL_VAR.KLineData = eval(json.datas.data);
-                GLOBAL_VAR.KLineData = json.datas.data;
-                try {
-                    if (!GLOBAL_VAR.chartMgr.updateData("frame0.k0", GLOBAL_VAR.KLineData)) {
-                        //GLOBAL_VAR.requestParam = setHttpRequestParam(GLOBAL_VAR.market_from, GLOBAL_VAR.time_type, GLOBAL_VAR.limit, null);
-                        //推送点下次请求
-                        //GLOBAL_VAR.TimeOutId = setTimeout(RequestData, 2*1000);//可用
-                        return
-                    }
-                    clear_refresh_counter()
-                } catch(err) {
-                    if (err == "data error") {
-                        GLOBAL_VAR.requestParam = setHttpRequestParam(GLOBAL_VAR.market_from, GLOBAL_VAR.time_type, GLOBAL_VAR.limit, null);
-                        GLOBAL_VAR.TimeOutId = setTimeout(RequestData, 1000);
-                        return
-                    }
-                }
-                //自循环请求点，测试用，页面启动后会每隔8秒请求一次后台点数据（一个点）
-                //GLOBAL_VAR.TimeOutId = setTimeout(TwoSecondThread, 8 * 1000);
-                $("#chart_loading").removeClass("activated");
-                ChartManager.getInstance().redraw("All", false)
-            }
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            if (xhr.status == 200 && xhr.readyState == 4) {
-                return
-            }
-            GLOBAL_VAR.TimeOutId = setTimeout(function() {
-                RequestData(true)
-            },
-            1000)
-        },
-        complete: function() {
-            GLOBAL_VAR.G_HTTP_REQUEST = null
+}
+
+//測試用，實際生產環境請移除
+//获取url地址栏参数值
+function queryString(url,name) {
+    /// 获取QueryString
+    if (name == null || name == "" || name == undefined) {
+        var AllVars = url;//.search.substring(1);
+        return AllVars.split("&");
+    }
+    else {
+        var AllVars = url;//.search.substring(1);
+        var Vars = AllVars.split("&");
+        for (i = 0; i < Vars.length; i++) {
+            var Var = Vars[i].split("=");
+            if (Var[0] == name) return Var[1];
         }
-    }))
+        return "";
+    }
 };
+//測試用
+//上一次收盤價
+var lastClosePrice = 0;
+
+var RequestData = function (showLoading) {
+    //顯示加載提示
+    $("#chart_loading").addClass("activated");
+
+    //參數
+    var canshu = GLOBAL_VAR;
+    var size = queryString(canshu.requestParam, "size");
+    console.log(size);
+
+    //當前時間戳
+    var timestamp = Date.parse(new Date());
+
+    // var data = { "des": "注释", "isSuc": true, "datas": { "USDCNY": 6.83, "contractUnit": "BTC", "data": [[1499875200000, 16580, 16700, 16530, 16700, 12.6415], [1499875200000, 16680, 16200, 16730, 16900, 9.6415], [1499875200000, 16552, 16980, 16130, 16400, 17.6415], [1499875200000, 16580, 16700, 16530, 16700, 15.6415], [1499875200000, 16580, 16700, 16530, 16700, 36.6415], [1499875200000, 16580, 16700, 16530, 16700, 85.6415], [1499918040000, 16630, 16784, 16582, 16710, 42.6415], [1499918280000, 16580, 16700, 16530, 16700, 32.6415], [1499918400000, 16580, 16700, 16530, 16700, 22.6415], [1499918760000, 16580, 16700, 16530, 16700, 17.6415], [1499919000000, 16548, 16860, 16430, 16800, 19.6415]], "marketName": "币柜网", "moneyType": "CNY", "symbol": "btc38btccny", "url": "官网地址", "topTickers": [] } };
+    // var data2 = { "des": "注释", "isSuc": true, "datas": { "USDCNY": 6.83, "contractUnit": "BTC", "data": [[1499875200, 2, 2, 2, 2, 500], [1499875200, 2, 2, 2, 2, 500]], "marketName": "币柜网", "moneyType": "CNY", "symbol": "btc38btccny", "url": "官网地址", "topTickers": [] } };
+    //生產即時點價格
+    //randomNum
+    //最高價
+    // var hight = randomNum(18000, 25000);
+    // //最低價
+    // var low = randomNum(18000, hight);
+    // //開盤價
+    // var open = lastClosePrice;
+    // if (lastClosePrice==0) {
+    //     open = randomNum(18000, hight);
+    // }
+    // console.log("開盤價" + open);
+    // //成交量
+    // var volume = randomNum(20, 100);
+    //
+    // //收盤價
+    // var close = randomNum(low, hight);
+    // lastClosePrice = close;
+    // console.log("收盤價" + close);
+    //
+    // var jishi = { "des": "注释", "isSuc": true, "datas": { "USDCNY": 6.83, "contractUnit": "BTC", "data": [[timestamp, open, hight, low, close, volume]], "marketName": "币柜网", "moneyType": "CNY", "symbol": "btc38btccny", "url": "官网地址", "topTickers": [] } }
+
+    //歷史數據
+    if (size > 0) {
+        $.ajax({
+            url: GLOBAL_VAR.initurl,
+            type: 'post',
+            dataType: 'json',
+            async:false,
+            success: function (data, status) {
+                GLOBAL_VAR.KLineData = data.datas.data;
+
+            }
+        });
+        console.log("歷史數據");
+    } else {
+        $.ajax({
+            url: GLOBAL_VAR.url,
+            type: 'post',
+            dataType: 'json',
+            success: function (data, status) {
+                GLOBAL_VAR.KLineData = data.datas.data;
+                console.log(data.datas.data);
+            }
+        });
+
+        console.log("即時數據");
+    }
+
+    var chart = ChartManager.getInstance().getChart();
+
+    chart.setTitle();
+
+    GLOBAL_VAR.chartMgr.updateData("frame0.k0", GLOBAL_VAR.KLineData);
+    clear_refresh_counter();
+
+    //移除加載提示
+    $("#chart_loading").removeClass("activated");
+
+    ChartManager.getInstance().redraw("All", false);
+}
+
+// var RequestData = function(showLoading) {
+//    AbortRequest();
+//    window.clearTimeout(GLOBAL_VAR.TimeOutId);
+//    if (showLoading == true) {
+//        $("#chart_loading").addClass("activated")
+//    }
+//    // debugger
+//    $(document).ready(GLOBAL_VAR.G_HTTP_REQUEST = $.ajax({
+//        type: "post",
+//        url: GLOBAL_VAR.url,
+//        dataType: "json",
+//        data: GLOBAL_VAR.requestParam,
+//        timeout: 30000,
+//        created: Date.now(),
+//        beforeSend: function() {
+//            this.time = GLOBAL_VAR.time_type;
+//            this.market = GLOBAL_VAR.market_from
+//        },
+//        success: function (json) {
+//            // debugger
+//            if (GLOBAL_VAR.G_HTTP_REQUEST) {
+//                if (this.time != GLOBAL_VAR.time_type || this.market != GLOBAL_VAR.market_from) {
+//                    GLOBAL_VAR.TimeOutId = setTimeout(RequestData, 1000);
+//                    return
+//                }
+//                if (!json) {
+//                    return
+//                }
+//                if (!json.isSuc) {
+//                    //alert(json.des);
+//                    //kline.refreshPage(json.datas.ecode == 101 ? null: GLOBAL_VAR.market_from);
+//                    return
+//                }
+//                GLOBAL_VAR.market_from_name = json.datas.marketName;
+//                var chart = ChartManager.getInstance().getChart();
+//                chart._contract_unit = json.datas.contractUnit;
+//                chart._money_type = json.datas.moneyType;
+//                chart._usd_cny_rate = json.datas.AMBCNY;
+//                chart.setTitle();
+//                //kline.setMarketShow(GLOBAL_VAR.market_from_name, chart._contract_unit, chart._money_type, json.datas.url);
+//                //kline.setTopTickers(json.datas.topTickers);
+//                //GLOBAL_VAR.KLineData = eval(json.datas.data);
+//                GLOBAL_VAR.KLineData = json.datas.data;
+//                try {
+//                    if (!GLOBAL_VAR.chartMgr.updateData("frame0.k0", GLOBAL_VAR.KLineData)) {
+//                        //GLOBAL_VAR.requestParam = setHttpRequestParam(GLOBAL_VAR.market_from, GLOBAL_VAR.time_type, GLOBAL_VAR.limit, null);
+//                        //推送点下次请求
+//                        //GLOBAL_VAR.TimeOutId = setTimeout(RequestData, 2*1000);//可用
+//                        return
+//                    }
+//                    clear_refresh_counter()
+//                } catch(err) {
+//                    if (err == "data error") {
+//                        GLOBAL_VAR.requestParam = setHttpRequestParam(GLOBAL_VAR.market_from, GLOBAL_VAR.time_type, GLOBAL_VAR.limit, null);
+//                        GLOBAL_VAR.TimeOutId = setTimeout(RequestData, 1000);
+//                        return
+//                    }
+//                }
+//                //自循环请求点，测试用，页面启动后会每隔8秒请求一次后台点数据（一个点）
+//                //GLOBAL_VAR.TimeOutId = setTimeout(TwoSecondThread, 8 * 1000);
+//                $("#chart_loading").removeClass("activated");
+//                ChartManager.getInstance().redraw("All", false)
+//            }
+//        },
+//        error: function(xhr, textStatus, errorThrown) {
+//            if (xhr.status == 200 && xhr.readyState == 4) {
+//                return
+//            }
+//            GLOBAL_VAR.TimeOutId = setTimeout(function() {
+//                RequestData(true)
+//            },
+//            1000)
+//        },
+//        complete: function() {
+//            GLOBAL_VAR.G_HTTP_REQUEST = null
+//        }
+//    }))
+// };
 function AbortRequest() {
     if (GLOBAL_VAR.G_HTTP_REQUEST && GLOBAL_VAR.G_HTTP_REQUEST.readyState != 4) {
         GLOBAL_VAR.G_HTTP_REQUEST.abort()
@@ -8901,13 +9017,13 @@ function readCookie() {
         }
     }
     var a = $("#chart_select_main_indicator");
-    a.find("a").each(function() {
+    a.find("a").each(function () {
         if ($(this).attr("name") == b.charts.mIndic) {
             $(this).addClass("selected")
         }
     });
     var c = $("#chart_select_chart_style");
-    c.find("a").each(function() {
+    c.find("a").each(function () {
         if ($(this)[0].innerHTML == b.charts.chartStyle) {
             $(this).addClass("selected")
         }
@@ -8924,32 +9040,32 @@ function readCookie() {
     }
     chart_switch_language(b.language || "zh-cn")
 }
-var main = function() {
-    window._setMarketFrom = function(a) {
+var main = function () {
+    window._setMarketFrom = function (a) {
         Template.displayVolume = false;
         refreshTemplate();
         readCookie();
         ChartManager.getInstance().getChart().setMarketFrom(a)
     };
-    window._set_current_language = function(a) {
+    window._set_current_language = function (a) {
         chart_switch_language(a)
     };
-    window._set_current_depth = function(a) {
+    window._set_current_depth = function (a) {
         ChartManager.getInstance().getChart().updateDepth(a)
     };
-    window._set_current_url = function(a) {
+    window._set_current_url = function (a) {
         GLOBAL_VAR.url = a
     };
-    window._set_current_contract_unit = function(a) {
+    window._set_current_contract_unit = function (a) {
         ChartManager.getInstance().getChart().setCurrentContractUnit(a)
     };
-    window._set_money_type = function(a) {
+    window._set_money_type = function (a) {
         ChartManager.getInstance().getChart().setCurrentMoneyType(a)
     };
-    window._set_usd_cny_rate = function(a) {
+    window._set_usd_cny_rate = function (a) {
         ChartManager.getInstance().getChart()._usd_cny_rate = a
     };
-    window._setCaptureMouseWheelDirectly = function(a) {
+    window._setCaptureMouseWheelDirectly = function (a) {
         ChartManager.getInstance().setCaptureMouseWheelDirectly(a)
     };
     window._current_future_change = new MEvent();
@@ -8963,7 +9079,7 @@ var main = function() {
     $("#chart_container").css({
         visibility: "visible"
     })
-} ();
+}();
 function setHttpRequestParam(b, c, a, e) {
     var d = "needTickers=1&symbol=" + b + "&type=" + c;
     if (a != null) {
@@ -9011,7 +9127,7 @@ function getRectCrossPt(h, c, f) {
 }
 function chart_switch_language(b) {
     var a = b.replace(/-/, "_");
-    $("#chart_language_switch_tmp").find("span").each(function() {
+    $("#chart_language_switch_tmp").find("span").each(function () {
         var d = $(this).attr("name");
         var c = $(this).attr(a);
         d = "." + d;
@@ -9019,7 +9135,7 @@ function chart_switch_language(b) {
         if (!e) {
             return
         }
-        $(d).each(function() {
+        $(d).each(function () {
             $(this)[0].innerHTML = c
         })
     });
@@ -9044,8 +9160,8 @@ function on_size() {
     var p = $("#chart_toolpanel");
     var s = $("#chart_canvasGroup");
     var B = $("#chart_tabbar");
-    var G = p[0].style.display != "inline" ? false: true;
-    var n = B[0].style.display != "block" ? false: true;
+    var G = p[0].style.display != "inline" ? false : true;
+    var n = B[0].style.display != "block" ? false : true;
     var v = {};
     v.x = 0;
     v.y = 0;
@@ -9182,12 +9298,12 @@ function mouseWheel(a, b) {
 function switch_theme(c) {
     $("#chart_toolbar_theme a").removeClass("selected");
     $("#chart_select_theme a").removeClass("selected");
-    $("#chart_toolbar_theme").find("a").each(function() {
+    $("#chart_toolbar_theme").find("a").each(function () {
         if ($(this).attr("name") == c) {
             $(this).addClass("selected")
         }
     });
-    $("#chart_select_theme a").each(function() {
+    $("#chart_select_theme a").each(function () {
         if ($(this).attr("name") == c) {
             $(this).addClass("selected")
         }
@@ -9225,7 +9341,7 @@ function switch_tools(a) {
     $("#chart_enable_tools a").removeClass("selected");
     if (a == "on") {
         $("#chart_show_tools").addClass("selected");
-        $("#chart_enable_tools a").each(function() {
+        $("#chart_enable_tools a").each(function () {
             if ($(this).attr("name") == "on") {
                 $(this).addClass("selected")
             }
@@ -9241,7 +9357,7 @@ function switch_tools(a) {
     } else {
         if (a == "off") {
             $("#chart_show_tools").removeClass("selected");
-            $("#chart_enable_tools a").each(function() {
+            $("#chart_enable_tools a").each(function () {
                 if ($(this).attr("name") == "off") {
                     $(this).addClass("selected")
                 }
@@ -9267,7 +9383,7 @@ function switch_indic(a) {
         } else {
             ChartManager.getInstance().getChart().setIndicator(2, c)
         }
-        $("#chart_tabbar").find("a").each(function() {
+        $("#chart_tabbar").find("a").each(function () {
             if ($(this).attr("name") == c) {
                 $(this).addClass("selected")
             }
@@ -9289,12 +9405,12 @@ function switch_indic(a) {
 function switch_period(a) {
     $("#chart_container .chart_toolbar_tabgroup a").removeClass("selected");
     $("#chart_toolbar_periods_vert ul a").removeClass("selected");
-    $("#chart_container .chart_toolbar_tabgroup a").each(function() {
+    $("#chart_container .chart_toolbar_tabgroup a").each(function () {
         if ($(this).parent().attr("name") == a) {
             $(this).addClass("selected")
         }
     });
-    $("#chart_toolbar_periods_vert ul a").each(function() {
+    $("#chart_toolbar_periods_vert ul a").each(function () {
         if ($(this).parent().attr("name") == a) {
             $(this).addClass("selected")
         }
@@ -9342,7 +9458,7 @@ function switch_market(b) {
 function IsSupportedBrowers() {
     function a() {
         var b = document.createElement("canvas");
-        return !! (b.getContext && b.getContext("2d"))
+        return !!(b.getContext && b.getContext("2d"))
     }
     if (!a()) {
         return false
@@ -9362,7 +9478,7 @@ function calcPeriodWeight(d) {
     }
     c[a] = 8;
     ChartSettings.save();
-    $("#chart_toolbar_periods_horz").find("li").each(function() {
+    $("#chart_toolbar_periods_horz").find("li").each(function () {
         var e = $(this).attr("name");
         var f = e;
         if (e != "line") {

@@ -41,12 +41,26 @@
                 <div class="change js-col-chg24">涨跌(24H)</div>
 
             </article>
-            <article id="pair_bitcoin">
+            <article id="pair_amb">
                 <div class="hiddenOne js-col-order">1</div>
+                <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_bitcoin2"></span></div>
+                <div class="js-col-pair_name left instName" main-value="{$amei_info['now_price']}"><a href="#">阿美币</a></div>
+                <div class="cryptoSymbol js-col-symbol">AMB</div>
+                <div class="hiddenOne js-col-priceUsd  redBg" id="now_price">{$amei_info['now_price']}</div>
+                <div class="hiddenOne js-col-marketCap">{$amei_info['num']}</div>
+                <div class="hiddenOne js-col-vol24 hideItem481" id="virtual_trans_num">{$amei_info['virtual_trans_num']}</div>
+                <div class="hiddenOne hideItem481 js-col-totalVol">{$amei_info['ratio']}</div>
+                <div class="hiddenOne hiddenOne--none768 hideItem481 js-col-priceBtc">0</div>
+                <div class="change js-col-chg24 greenFont" id="ratio_1">{$amei_info['ratio_1']}%</div>
+                <div class="change hideItem320 js-col-chg7 greenFont">{$amei_info['ratio_7']}%</div>
+            </article>
+
+            <article id="pair_bitcoin">
+                <div class="hiddenOne js-col-order">2</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_bitcoin"></span></div>
                 <div class="js-col-pair_name left instName" main-value="5,539.8"><a href="{:url('btc')}">比特币</a></div>
                 <div class="cryptoSymbol js-col-symbol">BTC</div>
-                <div class="hiddenOne js-col-priceUsd  pid-1057391-last redBg">5,541.6</div>
+                <div class="js-col-priceUsd  pid-1057391-last redBg">5,541.6</div>
                 <div class="hiddenOne js-col-marketCap">$98.63B</div>
                 <div class="hiddenOne js-col-vol24 hideItem481">$16.20B</div>
                 <div class="hiddenOne hideItem481 js-col-totalVol">31.09%</div>
@@ -55,7 +69,7 @@
                 <div class="change hideItem320 js-col-chg7 greenFont">+6.58%</div>
             </article>
             <article id="pair_ethereum">
-                <div class="hiddenOne js-col-order">2</div>
+                <div class="hiddenOne js-col-order">3</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_ethereum"></span></div>
                 <div class="js-col-pair_name left instName" main-value="168.99"><a href="{:url('eth')}">以太坊</a></div>
                 <div class="cryptoSymbol js-col-symbol">ETH</div>
@@ -68,7 +82,7 @@
                 <div class="change hideItem320 js-col-chg7 greenFont">+1.80%</div>
             </article>
             <article id="pair_ripple">
-                <div class="hiddenOne js-col-order">3</div>
+                <div class="hiddenOne js-col-order">4</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_ripple"></span></div>
                 <div class="js-col-pair_name left instName" main-value="0.31887"><a href="{:url('xrp')}">瑞波币</a></div>
                 <div class="cryptoSymbol js-col-symbol">XRP</div>
@@ -81,7 +95,7 @@
                 <div class="change hideItem320 js-col-chg7 redFont">-1.50%</div>
             </article>
             <article id="pair_bitcoin-cash">
-                <div class="hiddenOne js-col-order">4</div>
+                <div class="hiddenOne js-col-order">5</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_bitcoin-cash"></span></div>
                 <div class="js-col-pair_name left instName" main-value="286.45"><a href="{:url('bch')}">比特币现金</a></div>
                 <div class="cryptoSymbol js-col-symbol">BCH</div>
@@ -94,7 +108,7 @@
                 <div class="change hideItem320 js-col-chg7 redFont">-8.44%</div>
             </article>
             <article id="pair_eos">
-                <div class="hiddenOne js-col-order">5</div>
+                <div class="hiddenOne js-col-order">6</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_eos"></span></div>
                 <div class="js-col-pair_name left instName" main-value="5.1061"><a href="{:url('eos')}">EOS</a></div>
                 <div class="cryptoSymbol js-col-symbol">EOS</div>
@@ -107,7 +121,7 @@
                 <div class="change hideItem320 js-col-chg7 redFont">-6.40%</div>
             </article>
             <article id="pair_litecoin">
-                <div class="hiddenOne js-col-order">6</div>
+                <div class="hiddenOne js-col-order">7</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_litecoin"></span></div>
                 <div class="js-col-pair_name left instName" main-value="73.069"><a href="{:url('ltc')}">莱特币</a></div>
                 <div class="cryptoSymbol js-col-symbol">LTC</div>
@@ -120,7 +134,7 @@
                 <div class="change hideItem320 js-col-chg7 redFont">-8.81%</div>
             </article>
             <article id="pair_binance-coin">
-                <div class="hiddenOne js-col-order">7</div>
+                <div class="hiddenOne js-col-order">8</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_binance-coin"></span></div>
                 <div class="js-col-pair_name left instName" main-value="22.3755"><a href="javascript:;" target="_blank">币安币</a></div>
                 <div class="cryptoSymbol js-col-symbol">BNB</div>
@@ -133,7 +147,7 @@
                 <div class="change hideItem320 js-col-chg7 greenFont">+14.39%</div>
             </article>
             <article id="pair_tether">
-                <div class="hiddenOne js-col-order">8</div>
+                <div class="hiddenOne js-col-order">9</div>
                 <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_tether"></span></div>
                 <div class="js-col-pair_name left instName" main-value="1.00911"><a href="javascript:;" target="_blank">泰达币</a></div>
                 <div class="cryptoSymbol js-col-symbol">USDT</div>
@@ -144,19 +158,6 @@
                 <div class="hiddenOne hiddenOne--none768 hideItem481 js-col-priceBtc">0.00018114</div>
                 <div class="change js-col-chg24 pid-1061453-pcp greenFont">+0.13%</div>
                 <div class="change hideItem320 js-col-chg7 redFont">-0.14%</div>
-            </article>
-            <article id="pair_tatatu">
-                <div class="hiddenOne js-col-order">9</div>
-                <div class="cryptoIconDiv js-col-icon"><span class="cryptoIcon c_tatatu"></span></div>
-                <div class="js-col-pair_name left instName" main-value="0.25">TaTaTu</div>
-                <div class="cryptoSymbol js-col-symbol">TTU</div>
-                <div class="hiddenOne js-col-priceUsd  pid--last">0.25</div>
-                <div class="hiddenOne js-col-marketCap">$2.50B</div>
-                <div class="hiddenOne js-col-vol24 hideItem481">$11.60M</div>
-                <div class="hiddenOne hideItem481 js-col-totalVol">0%</div>
-                <div class="hiddenOne hiddenOne--none768 hideItem481 js-col-priceBtc">0</div>
-                <div class="change js-col-chg24 greenFont pid--pcp">0%</div>
-                <div class="change hideItem320 js-col-chg7 greenFont">0%</div>
             </article>
             <article id="pair_stellar">
                 <div class="hiddenOne js-col-order">10</div>

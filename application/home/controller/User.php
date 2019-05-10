@@ -247,7 +247,110 @@ class User extends Common
 
     }
 
-    //阿美币k线图
+//'needTickers' => string '1' (length=1)
+//'symbol' => string '1' (length=1)
+//'type' => string '1min' (length=4)
+//'since' => string '100000000000' (length=12)
+
+    //ajax获取阿美币实时信息
+    public function ambInfo()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            //获取阿美币信息
+            $start_time = strtotime(date('Y-m-d 00:00:00'));
+            $end_time = strtotime(date('Y-m-d 23:59:59'));
+
+            //查询今天所有成交记录
+            $where1 = new Where();
+            $where1['trade_type'] = 2;
+            $where1['create_time'] = array('between time', array($start_time, $end_time));
+            $all_list = Db::name('user_trade_depute_log')->group('order_num')->where($where1)->order('id ASC')->select();
+            //昨天收盘价
+            $beginYesterday=mktime(0,0,0,date('m'),date('d')-1,date('Y'));
+            $endYesterday=mktime(0,0,0,date('m'),date('d'),date('Y'))-1;
+            $where2 = new Where();
+            $where2['trade_type'] = 2;
+            $where2['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+            $yes_last_price = Db::name('user_trade_depute_log')->where($where2)->order('id DESC')->value('price');
+
+            $return_arr = [
+                'des' => '注释',
+                'isSuc' => 'true',
+            ];
+            $return_arr['datas'] = [
+                'AMBCNY' => '2',
+                'contractUnit' => 'AMB',
+                "marketName" => "沙特阿美",
+                "moneyType" => "CNY",
+                "symbol" => "amb38cny",
+                "url" => "官网地址",
+                "topTickers" =>  [],
+            ];
+            $arr = [];
+            foreach ($all_list as $k => $v){
+                if(empty($yes_last_price)){
+                    $yes_last_price = $v['price'];
+                }
+
+                $arr[] = [(int)$v['create_time']*1000, (float)$yes_last_price, (float)$v['hig_price'], (float)$v['price'], (float)$v['price'], (float)$v['sum']];
+            }
+            $return_arr['datas']['data'] = $arr;
+            return $return_arr;
+
+        }
+    }
+
+    //定时请求的信息
+    public function realTimeInfo()
+    {
+        if(request()->isPost()){
+            $data = input('post.');
+            //获取阿美币信息
+            $start_time = strtotime(date('Y-m-d 00:00:00'));
+            $end_time = strtotime(date('Y-m-d 23:59:59'));
+
+            //查询今天最后一条成交记录
+            $where1 = new Where();
+            $where1['trade_type'] = 2;
+            $where1['create_time'] = array('between time', array($start_time, $end_time));
+            $last_info = Db::name('user_trade_depute_log')->group('order_num')->where($where1)->order('id DESC')->find();
+            //昨天收盘价
+            $beginYesterday=mktime(0,0,0,date('m'),date('d')-1,date('Y'));
+            $endYesterday=mktime(0,0,0,date('m'),date('d'),date('Y'))-1;
+            $where2 = new Where();
+            $where2['trade_type'] = 2;
+            $where2['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+            $yes_last_price = Db::name('user_trade_depute_log')->where($where2)->order('id DESC')->value('price');
+
+            $return_arr = [
+                'des' => '注释',
+                'isSuc' => 'true',
+            ];
+            $return_arr['datas'] = [
+                'AMBCNY' => '2',
+                'contractUnit' => 'AMB',
+                "marketName" => "沙特阿美",
+                "moneyType" => "CNY",
+                "symbol" => "amb38cny",
+                "url" => "官网地址",
+                "topTickers" =>  [],
+            ];
+            if(empty($yes_last_price)){
+                $yes_last_price = $last_info['price'];
+            }
+
+            $time = time();
+            $arr = [[(int)$time*1000, (float)$yes_last_price, (float)$last_info['hig_price'], (float)$last_info['price'], (float)$last_info['price'], (float)$last_info['sum']]];
+            $return_arr['datas']['data'] = $arr;
+
+            return $return_arr;
+
+        }
+    }
+
+
+    //阿美币k线图显示
     public function kline()
     {
         return $this->fetch('kline');
@@ -694,7 +797,7 @@ class User extends Common
                 $order_num =  $this->createOrderNum();
                 $sell_count = bcsub($v['num'], $v['have_trade'], 4);
                 //如果买入价格大于卖出价格,且卖家数量尚有剩余
-                if(bccomp($data['price'], $v['price']) >=0 && $sell_count > 0){
+                if(bccomp($data['price'], $v['price'], 4) >=0 && $sell_count > 0){
                     //如果买入数量大于等于 卖出数量
                     if(bccomp($buy_count, $sell_count, 4) >= 0){
                         //已卖家的价格结算
@@ -708,6 +811,7 @@ class User extends Common
                             'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency' => $amei_infos['id'],
                             'price'          => $v['price'],
+                            'hig_price'      => $data['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $buy_id,
@@ -724,6 +828,7 @@ class User extends Common
                             'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency'  => $amei_infos['id'],
                             'price'           => $v['price'],
+                            'hig_price'       => $data['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $v['id'],
@@ -832,7 +937,7 @@ class User extends Common
                         //修改买家托管成交数量
                         $buy_have_trade = Db::name('user_trade_depute')->where(['id' => $buy_id])->find();
                         $buy_count_this = bcadd($buy_have_trade['have_trade'], $sell_count, 4);                           $buy_up['have_trade'] = $buy_count_this;
-                        if(bccomp($buy_count_this, $buy_have_trade['num']) == 0){
+                        if(bccomp($buy_count_this, $buy_have_trade['num'], 4) == 0){
                             $buy_up['status'] = 3;
                             $buy_up['depute_status'] = 2;
                         }else{
@@ -843,7 +948,7 @@ class User extends Common
                         $sell_have_trade = Db::name('user_trade_depute')->where(['id' => $v['id']])->find();
                         $sell_count_this = bcadd($sell_have_trade['have_trade'], $add_buy['trade_num'], 4);
                         $sell_up['have_trade'] = $sell_count_this;
-                        if(bccomp($sell_count_this, $sell_have_trade['num']) == 0){
+                        if(bccomp($sell_count_this, $sell_have_trade['num'], 4) == 0){
                             $sell_up['status'] = 3;
                             $sell_up['depute_status'] = 2;
                         }else{
@@ -870,7 +975,8 @@ class User extends Common
                             'order_num'  => $order_num,
                             'trade_num'  => $buy_count, //本次交易数量
                             'trade_currency' => $amei_infos['id'],
-                            'price'          => $data['price'],
+                            'price'          => $v['price'],
+                            'hig_price'      => $data['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $buy_id,
@@ -886,7 +992,8 @@ class User extends Common
                             'order_num'  => $order_num,
                             'trade_num'  => $buy_count, //本次交易数量
                             'trade_currency'  => $amei_infos['id'],
-                            'price'           => $data['price'],
+                            'price'           => $v['price'],
+                            'hig_price'       => $data['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $v['id'],
@@ -1002,7 +1109,7 @@ class User extends Common
                         $sell_have_trade = Db::name('user_trade_depute')->where(['id' => $v['id']])->find();
                         $sell_count_this = bcadd($sell_have_trade['have_trade'], $add_buy['trade_num'], 4);
                         $sell_up['have_trade'] = $sell_count_this;
-                        if(bccomp($sell_count_this, $sell_have_trade['num']) == 0){
+                        if(bccomp($sell_count_this, $sell_have_trade['num'], 4) == 0){
                             $sell_up['status'] = 3;
                             $sell_up['depute_status'] = 2;
                         }else{
@@ -1043,7 +1150,7 @@ class User extends Common
                 $order_num =  $this->createOrderNum();
                 $buy_count = bcsub($v['num'], $v['have_trade'], 4);
                 //如果买入价格大于卖出价格,且买家数量尚有剩余
-                if(bccomp($v['price'], $data['price']) >=0 && $buy_count > 0){
+                if(bccomp($v['price'], $data['price'], 4) >=0 && $buy_count > 0){
                     //如果卖出数量大于买入数量
                     if(bccomp($sell_count, $buy_count, 4) >= 0){
                         //已卖家的价格结算
@@ -1056,7 +1163,8 @@ class User extends Common
                             'order_num'  => $order_num,
                             'trade_num'  => $buy_count, //本次交易数量
                             'trade_currency' => $amei_infos['id'],
-                            'price'          => $data['price'],
+                            'price'          => $data['price'], //收
+                            'hig_price'      =>    $v['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $v['id'],
@@ -1073,6 +1181,7 @@ class User extends Common
                             'trade_num'  => $buy_count, //本次交易数量
                             'trade_currency'  => $amei_infos['id'],
                             'price'           => $data['price'],
+                            'hig_price'      =>    $v['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $sell_id,
@@ -1219,6 +1328,7 @@ class User extends Common
                             'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency' => $amei_infos['id'],
                             'price'          => $data['price'],
+                            'hig_price'      =>    $v['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $v['id'],
@@ -1235,6 +1345,7 @@ class User extends Common
                             'trade_num'  => $sell_count, //本次交易数量
                             'trade_currency'  => $amei_infos['id'],
                             'price'           => $data['price'],
+                            'hig_price'      =>    $v['price'], //高
                             'poundage'        => 0,
                             'sum'             => $all_num,
                             'trade_depute_id' => $sell_id,

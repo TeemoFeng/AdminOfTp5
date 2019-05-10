@@ -108,8 +108,13 @@ class Index extends Common{
             $where1['create_time'] = array('between time', array($start_time, $end_time));
             $high = db('user_trade_depute_log')->where($where1)->order('price DESC')->value('price');
             $low = db('user_trade_depute_log')->where($where1)->order('price ASC')->value('price');
-            //价格
-            $new_price = db('user_trade_depute_log')->where($where1)->order('id DESC')->value('price');
+            //昨天收盘价
+            $beginYesterday=mktime(0,0,0,date('m'),date('d')-1,date('Y'));
+            $endYesterday=mktime(0,0,0,date('m'),date('d'),date('Y'))-1;
+            $where2 = new Where();
+            $where2['trade_type'] = 2;
+            $where2['create_time'] = array('between time', array($beginYesterday, $endYesterday));
+            $new_price = Db::name('user_trade_depute_log')->where($where2)->order('id DESC')->value('price');
             //7天前的价格
             $where2 = new Where();
             $where2['trade_type'] = 2;
@@ -128,13 +133,13 @@ class Index extends Common{
             $amei_info['virtual_trans_num'] = '$'. bcdiv($amei_info['virtual_trans_num'], 1000000, 4);
 
             //价格
-            $amei_info['to_btc'] = 0;
+            $amei_info['to_btc'] = '0';
             //涨跌24
             if(empty($high)){
-                $high = $amei_info['price'];
+                $high = (string)$amei_info['price'];
             }
             if(empty($low)){
-                $low = $amei_info['price'];
+                $low = (string)$amei_info['price'];
             }
             if(empty($new_price)){
                 $new_price = $amei_info['price'];
@@ -142,9 +147,9 @@ class Index extends Common{
             $h_l = bcsub($amei_info['price'], $new_price,4);
             $h_l_s = bcdiv($h_l, $amei_info['price']);
             if($h_l_s < 0){
-                $amei_info['ratio_1'] = -$h_l_s; //负数
+                $amei_info['ratio_1'] = (string)-$h_l_s; //负数
             }else{
-                $amei_info['ratio_1'] = +$h_l_s;
+                $amei_info['ratio_1'] = (string)+$h_l_s;
             }
             //最新价
             if(!empty($new_price)){
@@ -156,9 +161,9 @@ class Index extends Common{
             $h_l = bcsub($day7_price, $new_price,4);
             $h_l_s = bcdiv($h_l, $amei_info['price']);
             if($h_l_s < 0){
-                $amei_info['ratio_7'] = -$h_l_s;
+                $amei_info['ratio_7'] = (string)-$h_l_s;
             }else{
-                $amei_info['ratio_7'] = +$h_l_s;
+                $amei_info['ratio_7'] = (string)+$h_l_s;
             }
             return ['code' => 1, 'data' => $amei_info];
         }
