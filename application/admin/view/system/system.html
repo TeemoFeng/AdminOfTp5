@@ -8,6 +8,7 @@
             <li class="layui-this">基础设置</li>
             <li>SEO管理</li>
             <li>其他</li>
+            <li>导入用户</li>
         </ul>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
@@ -120,6 +121,7 @@
                             <input type="radio" name="code" value="close" title="关闭">
                         </div>
                     </div>
+
                     <div class="layui-form-item">
                         <div class="layui-input-block">
                             <button type="button" class="layui-btn" lay-submit="" lay-filter="sys">{:lang('submit')}</button>
@@ -128,6 +130,30 @@
                     </div>
                 </form>
             </div>
+            <div class="layui-tab-item">
+                <form class="layui-form layui-form-pane" lay-filter="form-system">
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">导入用户</label>
+                        <input type="hidden" name="excel" >
+                        <div class="layui-input-block">
+                            <div class="layui-upload">
+                                <button type="button" class="layui-btn layui-btn-primary" id="uploadExcel"><i class="icon icon-upload3"></i>点击上传</button>
+                                <div class="layui-upload-list">
+                                    <img class="layui-upload-img" id="excel2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn" lay-submit="" lay-filter="excel">{:lang('submit')}</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">{:lang('reset')}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 
@@ -168,6 +194,19 @@
                 });
             }
         });
+
+        upload.render({
+            elem: '#uploadExcel'
+            ,url: '{:url("admin/excel/addExcel")}'
+            ,accept: 'file' //普通文件
+            ,exts: 'xls|excel|xlsx'
+            ,multiple: true
+            ,done: function(res){
+                console.log(res);
+            }
+        });
+
+
         //提交监听
         form.on('submit(sys)', function (data) {
             loading =layer.load(1, {shade: [0.1,'#fff']});
@@ -182,6 +221,21 @@
                 }
             });
         })
+
+        // //提交监听
+        // form.on('submit(excel)', function (data) {
+        //     loading =layer.load(1, {shade: [0.1,'#fff']});
+        //     $.post("{:url('system/system')}",data.field,function(res){
+        //         layer.close(loading);
+        //         if(res.code > 0){
+        //             layer.msg(res.msg,{icon: 1, time: 1000},function(){
+        //                 location.href = res.url;
+        //             });
+        //         }else{
+        //             layer.msg(res.msg,{icon: 2, time: 1000});
+        //         }
+        //     });
+        // })
     })
 </script>
 </body>

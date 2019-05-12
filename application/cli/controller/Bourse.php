@@ -16,6 +16,7 @@ use app\user\model\UserCurrencyList;
 use app\user\model\UserDynamicAmeiBonus;
 use app\user\model\UserExceotGrant;
 use app\user\model\UserRunningLog;
+use think\Cache;
 use think\Controller;
 use think\Db;
 use think\db\Where;
@@ -487,6 +488,16 @@ class Bourse extends Controller {
        $num2 =  rand(01,99);
        return 'JF'.$num1.$num2;
     }
+
+    //导入用户
+    public function exportUser()
+    {
+        $user = cache('Kdexcel');
+        foreach($user as $k => $v){
+
+        }
+    }
+
 
 
 }
