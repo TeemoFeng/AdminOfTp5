@@ -37,6 +37,7 @@
 
             </div>
             <button class="layui-btn" id="search"  value=""  data-type="reload">搜索</button>
+            <button class="layui-btn layui-btn layui-btn-warm" id="export">导出</button>
         </div>
 
 
@@ -132,8 +133,16 @@
                 table.reload('table'+type1,{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status, currency_id:cur_id}})
             });
 
+            //导出
+            $('#export').on('click', function() {
+                var start_time = $('#start_time').val();
+                var end_time = $('#end_time').val();
+                var status = $('#status').val();
+                var key = $('#key').val();
 
-
+                var url = '{:url("tradeList")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&status='+status+'&currency_id='+cur_id;
+                location.href = url;
+            });
 
         });
     </script>

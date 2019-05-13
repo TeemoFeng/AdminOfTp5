@@ -37,6 +37,7 @@
 
             </div>
             <button class="layui-btn" id="search"  value=""  data-type="reload">搜索</button>
+            <button class="layui-btn layui-btn layui-btn-warm" id="export">导出</button>
         </div>
 
 
@@ -105,7 +106,6 @@
                         {field: 'sum', title: '总价', width: 100},
                         {field: 'depute_type_str', title: '委托类型', width: 100},
                         {field: 'create_time', title: '委托时间', width: 150},
-                        {field: 'depute_time', title: '成交时间', width: 150},
                         {field: 'status_str', title: '状态', width: 100},
                     ]],
                     limit: 10 //每页默认显示的数量
@@ -133,6 +133,16 @@
                 table.reload('table'+type1,{ page: {page: 1},where: {key: key, start_time:start_time, end_time:end_time, status:status, currency_id:cur_id}})
             });
 
+            //导出
+            $('#export').on('click', function() {
+                var start_time = $('#start_time').val();
+                var end_time = $('#end_time').val();
+                var status = $('#status').val();
+                var key = $('#key').val();
+
+                var url = '{:url("deputeList")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time+'&status='+status+'&currency_id='+cur_id;
+                location.href = url;
+            });
 
 
 

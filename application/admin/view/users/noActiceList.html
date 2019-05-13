@@ -21,6 +21,7 @@
         </div>
         <button class="layui-btn" id="search" data-type="reload">搜索</button>
         <a href="{:url('noActiceList')}" class="layui-btn">显示全部</a>
+        <button class="layui-btn layui-btn layui-btn-warm" id="export">导出</button>
 
     </div>
     <table class="layui-table" id="list" lay-filter="list"></table>
@@ -61,8 +62,8 @@
 
         //搜索
         $('#search').on('click', function() {
-            var start_time = $('#start_time1').val();
-            var end_time = $('#end_time1').val();
+            var start_time = $('#start_time').val();
+            var end_time = $('#end_time').val();
             var key = $('#key').val();
             tableIn.reload({page: {page: 1},where: {key:key,start_time: start_time,end_time:end_time}});
         });
@@ -73,6 +74,16 @@
         //执行一个laydate实例
         laydate.render({
             elem: '#end_time' //指定元素
+        });
+
+        //导出
+        $('#export').on('click', function() {
+            var start_time = $('#start_time').val();
+            var end_time = $('#end_time').val();
+            var key = $('#key').val();
+
+            var url = '{:url("noActiceList")}?export=1&key='+key+'&start_time='+start_time+'&end_time='+end_time;
+            location.href = url;
         });
 
         //删除会员

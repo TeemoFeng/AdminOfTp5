@@ -96,13 +96,12 @@ class Users extends Common
             $list2[$k]['enabled'] = UsersModel::$vastatus2[$v['enabled']];
             $list2[$k]['baodan_center'] = UsersModel::$bdstatus2[$v['baodan_center']];
             $list2[$k]['is_report'] = UsersModel::$yhstatus[$v['is_report']];
-            $file_name = '会员列表';
-
-            $headArr = ['id','用户名','用户编号','手机号','沙特链','交易账户','激活钱包','消费钱包','本金账号','投资单价','会员等级','报单额','复投数量','推荐人编号','接点人编号','报单中心','注册时间','激活时间','有效会员','是否报单中心','是否报备银行'];
-            $this->excelExport($file_name, $headArr, $list2);
-
 
         }
+
+        $file_name = '会员列表';
+        $headArr = ['id','用户编号','用户名','手机号','沙特链','交易账户','激活钱包','消费钱包','本金账号','投资单价','会员等级','报单额','复投数量','推荐人编号','接点人编号','报单中心','注册时间','激活时间','有效会员','是否报单中心','是否报备银行'];
+        $this->excelExport($file_name, $headArr, $list2);
     }
 
     //搜索
@@ -608,10 +607,13 @@ class Users extends Common
     //未激活会员列表
     public function noActiceList()
     {
+        $data = Request::param();
+        $where = $this->noActiveSearch($data);
+        if(!empty($data['export'])){
+            $this->_exportNoActiveUser($where);
+        }
         if (request()->isPost()) {
 
-            $data = input('post.');
-            $where = $this->noActiveSearch($data);
             $page = $data['page'] ? $data['page'] : 1;
             $pageSize = $data['limit'] ? $data['limit'] : config('pageSize');
             $where['status'] = 0;
@@ -633,6 +635,34 @@ class Users extends Common
         }
 
         return $this->fetch('noActiceList');
+    }
+
+    //导出未激活会员
+    public function _exportNoActiveUser($where)
+    {
+        $list = db('users')
+            ->where($where)
+            ->order('id desc')
+            ->select();
+        $list2 = [];
+        foreach ($list as $k => $v) {
+            $list2[$k]['id'] = $v['id'];
+            $list2[$k]['usernum'] = $v['usernum'];
+            $list2[$k]['username'] = $v['username'];
+
+            $tuijian_user = UsersModel::where(['id' => $v['pid']])->value('username');
+            $list2[$k]['referee'] = $v['referee'] . '【' . $tuijian_user . '】';
+            $jidianren_user = UsersModel::where(['id' => $v['npid']])->value('username');
+            $list2[$k]['contact_person'] = $v['contact_person'] . '【' . $jidianren_user . '】';
+            $baodan_user = UsersModel::where(['usernum' => $v['baodan_user']])->value('username');
+            $list2[$k]['baodan_user'] = $v['baodan_user'] . '【' . $baodan_user . '】';
+            $list2[$k]['reg_time'] = date('Y-m-d H:s', $v['reg_time']);
+
+        }
+        $file_name = '未激活会员列表';
+        $headArr = ['id','用户编号','用户名','推荐人','接点人','所属报单中心','注册时间'];
+        $this->excelExport($file_name, $headArr, $list2);
+
     }
 
     //搜索
