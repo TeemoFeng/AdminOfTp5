@@ -26,6 +26,18 @@ class Index extends Common{
         //首页各项待加
         //获取广告列表
         $guanggao_list = Db::name('ad')->select();
+        $amei_info = $this->getAmeiInfo();
+        $this->assign('amei_info', $amei_info);
+        $user = session('user');
+        $this->assign('user', $user);
+        $this->assign('guanggao_list', $guanggao_list);
+
+        return $this->fetch('index');
+    }
+
+    //pc和app首页获取阿美币信息
+    public function getAmeiInfo()
+    {
         //获取阿美币信息
         $start_time = strtotime(date('Y-m-d 00:00:00'));
         $end_time = strtotime(date('Y-m-d 23:59:59'));
@@ -87,13 +99,9 @@ class Index extends Common{
         }else{
             $amei_info['ratio_7'] = +$h_l_s;
         }
-        $this->assign('amei_info', $amei_info);
-        $user = session('user');
-        $this->assign('user', $user);
-        $this->assign('guanggao_list', $guanggao_list);
-
-        return $this->fetch('index');
+        return $amei_info;
     }
+
 
     //10秒刷新一次阿美币信息
     public function getAmbInfo()

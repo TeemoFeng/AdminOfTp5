@@ -1101,8 +1101,6 @@
         var price = 0;
         //点击币种切换信息
         $('body').on('click','.get_price',function() {
-            var test = $("#iframe1").contents().find("iframe[id^=tradingview]").find(".symbol-edit").val();
-            console.log(test);
             price = $(this).find("[name='coin_price']").html();
             var name = $(this).find("[name='coin_name']").html();
             var high = $(this).find("[name='high']").val();

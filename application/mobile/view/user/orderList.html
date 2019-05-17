@@ -106,12 +106,6 @@
                         '	<td class="mui-text-center">'+value.create_time+'</td>'+
                         '	<td class="mui-text-center">'+value.trade_status_str+'</td>'+
                         '	<td class="mui-text-center">';
-                        if(value.trade_type == 1){
-                          str += '<a href="{:url(\'orderDetail\')}?id='+value.id+'">查看详情</a>';
-                        }
-                        if(value.trade_type == 2 && value.trade_status == 2){
-                            str += '<a href="JavaScript:;" class="shoukuan" iid="'+value.id+'">确认收款</a>';
-                        }
 
                        str += '</td></tr>';
 
