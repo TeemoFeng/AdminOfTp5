@@ -492,13 +492,132 @@ class Bourse extends Controller {
     //导入用户
     public function exportUser()
     {
-        $user = cache('Kdexcel');
-        foreach($user as $k => $v){
+        set_time_limit(0);
+//        $count = Db::name('old_user')->count();
+        $page = 500;
+//        $size = ceil($count/$page);
+        // 0-5  5-10 10-15 15-20 20-25  25-30
+            $list = Db::name('old_user')->limit(23000, 1000)->select();
+            foreach ($list as $k => $v) {
+                if($v['user_name'] == 'admin') {
+                    continue;
+                }
+                $add['usernum'] = $v['user_name'] ? $v['user_name'] : '';
+                $add['username'] = $v['true_name'] ? $v['true_name'] : '';
+                $add['nickname'] = $v['true_name'] ? $v['true_name'] : '';
+                $add['is_report'] = $v['with_re']; //是否报备
+                $add['email'] = $v['email'] ? $v['email'] : ''; //是否报备
+                $add['mobile'] = $v['mobile'] ? $v['mobile'] : ''; //手机号
+                $add['npid'] = $v['parentid']; //节点关系
+                $add['pid'] = $v['refereeid']; //推荐关系
+                $add['sys_type'] = $v['sys_type']; //系统类型
+                $add['level'] = $v['user_level']; //系统类型
+                $add['have_tree'] = 0;
+                if ($v['referee_number'] > 0) {
+                    $add['have_tree'] = 1;
+                }
+                if ($v['my_server_center'] > 0) {
+                    $my_baodan_center = Db::name('old_user')->where(['id' => $v['my_server_center']])->field('user_name')->find();
+                    $add['baodan_user'] = $my_baodan_center['uesr_name']; //报单人
+                }
+                $add['baodan_center'] = $v['is_server_center']; //是否报单中心
+                $add['avatar'] = $v['user_face']; //用户头像
+                $add['status'] = 0;
+                if ($v['status'] > 0) {
+                    $add['status'] = 1; //用户状态
+                }
+                $add['enabled'] = $v['valid_status']; //是否有效
+                $add['password'] = 'e10adc3949ba59abbe56e057f20f883e'; //密码
+                $add['pwd'] = lock_url($add['password']);
+                $add['safeword'] = '123456';
+                $add['last_login'] = $v['last_login_time'] ? $v['last_login_time'] : 0;
+                if (!empty($v['refereeid'])) {
+                   $referee = Db::name('old_user')->where(['id' => $v['refereeid']])->value('user_name');
+                    $add['referee'] = $referee ? $referee : '';
+                } else {
+                    $add['referee'] = '';
+                }
+                $add['old_user_id'] = $v['id'];
+                $id = Db::name('users')->insertGetId($add); //添加用户
+
+                $account['user_id'] = $id;
+                $account['cash_currency_num'] = $v['balance_bonus']; //现金币数量
+                $account['cash_input_num'] = $v['balance_repeat']; //复投数量
+                $account['corpus'] = $v['balance_heart']; //本金账户余额
+                $account['activation_num'] = $v['balance_cash']; //激活钱包余额
+                $account['consume_num'] = $v['balance_shopping']; //消费钱包余额
+                $account['transaction_num'] = $v['balance_integral']; //交易账户余额
+                $account['rate'] = $v['activ_lv'];
+                $account['status'] = $v['valid_status']; //
+                $account['level_id'] = $v['user_level'];
+
+                Db::name('user_currency_account')->insert($account); //添加账户信息
+                usleep(5000);
+            }
+
+
+    }
+
+    //处理接点关系
+    public function handleRelation($start, $end)
+    {
+        set_time_limit(0);
+        $where = new Where();
+        $where['id'] = ['>=', $start];
+        $where['id'] = ['<', $end];
+        $list = Db::name('users')->where($where)->field('id,old_user_id,enabled')->select();
+        foreach ($list as $k => $v) {
+            //查询原先关系
+            $nodeRela =  Db::name('old_user_parent')->where(['userid' => $v['old_user_id']])->order('distance DESC')->column('parentid');
+            if (empty($nodeRela)) {
+               continue;
+            }
+
+            //查询原先id现在对应的用户id
+            $map = new Where();
+            $map['old_user_id'] = ['in', $nodeRela];
+            $newRela =  Db::name('users')->where($map)->column('id');
+            $add['user_id'] = $v['id'];
+            $add['user_son_str'] = implode(",", $newRela) . ',';
+            $add['enabled'] = $v['enabled'];
+            $add['deep'] = count($newRela);
+            Db::name('user_node')->insert($add);
+            usleep(5000);
 
         }
+
     }
 
 
+    //处理推荐关系
+    public function handleRelationReferee($start, $end)
+    {
+        set_time_limit(0);
+        $where = new Where();
+        $where['id'] = ['>=', $start];
+        $where['id'] = ['<', $end];
+        $list = Db::name('users')->where($where)->field('id,old_user_id,enabled')->select();
+        foreach ($list as $k => $v) {
+            //查询原先关系
+            $nodeRela =  Db::name('old_user_referee')->where(['userid' => $v['old_user_id']])->order('distance DESC')->column('refereeid');
+            if (empty($nodeRela)) {
+                continue;
+            }
+
+            //查询原先id现在对应的用户id
+            $map = new Where();
+            $map['old_user_id'] = ['in', $nodeRela];
+            $newRela =  Db::name('users')->where($map)->column('id');
+            $add['user_id'] = $v['id'];
+            $add['user_son_str'] = implode(",", $newRela) . ',';
+            $add['enabled'] = $v['enabled'];
+            $add['deep'] = count($newRela);
+            Db::name('user_referee')->insert($add);
+            usleep(5000);
+
+        }
+
+    }
 
 }
 
