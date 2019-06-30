@@ -27,7 +27,7 @@ class Excel extends Controller {
         $root_path = Env::get('root_path');
         $filename = $root_path.'public/uploads/user/'.$file_name;
         $filename=iconv('GB2312','UTF-8',$filename);
-        $final_arr = $this->_readExcel($filename);
+        $final_arr = $this->readexcel($filename);
         if(!empty($final_arr)){
             //设置快递excel的数据缓存
             cache("Kdexcel",$final_arr,6000);
@@ -71,6 +71,34 @@ class Excel extends Controller {
         //只设为读取,加快读取速度
         $objReader->setReadDataOnly(true);
         $objExcel = $objReader->load($filename);
+    }
+
+
+    public function readexcel($fileName)
+    {
+
+        $extension = 'xlsx';
+
+        if ($extension =='xlsx') {
+            $objReader = new \PHPExcel_Reader_Excel2007();
+            $objExcel = $objReader ->load($fileName);
+        } else if ($extension =='xls') {
+            $objReader = new \PHPExcel_Reader_Excel5();
+            $objExcel = $objReader ->load($fileName);
+        } else if ($extension=='csv') {
+            $PHPReader = new \PHPExcel_Reader_CSV();
+
+            //默认输入字符集
+            $PHPReader->setInputEncoding('GBK');
+
+            //默认的分隔符
+            $PHPReader->setDelimiter(',');
+
+            //载入文件
+            $objExcel = $PHPReader->load($fileName);
+        }
+
+        return $objExcel ->getSheet(0)->toArray();
     }
 
 }

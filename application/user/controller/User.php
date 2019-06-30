@@ -25,6 +25,7 @@ class User extends Common{
     //用户推荐的用户列表
     public function userList()
     {
+
         if(request()->isPost()){
             $data   = input('post.');
             $where  = $this->makeSearch($data);
@@ -40,6 +41,7 @@ class User extends Common{
 
             }
             $where['status'] = 1;
+            $where['sys_type'] = 1;
             //根绝用户id获取推荐的人员信息
             $list = db('users')
                 ->alias('u')

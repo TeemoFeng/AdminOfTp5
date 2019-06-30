@@ -179,6 +179,9 @@ class Bourse extends Controller {
             $jiangli_all = 0;
             foreach ($son_list as $k => $v){
                 $son_level = Db::name('users')->where(['id' => $v['user_id'], 'enabled' => 1])->value('level');
+                if (empty($son_level)) {
+                    continue;
+                }
                 $jiangli_one = $rule[$user_level][$son_level];
 //                $jiangli_all += $rule[$level][$son_level];
 
@@ -497,9 +500,13 @@ class Bourse extends Controller {
         $page = 500;
 //        $size = ceil($count/$page);
         // 0-5  5-10 10-15 15-20 20-25  25-30
-            $list = Db::name('old_user')->limit(23000, 1000)->select();
+//            $list = Db::name('old_user')->limit(23000, 1000)->select();
+            $list = Db::name('old_user')->where(['sys_type' => 1])->select();
             foreach ($list as $k => $v) {
                 if($v['user_name'] == 'admin') {
+                    continue;
+                }
+                if ($v['id'] == 223 || $v['id'] == 227) {
                     continue;
                 }
                 $add['usernum'] = $v['user_name'] ? $v['user_name'] : '';
@@ -517,9 +524,12 @@ class Bourse extends Controller {
                     $add['have_tree'] = 1;
                 }
                 if ($v['my_server_center'] > 0) {
-                    $my_baodan_center = Db::name('old_user')->where(['id' => $v['my_server_center']])->field('user_name')->find();
-                    $add['baodan_user'] = $my_baodan_center['uesr_name']; //报单人
+                    $my_baodan_center = Db::name('old_user')->where(['id' => $v['my_server_center']])->value('user_name');
+                    $add['baodan_user'] = $my_baodan_center; //报单人
                 }
+
+                $add['reg_time'] = $v['reg_time'] ? $v['reg_time'] : 0; //注册时间
+                $add['active_time'] = $v['activation_time'] ? $v['activation_time'] : 0; //激活时间
                 $add['baodan_center'] = $v['is_server_center']; //是否报单中心
                 $add['avatar'] = $v['user_face']; //用户头像
                 $add['status'] = 0;
@@ -537,6 +547,15 @@ class Bourse extends Controller {
                 } else {
                     $add['referee'] = '';
                 }
+
+                if (!empty($v['parentid'])) {
+                    $contact_person = Db::name('old_user')->where(['id' => $v['parentid']])->value('user_name');
+                    $add['contact_person'] = $contact_person ? $contact_person : '';
+                } else {
+                    $add['contact_person'] = '';
+                }
+
+
                 $add['old_user_id'] = $v['id'];
                 $id = Db::name('users')->insertGetId($add); //添加用户
 
@@ -559,13 +578,12 @@ class Bourse extends Controller {
     }
 
     //处理接点关系
-    public function handleRelation($start, $end)
+    public function handleRelation()
     {
+
         set_time_limit(0);
-        $where = new Where();
-        $where['id'] = ['>=', $start];
-        $where['id'] = ['<', $end];
-        $list = Db::name('users')->where($where)->field('id,old_user_id,enabled')->select();
+//        $list = Db::name('users')->where('id', ['>=', 21000], ['<', 24000], 'and')->field('id,old_user_id,enabled')->select();
+        $list = Db::name('users')->field('id,old_user_id,enabled')->select();
         foreach ($list as $k => $v) {
             //查询原先关系
             $nodeRela =  Db::name('old_user_parent')->where(['userid' => $v['old_user_id']])->order('distance DESC')->column('parentid');
@@ -582,7 +600,6 @@ class Bourse extends Controller {
             $add['enabled'] = $v['enabled'];
             $add['deep'] = count($newRela);
             Db::name('user_node')->insert($add);
-            usleep(5000);
 
         }
 
@@ -590,13 +607,11 @@ class Bourse extends Controller {
 
 
     //处理推荐关系
-    public function handleRelationReferee($start, $end)
+    public function handleRelationReferee()
     {
         set_time_limit(0);
-        $where = new Where();
-        $where['id'] = ['>=', $start];
-        $where['id'] = ['<', $end];
-        $list = Db::name('users')->where($where)->field('id,old_user_id,enabled')->select();
+        //        $list = Db::name('users')->where('id', ['>=', 21000], ['<', 24000], 'and')->field('id,old_user_id,enabled')->select();
+        $list = Db::name('users')->field('id,old_user_id,enabled')->select();
         foreach ($list as $k => $v) {
             //查询原先关系
             $nodeRela =  Db::name('old_user_referee')->where(['userid' => $v['old_user_id']])->order('distance DESC')->column('refereeid');
@@ -613,11 +628,65 @@ class Bourse extends Controller {
             $add['enabled'] = $v['enabled'];
             $add['deep'] = count($newRela);
             Db::name('user_referee')->insert($add);
-            usleep(5000);
 
         }
 
     }
+
+
+    //处理用户表中推荐关系和接点关系
+    public function handelNodeAndReferee()
+    {
+        set_time_limit(0);
+//        $list = Db::name('users')->where('id', ['>=', 21000], ['<', 24000], 'and')->field('id,old_user_id,pid,npid')->select();
+        $list = Db::name('users')->field('id,old_user_id,pid,npid')->select();
+        foreach ($list as $k => $v) {
+            //更新pid
+            if ($v['pid'] > 0) {
+                $now_pid_id =  Db::name('users')->where(['old_user_id' => $v['pid']])->value('id');
+                if ($now_pid_id) {
+                    Db::name('users')->where(['id' => $v['id']])->update(['pid' => $now_pid_id]);
+                }
+
+            }
+
+            //更新npid
+            if ($v['npid'] > 0) {
+                $now_pid_id =  Db::name('users')->where(['old_user_id' => $v['npid']])->value('id');
+                if($now_pid_id){
+                    Db::name('users')->where(['id' => $v['id']])->update(['npid' => $now_pid_id]);
+                }
+
+            }
+
+
+
+
+        }
+
+    }
+
+
+
+
+//    public function export()
+//    {
+//        $goods = cache("Kdexcel");
+//        $sql_txt = fopen("D:/sql.txt", "w");
+//
+//        foreach ($goods as $k => $v) {
+//            if ($k == 0) {
+//                continue;
+//            }
+//            $cost = number_format($v[1], 2);;
+//            $sql = "UPDATE mkl_goods SET `cost_coin`=45,`cost`=" . $cost ." WHERE id=" .$v[0] . ";\n";
+//            fwrite($sql_txt, $sql);
+//
+//        }
+//
+//        fclose($sql_txt);
+//    }
+
 
 }
 

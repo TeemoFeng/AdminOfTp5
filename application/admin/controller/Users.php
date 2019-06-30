@@ -109,6 +109,7 @@ class Users extends Common
     {
         $where = new Where();
         $where['u.status'] = 1;
+        $where['u.sys_type'] = 1;
         if (!empty($data['status'])) {
             if ($data['status'] == 1) {
                 $where['u.enabled'] = 0; //无效会员
