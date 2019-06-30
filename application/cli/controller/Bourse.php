@@ -89,6 +89,9 @@ class Bourse extends Controller {
     //用户动态奖发放
     public function dynamic()
     {
+        $stime=microtime(true); //获取程序开始执行的时间
+
+
         set_time_limit(0);
         //获取用户拿取设置
         $user_level = Db::name('user_level')->column('bonus_level','level_id');
@@ -138,7 +141,7 @@ class Bourse extends Controller {
         }
         $price = $amei_price;
         $user_count = db('user_node')->where(['enabled' => 1])->count();
-        $page_size = 500;
+        $page_size = 200;
         $page = ceil($user_count/$page_size);
         //获取阿美币的id
         $currency_id = CurrencyList::where(['en_name' => 'AMB'])->value('id');
@@ -148,7 +151,7 @@ class Bourse extends Controller {
                 ->join(config('database.prefix').'users b','a.user_id = b.id','left')
                 ->field('a.*,b.level')
                 ->where(['a.enabled' => 1])
-                ->limit($i*$page_size,500)
+                ->limit($i*$page_size,$page_size)
                 ->select();
 
             foreach ($user_list as $k => $v){
@@ -162,6 +165,13 @@ class Bourse extends Controller {
             }
 
         }
+
+        /**
+         *你要运行的程序
+         **/
+        $etime=microtime(true);//获取程序执行结束的时间
+        $total=$etime-$stime;   //计算差值
+        echo "<br />[页面执行时间：{$total} ]秒";
     }
 
     //获取用户推荐人数
